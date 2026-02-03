@@ -353,7 +353,7 @@ print("Book Equity Summary Statistics (in million VND):")
 print(df_fundamentals["be"].describe().round(2))
 ```
 
-Operating profitability, introduced by @Fama2015, measures a firm's profits relative to its book equity. Firms with higher operating profitability tend to have higher expected returns.
+Operating profitability, introduced by @FamaFrench2015, measures a firm's profits relative to its book equity. Firms with higher operating profitability tend to have higher expected returns.
 
 ```{python}
 def compute_profitability(df):

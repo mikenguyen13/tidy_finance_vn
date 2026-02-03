@@ -985,7 +985,7 @@ def estimate_daily_betas_batch(symbols, tidy_finance, n_cores, batch_size=500,
 
 ```{python}
 #| eval: false
-symbols = prices_monthly["symbol"].unique().tolist()[1:100]
+symbols = prices_monthly["symbol"].unique().tolist()
 
 capm_daily = estimate_daily_betas_batch(
     symbols=symbols,

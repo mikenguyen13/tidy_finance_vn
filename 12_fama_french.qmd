@@ -11,622 +11,1297 @@ execute:
   message: false
 ---
 
-In this chapter, we provide a replication of the famous Fama-French factor portfolios. The Fama-French factor models are a cornerstone of empirical asset pricing [see @Fama1992 and @FamaFrench2015]. On top of the market factor represented by the traditional CAPM beta, the three-factor model includes the size and value factors to explain the cross section of returns. Its successor, the five-factor model, additionally includes profitability and investment as explanatory factors.
+This chapter provides a replication of the Fama-French factor portfolios for the Vietnamese stock market. The Fama-French factor models represent a cornerstone of empirical asset pricing, originating from the seminal work of @Fama1992 and later extended in @FamaFrench2015. These models have transformed how academics and practitioners understand the cross-section of expected stock returns, moving beyond the single-factor Capital Asset Pricing Model to incorporate multiple sources of systematic risk.
 
-We start with the three-factor model. We already introduced the size and value factors in [Value and Bivariate Sorts](value-and-bivariate-sorts.qmd), and their definition remains the same: size is the SMB factor (small-minus-big) that is long small firms and short large firms. The value factor is HML (high-minus-low) and is long in high book-to-market firms and short in low book-to-market counterparts.
+We construct both the three-factor and five-factor models at monthly and daily frequencies. The monthly factors serve as the foundation for most asset pricing tests and portfolio analyses, while the daily factors enable higher-frequency applications including short-horizon event studies, market microstructure research, and daily beta estimation. By constructing factors at both frequencies, we create a complete toolkit for empirical finance research in the Vietnamese market.
 
-After the replication of the three-factor model, we move to the five-factors by constructing the profitability factor RMW (robust-minus-weak) as the difference between the returns of firms with high and low operating profitability and the investment factor CMA (conservative-minus-aggressive) as the difference between firms with high versus low investment rates.
+The chapter proceeds as follows. We first discuss the theoretical motivation for each factor and the economic intuition behind the Fama-French methodology. We then prepare the necessary data, merging stock returns with accounting characteristics. Next, we implement the portfolio sorting procedures that form the basis of factor construction, carefully following the original Fama-French protocols while adapting them for Vietnamese market characteristics. We construct the three-factor model (market, size, and value) before extending to the five-factor model (adding profitability and investment). Finally, we construct daily factors and validate our replicated factors through various diagnostic checks.
 
-The current chapter relies on this set of Python packages.
+## Theoretical Background
+
+### The Evolution from CAPM to Multi-Factor Models
+
+The Capital Asset Pricing Model of @Sharpe1964 posits that a single factor—the market portfolio—should explain all cross-sectional variation in expected returns. However, decades of empirical research have documented persistent patterns that CAPM cannot explain. @Fama1992 demonstrated that two firm characteristics—size and book-to-market ratio—capture substantial variation in average returns that the market beta leaves unexplained.
+
+Small firms tend to earn higher returns than large firms, a pattern known as the size effect. Similarly, firms with high book-to-market ratios (value stocks) tend to outperform firms with low book-to-market ratios (growth stocks), known as the value premium. The three-factor model formalizes these observations by constructing tradeable factor portfolios:
+
+$$
+r_{i,t} - r_{f,t} = \alpha_i + \beta_i^{MKT}(r_{m,t} - r_{f,t}) + \beta_i^{SMB} \cdot SMB_t + \beta_i^{HML} \cdot HML_t + \varepsilon_{i,t}
+$$ {#eq-ff3}
+
+where:
+
+- $r_{i,t} - r_{f,t}$ is the excess return on asset $i$
+- $r_{m,t} - r_{f,t}$ is the market excess return
+- $SMB_t$ (Small Minus Big) is the size factor
+- $HML_t$ (High Minus Low) is the value factor
+
+### The Five-Factor Extension
+
+@FamaFrench2015 extended the model to include two additional factors motivated by the dividend discount model. Firms with higher profitability should have higher expected returns (all else equal), and firms with aggressive investment policies should have lower expected returns:
+
+$$
+r_{i,t} - r_{f,t} = \alpha_i + \beta_i^{MKT}MKT_t + \beta_i^{SMB}SMB_t + \beta_i^{HML}HML_t + \beta_i^{RMW}RMW_t + \beta_i^{CMA}CMA_t + \varepsilon_{i,t}
+$$ {#eq-ff5}
+
+where:
+
+- $RMW_t$ (Robust Minus Weak) is the profitability factor
+- $CMA_t$ (Conservative Minus Aggressive) is the investment factor
+
+### Factor Construction Methodology
+
+The Fama-French methodology constructs factors through double-sorted portfolios:
+
+1. **Size sorts**: Stocks are divided into Small and Big groups based on median market capitalization.
+
+2. **Characteristic sorts**: Within each size group, stocks are sorted into terciles based on book-to-market (for HML), operating profitability (for RMW), or investment (for CMA).
+
+3. **Factor returns**: Factors are computed as the difference between average returns of portfolios with high versus low characteristic values, averaging across size groups to neutralize size effects.
+
+4. **Timing**: Portfolios are formed at the end of June each year using accounting data from the prior fiscal year, ensuring all information was publicly available at formation.
+
+## Setting Up the Environment
+
+We load the required Python packages for data manipulation, statistical analysis, and visualization.
 
 ```{python}
 import pandas as pd
 import numpy as np
 import sqlite3
 import statsmodels.formula.api as smf
+from scipy.stats.mstats import winsorize
+import matplotlib.pyplot as plt
 
+from plotnine import *
+from mizani.formatters import percent_format, comma_format
+```
 
-from regtabletotext import prettify_result
+We connect to our SQLite database containing the processed Vietnamese financial data.
+
+```{python}
+tidy_finance = sqlite3.connect(database="data/tidy_finance_python.sqlite")
 ```
 
 ## Data Preparation
 
-We use Stock Data and Fundamentals as data sources, as we need exactly the same variables to compute the size and value factors in the way Fama and French do it.[^1]
+### Loading Stock Returns
 
-[^1]: Note that @Fama1992 claim to exclude financial firms. To a large extent this happens through using industry format "INDL". Neither the original paper, nor Ken French's website, or the WRDS replication contains any indication that financial companies are excluded using additional filters such as industry codes.
+We load the monthly stock returns data, which includes excess returns, market capitalization, and the risk-free rate. These variables are essential for computing value-weighted portfolio returns and factor premiums.
 
 ```{python}
-tidy_finance = sqlite3.connect(
-  database="data/tidy_finance_python.sqlite"
-)
-
-prices_monthly = (pd.read_sql_query(
-    sql=("SELECT symbol, date, ret_excess, mktcap, risk_free,"
-         "mktcap_lag FROM prices_monthly"),
+prices_monthly = pd.read_sql_query(
+    sql="""
+        SELECT symbol, date, ret_excess, mktcap, mktcap_lag, risk_free
+        FROM prices_monthly
+    """,
     con=tidy_finance,
-    parse_dates={"date"})
-  .dropna()
-)
+    parse_dates={"date"}
+).dropna()
 
-comp_vn = (pd.read_sql_query(
-    sql="SELECT symbol, datadate, be, op, inv FROM comp_vn",
-    con=tidy_finance,
-    parse_dates={"datadate"})
-  .dropna()
-)
+print(f"Monthly returns: {len(prices_monthly):,} observations")
+print(f"Unique stocks: {prices_monthly['symbol'].nunique():,}")
+print(f"Date range: {prices_monthly['date'].min():%Y-%m} to {prices_monthly['date'].max():%Y-%m}")
 ```
 
-Following Fama-French standards for empirical asset pricing:
+### Loading Company Fundamentals
 
-1.  Identification of Firm Size (June Market Cap)
-
-Following the Fama and French protocol, we identify the market capitalization in June of year $t$. This represents the firm's "Size" at the moment of portfolio formation. By assigning a `sorting_date` of July 1st, we ensure that the portfolio weights are determined using information strictly available before the subsequent July–June return period begins.
-
-2.  Establishing the Market Equity Benchmark (December Market Cap)
-
-To calculate the Book-to-Market ratio, we extract the market capitalization from December of year $t-1$. This specific timestamp is used to scale the book equity values. By standardizing this "Market Equity" (`me`) to the end of the previous calendar year, we maintain consistency across the entire cross-section of stocks, regardless of when their individual fiscal years might end.
-
-3.  Construction of the Book-to-Market Ratio
-
-The Book-to-Market (`bm`) ratio is constructed using the most recent fiscal year-end book equity (`be`) from the `comp_vn` dataset and the preceding December market equity. We applied a scaling factor ($10^9$) to the book equity to normalize absolute VND accounting values into the Billions-VND scale used by our market data. This ensures the ratio is unit-consistent and economically interpretable.
-
-4.  Final Data Integration and De-duplication
-
-In the final step, we merge the Size and Value components into a single `sorting_variables` table using the `symbol` and `sorting_date` as keys. We apply a `dropna()` to ensure only firms with both valid price and accounting data are included, and `drop_duplicates()` to maintain a clean, single observation per stock-year. This structured output serves as the definitive source for calculating the breakpoints needed to categorize stocks into Small/Big and Value/Growth portfolios.
+We load the company fundamentals data containing book equity, operating profitability, and investment—the characteristics needed for constructing the Fama-French factors.
 
 ```{python}
-# 1. Size (June Market Cap)
-size = (prices_monthly
-  .query("date.dt.month == 6")
-  # Use MonthBegin(1) to set to July 1st
-  .assign(sorting_date=lambda x: x["date"] + pd.offsets.MonthBegin(1))
-  .get(["symbol", "sorting_date", "mktcap"])
-  .rename(columns={"mktcap": "size"})
-)
-size.head(3)
+comp_vn = pd.read_sql_query(
+    sql="""
+        SELECT symbol, datadate, be, op, inv
+        FROM comp_vn
+    """,
+    con=tidy_finance,
+    parse_dates={"datadate"}
+).dropna()
 
-# 2. Market Equity (December Market Cap for BM scaling)
-market_equity = (prices_monthly
-  .query("date.dt.month == 12")
-  # Shift December t-1 to July 1st of year t
-  .assign(sorting_date=lambda x: x["date"] + pd.offsets.MonthBegin(7))
-  .get(["symbol", "sorting_date", "mktcap"])
-  .rename(columns={"mktcap": "me"})
-)
-market_equity.head(3)
+print(f"Fundamentals: {len(comp_vn):,} firm-year observations")
+print(f"Unique firms: {comp_vn['symbol'].nunique():,}")
+```
 
-# 3. Calculate Book-to-Market (BM) with Correct Scaling
-book_to_market = (comp_vn
-    .assign(
-        sorting_date=lambda x: pd.to_datetime((x["datadate"].dt.year + 1).astype(str) + "-07-01")
+### Constructing Sorting Variables
+
+Following Fama-French conventions, we construct the sorting variables with careful attention to timing. The key principles are:
+
+1. **Size (June Market Cap)**: We use market capitalization at the end of June of year $t$ to sort stocks into size groups. This ensures we capture the firm's size at the moment of portfolio formation.
+
+2. **Book-to-Market Ratio**: We use book equity from fiscal year $t-1$ divided by market equity at the end of December $t-1$. This creates a six-month gap between the accounting data and portfolio formation, ensuring the information was publicly available.
+
+3. **Portfolio Formation Date**: Portfolios are formed on July 1st and held for twelve months until the following June.
+
+```{python}
+def construct_sorting_variables(prices_monthly, comp_vn):
+    """
+    Construct sorting variables following Fama-French methodology.
+    
+    Parameters
+    ----------
+    prices_monthly : pd.DataFrame
+        Monthly stock returns with market cap
+    comp_vn : pd.DataFrame
+        Company fundamentals with book equity, profitability, investment
+        
+    Returns
+    -------
+    pd.DataFrame
+        Sorting variables aligned with July 1st formation dates
+    """
+    
+    # 1. Size: June market capitalization
+    # Portfolio formation is July 1st, so we use June market cap
+    size = (prices_monthly
+        .query("date.dt.month == 6")
+        .assign(
+            sorting_date=lambda x: x["date"] + pd.offsets.MonthBegin(1)
+        )
+        [["symbol", "sorting_date", "mktcap"]]
+        .rename(columns={"mktcap": "size"})
     )
-    .merge(market_equity, how="inner", on=["symbol", "sorting_date"])
-    # Adjusted scaling: Dividing BE by 1,000,000,000 to convert absolute VND to Billions
-    # to match the scale of your Market Equity (me)
-    .assign(bm=lambda x: x["be"] / (x["me"] * 1000000000)) 
-    [["symbol", "sorting_date", "me", "bm"]]
-)
+    
+    print(f"Size observations: {len(size):,}")
+    
+    # 2. Market Equity: December market cap for B/M calculation
+    # December t-1 market cap is used with fiscal year t-1 book equity
+    # This is then used for July t portfolio formation
+    market_equity = (prices_monthly
+        .query("date.dt.month == 12")
+        .assign(
+            # December year t-1 maps to July year t formation
+            sorting_date=lambda x: x["date"] + pd.offsets.MonthBegin(7)
+        )
+        [["symbol", "sorting_date", "mktcap"]]
+        .rename(columns={"mktcap": "me"})
+    )
+    
+    print(f"Market equity observations: {len(market_equity):,}")
+    
+    # 3. Book-to-Market and other characteristics
+    # Fiscal year t-1 data is used for July t portfolio formation
+    book_to_market = (comp_vn
+        .assign(
+            # Fiscal year-end + 6 months = July formation
+            sorting_date=lambda x: pd.to_datetime(
+                (x["datadate"].dt.year + 1).astype(str) + "-07-01"
+            )
+        )
+        .merge(market_equity, on=["symbol", "sorting_date"], how="inner")
+        .assign(
+            # Scale book equity to match market equity units
+            # BE is in VND, ME is in millions VND
+            bm=lambda x: x["be"] / (x["me"] * 1e9)
+        )
+        [["symbol", "sorting_date", "me", "bm", "op", "inv"]]
+    )
+    
+    print(f"Book-to-market observations: {len(book_to_market):,}")
+    
+    # 4. Merge size with characteristics
+    sorting_variables = (size
+        .merge(book_to_market, on=["symbol", "sorting_date"], how="inner")
+        .dropna()
+        .drop_duplicates(subset=["symbol", "sorting_date"])
+    )
+    
+    return sorting_variables
 
-# SANITY CHECK
-print(f"New Median BM Ratio: {book_to_market['bm'].median():.4f}")
-book_to_market.head(3)
+sorting_variables = construct_sorting_variables(prices_monthly, comp_vn)
 
-# Sanity Check: Print the median BM to ensure it is near 1.0
-print(f"Median BM Ratio: {book_to_market['bm'].median():.4f}")
-
-# 4. Final Merge (This should now work)
-sorting_variables = (size
-  .merge(book_to_market, how="inner", on=["symbol", "sorting_date"])
-  .dropna()
-  .drop_duplicates(subset=["symbol", "sorting_date"])
-)
-sorting_variables.head(3)
+print(f"\nFinal sorting variables: {len(sorting_variables):,} stock-years")
+print(f"Sorting date range: {sorting_variables['sorting_date'].min():%Y-%m} to {sorting_variables['sorting_date'].max():%Y-%m}")
 ```
 
-### Portfolio Sorts
+### Validating Sorting Variables
 
-Next, we construct our portfolios with an adjusted `assign_portfolio()` function. Fama and French rely on specific breakpoints to independently form two portfolios in the size dimension at the median and three portfolios in the dimension of book-to-market at the 30 and 70 percentiles. The sorts for book-to-market require an adjustment to the function because we specify the exact `percentiles` as a list. Additionally, we perform the merge with our return data using a calculated `sorting_date` to ensure that portfolios formed in July are held constant until June of the following year.
+Before proceeding, we validate that our sorting variables have reasonable distributions. The book-to-market ratio should center around 1.0 for a typical market, though emerging markets may differ.
+
+```{python}
+print("Sorting Variable Summary Statistics:")
+print(sorting_variables[["size", "bm", "op", "inv"]].describe().round(4))
+
+# Check for extreme values that might indicate data issues
+print(f"\nB/M Median: {sorting_variables['bm'].median():.4f}")
+print(f"B/M 1st percentile: {sorting_variables['bm'].quantile(0.01):.4f}")
+print(f"B/M 99th percentile: {sorting_variables['bm'].quantile(0.99):.4f}")
+```
+
+### Handling Outliers
+
+Extreme values in sorting characteristics can distort portfolio assignments and factor returns. We apply winsorization to limit the influence of outliers while preserving the general ranking of stocks.
+
+```{python}
+# Check BEFORE winsorization
+print("BEFORE Winsorization:")
+print(sorting_variables[["size", "bm", "op", "inv"]].describe().round(4))
+
+# Apply winsorization
+def winsorize_characteristics(df, columns, limits=(0.01, 0.99)):
+    """
+    Apply winsorization using pandas clip.
+    """
+    df = df.copy()
+    for col in columns:
+        if col in df.columns:
+            lower = df[col].quantile(limits[0])
+            upper = df[col].quantile(limits[1])
+            df[col] = df[col].clip(lower=lower, upper=upper)
+            print(f"  {col}: clipped to [{lower:.4f}, {upper:.4f}]")
+    return df
+
+sorting_variables = winsorize_characteristics(
+    sorting_variables,
+    columns=["bm", "op", "inv"],  # Don't winsorize size
+    limits=(0.01, 0.99)
+)
+
+# Check AFTER winsorization
+print("\nAFTER Winsorization:")
+print(sorting_variables[["size", "bm", "op", "inv"]].describe().round(4))
+```
+
+## Portfolio Assignment Functions
+
+### The Portfolio Assignment Function
+
+We create a flexible function for assigning stocks to portfolios based on quantile breakpoints. This function handles both independent sorts (where breakpoints are computed across all stocks) and dependent sorts (where breakpoints are computed within subgroups).
 
 ```{python}
 def assign_portfolio(data, sorting_variable, percentiles):
     """Assign portfolios to a bin according to a sorting variable."""
     
-    # Calculate breakpoints based on quantile sequences
-    breakpoints = (data
-      .get(sorting_variable)
-      .quantile(percentiles, interpolation="linear")
-      .drop_duplicates()
+    # Get the values
+    values = data[sorting_variable].dropna()
+    
+    if len(values) == 0:
+        return pd.Series([np.nan] * len(data), index=data.index)
+    
+    # Calculate breakpoints
+    breakpoints = values.quantile(percentiles, interpolation="linear")
+    
+    # Handle duplicate breakpoints by using unique values
+    unique_breakpoints = np.unique(breakpoints)
+    
+    # If all values are the same, assign all to portfolio 1
+    if len(unique_breakpoints) <= 1:
+        return pd.Series([1] * len(data), index=data.index)
+    
+    # Set boundaries to -inf and +inf
+    unique_breakpoints.iloc[0] = -np.inf
+    unique_breakpoints.iloc[unique_breakpoints.size-1] = np.inf
+    
+    # Assign to bins
+    assigned = pd.cut(
+        data[sorting_variable],
+        bins=unique_breakpoints,
+        labels=pd.Series(range(1, breakpoints.size)),
+        include_lowest=True,
+        right=False
     )
     
-    # Ensure the range covers all possible values
-    breakpoints.iloc[0] = -np.inf
-    breakpoints.iloc[breakpoints.size-1] = np.inf
-    
-    # Categorize into bins
-    assigned_portfolios = pd.cut(
-      data[sorting_variable],
-      bins=breakpoints,
-      labels=pd.Series(range(1, breakpoints.size)),
-      include_lowest=True,
-      right=False
-    )
-    
-    return assigned_portfolios
-
-# 1. Assign Portfolios (Annual Sorts)
-# We calculate breakpoints and assign portfolios 1-2 for size and 1-3 for BM
-portfolios_assigned = (sorting_variables
-  .groupby("sorting_date")
-  .apply(lambda x: x.assign(
-      portfolio_size=assign_portfolio(x, "size", [0, 0.5, 1]),
-      portfolio_bm=assign_portfolio(x, "bm", [0, 0.3, 0.7, 1])
-    ), include_groups=False)
-  .reset_index()
-  # We keep 'size' and 'bm' here so they are available after the merge
-  .get(["symbol", "sorting_date", "portfolio_size", "portfolio_bm", "size", "bm"])
-)
-
-# 2. Merge Portfolios to Monthly Returns
-# Portfolios formed in July are held until June of the following year
-portfolios = (prices_monthly
-  .assign(
-    sorting_date=lambda x: pd.to_datetime(
-        np.where(x["date"].dt.month <= 6,
-                 (x["date"].dt.year - 1).astype(str) + "0701",
-                 x["date"].dt.year.astype(str) + "0701")
-    )
-  )
-  .merge(portfolios_assigned, how="inner", on=["symbol", "sorting_date"])
-)
+    return assigned
 ```
 
-1.  **Breakpoint Determination**: The `assign_portfolio` function calculates quantiles annually. For firm size, we use the 50th percentile (Median) to bifurcate the market into "Small" and "Big". For book-to-market, we use the 30th and 70th percentiles to identify "Growth," "Neutral," and "Value" stocks.
+```{python}
+# Check the distribution of characteristics BEFORE portfolio assignment
+print("Operating Profitability Distribution:")
+print(sorting_variables["op"].describe())
+print(f"\nUnique OP values: {sorting_variables['op'].nunique()}")
 
-2.  **Independent Sorting**: We apply these breakpoints independently. This methodology allows a stock to be classified into one of six distinct $2 \times 3$ portfolios, facilitating the isolation of specific factor premiums.
+print("\nInvestment Distribution:")
+print(sorting_variables["inv"].describe())
+print(f"\nUnique INV values: {sorting_variables['inv'].nunique()}")
 
-3.  **Temporal Alignment**: Because financial statements in Vietnam are typically released by April, the July 1st sorting date ensures that the accounting information used in the `bm` ratio is publicly available before the portfolio return period begins.
+# Check breakpoints for a specific date
+test_date = sorting_variables["sorting_date"].iloc[0]
+test_data = sorting_variables.query("sorting_date == @test_date")
 
-4.  **Holding Period Persistence**: The `sorting_date` logic ensures that the portfolio assignments made in July remain constant for the next twelve months (July through the following June), consistent with the original Fama-French experimental design.
+print(f"\nBreakpoints for {test_date}:")
+print(f"OP 30th percentile: {test_data['op'].quantile(0.3):.4f}")
+print(f"OP 70th percentile: {test_data['op'].quantile(0.7):.4f}")
+print(f"INV 30th percentile: {test_data['inv'].quantile(0.3):.4f}")
+print(f"INV 70th percentile: {test_data['inv'].quantile(0.7):.4f}")
+```
 
-Sanity Check 1: Portfolio Distribution (The 2x3 Grid)
 
-First, we verify that the independent sorts created the expected six portfolios (2 size groups $\times$ 3 value groups).
+### Assigning Portfolios for Three-Factor Model
+
+For the three-factor model, we perform independent double sorts on size and book-to-market. Size is split at the median (2 groups), and book-to-market is split at the 30th and 70th percentiles (3 groups), creating 6 portfolios.
 
 ```{python}
-# Check the count of stocks in each portfolio combination for the most recent year
-portfolio_counts = (portfolios
-    .query("date == date.max()")
+def assign_ff3_portfolios(sorting_variables):
+    """
+    Assign portfolios for Fama-French three-factor model.
+    Independent 2x3 sort on size and book-to-market.
+    """
+    df = sorting_variables.copy()
+    
+    # Independent size sort (median split)
+    df["portfolio_size"] = df.groupby("sorting_date")["size"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.5, 1], labels=[1, 2], duplicates='drop')
+    )
+    
+    # Independent B/M sort (30/70 split)
+    df["portfolio_bm"] = df.groupby("sorting_date")["bm"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.3, 0.7, 1], labels=[1, 2, 3], duplicates='drop')
+    )
+    
+    return df
+
+# Assign portfolios
+portfolios_ff3 = assign_ff3_portfolios(sorting_variables)
+
+# Validate
+print("FF3 Book-to-Market by Portfolio (should be INCREASING):")
+print(portfolios_ff3.groupby("portfolio_bm", observed=True)["bm"].median().round(4))
+
+
+print("Three-Factor Portfolio Assignments:")
+print(portfolios_ff3[["symbol", "sorting_date", "portfolio_size", "portfolio_bm"]].head(10))
+```
+
+
+### Validating Portfolio Assignments
+
+We verify that the portfolio assignments create the expected 2×3 grid with reasonable stock counts in each cell.
+
+```{python}
+# Check portfolio distribution for most recent year
+latest_date = portfolios_ff3["sorting_date"].max()
+
+portfolio_counts = (portfolios_ff3
+    .query("sorting_date == @latest_date")
     .groupby(["portfolio_size", "portfolio_bm"], observed=True)
     .size()
-    .unstack()
+    .unstack(fill_value=0)
 )
-print("Portfolio Counts (Size x BM):")
+
+print(f"Portfolio Counts for {latest_date:%Y-%m}:")
 print(portfolio_counts)
+
+# Verify characteristic monotonicity
+print("\nBook-to-Market by Portfolio (should be increasing):")
+print(portfolios_ff3.groupby("portfolio_bm", observed=True)["bm"].median().round(4))
 ```
-
-**Interpretation**:
-
-The Fama-French methodology relies on having a sufficient number of stocks in each of the six bins to diversify idiosyncratic risk. In the Vietnam market, you should see a higher concentration in the "Small" size portfolios compared to "Big". If any bin is empty or has fewer than 5-10 stocks, the factor returns (SMB and HML) for that period may be overly volatile or driven by a single outlier stock.
-
-Sanity Check 2: Characteristic Monotonicity
-
-We check if the average Book-to-Market ratio actually increases as we move from `portfolio_bm` 1 to 3.
-
-```{python}
-# Verify that higher portfolio numbers correspond to higher BM values
-bm_check = (portfolios
-    .groupby("portfolio_bm", observed=True)
-    .agg({"bm": ["mean", "median", "min", "max"]})
-)
-print("\nBM Characteristic Check:")
-print(bm_check)
-```
-
-**Interpretation**:
-
-For the sort to be valid, the mean and median `bm` must be strictly increasing across the portfolios (Portfolio 1 \< Portfolio 2 \< Portfolio 3). Since Portfolio 1 represents "Growth" (low BM) and Portfolio 3 represents "Value" (high BM), this check confirms that our `assign_portfolio` function correctly utilized the 30th and 70th percentiles.
-
-Sanity Check 3: Holding Period Persistence
 
 We verify that for a single stock, the portfolio assignment remains constant between July of one year and June of the next.
 
 ```{python}
 # Trace a single symbol (e.g., 'A32') across a formation window
-persistence_check = (portfolios
-    .query("symbol == 'A32' & date >= '2022-01-01' & date <= '2023-12-31'")
-    .sort_values("date")
-    [['symbol', 'date', 'sorting_date', 'portfolio_size', 'portfolio_bm']]
+persistence_check = (portfolios_ff3
+    .query("symbol == 'A32' & sorting_date >= '2022-01-01' & sorting_date <= '2023-12-31'")
+    .sort_values("sorting_date")
+    [['symbol', 'sorting_date', 'portfolio_size', 'portfolio_bm']]
 )
 print("\nTemporal Persistence Check (Symbol A32):")
 print(persistence_check.head(15))
 ```
 
-**Interpretation**:
+## Fama-French Three-Factor Model (Monthly)
 
-This check ensures our `sorting_date` logic is working. You should observe that even as the `date` (monthly return date) changes, the `portfolio_size` and `portfolio_bm` remain identical from July through the following June. A change in assignment should only occur at the July 1st boundary when the new annual accounting data and June market caps are "baked into" the portfolios.
+### Merging Portfolios with Returns
 
-Final Summary of the 4-Step Process
-
-1.  **Breakpoint Calculation**: We calculate the 50th percentile for Size and 30th/70th for BM annually, ensuring the "goalposts" move with the market's overall valuation.
-
-2.  **Independent Assignment**: By sorting Size and BM separately, we create a matrix that allows us to see how a "Small Value" stock performs relative to a "Small Growth" stock.
-
-3.  **Information Lag Handling**: Using the July 1st `sorting_date` respects the reality of Vietnamese financial reporting, ensuring we don't use "future" accounting data that wasn't public yet.
-
-4.  **Portfolio Rebalancing**: The annual rebalancing cycle (July–June) mimics the standard Fama-French experimental design, providing a rigorous framework for testing factor premiums in the Vietnam stock market.
-
-## Fama-French Three-Factor Model
-
-Equipped with the return data and the assigned portfolios, we can now compute the value-weighted average return for each of the six portfolios. Then, we form the Fama-French factors. For the size factor (i.e., SMB), we go long in the three small portfolios and short the three large portfolios by taking an average across either group. For the value factor (i.e., HML), we go long in the two high book-to-market portfolios and short the two low book-to-market portfolios, again weighting them equally (using the `mean()` function).
+We merge the portfolio assignments with monthly returns. The key insight is that portfolios formed in July of year $t$ are held through June of year $t+1$. We implement this by computing a `sorting_date` for each monthly return observation.
 
 ```{python}
-factors = (portfolios
-  .groupby(["portfolio_size", "portfolio_bm", "date"])
-  .apply(lambda x: pd.Series({
-    "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    })
-   )
-  .reset_index()
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-    "smb": (
-      x["ret"][x["portfolio_size"] == 1].mean() - 
-        x["ret"][x["portfolio_size"] == 2].mean()),
-    "hml": (
-      x["ret"][x["portfolio_bm"] == 3].mean() -
-        x["ret"][x["portfolio_bm"] == 1].mean())
-    }))
-  .reset_index()
-)
-
-factors.head(3)
-```
-
-The market factor ($Mkt - RF$) is defined as the value-weighted return of all stocks in the investable universe minus the risk-free rate. Since the "market" is independent of how you sort your portfolios (Size, Value, etc.), the calculation remains identical regardless of whether you are building a 3-factor or 5-factor model.
-
-```{python}
-## Fama-French Three-Factor Model
-# --- Calculate Market Factor independently ---
-# This uses the entire prices_monthly universe to represent the broad market
-factor_market_excess = (prices_monthly
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-      "mkt_excess": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    }), include_groups=False)
-  .reset_index()
-)
-
-# --- Merge ---
-# Combine your replicated SMB/HML with the Market Factor
-factors_ff3_monthly = (factors
-  .merge(factor_market_excess, on="date", how="inner")
-)
-
-factors_ff3_monthly.head(3)
-```
-
-
-```{python}
-# Remove rows with missing factor values
-# We keep only rows where the characteristic factors are fully populated
-factors_ff3_monthly = (factors_ff3_monthly
-    .dropna(subset=["smb", "hml", "mkt_excess"])
-    .reset_index(drop=True)
-)
-
-# Sanity Check
-print(f"Factors cleaned. Sample period: {factors_ff3_monthly['date'].min().date()} to {factors_ff3_monthly['date'].max().date()}")
-print("\nFirst 3 rows of cleaned factors:")
-print(factors_ff3_monthly.head(3))
-```
-
-```{python}
-# --- Save to Database ---
-(factors_ff3_monthly
-  .to_sql(name="factors_ff3_monthly", 
-          con=tidy_finance, 
-          if_exists="replace",
-          index=False)
-)
-```
-
-## Fama-French Five-Factor Model
-
-Now, let us move to the replication of the five-factor model. We extend the `other_sorting_variables` table from above with the additional characteristics operating profitability `op` and investment `inv`. Note that the `dropna()` statement yields different sample sizes, as some firms with `be` values might not have `op` or `inv` values.
-
-```{python}
-# Ensure your BM median is ~1.17 and max is not 272
-# adjust the 1e9 based on your 'me' scale
-other_sorting_variables = (comp_vn
-  .assign(
-    sorting_date=lambda x: (pd.to_datetime(
-      (x["datadate"].dt.year+1).astype(str)+"0701", format="%Y%m%d")
+def merge_portfolios_with_returns(prices_monthly, portfolio_assignments):
+    """
+    Merge portfolio assignments with monthly returns.
+    
+    Portfolios formed in July t are held through June t+1.
+    
+    Parameters
+    ----------
+    prices_monthly : pd.DataFrame
+        Monthly stock returns
+    portfolio_assignments : pd.DataFrame
+        Portfolio assignments with sorting_date
+        
+    Returns
+    -------
+    pd.DataFrame
+        Returns merged with portfolio assignments
+    """
+    portfolios = (prices_monthly
+        .assign(
+            # Map each return month to its portfolio formation date
+            sorting_date=lambda x: pd.to_datetime(
+                np.where(
+                    x["date"].dt.month <= 6,
+                    (x["date"].dt.year - 1).astype(str) + "-07-01",
+                    x["date"].dt.year.astype(str) + "-07-01"
+                )
+            )
+        )
+        .merge(
+            portfolio_assignments,
+            on=["symbol", "sorting_date"],
+            how="inner"
+        )
     )
-  )
-  .merge(market_equity, how="inner", on=["symbol", "sorting_date"])
-  .assign(bm=lambda x: x["be"]/1e9/x["me"])
-  .get(["symbol", "sorting_date", "me", "bm", "op", "inv"])
+    
+    return portfolios
+
+portfolios_monthly_ff3 = merge_portfolios_with_returns(
+    prices_monthly,
+    portfolios_ff3[["symbol", "sorting_date", "portfolio_size", "portfolio_bm"]]
 )
 
-print(other_sorting_variables['bm'].median())
 
-# Independent Size Sort
-sorting_variables = (size
-  .merge(other_sorting_variables, how="inner", on=["symbol", "sorting_date"])
-  .dropna()
-  .drop_duplicates(subset=["symbol", "sorting_date"])
- )
+print(f"Merged observations: {len(portfolios_monthly_ff3):,}")
 ```
 
-In each month, we independently sort all stocks into the two size portfolios. The value, profitability, and investment portfolios, on the other hand, are the results of dependent sorts based on the size portfolios. We then merge the portfolios to the return data for the rest of the year just as above.
+### Computing Value-Weighted Portfolio Returns
+
+We compute value-weighted returns for each of the six portfolios. Value-weighting uses lagged market capitalization to avoid look-ahead bias.
 
 ```{python}
-from scipy.stats.mstats import winsorize
+def compute_portfolio_returns(data, grouping_vars):
+    """
+    Compute value-weighted portfolio returns.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Returns data with portfolio assignments and mktcap_lag
+    grouping_vars : list
+        Variables defining portfolio groups
+        
+    Returns
+    -------
+    pd.DataFrame
+        Value-weighted returns for each portfolio-date
+    """
+    portfolio_returns = (data
+        .groupby(grouping_vars + ["date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"]),
+            "n_stocks": len(x)
+        }))
+        .reset_index()
+    )
+    
+    return portfolio_returns
 
-# Winsorize Characteristics (1st and 99th percentiles)
-# This handles your extreme 272.18 BM values.
-vars_to_clean = ["bm", "op", "inv"]
-for var in vars_to_clean:
-    sorting_variables[var] = winsorize(sorting_variables[var], limits=[0.01, 0.01])
 
-
-# Use transform to keep columns exactly as they are
-sorting_variables['portfolio_size'] = (sorting_variables
-  .groupby('sorting_date', group_keys=False)
-  .apply(lambda x: assign_portfolio(x, 'size', [0, 0.5, 1]))
-  .values
+# Compute portfolio returns
+portfolio_returns_ff3 = compute_portfolio_returns(
+    portfolios_monthly_ff3,
+    ["portfolio_size", "portfolio_bm"]
 )
 
-# Dependent Sorts (Sub-grouping)
-# We calculate each characteristic portfolio one by one to avoid KeyError
-def dependent_sort(df, var, name):
-    return (df.groupby(['sorting_date', 'portfolio_size'], group_keys=False)
-            .apply(lambda x: assign_portfolio(x, var, [0, 0.3, 0.7, 1])))
-
-sorting_variables['portfolio_bm'] = dependent_sort(sorting_variables, 'bm', 'portfolio_bm').values
-sorting_variables['portfolio_op'] = dependent_sort(sorting_variables, 'op', 'portfolio_op').values
-sorting_variables['portfolio_inv'] = dependent_sort(sorting_variables, 'inv', 'portfolio_inv').values
-
-# --- Column Selection for Sorting Variables ---
-portfolios_sorting = sorting_variables.get([
-    "symbol", "sorting_date", "portfolio_size", 
-    "portfolio_bm", "portfolio_op", "portfolio_inv"
-])
-portfolios_sorting.head(3)
+print("Portfolio Returns Summary:")
+print(portfolio_returns_ff3.groupby(["portfolio_size", "portfolio_bm"], observed=True)["ret"].describe().round(4))
 ```
 
-Step-by-Step Interpretation
+### Constructing SMB and HML Factors
 
--   **Size-Based Stratification**: We first partition the market into "Small" and "Big" portfolios using the median market capitalization. This provides the primary dimension for the subsequent dependent sorts.
+We now construct the SMB and HML factors from the portfolio returns.
 
--   **Conditional Characteristic Sorting**: Unlike the independent sorts of the 3-factor model, the 5-factor model employs **dependent sorts** for Value (BM), Profitability (OP), and Investment (INV). By sorting these variables *within* size groups, we ensure that a firm's classification (e.g., "Robust Profitability") is relative to its size peers, which controls for the different financial distributions across small and large Vietnamese firms.
+**SMB (Small Minus Big)**: Average return of three small portfolios minus average return of three big portfolios.
 
--   **Temporal Synchronization**: We maintain the July 1st formation date to accommodate the Vietnamese corporate reporting landscape, where audited annual results are typically finalized by late April. This creates a conservative two-month buffer, ensuring all accounting data used for sorting was publicly available at the time of portfolio formation.
+**HML (High Minus Low)**: Average return of two high B/M portfolios minus average return of two low B/M portfolios.
 
--   **Portfolio Persistence**: The resulting assignments are held for a 12-month period (July through June). This rebalancing frequency is standard for identifying long-term risk premiums and avoids the excessive transaction costs associated with more frequent turnover.
+```{python}
+def construct_ff3_factors(portfolio_returns):
+    """
+    Construct Fama-French three factors from portfolio returns.
+    
+    Parameters
+    ----------
+    portfolio_returns : pd.DataFrame
+        Value-weighted returns for 2x3 portfolios
+        
+    Returns
+    -------
+    pd.DataFrame
+        Monthly SMB and HML factors
+    """
+    factors = (portfolio_returns
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            # SMB: Small minus Big (average across B/M groups)
+            "smb": (
+                x.loc[x["portfolio_size"] == 1, "ret"].mean() -
+                x.loc[x["portfolio_size"] == 2, "ret"].mean()
+            ),
+            # HML: High minus Low B/M (average across size groups)
+            "hml": (
+                x.loc[x["portfolio_bm"] == 3, "ret"].mean() -
+                x.loc[x["portfolio_bm"] == 1, "ret"].mean()
+            )
+        }))
+        .reset_index()
+    )
+    
+    return factors
 
-Check 1: Characteristic Monotonicity
+factors_smb_hml = construct_ff3_factors(portfolio_returns_ff3)
 
-This confirms the sort effectively separated stocks by their economic quality.
+print("SMB and HML Factors:")
+print(factors_smb_hml.head(10))
+```
 
-```{python}     
-# Verify that higher portfolio numbers have higher median characteristics
-sanity_check = (sorting_variables
-    .groupby("portfolio_op")["op"].median()
+### Computing the Market Factor
+
+The market factor is the value-weighted return of all stocks minus the risk-free rate. We compute this independently from the sorted portfolios.
+
+```{python}
+def compute_market_factor(prices_monthly):
+    """
+    Compute value-weighted market excess return.
+    
+    Parameters
+    ----------
+    prices_monthly : pd.DataFrame
+        Monthly stock returns with mktcap_lag
+        
+    Returns
+    -------
+    pd.DataFrame
+        Monthly market excess return
+    """
+    market_factor = (prices_monthly
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "mkt_excess": np.average(x["ret_excess"], weights=x["mktcap_lag"]),
+            "n_stocks": len(x)
+        }), include_groups=False)
+        .reset_index()
+    )
+    
+    return market_factor
+
+market_factor = compute_market_factor(prices_monthly)
+
+print("Market Factor Summary:")
+print(market_factor["mkt_excess"].describe().round(4))
+```
+
+### Combining Three Factors
+
+We combine SMB, HML, and the market factor into the complete three-factor dataset.
+
+```{python}
+factors_ff3_monthly = (factors_smb_hml
+    .merge(market_factor[["date", "mkt_excess"]], on="date", how="inner")
 )
-print("Median OP by Portfolio (Should be strictly increasing):")
-print(sanity_check)
+
+# Add risk-free rate for completeness
+rf_monthly = (prices_monthly
+    .groupby("date")["risk_free"]
+    .first()
+    .reset_index()
+)
+
+factors_ff3_monthly = factors_ff3_monthly.merge(rf_monthly, on="date", how="left")
+
+print("Fama-French Three Factors (Monthly):")
+print(factors_ff3_monthly.head(10))
+
+print("\nFactor Summary Statistics:")
+print(factors_ff3_monthly[["mkt_excess", "smb", "hml"]].describe().round(4))
 ```
 
-**Interpretation**: If Portfolio 1 (Weak) has a lower median OP than Portfolio 3 (Robust), your sort is economically valid. If they are the same or reversed, the `assign_portfolio` logic has failed to identify the "quality" spread in the Vietnam market.
+### Saving Three-Factor Data
 
-Check 2: Bin Diversification
+```{python}
+factors_ff3_monthly.to_sql(
+    name="factors_ff3_monthly",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
 
-This ensures each factor is built on enough stocks to be statistically reliable.
+print("Three-factor monthly data saved to database.")
+```
 
-```{python}     
-# Check the 2x3 grid for Profitability
-rmw_counts = sorting_variables.groupby(["portfolio_size", "portfolio_op"]).size().unstack()
+## Fama-French Five-Factor Model (Monthly)
+
+### Portfolio Assignments with Dependent Sorts
+
+For the five-factor model, we use dependent sorts: size is sorted independently, but profitability and investment are sorted within size groups. This controls for the correlation between size and these characteristics.
+
+```{python}
+def assign_ff5_portfolios(sorting_variables):
+    """
+    Assign portfolios for Fama-French five-factor model.
+    """
+    df = sorting_variables.copy()
+    
+    # Independent size sort
+    df["portfolio_size"] = df.groupby("sorting_date")["size"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.5, 1], labels=[1, 2], duplicates='drop')
+    )
+    
+    # Dependent sorts within size groups
+    df["portfolio_bm"] = df.groupby(["sorting_date", "portfolio_size"])["bm"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.3, 0.7, 1], labels=[1, 2, 3], duplicates='drop')
+    )
+    
+    df["portfolio_op"] = df.groupby(["sorting_date", "portfolio_size"])["op"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.3, 0.7, 1], labels=[1, 2, 3], duplicates='drop')
+    )
+    
+    df["portfolio_inv"] = df.groupby(["sorting_date", "portfolio_size"])["inv"].transform(
+        lambda x: pd.qcut(x, q=[0, 0.3, 0.7, 1], labels=[1, 2, 3], duplicates='drop')
+    )
+    
+    return df
+
+# Run
+portfolios_ff5 = assign_ff5_portfolios(sorting_variables)
+```
+
+### Validating Five-Factor Portfolios
+
+```{python}
+# Check characteristic monotonicity for each dimension
+print("Profitability by Portfolio (should be increasing):")
+print(portfolios_ff5.groupby("portfolio_op", observed=True)["op"].median().round(4))
+
+print("\nInvestment by Portfolio (should be increasing):")
+print(portfolios_ff5.groupby("portfolio_inv", observed=True)["inv"].median().round(4))
+
+# Check portfolio counts
 print("\nStocks per Size/Profitability Bin:")
-print(rmw_counts)
+print(portfolios_ff5.groupby(["portfolio_size", "portfolio_op"], observed=True).size().unstack(fill_value=0))
+
+# Check number of unique firms per year
+(portfolios_ff5
+ .groupby("sorting_date")["symbol"]
+ .nunique())
 ```
 
-**Interpretation**: Your check showed roughly **1,800 stocks** per bin. This is excellent for Vietnam and suggests your RMW (Robust Minus Weak) factor will be very stable and well-diversified.
-
-Now, we want to construct each of the factors, but this time, the size factor actually comes last because it is the result of averaging across all other factor portfolios. This dependency is the reason why we keep the table with value-weighted portfolio returns as a separate object that we reuse later. We construct the value factor, HML, as above by going long the two portfolios with high book-to-market ratios and shorting the two portfolios with low book-to-market.
+### Merging and Computing Portfolio Returns
 
 ```{python}
-# --- Merge with FULL monthly return data ---
-# This step is crucial. It adds 'date', 'ret_excess', and 'mktcap_lag'
-# which are missing from your current 'portfolios' object.
-portfolios_full = (prices_monthly
-  .assign(
-    sorting_date=lambda x: pd.to_datetime(
-      np.where(x["date"].dt.month <= 6, 
-               (x["date"].dt.year - 1).astype(str) + "0701", 
-               x["date"].dt.year.astype(str) + "0701")
+# Merge with returns
+portfolios_monthly_ff5 = merge_portfolios_with_returns(
+    prices_monthly,
+    portfolios_ff5[["symbol", "sorting_date", "portfolio_size", 
+                    "portfolio_bm", "portfolio_op", "portfolio_inv"]]
+)
+
+print(f"Five-factor merged observations: {len(portfolios_monthly_ff5):,}")
+```
+
+### Constructing All Five Factors
+
+We construct each factor from the appropriate portfolio sorts.
+
+```{python}
+def construct_ff5_factors(portfolios_monthly):
+    """
+    Construct Fama-French five factors from portfolio data.
+    
+    Parameters
+    ----------
+    portfolios_monthly : pd.DataFrame
+        Monthly returns with all portfolio assignments
+        
+    Returns
+    -------
+    pd.DataFrame
+        Monthly five-factor returns
+    """
+    
+    # HML: Value factor from B/M sorts
+    portfolios_bm = (portfolios_monthly
+        .groupby(["portfolio_size", "portfolio_bm", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
     )
-  )
-  .merge(portfolios_sorting, how="inner", on=["symbol", "sorting_date"])
+    
+    factors_hml = (portfolios_bm
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "hml": (x.loc[x["portfolio_bm"] == 3, "ret"].mean() -
+                   x.loc[x["portfolio_bm"] == 1, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # RMW: Profitability factor from OP sorts
+    portfolios_op = (portfolios_monthly
+        .groupby(["portfolio_size", "portfolio_op", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    factors_rmw = (portfolios_op
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "rmw": (x.loc[x["portfolio_op"] == 3, "ret"].mean() -
+                   x.loc[x["portfolio_op"] == 1, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # CMA: Investment factor from INV sorts
+    # Note: CMA is Conservative minus Aggressive (low inv - high inv)
+    portfolios_inv = (portfolios_monthly
+        .groupby(["portfolio_size", "portfolio_inv", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    factors_cma = (portfolios_inv
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "cma": (x.loc[x["portfolio_inv"] == 1, "ret"].mean() -
+                   x.loc[x["portfolio_inv"] == 3, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # SMB: Size factor (average across all characteristic portfolios)
+    all_portfolios = pd.concat([portfolios_bm, portfolios_op, portfolios_inv])
+    
+    factors_smb = (all_portfolios
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "smb": (x.loc[x["portfolio_size"] == 1, "ret"].mean() -
+                   x.loc[x["portfolio_size"] == 2, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # Combine all factors
+    factors = (factors_smb
+        .merge(factors_hml, on="date", how="outer")
+        .merge(factors_rmw, on="date", how="outer")
+        .merge(factors_cma, on="date", how="outer")
+    )
+    
+    return factors
+
+factors_ff5 = construct_ff5_factors(portfolios_monthly_ff5)
+
+# Add market factor
+factors_ff5_monthly = (factors_ff5
+    .merge(market_factor[["date", "mkt_excess"]], on="date", how="inner")
+    .merge(rf_monthly, on="date", how="left")
 )
 
-# --- Construct the Value Factor (HML) ---
-portfolios_value = (portfolios_full
-  .groupby(["portfolio_size", "portfolio_bm", "date"], group_keys=False)
-  .apply(lambda x: pd.Series({
-      "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    })
-  )
-  .reset_index()
-)
+print("Fama-French Five Factors (Monthly):")
+print(factors_ff5_monthly.head(10))
 
-factors_value = (portfolios_value
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-    "hml": (
-      x["ret"][x["portfolio_bm"] == 3].mean() - 
-        x["ret"][x["portfolio_bm"] == 1].mean())})
-  , include_groups=False)
-  .reset_index()
-)
+print("\nFactor Summary Statistics:")
+print(factors_ff5_monthly[["mkt_excess", "smb", "hml", "rmw", "cma"]].describe().round(4))
 ```
 
-For the profitability factor, RMW (robust-minus-weak), we take a long position in the two high profitability portfolios and a short position in the two low profitability portfolios.
+### Factor Correlations
+
+We examine correlations between factors, which should generally be low for the factors to capture distinct sources of risk.
 
 ```{python}
-# --- Construct the Profitability Factor (RMW) ---
-portfolios_profitability = (portfolios_full
-  .groupby(["portfolio_size", "portfolio_op", "date"], group_keys=False)
-  .apply(lambda x: pd.Series({
-      "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    })
-  )
-  .reset_index()
-)
-
-factors_profitability = (portfolios_profitability
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-    "rmw": (
-      x["ret"][x["portfolio_op"] == 3].mean() - 
-        x["ret"][x["portfolio_op"] == 1].mean())})
-  , include_groups=False)
-  .reset_index()
-)
+print("Factor Correlation Matrix:")
+correlation_matrix = factors_ff5_monthly[["mkt_excess", "smb", "hml", "rmw", "cma"]].corr()
+print(correlation_matrix.round(3))
 ```
 
-For the investment factor, CMA (conservative-minus-aggressive), we go long the two low investment portfolios and short the two high investment portfolios.
+### Saving Five-Factor Data
 
 ```{python}
-
-# --- 5. Construct the Investment Factor (CMA) ---
-portfolios_investment = (portfolios_full
-  .groupby(["portfolio_size", "portfolio_inv", "date"], group_keys=False)
-  .apply(lambda x: pd.Series({
-      "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    })
-  )
-  .reset_index()
+factors_ff5_monthly.to_sql(
+    name="factors_ff5_monthly",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
 )
 
-factors_investment = (portfolios_investment
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-    "cma": (
-      x["ret"][x["portfolio_inv"] == 1].mean() - 
-        x["ret"][x["portfolio_inv"] == 3].mean())})
-  , include_groups=False)
-  .reset_index()
-)
+print("Five-factor monthly data saved to database.")
 ```
 
-Finally, the size factor, SMB, is constructed by going long the nine small portfolios and short the nine large portfolios.
+## Daily Fama-French Factors
+
+### Motivation for Daily Factors
+
+Daily factors are essential for several applications:
+
+1. **Daily beta estimation**: CAPM regressions using daily data require daily market excess returns.
+2. **Event studies**: Measuring abnormal returns around corporate events requires daily factor adjustments.
+3. **High-frequency research**: Market microstructure studies need daily or intraday factor data.
+
+The construction methodology mirrors the monthly approach, but we compute portfolio returns at daily frequency while maintaining the same annual portfolio formation dates.
+
+### Loading Daily Returns
 
 ```{python}
-# --- Construct the Size Factor (SMB) ---
-factors_size = (
-  pd.concat(
-    [portfolios_value, portfolios_profitability, portfolios_investment], 
-    ignore_index=True
-  )
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-    "smb": (
-      x["ret"][x["portfolio_size"] == 1].mean() - 
-        x["ret"][x["portfolio_size"] == 2].mean())})
-  , include_groups=False)
-  .reset_index()
-)
-```
-
-The market factor ($Mkt - RF$) is defined as the value-weighted return of all stocks in the investable universe minus the risk-free rate. Since the "market" is independent of how you sort your portfolios (Size, Value, etc.), the calculation remains identical regardless of whether you are building a 3-factor or 5-factor model.
-
-```{python}
-# --- Calculate Market Factor independently ---
-# This uses the entire prices_monthly universe
-factor_market_excess = (prices_monthly
-  .groupby("date")
-  .apply(lambda x: pd.Series({
-      "mkt_excess": np.average(x["ret_excess"], weights=x["mktcap_lag"])
-    }), include_groups=False)
-  .reset_index()
-)
-```
-
-We then join all factors together into one dataframe and construct again a suitable table to run tests for evaluating our replication.
-
-```{python}
-factors = (factors_size
-  .merge(factors_value, how="outer", on="date")
-  .merge(factors_profitability, how="outer", on="date")
-  .merge(factors_investment, how="outer", on="date")
-  .merge(factor_market_excess, how="outer", on="date")
-  
+# Load daily price data
+prices_daily = pd.read_sql_query(
+    sql="""
+        SELECT symbol, date, ret_excess
+        FROM prices_daily
+    """,
+    con=tidy_finance,
+    parse_dates={"date"}
 )
 
-# Check correlations
-print("Factor Correlation Matrix (Vietnam):")
-print(factors.drop(columns="date").corr())
+print(f"Daily returns: {len(prices_daily):,} observations")
+print(f"Date range: {prices_daily['date'].min():%Y-%m-%d} to {prices_daily['date'].max():%Y-%m-%d}")
 ```
 
-Interpretation: In standard markets, we expect low correlations between factors. If HML and RMW are correlated above 0.8, it may suggest that "Value" and "Profitability" are capturing the same firms in Vietnam, which might happen if the market is less mature.
+### Adding Market Cap for Daily Weighting
 
-1. Factor Volatility and Means
-Factors should have a low but generally positive mean return over long periods.
-
-```{python}
-#| label: factor-summary
-# Check the average monthly premium of each factor
-print("Average Monthly Factor Premiums:")
-print(factors.drop(columns="date").mean() * 100) # In percent
-```
-
-
-
-If a factor mean is extremely high (e.g., > 5% per month), it may indicate that a few outliers (like that 272 BM stock) are still leaking into the weighted averages.
-
-2. Visual Persistence Check
-
-Cumulative returns should show the "growth" of $1 invested in the factor.
+For value-weighted daily returns, we need market capitalization. We use the most recent monthly market cap as the weight for daily returns within that month.
 
 ```{python}
-#| label: cumulative-plot
-import matplotlib.pyplot as plt
-
-factors_cum = (factors.set_index("date")
-  .add(1).cumprod()
+# Get monthly market cap to use as weights for daily returns
+mktcap_monthly = (prices_monthly
+    [["symbol", "date", "mktcap_lag"]]
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
 )
-factors_cum.plot(figsize=(10, 6), title="Cumulative Factor Growth (Vietnam)")
-plt.ylabel("Value of $1 Investment")
+
+# Add year_month to daily data for merging
+prices_daily = (prices_daily
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+    .merge(
+        mktcap_monthly[["symbol", "year_month", "mktcap_lag"]],
+        on=["symbol", "year_month"],
+        how="left"
+    )
+    .dropna(subset=["ret_excess", "mktcap_lag"])
+)
+
+print(f"Daily returns with weights: {len(prices_daily):,} observations")
+```
+
+### Merging Daily Returns with Portfolios
+
+We use the same portfolio assignments (formed annually in July) for daily returns.
+
+```{python}
+# Step 1: Ensure portfolios_ff3 has correct format
+portfolios_ff3_clean = portfolios_ff3[["symbol", "sorting_date", "portfolio_size", "portfolio_bm"]].copy()
+portfolios_ff3_clean["sorting_date"] = pd.to_datetime(portfolios_ff3_clean["sorting_date"])
+
+print("Portfolio sorting dates:")
+print(portfolios_ff3_clean["sorting_date"].unique()[:5])
+
+# Step 2: Create sorting_date for daily data
+prices_daily_with_sort = prices_daily.copy()
+prices_daily_with_sort["sorting_date"] = prices_daily_with_sort["date"].apply(
+    lambda x: pd.Timestamp(f"{x.year}-07-01") if x.month > 6 else pd.Timestamp(f"{x.year - 1}-07-01")
+)
+
+print("\nDaily sorting dates:")
+print(prices_daily_with_sort["sorting_date"].unique()[:5])
+
+# Step 3: Merge
+portfolios_daily_ff3 = prices_daily_with_sort.merge(
+    portfolios_ff3_clean,
+    on=["symbol", "sorting_date"],
+    how="inner"
+)
+
+print(f"\nMerged daily observations: {len(portfolios_daily_ff3):,}")
+print(f"Unique dates: {portfolios_daily_ff3['date'].nunique():,}")
+
+# Step 4: Verify portfolio distribution
+print("\nPortfolio distribution in daily data:")
+print(portfolios_daily_ff3.groupby(["portfolio_size", "portfolio_bm"], observed=True).size().unstack(fill_value=0))
+```
+
+
+```{python}
+# Diagnostic: Check the daily portfolio merge
+print("="*50)
+print("DIAGNOSTIC: Daily Portfolio Merge")
+print("="*50)
+
+print(f"\nDaily prices rows: {len(prices_daily):,}")
+print(f"Daily FF3 portfolios rows: {len(portfolios_daily_ff3):,}")
+print(f"Match rate: {len(portfolios_daily_ff3)/len(prices_daily)*100:.1f}%")
+
+# Check portfolio distribution in daily data
+print("\nDaily portfolio distribution:")
+print(portfolios_daily_ff3.groupby(["portfolio_size", "portfolio_bm"], observed=True).size().unstack(fill_value=0))
+
+# Check a specific date
+test_date = portfolios_daily_ff3["date"].iloc[1000]
+print(f"\nSample date: {test_date}")
+print(portfolios_daily_ff3.query("date == @test_date").groupby(["portfolio_size", "portfolio_bm"], observed=True).size().unstack(fill_value=0))
+```
+
+### Computing Daily Three Factors
+
+```{python}
+def compute_daily_ff3_factors(portfolios_daily):
+    """
+    Compute daily Fama-French three factors.
+    
+    Parameters
+    ----------
+    portfolios_daily : pd.DataFrame
+        Daily returns with portfolio assignments
+        
+    Returns
+    -------
+    pd.DataFrame
+        Daily SMB and HML factors
+    """
+    # Compute daily portfolio returns
+    portfolio_returns = (portfolios_daily
+        .groupby(["portfolio_size", "portfolio_bm", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    # Compute factors
+    factors = (portfolio_returns
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "smb": (x.loc[x["portfolio_size"] == 1, "ret"].mean() -
+                   x.loc[x["portfolio_size"] == 2, "ret"].mean()),
+            "hml": (x.loc[x["portfolio_bm"] == 3, "ret"].mean() -
+                   x.loc[x["portfolio_bm"] == 1, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    return factors
+
+factors_daily_smb_hml = compute_daily_ff3_factors(portfolios_daily_ff3)
+
+print(f"Daily factor observations: {len(factors_daily_smb_hml):,}")
+print(factors_daily_smb_hml.head(10))
+```
+
+### Computing Daily Market Factor
+
+```{python}
+def compute_daily_market_factor(prices_daily):
+    """
+    Compute daily value-weighted market excess return.
+    
+    Parameters
+    ----------
+    prices_daily : pd.DataFrame
+        Daily returns with mktcap_lag
+        
+    Returns
+    -------
+    pd.DataFrame
+        Daily market excess return
+    """
+    market_daily = (prices_daily
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "mkt_excess": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    return market_daily
+
+market_factor_daily = compute_daily_market_factor(prices_daily)
+
+print(f"Daily market factor: {len(market_factor_daily):,} days")
+```
+
+### Combining Daily Three Factors
+
+```{python}
+factors_ff3_daily = (factors_daily_smb_hml
+    .merge(market_factor_daily, on="date", how="inner")
+)
+
+# Add risk-free rate (use monthly rate / 21 as daily approximation, or load actual daily rate)
+factors_ff3_daily["risk_free"] = 0.04 / 252  # Approximate daily risk-free
+
+print("Daily Fama-French Three Factors:")
+print(factors_ff3_daily.head(10))
+
+print("\nDaily Factor Summary Statistics:")
+print(factors_ff3_daily[["mkt_excess", "smb", "hml"]].describe().round(6))
+```
+
+### Computing Daily Five Factors
+
+```{python}
+# Step 1: Clean portfolios
+portfolios_ff5_clean = portfolios_ff5[["symbol", "sorting_date", "portfolio_size", 
+                                        "portfolio_bm", "portfolio_op", "portfolio_inv"]].copy()
+portfolios_ff5_clean["sorting_date"] = pd.to_datetime(portfolios_ff5_clean["sorting_date"])
+
+# Step 2: Merge with daily prices
+portfolios_daily_ff5 = prices_daily_with_sort.merge(
+    portfolios_ff5_clean,
+    on=["symbol", "sorting_date"],
+    how="inner"
+)
+
+print(f"FF5 Daily merged observations: {len(portfolios_daily_ff5):,}")
+```
+
+```{python}
+def compute_daily_ff5_factors(portfolios_daily):
+    """Compute daily Fama-French five factors."""
+    
+    # HML from B/M sorts
+    portfolios_bm = (portfolios_daily
+        .groupby(["portfolio_size", "portfolio_bm", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    factors_hml = (portfolios_bm
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "hml": (x.loc[x["portfolio_bm"] == 3, "ret"].mean() -
+                   x.loc[x["portfolio_bm"] == 1, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # RMW from OP sorts
+    portfolios_op = (portfolios_daily
+        .groupby(["portfolio_size", "portfolio_op", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    factors_rmw = (portfolios_op
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "rmw": (x.loc[x["portfolio_op"] == 3, "ret"].mean() -
+                   x.loc[x["portfolio_op"] == 1, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # CMA from INV sorts (note: low minus high)
+    portfolios_inv = (portfolios_daily
+        .groupby(["portfolio_size", "portfolio_inv", "date"], observed=True)
+        .apply(lambda x: pd.Series({
+            "ret": np.average(x["ret_excess"], weights=x["mktcap_lag"])
+        }))
+        .reset_index()
+    )
+    
+    factors_cma = (portfolios_inv
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "cma": (x.loc[x["portfolio_inv"] == 1, "ret"].mean() -
+                   x.loc[x["portfolio_inv"] == 3, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # SMB from all sorts
+    all_portfolios = pd.concat([portfolios_bm, portfolios_op, portfolios_inv])
+    
+    factors_smb = (all_portfolios
+        .groupby("date")
+        .apply(lambda x: pd.Series({
+            "smb": (x.loc[x["portfolio_size"] == 1, "ret"].mean() -
+                   x.loc[x["portfolio_size"] == 2, "ret"].mean())
+        }))
+        .reset_index()
+    )
+    
+    # Combine
+    factors = (factors_smb
+        .merge(factors_hml, on="date", how="outer")
+        .merge(factors_rmw, on="date", how="outer")
+        .merge(factors_cma, on="date", how="outer")
+    )
+    
+    return factors
+
+# Compute daily FF5 factors
+factors_daily_ff5 = compute_daily_ff5_factors(portfolios_daily_ff5)
+
+# Add market factor
+factors_ff5_daily = (factors_daily_ff5
+    .merge(market_factor_daily, on="date", how="inner")
+)
+factors_ff5_daily["risk_free"] = 0.04 / 252
+
+print("Daily Fama-French Five Factors:")
+print(factors_ff5_daily.head(10))
+
+print("\nDaily Five-Factor Summary Statistics:")
+print(factors_ff5_daily[["mkt_excess", "smb", "hml", "rmw", "cma"]].describe().round(6))
+```
+
+### Saving Daily Factors
+
+```{python}
+factors_ff3_daily.to_sql(
+    name="factors_ff3_daily",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
+
+factors_ff5_daily.to_sql(
+    name="factors_ff5_daily",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
+
+print("Daily factor data saved to database.")
+```
+
+## Factor Validation and Diagnostics
+
+```{python}
+# Verify all tables are in database
+print("\n" + "="*50)
+print("DATABASE SUMMARY")
+print("="*50)
+
+tables = ["factors_ff3_monthly", "factors_ff5_monthly", 
+          "factors_ff3_daily", "factors_ff5_daily"]
+
+for table in tables:
+    df = pd.read_sql_query(f"SELECT COUNT(*) as n FROM {table}", con=tidy_finance)
+    print(f"{table}: {df['n'].iloc[0]:,} observations")
+
+# Correlation check: Monthly vs Daily (aggregated)
+print("\n" + "="*50)
+print("MONTHLY VS DAILY CONSISTENCY CHECK")
+print("="*50)
+
+factors_daily_agg = (factors_ff3_daily
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+    .groupby("year_month")[["mkt_excess", "smb", "hml"]]
+    .sum()
+    .reset_index()
+)
+
+factors_monthly_check = (factors_ff3_monthly
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+)
+
+comparison = factors_monthly_check.merge(
+    factors_daily_agg, on="year_month", suffixes=("_monthly", "_daily")
+)
+
+for factor in ["mkt_excess", "smb", "hml"]:
+    corr = comparison[f"{factor}_monthly"].corr(comparison[f"{factor}_daily"])
+    print(f"{factor}: Monthly-Daily correlation = {corr:.4f}")
+```
+
+### Cumulative Factor Returns
+
+We visualize the cumulative performance of each factor to assess whether the factors generate meaningful premiums over time.
+
+```{python}
+#| label: fig-cumulative-factors
+#| out-width: "70%"
+#| fig-align: center
+#| fig-cap: "Cumulative returns of Fama-French factors for the Vietnamese market. The figure shows the growth of $1 invested in each factor portfolio."
+#| fig-alt: "Line chart showing cumulative factor returns over time."
+
+# Compute cumulative returns
+factors_cumulative = (factors_ff5_monthly
+    .set_index("date")
+    [["mkt_excess", "smb", "hml", "rmw", "cma"]]
+    .add(1)
+    .cumprod()
+)
+
+# Plot
+fig, ax = plt.subplots(figsize=(12, 6))
+factors_cumulative.plot(ax=ax)
+ax.set_title("Cumulative Factor Returns (Vietnam)")
+ax.set_xlabel("")
+ax.set_ylabel("Growth of $1")
+ax.legend(title="Factor")
+ax.axhline(y=1, color='gray', linestyle='--', alpha=0.5)
+plt.tight_layout()
 plt.show()
 ```
 
+### Average Factor Premiums
+
+We compute annualized average factor premiums and their statistical significance.
 
 ```{python}
-# Remove rows with missing factor values
-# We keep only rows where the characteristic factors are fully populated
-factors_ff5_monthly = (factors
-    .dropna(subset=["smb", "hml", "rmw", "cma", "mkt_excess"])
-    .reset_index(drop=True)
+# Annualized average returns (monthly returns * 12)
+factor_premiums = (factors_ff5_monthly
+    [["mkt_excess", "smb", "hml", "rmw", "cma"]]
+    .mean() * 12 * 100  # Annualized percentage
 )
 
-# Sanity Check
-print(f"Factors cleaned. Sample period: {factors_ff5_monthly['date'].min().date()} to {factors_ff5_monthly['date'].max().date()}")
-print("\nFirst 3 rows of cleaned factors:")
-print(factors_ff5_monthly.head(3))
+# Standard errors
+factor_se = (factors_ff5_monthly
+    [["mkt_excess", "smb", "hml", "rmw", "cma"]]
+    .std() / np.sqrt(len(factors_ff5_monthly)) * np.sqrt(12) * 100
+)
+
+# T-statistics
+factor_tstat = factor_premiums / factor_se
+
+print("Annualized Factor Premiums (%):")
+print(factor_premiums.round(2))
+
+print("\nT-Statistics:")
+print(factor_tstat.round(2))
 ```
 
+### Comparing Monthly and Daily Factors
+
+We verify consistency between monthly and daily factors by computing correlations.
+
 ```{python}
-(factors_ff5_monthly
-  .to_sql(name="factors_ff5_monthly", 
-          con=tidy_finance, 
-          if_exists="replace",
-          index=False)
+# Aggregate daily factors to monthly for comparison
+factors_daily_monthly = (factors_ff5_daily
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+    .groupby("year_month")
+    [["mkt_excess", "smb", "hml", "rmw", "cma"]]
+    .sum()  # Sum daily returns to get monthly
+    .reset_index()
 )
+
+# Merge with actual monthly factors
+comparison = (factors_ff5_monthly
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+    .merge(
+        factors_daily_monthly,
+        on="year_month",
+        suffixes=("_monthly", "_daily")
+    )
+)
+
+# Correlations
+for factor in ["mkt_excess", "smb", "hml", "rmw", "cma"]:
+    corr = comparison[f"{factor}_monthly"].corr(comparison[f"{factor}_daily"])
+    print(f"{factor}: Monthly-Daily correlation = {corr:.4f}")
 ```
 
 ## Key Takeaways
 
--   The three-factor model adds size (SMB) and value (HML) to the traditional CAPM, while the five-factor model extends this with profitability (RMW) and investment (CMA) factors.
--   The portfolio construction follows the original Fama-French methodology, including NYSE breakpoints, specific time lags, and sorting rules based on firm characteristics.
--   The quality of replication can be evaluated using regression analysis and confirms strong alignment with the original Fama-French data.
+1. **Factor Models Explained**: The Fama-French three-factor model adds size (SMB) and value (HML) factors to the CAPM, while the five-factor model further includes profitability (RMW) and investment (CMA) factors.
+
+2. **Construction Methodology**: Factors are constructed through double-sorted portfolios with careful attention to timing. Portfolios are formed in July using accounting data from the prior fiscal year to ensure information was publicly available.
+
+3. **Independent vs. Dependent Sorts**: The three-factor model uses independent sorts on size and book-to-market, creating a 2×3 grid. The five-factor model uses dependent sorts where characteristics are sorted within size groups.
+
+4. **Value-Weighted Returns**: Portfolio returns are computed using value-weighting with lagged market capitalization to avoid look-ahead bias.
+
+5. **Daily Factors**: Daily factors use the same annual portfolio assignments but compute returns at daily frequency, enabling higher-frequency applications like daily beta estimation.
+
+6. **Market Factor**: The market factor is computed independently as the value-weighted return of all stocks minus the risk-free rate.
+
+7. **Validation**: Factor quality can be assessed through characteristic monotonicity, portfolio diversification, cumulative returns, and consistency between daily and monthly frequencies.
+
+8. **Vietnamese Market Adaptation**: While following the original Fama-French methodology, we adapt for Vietnamese market characteristics including VAS accounting standards, reporting timelines, and currency units.
