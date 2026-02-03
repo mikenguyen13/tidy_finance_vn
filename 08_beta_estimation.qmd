@@ -29,7 +29,6 @@ from dateutil.relativedelta import relativedelta
 ```
 
 
-Compared to previous chapters, we introduce `statsmodels` [@seabold2010statsmodels] for regression analysis and for sliding-window regressions and `joblib` [@joblib] for parallelization.\index{Parallelization}
 
 ## Estimating Beta Using Monthly Returns
 
