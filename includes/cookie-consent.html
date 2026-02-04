@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+  window.cookieconsent.initialise({
+    palette: {
+      popup: { background: "#1f2933" },
+      button: { background: "#f59e0b" }
+    },
+    theme: "classic",
+    content: {
+      message: "This site uses cookies and analytics to understand how readers use the book.",
+      dismiss: "Got it",
+      link: "Learn more",
+      href: "/privacy.html"
+    }
+  })
+});
+</script>

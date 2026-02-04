@@ -9,6 +9,22 @@ execute:
 repo-url: https://github.com/mikenguyen13/tidy_finance_vn
 repo-actions: [source]
 
+website:
+  google-analytics: "G-LMDLDJXXSC"
+  # goatcounter: "your-site-name"
+  open-graph: true
+  twitter-card: true
+  page-footer:
+    # left: "© 2026 Mike. All rights reserved."
+    left: |
+      <span id="copyright"></span> Mike. All rights reserved.
+    # right: "Built with Quarto"
+  announcement:
+    content: "Welcome"
+    type: primary
+    position: below-navbar
+
+
 
 book:
   title: "Tidy Finance in Vietnam"
@@ -42,9 +58,19 @@ bibliography: references.bib
 
 format:
   html:
+    # theme:
+    #   - cosmo
+    #   - brand
     theme:
-      - cosmo
-      - brand
+      light: cosmo
+      dark: darkly
+    css: styles.css
     code-tools: true
+    # include-after-body: includes/cookie-consent.html
+    # include-after-body: includes/year.js
+    include-after-body:
+      - includes/cookie-consent.html
+      - includes/year.js
+
   pdf:
     documentclass: scrreprt

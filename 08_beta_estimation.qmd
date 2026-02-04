@@ -909,15 +909,12 @@ beta_industry_figure = (
 beta_industry_figure.show()
 ```
 
-The figure reveals systematic differences in market sensitivity across industries. Cyclical industries such as real estate and materials tend to have higher betas, while defensive sectors like utilities and consumer staples typically have lower betas.
-
 ### Time Variation in Cross-Sectional Beta Distribution
 
 Betas vary not only across stocks but also over time. @fig-beta-quantiles shows how the cross-sectional distribution of betas has evolved in the Vietnamese market.
 
 ```{python}
 #| label: fig-beta-quantiles
-#| eval: false
 #| fig-cap: "Monthly quantiles of beta estimates over time. Each line represents a decile of the cross-sectional beta distribution."
 #| fig-alt: "Line chart showing time series of beta deciles, illustrating how the distribution of betas has changed over time."
 # Compute monthly quantiles

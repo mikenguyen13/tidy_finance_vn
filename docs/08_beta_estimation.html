@@ -94,10 +94,14 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-50a4fa9e9ef121803c2355a2deb1af4d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-50a4fa9e9ef121803c2355a2deb1af4d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-d8431037eefe704a1e7a103aa5b75ea7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-50a4fa9e9ef121803c2355a2deb1af4d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -156,9 +160,172 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -175,6 +342,9 @@ window.Quarto = {
       </button>
     </div>
   </nav>
+  <div id="quarto-announcement" data-announcement-id="83218ac34c1834c26781fe4bde918ee4" class="alert alert-primary hidden"><div class="quarto-announcement-content">
+<p>Welcome</p>
+</div><i class="bi bi-x-lg quarto-announcement-action"></i></div>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
@@ -183,6 +353,9 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">Tidy Finance in Vietnam</a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -345,6 +518,7 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Beta Estimation</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
@@ -400,7 +574,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <section id="setting-up-the-environment" class="level2" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="setting-up-the-environment"><span class="header-section-number">9.2</span> Setting Up the Environment</h2>
 <p>We begin by loading the necessary Python packages. The core packages handle data manipulation, statistical modeling, and database operations. We also import parallelization tools that will be essential when scaling our estimation to the full market.</p>
-<div id="e2db642e" class="cell" data-execution_count="1">
+<div id="b604d6ab" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
@@ -413,7 +587,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dateutil.relativedelta <span class="im">import</span> relativedelta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We connect to our SQLite database containing the processed Vietnamese financial data from previous chapters.</p>
-<div id="f1e0e615" class="cell" data-execution_count="2">
+<div id="2e692dac" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
@@ -422,7 +596,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <section id="stock-returns-data" class="level3" data-number="9.3.1">
 <h3 data-number="9.3.1" class="anchored" data-anchor-id="stock-returns-data"><span class="header-section-number">9.3.1</span> Stock Returns Data</h3>
 <p>We load the monthly stock returns data prepared in the Datacore chapter. The data includes excess returns (returns minus the risk-free rate) for all Vietnamese listed stocks.</p>
-<div id="b982bc60" class="cell" data-execution_count="3">
+<div id="6dec0062" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT symbol, date, ret_excess </span></span>
@@ -444,7 +618,7 @@ Covering 1,837 unique stocks
 Date range: 2010-01 to 2025-05</code></pre>
 </div>
 </div>
-<div id="b9f3b664" class="cell" data-execution_count="4">
+<div id="3c8db2eb" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT symbol, date, ret_excess </span></span>
@@ -458,7 +632,7 @@ Date range: 2010-01 to 2025-05</code></pre>
 <section id="company-information" class="level3" data-number="9.3.2">
 <h3 data-number="9.3.2" class="anchored" data-anchor-id="company-information"><span class="header-section-number">9.3.2</span> Company Information</h3>
 <p>We load company information to enable industry-level analysis of beta estimates.</p>
-<div id="4a777098" class="cell" data-execution_count="5">
+<div id="ad2bcc25" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>comp_vn <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT symbol, datadate, icb_name_vi </span></span>
@@ -480,7 +654,7 @@ Date range: 2010-01 to 2025-05</code></pre>
 <section id="market-excess-returns" class="level3" data-number="9.3.3">
 <h3 data-number="9.3.3" class="anchored" data-anchor-id="market-excess-returns"><span class="header-section-number">9.3.3</span> Market Excess Returns</h3>
 <p>For the market portfolio proxy, we use the value-weighted market excess return. If you have constructed Fama-French factors in a previous chapter, load them here. Otherwise, we can construct a simple market return from our stock data.</p>
-<div id="8e539415" class="cell" data-execution_count="6">
+<div id="fae5d2ee" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 1: Load pre-computed market factor</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT date, mkt_excess FROM factors_ff3_monthly"</span>,</span>
@@ -515,7 +689,7 @@ Date range: 2010-01 to 2025-05</code></pre>
 <section id="merging-datasets" class="level3" data-number="9.3.4">
 <h3 data-number="9.3.4" class="anchored" data-anchor-id="merging-datasets"><span class="header-section-number">9.3.4</span> Merging Datasets</h3>
 <p>We combine the stock returns with market returns and company information to create our estimation dataset.</p>
-<div id="545e7364" class="cell" data-execution_count="7">
+<div id="dbd9891e" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge stock returns with market returns</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> prices_monthly.merge(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    factors_ff3_monthly, </span>
@@ -542,7 +716,7 @@ Date range: 2010-01 to 2025-05</code></pre>
 <section id="handling-outliers" class="level3" data-number="9.3.5">
 <h3 data-number="9.3.5" class="anchored" data-anchor-id="handling-outliers"><span class="header-section-number">9.3.5</span> Handling Outliers</h3>
 <p>Extreme returns can unduly influence regression estimates. We apply winsorization to limit the impact of outliers while preserving the general distribution of returns. Winsorization at the 1% level replaces values below the 1st percentile with the 1st percentile value, and values above the 99th percentile with the 99th percentile value.</p>
-<div id="7f723e84" class="cell" data-execution_count="8">
+<div id="5828fe36" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> winsorize_returns(df, columns, limits<span class="op">=</span>(<span class="fl">0.01</span>, <span class="fl">0.01</span>)):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Apply winsorization to return columns to limit outlier influence.</span></span>
@@ -594,7 +768,7 @@ max         0.6117       0.1221</code></pre>
 <section id="single-stock-example" class="level3" data-number="9.4.1">
 <h3 data-number="9.4.1" class="anchored" data-anchor-id="single-stock-example"><span class="header-section-number">9.4.1</span> Single Stock Example</h3>
 <p>Before scaling to the full market, we demonstrate beta estimation for a single well-known Vietnamese stock. We use Vingroup (VIC), one of the largest conglomerates in Vietnam with significant exposure to real estate, retail, and automotive sectors.</p>
-<div id="e256c6be" class="cell" data-execution_count="9">
+<div id="484778d9" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter data for Vingroup</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>vic_data <span class="op">=</span> prices_monthly.query(<span class="st">"symbol == 'VIC'"</span>).copy()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -606,7 +780,7 @@ Date range: 2011-07 to 2023-12</code></pre>
 </div>
 </div>
 <p>We estimate the CAPM regression using ordinary least squares via the <code>statsmodels</code> package. The formula interface provides a convenient way to specify regression models.</p>
-<div id="32e744e6" class="cell" data-execution_count="10">
+<div id="ccd89e98" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate CAPM for Vingroup</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>model_vic <span class="op">=</span> smf.ols(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    formula<span class="op">=</span><span class="st">"ret_excess ~ mkt_excess"</span>,</span>
@@ -622,7 +796,7 @@ Dep. Variable:             ret_excess   R-squared:                       0.153
 Model:                            OLS   Adj. R-squared:                  0.147
 Method:                 Least Squares   F-statistic:                     26.67
 Date:                Wed, 04 Feb 2026   Prob (F-statistic):           7.66e-07
-Time:                        08:56:34   Log-Likelihood:                 131.96
+Time:                        10:19:28   Log-Likelihood:                 131.96
 No. Observations:                 150   AIC:                            -259.9
 Df Residuals:                     148   BIC:                            -253.9
 Df Model:                           1                                         
@@ -650,7 +824,7 @@ Notes:
 <li><strong>R-squared</strong>: The proportion of return variation explained by market movements.</li>
 <li><strong>t-statistics</strong>: Test whether coefficients differ significantly from zero.</li>
 </ul>
-<div id="4094e49c" class="cell" data-execution_count="11">
+<div id="4fa71df5" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract key estimates</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> model_vic.summary2().tables[<span class="dv">1</span>]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -670,7 +844,7 @@ Key estimates for Vingroup (VIC):
 <section id="capm-estimation-function" class="level3" data-number="9.4.2">
 <h3 data-number="9.4.2" class="anchored" data-anchor-id="capm-estimation-function"><span class="header-section-number">9.4.2</span> CAPM Estimation Function</h3>
 <p>We create a reusable function that estimates the CAPM and returns results in a standardized format. The function includes a minimum observations requirement to avoid unreliable estimates from sparse data.</p>
-<div id="a021b159" class="cell" data-execution_count="12">
+<div id="e17c5bf2" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_capm(data, min_obs<span class="op">=</span><span class="dv">48</span>):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate CAPM regression and return coefficients.</span></span>
@@ -741,7 +915,7 @@ Key estimates for Vingroup (VIC):
 <section id="rolling-window-implementation" class="level3" data-number="9.5.2">
 <h3 data-number="9.5.2" class="anchored" data-anchor-id="rolling-window-implementation"><span class="header-section-number">9.5.2</span> Rolling Window Implementation</h3>
 <p>The following function implements rolling-window CAPM estimation. For each month in the sample, it looks back over the specified window and estimates beta using all available data within that window.</p>
-<div id="7caed203" class="cell" data-execution_count="13">
+<div id="cb5a7477" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> roll_capm_estimation(data, look_back<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">48</span>):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Perform rolling-window CAPM estimation.</span></span>
@@ -799,7 +973,7 @@ Key estimates for Vingroup (VIC):
 <section id="example-rolling-betas-for-selected-stocks" class="level3" data-number="9.5.3">
 <h3 data-number="9.5.3" class="anchored" data-anchor-id="example-rolling-betas-for-selected-stocks"><span class="header-section-number">9.5.3</span> Example: Rolling Betas for Selected Stocks</h3>
 <p>We demonstrate rolling-window estimation for several well-known Vietnamese stocks spanning different industries.</p>
-<div id="05776a82" class="cell" data-execution_count="14">
+<div id="dbafab81" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define example stocks</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>examples <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"symbol"</span>: [<span class="st">"FPT"</span>, <span class="st">"VNM"</span>, <span class="st">"VIC"</span>, <span class="st">"HPG"</span>, <span class="st">"VCB"</span>],</span>
@@ -836,7 +1010,7 @@ Key estimates for Vingroup (VIC):
 4    VNM    150 2011-07-31 2023-12-31</code></pre>
 </div>
 </div>
-<div id="c9e909bf" class="cell" data-execution_count="15">
+<div id="a7c126ff" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate rolling betas for example stocks</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>example_data <span class="op">=</span> prices_monthly.query(<span class="st">"symbol in @examples['symbol']"</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -911,19 +1085,19 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <section id="setting-up-parallel-processing" class="level3" data-number="9.6.2">
 <h3 data-number="9.6.2" class="anchored" data-anchor-id="setting-up-parallel-processing"><span class="header-section-number">9.6.2</span> Setting Up Parallel Processing</h3>
 <p>We use the <code>joblib</code> library to distribute computation across multiple CPU cores. The <code>Parallel</code> class manages worker processes, while <code>delayed</code> wraps function calls for deferred execution.</p>
-<div id="fe18692a" class="cell" data-execution_count="17">
+<div id="39cec92a" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine available cores (reserve one for system operations)</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>n_cores <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, cpu_count() <span class="op">-</span> <span class="dv">1</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Available cores for parallel processing: </span><span class="sc">{</span>n_cores<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Available cores for parallel processing: 19</code></pre>
+<pre><code>Available cores for parallel processing: 3</code></pre>
 </div>
 </div>
 </section>
 <section id="parallel-beta-estimation" class="level3" data-number="9.6.3">
 <h3 data-number="9.6.3" class="anchored" data-anchor-id="parallel-beta-estimation"><span class="header-section-number">9.6.3</span> Parallel Beta Estimation</h3>
 <p>The following code estimates rolling betas for all stocks in parallel. Each stock is processed independently by a separate worker.</p>
-<div id="0de4af3d" class="cell" data-execution_count="18">
+<div id="3f43fea5" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_all_betas_parallel(data, n_cores, look_back<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">48</span>):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate rolling betas for all stocks using parallel processing.</span></span>
@@ -967,7 +1141,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.DataFrame()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="ec20df73" class="cell" data-execution_count="19">
+<div id="1015a664" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate betas for all stocks</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Estimating rolling betas for all stocks..."</span>)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>capm_monthly <span class="op">=</span> estimate_all_betas_parallel(</span>
@@ -984,7 +1158,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <section id="storing-results" class="level3" data-number="9.6.4">
 <h3 data-number="9.6.4" class="anchored" data-anchor-id="storing-results"><span class="header-section-number">9.6.4</span> Storing Results</h3>
 <p>We save the CAPM estimates to our database for use in subsequent chapters.</p>
-<div id="83988e7f" class="cell" data-execution_count="20">
+<div id="1cf396d7" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>capm_monthly.to_sql(</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"capm_monthly"</span>,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -995,7 +1169,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"CAPM estimates saved to database."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For subsequent analysis, we load the pre-computed estimates:</p>
-<div id="0e32a4b4" class="cell" data-execution_count="21">
+<div id="9dd1c9d3" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>capm_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM capm_monthly"</span>,</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1026,7 +1200,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <section id="batch-processing-for-daily-data" class="level3" data-number="9.7.1">
 <h3 data-number="9.7.1" class="anchored" data-anchor-id="batch-processing-for-daily-data"><span class="header-section-number">9.7.1</span> Batch Processing for Daily Data</h3>
 <p>Given the size of daily data, we process stocks in batches to manage memory constraints. This approach loads and processes a subset of stocks, saves results, and proceeds to the next batch.</p>
-<div id="bb1dde27" class="cell" data-execution_count="22">
+<div id="93d0d5e5" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_market_return_daily(tidy_finance):</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute daily value-weighted market excess return from stock data.</span></span>
@@ -1158,7 +1332,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <span id="cb33-129"><a href="#cb33-129" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb33-130"><a href="#cb33-130" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.DataFrame()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="757e0ea0" class="cell" data-execution_count="23">
+<div id="6a09686c" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>symbols <span class="op">=</span> prices_monthly[<span class="st">"symbol"</span>].unique().tolist()</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>capm_daily <span class="op">=</span> estimate_daily_betas_batch(</span>
@@ -1172,7 +1346,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily beta estimates: </span><span class="sc">{</span><span class="bu">len</span>(capm_daily)<span class="sc">:,}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="b8ccafc3" class="cell" data-execution_count="24">
+<div id="bafd585b" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>capm_daily.to_sql(</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"capm_daily"</span>,</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1183,7 +1357,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"CAPM estimates saved to database."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For subsequent analysis, we load the pre-computed estimates:</p>
-<div id="ae4e115c" class="cell" data-execution_count="25">
+<div id="21713135" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>capm_daily <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM capm_daily"</span>,</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1202,7 +1376,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 <section id="extracting-beta-estimates" class="level3" data-number="9.8.1">
 <h3 data-number="9.8.1" class="anchored" data-anchor-id="extracting-beta-estimates"><span class="header-section-number">9.8.1</span> Extracting Beta Estimates</h3>
 <p>We extract the beta coefficient estimates from our CAPM results for analysis.</p>
-<div id="8a9b3ba3" class="cell" data-execution_count="26">
+<div id="4c1844af" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract monthly betas</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>beta_monthly <span class="op">=</span> (capm_monthly</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'beta'"</span>)</span>
@@ -1226,7 +1400,7 @@ Figure&nbsp;9.1: Monthly rolling beta estimates for selected Vietnamese stocks u
 Unique stocks: 1,383</code></pre>
 </div>
 </div>
-<div id="fc1e8eb4" class="cell" data-execution_count="27">
+<div id="a3381455" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load pre-computed betas</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>beta_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM beta_monthly"</span>,</span>
@@ -1238,7 +1412,7 @@ Unique stocks: 1,383</code></pre>
 <section id="summary-statistics" class="level3" data-number="9.8.2">
 <h3 data-number="9.8.2" class="anchored" data-anchor-id="summary-statistics"><span class="header-section-number">9.8.2</span> Summary Statistics</h3>
 <p>We examine the distribution of beta estimates to verify their reasonableness.</p>
-<div id="68f3d75b" class="cell" data-execution_count="28">
+<div id="2d9a0259" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Beta Summary Statistics:"</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(beta_monthly[<span class="st">"beta"</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1265,7 +1439,7 @@ Stocks with beta &gt; 2: 5</code></pre>
 <section id="beta-distribution-across-industries" class="level3" data-number="9.8.3">
 <h3 data-number="9.8.3" class="anchored" data-anchor-id="beta-distribution-across-industries"><span class="header-section-number">9.8.3</span> Beta Distribution Across Industries</h3>
 <p>Different industries have different exposures to systematic market risk based on their business models, operating leverage, and financial leverage. <a href="#fig-beta-by-industry" class="quarto-xref">Figure&nbsp;<span>9.2</span></a> shows the distribution of firm-level average betas across Vietnamese industries.</p>
-<div id="e76a218e" class="cell" data-execution_count="29">
+<div id="4dd162f0" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge betas with industry information</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>beta_with_industry <span class="op">=</span> (beta_monthly</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
@@ -1331,14 +1505,11 @@ Figure&nbsp;9.2: Distribution of firm-level average betas across Vietnamese indu
 </div>
 </div>
 </div>
-<p>The figure reveals systematic differences in market sensitivity across industries. Cyclical industries such as real estate and materials tend to have higher betas, while defensive sectors like utilities and consumer staples typically have lower betas.</p>
 </section>
 <section id="time-variation-in-cross-sectional-beta-distribution" class="level3" data-number="9.8.4">
 <h3 data-number="9.8.4" class="anchored" data-anchor-id="time-variation-in-cross-sectional-beta-distribution"><span class="header-section-number">9.8.4</span> Time Variation in Cross-Sectional Beta Distribution</h3>
 <p>Betas vary not only across stocks but also over time. <a href="#fig-beta-quantiles" class="quarto-xref">Figure&nbsp;<span>9.3</span></a> shows how the cross-sectional distribution of betas has evolved in the Vietnamese market.</p>
-<div id="fig-beta-quantiles" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="31">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-beta-quantiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="cell-fig-beta-quantiles" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly quantiles</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>beta_quantiles <span class="op">=</span> (beta_monthly</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"beta"</span>]</span>
@@ -1365,11 +1536,18 @@ Figure&nbsp;9.2: Distribution of firm-level average betas across Vietnamese indu
 <span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
 <span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-beta-quantiles" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Line chart showing time series of beta deciles, illustrating how the distribution of betas has changed over time.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-beta-quantiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="08_beta_estimation_files/figure-html/fig-beta-quantiles-output-1.png" alt="Line chart showing time series of beta deciles, illustrating how the distribution of betas has changed over time." width="672" height="480" class="figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-beta-quantiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9.3
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-beta-quantiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.3: Monthly quantiles of beta estimates over time. Each line represents a decile of the cross-sectional beta distribution.
 </figcaption>
 </figure>
+</div>
+</div>
 </div>
 <p>The figure reveals several interesting patterns:</p>
 <ol type="1">
@@ -1428,7 +1606,7 @@ Figure&nbsp;9.4: Share of stocks with available beta estimates over time. Covera
 <section id="comparing-monthly-and-daily-beta-estimates" class="level2" data-number="9.9">
 <h2 data-number="9.9" class="anchored" data-anchor-id="comparing-monthly-and-daily-beta-estimates"><span class="header-section-number">9.9</span> Comparing Monthly and Daily Beta Estimates</h2>
 <p>When both monthly and daily beta estimates are available, we can compare them to understand how estimation frequency affects results.</p>
-<div id="d86b3baf" class="cell" data-execution_count="33">
+<div id="95ea3860" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine monthly and daily estimates</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>beta_daily <span class="op">=</span> (capm_daily</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'beta'"</span>)</span>
@@ -1479,7 +1657,7 @@ Figure&nbsp;9.5: Comparison of beta estimates using monthly versus daily returns
 </div>
 </div>
 <p>The comparison reveals that daily-based estimates are generally smoother due to the larger number of observations in each window. However, the level and trend of estimates are similar across frequencies, providing validation that both approaches capture the same underlying systematic risk exposure.</p>
-<div id="3120fb71" class="cell" data-execution_count="35">
+<div id="31f7ea57" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation between monthly and daily estimates</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>correlation_data <span class="op">=</span> (beta_combined</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    .pivot_table(index<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>], columns<span class="op">=</span><span class="st">"frequency"</span>, values<span class="op">=</span><span class="st">"beta"</span>)</span>
@@ -1562,8 +1740,40 @@ Sharpe, William F. 1964. <span>“<span class="nocase">Capital asset prices: A t
 </section>
 
 </main> <!-- /main -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"></script>
+<script>
+window.addEventListener("load", function(){
+  window.cookieconsent.initialise({
+    palette: {
+      popup: { background: "#1f2933" },
+      button: { background: "#f59e0b" }
+    },
+    theme: "classic",
+    content: {
+      message: "This site uses cookies and analytics to understand how readers use the book.",
+      dismiss: "Got it",
+      link: "Learn more",
+      href: "/privacy.html"
+    }
+  })
+});
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -2936,182 +3146,192 @@ Sharpe, William F. 1964. <span>“<span class="nocase">Capital asset prices: A t
 <span id="cb51-969"><a href="#cb51-969" aria-hidden="true" tabindex="-1"></a>beta_industry_figure.show()</span>
 <span id="cb51-970"><a href="#cb51-970" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb51-971"><a href="#cb51-971" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-972"><a href="#cb51-972" aria-hidden="true" tabindex="-1"></a>The figure reveals systematic differences in market sensitivity across industries. Cyclical industries such as real estate and materials tend to have higher betas, while defensive sectors like utilities and consumer staples typically have lower betas.</span>
+<span id="cb51-972"><a href="#cb51-972" aria-hidden="true" tabindex="-1"></a><span class="fu">### Time Variation in Cross-Sectional Beta Distribution</span></span>
 <span id="cb51-973"><a href="#cb51-973" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-974"><a href="#cb51-974" aria-hidden="true" tabindex="-1"></a><span class="fu">### Time Variation in Cross-Sectional Beta Distribution</span></span>
+<span id="cb51-974"><a href="#cb51-974" aria-hidden="true" tabindex="-1"></a>Betas vary not only across stocks but also over time. @fig-beta-quantiles shows how the cross-sectional distribution of betas has evolved in the Vietnamese market.</span>
 <span id="cb51-975"><a href="#cb51-975" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-976"><a href="#cb51-976" aria-hidden="true" tabindex="-1"></a>Betas vary not only across stocks but also over time. @fig-beta-quantiles shows how the cross-sectional distribution of betas has evolved in the Vietnamese market.</span>
-<span id="cb51-977"><a href="#cb51-977" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-980"><a href="#cb51-980" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb51-981"><a href="#cb51-981" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-quantiles</span></span>
-<span id="cb51-982"><a href="#cb51-982" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb51-983"><a href="#cb51-983" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Monthly quantiles of beta estimates over time. Each line represents a decile of the cross-sectional beta distribution."</span></span>
-<span id="cb51-984"><a href="#cb51-984" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart showing time series of beta deciles, illustrating how the distribution of betas has changed over time."</span></span>
-<span id="cb51-985"><a href="#cb51-985" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly quantiles</span></span>
-<span id="cb51-986"><a href="#cb51-986" aria-hidden="true" tabindex="-1"></a>beta_quantiles <span class="op">=</span> (beta_monthly</span>
-<span id="cb51-987"><a href="#cb51-987" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"beta"</span>]</span>
-<span id="cb51-988"><a href="#cb51-988" aria-hidden="true" tabindex="-1"></a>    .quantile(q<span class="op">=</span>np.arange(<span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">0.1</span>))</span>
-<span id="cb51-989"><a href="#cb51-989" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
-<span id="cb51-990"><a href="#cb51-990" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"level_1"</span>: <span class="st">"quantile"</span>})</span>
-<span id="cb51-991"><a href="#cb51-991" aria-hidden="true" tabindex="-1"></a>    .assign(quantile<span class="op">=</span><span class="kw">lambda</span> x: (x[<span class="st">"quantile"</span>] <span class="op">*</span> <span class="dv">100</span>).astype(<span class="bu">int</span>).astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">"%"</span>)</span>
-<span id="cb51-992"><a href="#cb51-992" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-993"><a href="#cb51-993" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-994"><a href="#cb51-994" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure <span class="op">=</span> (</span>
-<span id="cb51-995"><a href="#cb51-995" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
-<span id="cb51-996"><a href="#cb51-996" aria-hidden="true" tabindex="-1"></a>        beta_quantiles,</span>
-<span id="cb51-997"><a href="#cb51-997" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"quantile"</span>)</span>
-<span id="cb51-998"><a href="#cb51-998" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-999"><a href="#cb51-999" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb51-1000"><a href="#cb51-1000" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_hline(yintercept<span class="op">=</span><span class="dv">1</span>, linetype<span class="op">=</span><span class="st">"dashed"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
-<span id="cb51-1001"><a href="#cb51-1001" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
-<span id="cb51-1002"><a href="#cb51-1002" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb51-1003"><a href="#cb51-1003" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Beta"</span>,</span>
-<span id="cb51-1004"><a href="#cb51-1004" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Quantile"</span>,</span>
-<span id="cb51-1005"><a href="#cb51-1005" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Cross-Sectional Distribution of Betas Over Time"</span></span>
-<span id="cb51-1006"><a href="#cb51-1006" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-1007"><a href="#cb51-1007" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
-<span id="cb51-1008"><a href="#cb51-1008" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
-<span id="cb51-1009"><a href="#cb51-1009" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-1010"><a href="#cb51-1010" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure.show()</span>
-<span id="cb51-1011"><a href="#cb51-1011" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-1012"><a href="#cb51-1012" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1013"><a href="#cb51-1013" aria-hidden="true" tabindex="-1"></a>The figure reveals several interesting patterns:</span>
-<span id="cb51-1014"><a href="#cb51-1014" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1015"><a href="#cb51-1015" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Level shifts**: The entire distribution of betas can shift over time, reflecting changes in market-wide correlation.</span>
-<span id="cb51-1016"><a href="#cb51-1016" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1017"><a href="#cb51-1017" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Dispersion changes**: During market stress, the spread between high and low beta stocks may change as correlations move.</span>
-<span id="cb51-1018"><a href="#cb51-1018" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1019"><a href="#cb51-1019" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Trends**: Some periods show trending behavior in betas, possibly reflecting structural changes in the economy.</span>
-<span id="cb51-1020"><a href="#cb51-1020" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1021"><a href="#cb51-1021" aria-hidden="true" tabindex="-1"></a><span class="fu">### Coverage Analysis</span></span>
-<span id="cb51-1022"><a href="#cb51-1022" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1023"><a href="#cb51-1023" aria-hidden="true" tabindex="-1"></a>We verify that our estimation procedure produces reasonable coverage across the sample. @fig-beta-coverage shows the fraction of stocks with available beta estimates over time.</span>
-<span id="cb51-1024"><a href="#cb51-1024" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1027"><a href="#cb51-1027" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb51-1028"><a href="#cb51-1028" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-coverage</span></span>
-<span id="cb51-1029"><a href="#cb51-1029" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Share of stocks with available beta estimates over time. Coverage increases as more stocks accumulate sufficient return history."</span></span>
-<span id="cb51-1030"><a href="#cb51-1030" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart showing the percentage of stocks with beta estimates available each month."</span></span>
-<span id="cb51-1031"><a href="#cb51-1031" aria-hidden="true" tabindex="-1"></a><span class="co"># Count stocks with and without betas</span></span>
-<span id="cb51-1032"><a href="#cb51-1032" aria-hidden="true" tabindex="-1"></a>coverage <span class="op">=</span> (prices_monthly</span>
-<span id="cb51-1033"><a href="#cb51-1033" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>]</span>
-<span id="cb51-1034"><a href="#cb51-1034" aria-hidden="true" tabindex="-1"></a>    .nunique()</span>
-<span id="cb51-1035"><a href="#cb51-1035" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"total_stocks"</span>)</span>
-<span id="cb51-1036"><a href="#cb51-1036" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
-<span id="cb51-1037"><a href="#cb51-1037" aria-hidden="true" tabindex="-1"></a>        beta_monthly.groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>].nunique().reset_index(name<span class="op">=</span><span class="st">"with_beta"</span>),</span>
-<span id="cb51-1038"><a href="#cb51-1038" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span><span class="st">"date"</span>,</span>
-<span id="cb51-1039"><a href="#cb51-1039" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">"left"</span></span>
-<span id="cb51-1040"><a href="#cb51-1040" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-1041"><a href="#cb51-1041" aria-hidden="true" tabindex="-1"></a>    .fillna(<span class="dv">0</span>)</span>
-<span id="cb51-1042"><a href="#cb51-1042" aria-hidden="true" tabindex="-1"></a>    .assign(coverage<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"with_beta"</span>] <span class="op">/</span> x[<span class="st">"total_stocks"</span>])</span>
-<span id="cb51-1043"><a href="#cb51-1043" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-1044"><a href="#cb51-1044" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1045"><a href="#cb51-1045" aria-hidden="true" tabindex="-1"></a>coverage_figure <span class="op">=</span> (</span>
-<span id="cb51-1046"><a href="#cb51-1046" aria-hidden="true" tabindex="-1"></a>    ggplot(coverage, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"coverage"</span>))</span>
-<span id="cb51-1047"><a href="#cb51-1047" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(color<span class="op">=</span><span class="st">"steelblue"</span>, size<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb51-1048"><a href="#cb51-1048" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
-<span id="cb51-1049"><a href="#cb51-1049" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb51-1050"><a href="#cb51-1050" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Share with Beta Estimate"</span>,</span>
-<span id="cb51-1051"><a href="#cb51-1051" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Beta Estimation Coverage Over Time"</span></span>
-<span id="cb51-1052"><a href="#cb51-1052" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-1053"><a href="#cb51-1053" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format(), limits<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
-<span id="cb51-1054"><a href="#cb51-1054" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
-<span id="cb51-1055"><a href="#cb51-1055" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
-<span id="cb51-1056"><a href="#cb51-1056" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-1057"><a href="#cb51-1057" aria-hidden="true" tabindex="-1"></a>coverage_figure.show()</span>
-<span id="cb51-1058"><a href="#cb51-1058" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-1059"><a href="#cb51-1059" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1060"><a href="#cb51-1060" aria-hidden="true" tabindex="-1"></a>Coverage is lower in early years because stocks need sufficient return history (at least 48 months) before their betas can be estimated. As the market matures and stocks accumulate longer histories, coverage approaches 100%.</span>
-<span id="cb51-1061"><a href="#cb51-1061" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1062"><a href="#cb51-1062" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparing Monthly and Daily Beta Estimates</span></span>
-<span id="cb51-1063"><a href="#cb51-1063" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1064"><a href="#cb51-1064" aria-hidden="true" tabindex="-1"></a>When both monthly and daily beta estimates are available, we can compare them to understand how estimation frequency affects results.</span>
-<span id="cb51-1065"><a href="#cb51-1065" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1068"><a href="#cb51-1068" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb51-1069"><a href="#cb51-1069" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine monthly and daily estimates</span></span>
-<span id="cb51-1070"><a href="#cb51-1070" aria-hidden="true" tabindex="-1"></a>beta_daily <span class="op">=</span> (capm_daily</span>
-<span id="cb51-1071"><a href="#cb51-1071" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'beta'"</span>)</span>
-<span id="cb51-1072"><a href="#cb51-1072" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"estimate"</span>: <span class="st">"beta"</span>})</span>
-<span id="cb51-1073"><a href="#cb51-1073" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"beta"</span>]]</span>
-<span id="cb51-1074"><a href="#cb51-1074" aria-hidden="true" tabindex="-1"></a>    .assign(frequency<span class="op">=</span><span class="st">"daily"</span>)</span>
-<span id="cb51-1075"><a href="#cb51-1075" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-978"><a href="#cb51-978" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb51-979"><a href="#cb51-979" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-quantiles</span></span>
+<span id="cb51-980"><a href="#cb51-980" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Monthly quantiles of beta estimates over time. Each line represents a decile of the cross-sectional beta distribution."</span></span>
+<span id="cb51-981"><a href="#cb51-981" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart showing time series of beta deciles, illustrating how the distribution of betas has changed over time."</span></span>
+<span id="cb51-982"><a href="#cb51-982" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly quantiles</span></span>
+<span id="cb51-983"><a href="#cb51-983" aria-hidden="true" tabindex="-1"></a>beta_quantiles <span class="op">=</span> (beta_monthly</span>
+<span id="cb51-984"><a href="#cb51-984" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"beta"</span>]</span>
+<span id="cb51-985"><a href="#cb51-985" aria-hidden="true" tabindex="-1"></a>    .quantile(q<span class="op">=</span>np.arange(<span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">0.1</span>))</span>
+<span id="cb51-986"><a href="#cb51-986" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb51-987"><a href="#cb51-987" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"level_1"</span>: <span class="st">"quantile"</span>})</span>
+<span id="cb51-988"><a href="#cb51-988" aria-hidden="true" tabindex="-1"></a>    .assign(quantile<span class="op">=</span><span class="kw">lambda</span> x: (x[<span class="st">"quantile"</span>] <span class="op">*</span> <span class="dv">100</span>).astype(<span class="bu">int</span>).astype(<span class="bu">str</span>) <span class="op">+</span> <span class="st">"%"</span>)</span>
+<span id="cb51-989"><a href="#cb51-989" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-990"><a href="#cb51-990" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-991"><a href="#cb51-991" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure <span class="op">=</span> (</span>
+<span id="cb51-992"><a href="#cb51-992" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb51-993"><a href="#cb51-993" aria-hidden="true" tabindex="-1"></a>        beta_quantiles,</span>
+<span id="cb51-994"><a href="#cb51-994" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"quantile"</span>)</span>
+<span id="cb51-995"><a href="#cb51-995" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-996"><a href="#cb51-996" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb51-997"><a href="#cb51-997" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_hline(yintercept<span class="op">=</span><span class="dv">1</span>, linetype<span class="op">=</span><span class="st">"dashed"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
+<span id="cb51-998"><a href="#cb51-998" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb51-999"><a href="#cb51-999" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb51-1000"><a href="#cb51-1000" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Beta"</span>,</span>
+<span id="cb51-1001"><a href="#cb51-1001" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Quantile"</span>,</span>
+<span id="cb51-1002"><a href="#cb51-1002" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Cross-Sectional Distribution of Betas Over Time"</span></span>
+<span id="cb51-1003"><a href="#cb51-1003" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-1004"><a href="#cb51-1004" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb51-1005"><a href="#cb51-1005" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
+<span id="cb51-1006"><a href="#cb51-1006" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1007"><a href="#cb51-1007" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure.show()</span>
+<span id="cb51-1008"><a href="#cb51-1008" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-1009"><a href="#cb51-1009" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1010"><a href="#cb51-1010" aria-hidden="true" tabindex="-1"></a>The figure reveals several interesting patterns:</span>
+<span id="cb51-1011"><a href="#cb51-1011" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1012"><a href="#cb51-1012" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**Level shifts**: The entire distribution of betas can shift over time, reflecting changes in market-wide correlation.</span>
+<span id="cb51-1013"><a href="#cb51-1013" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1014"><a href="#cb51-1014" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Dispersion changes**: During market stress, the spread between high and low beta stocks may change as correlations move.</span>
+<span id="cb51-1015"><a href="#cb51-1015" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1016"><a href="#cb51-1016" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Trends**: Some periods show trending behavior in betas, possibly reflecting structural changes in the economy.</span>
+<span id="cb51-1017"><a href="#cb51-1017" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1018"><a href="#cb51-1018" aria-hidden="true" tabindex="-1"></a><span class="fu">### Coverage Analysis</span></span>
+<span id="cb51-1019"><a href="#cb51-1019" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1020"><a href="#cb51-1020" aria-hidden="true" tabindex="-1"></a>We verify that our estimation procedure produces reasonable coverage across the sample. @fig-beta-coverage shows the fraction of stocks with available beta estimates over time.</span>
+<span id="cb51-1021"><a href="#cb51-1021" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1024"><a href="#cb51-1024" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb51-1025"><a href="#cb51-1025" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-coverage</span></span>
+<span id="cb51-1026"><a href="#cb51-1026" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Share of stocks with available beta estimates over time. Coverage increases as more stocks accumulate sufficient return history."</span></span>
+<span id="cb51-1027"><a href="#cb51-1027" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart showing the percentage of stocks with beta estimates available each month."</span></span>
+<span id="cb51-1028"><a href="#cb51-1028" aria-hidden="true" tabindex="-1"></a><span class="co"># Count stocks with and without betas</span></span>
+<span id="cb51-1029"><a href="#cb51-1029" aria-hidden="true" tabindex="-1"></a>coverage <span class="op">=</span> (prices_monthly</span>
+<span id="cb51-1030"><a href="#cb51-1030" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>]</span>
+<span id="cb51-1031"><a href="#cb51-1031" aria-hidden="true" tabindex="-1"></a>    .nunique()</span>
+<span id="cb51-1032"><a href="#cb51-1032" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">"total_stocks"</span>)</span>
+<span id="cb51-1033"><a href="#cb51-1033" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
+<span id="cb51-1034"><a href="#cb51-1034" aria-hidden="true" tabindex="-1"></a>        beta_monthly.groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>].nunique().reset_index(name<span class="op">=</span><span class="st">"with_beta"</span>),</span>
+<span id="cb51-1035"><a href="#cb51-1035" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span><span class="st">"date"</span>,</span>
+<span id="cb51-1036"><a href="#cb51-1036" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb51-1037"><a href="#cb51-1037" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-1038"><a href="#cb51-1038" aria-hidden="true" tabindex="-1"></a>    .fillna(<span class="dv">0</span>)</span>
+<span id="cb51-1039"><a href="#cb51-1039" aria-hidden="true" tabindex="-1"></a>    .assign(coverage<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"with_beta"</span>] <span class="op">/</span> x[<span class="st">"total_stocks"</span>])</span>
+<span id="cb51-1040"><a href="#cb51-1040" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1041"><a href="#cb51-1041" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1042"><a href="#cb51-1042" aria-hidden="true" tabindex="-1"></a>coverage_figure <span class="op">=</span> (</span>
+<span id="cb51-1043"><a href="#cb51-1043" aria-hidden="true" tabindex="-1"></a>    ggplot(coverage, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"coverage"</span>))</span>
+<span id="cb51-1044"><a href="#cb51-1044" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(color<span class="op">=</span><span class="st">"steelblue"</span>, size<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb51-1045"><a href="#cb51-1045" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb51-1046"><a href="#cb51-1046" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb51-1047"><a href="#cb51-1047" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Share with Beta Estimate"</span>,</span>
+<span id="cb51-1048"><a href="#cb51-1048" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Beta Estimation Coverage Over Time"</span></span>
+<span id="cb51-1049"><a href="#cb51-1049" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-1050"><a href="#cb51-1050" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format(), limits<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb51-1051"><a href="#cb51-1051" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb51-1052"><a href="#cb51-1052" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
+<span id="cb51-1053"><a href="#cb51-1053" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1054"><a href="#cb51-1054" aria-hidden="true" tabindex="-1"></a>coverage_figure.show()</span>
+<span id="cb51-1055"><a href="#cb51-1055" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-1056"><a href="#cb51-1056" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1057"><a href="#cb51-1057" aria-hidden="true" tabindex="-1"></a>Coverage is lower in early years because stocks need sufficient return history (at least 48 months) before their betas can be estimated. As the market matures and stocks accumulate longer histories, coverage approaches 100%.</span>
+<span id="cb51-1058"><a href="#cb51-1058" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1059"><a href="#cb51-1059" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparing Monthly and Daily Beta Estimates</span></span>
+<span id="cb51-1060"><a href="#cb51-1060" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1061"><a href="#cb51-1061" aria-hidden="true" tabindex="-1"></a>When both monthly and daily beta estimates are available, we can compare them to understand how estimation frequency affects results.</span>
+<span id="cb51-1062"><a href="#cb51-1062" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1065"><a href="#cb51-1065" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb51-1066"><a href="#cb51-1066" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine monthly and daily estimates</span></span>
+<span id="cb51-1067"><a href="#cb51-1067" aria-hidden="true" tabindex="-1"></a>beta_daily <span class="op">=</span> (capm_daily</span>
+<span id="cb51-1068"><a href="#cb51-1068" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'beta'"</span>)</span>
+<span id="cb51-1069"><a href="#cb51-1069" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"estimate"</span>: <span class="st">"beta"</span>})</span>
+<span id="cb51-1070"><a href="#cb51-1070" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"beta"</span>]]</span>
+<span id="cb51-1071"><a href="#cb51-1071" aria-hidden="true" tabindex="-1"></a>    .assign(frequency<span class="op">=</span><span class="st">"daily"</span>)</span>
+<span id="cb51-1072"><a href="#cb51-1072" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1073"><a href="#cb51-1073" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1074"><a href="#cb51-1074" aria-hidden="true" tabindex="-1"></a>beta_combined <span class="op">=</span> pd.concat([beta_monthly, beta_daily], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb51-1075"><a href="#cb51-1075" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb51-1076"><a href="#cb51-1076" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1077"><a href="#cb51-1077" aria-hidden="true" tabindex="-1"></a>beta_combined <span class="op">=</span> pd.concat([beta_monthly, beta_daily], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb51-1078"><a href="#cb51-1078" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-1079"><a href="#cb51-1079" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1082"><a href="#cb51-1082" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb51-1083"><a href="#cb51-1083" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-comparison</span></span>
-<span id="cb51-1084"><a href="#cb51-1084" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Comparison of beta estimates using monthly versus daily returns for selected stocks. Daily estimates are smoother due to more observations per estimation window."</span></span>
-<span id="cb51-1085"><a href="#cb51-1085" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart comparing monthly and daily beta estimates over time for example stocks."</span></span>
-<span id="cb51-1086"><a href="#cb51-1086" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to example stocks</span></span>
-<span id="cb51-1087"><a href="#cb51-1087" aria-hidden="true" tabindex="-1"></a>beta_comparison <span class="op">=</span> (beta_combined</span>
-<span id="cb51-1088"><a href="#cb51-1088" aria-hidden="true" tabindex="-1"></a>    .merge(examples, on<span class="op">=</span><span class="st">"symbol"</span>)</span>
-<span id="cb51-1089"><a href="#cb51-1089" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"symbol in ['VIC', 'FPT']"</span>)  <span class="co"># Select two for clarity</span></span>
-<span id="cb51-1090"><a href="#cb51-1090" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-1091"><a href="#cb51-1091" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1092"><a href="#cb51-1092" aria-hidden="true" tabindex="-1"></a>comparison_figure <span class="op">=</span> (</span>
-<span id="cb51-1093"><a href="#cb51-1093" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
-<span id="cb51-1094"><a href="#cb51-1094" aria-hidden="true" tabindex="-1"></a>        beta_comparison,</span>
-<span id="cb51-1095"><a href="#cb51-1095" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"frequency"</span>, linetype<span class="op">=</span><span class="st">"frequency"</span>)</span>
-<span id="cb51-1096"><a href="#cb51-1096" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-1097"><a href="#cb51-1097" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(size<span class="op">=</span><span class="fl">0.8</span>)</span>
-<span id="cb51-1098"><a href="#cb51-1098" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(<span class="st">"~company"</span>, ncol<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb51-1099"><a href="#cb51-1099" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
-<span id="cb51-1100"><a href="#cb51-1100" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
-<span id="cb51-1101"><a href="#cb51-1101" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Beta"</span>,</span>
-<span id="cb51-1102"><a href="#cb51-1102" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Data Frequency"</span>,</span>
-<span id="cb51-1103"><a href="#cb51-1103" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">"Data Frequency"</span>,</span>
-<span id="cb51-1104"><a href="#cb51-1104" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Monthly vs Daily Beta Estimates"</span></span>
-<span id="cb51-1105"><a href="#cb51-1105" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb51-1106"><a href="#cb51-1106" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
-<span id="cb51-1107"><a href="#cb51-1107" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
-<span id="cb51-1108"><a href="#cb51-1108" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"bottom"</span>)</span>
-<span id="cb51-1109"><a href="#cb51-1109" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb51-1110"><a href="#cb51-1110" aria-hidden="true" tabindex="-1"></a>comparison_figure.show()</span>
-<span id="cb51-1111"><a href="#cb51-1111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-1112"><a href="#cb51-1112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1113"><a href="#cb51-1113" aria-hidden="true" tabindex="-1"></a>The comparison reveals that daily-based estimates are generally smoother due to the larger number of observations in each window. However, the level and trend of estimates are similar across frequencies, providing validation that both approaches capture the same underlying systematic risk exposure.</span>
-<span id="cb51-1114"><a href="#cb51-1114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1117"><a href="#cb51-1117" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb51-1118"><a href="#cb51-1118" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation between monthly and daily estimates</span></span>
-<span id="cb51-1119"><a href="#cb51-1119" aria-hidden="true" tabindex="-1"></a>correlation_data <span class="op">=</span> (beta_combined</span>
-<span id="cb51-1120"><a href="#cb51-1120" aria-hidden="true" tabindex="-1"></a>    .pivot_table(index<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>], columns<span class="op">=</span><span class="st">"frequency"</span>, values<span class="op">=</span><span class="st">"beta"</span>)</span>
-<span id="cb51-1121"><a href="#cb51-1121" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
-<span id="cb51-1122"><a href="#cb51-1122" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1079"><a href="#cb51-1079" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb51-1080"><a href="#cb51-1080" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-beta-comparison</span></span>
+<span id="cb51-1081"><a href="#cb51-1081" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Comparison of beta estimates using monthly versus daily returns for selected stocks. Daily estimates are smoother due to more observations per estimation window."</span></span>
+<span id="cb51-1082"><a href="#cb51-1082" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Line chart comparing monthly and daily beta estimates over time for example stocks."</span></span>
+<span id="cb51-1083"><a href="#cb51-1083" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter to example stocks</span></span>
+<span id="cb51-1084"><a href="#cb51-1084" aria-hidden="true" tabindex="-1"></a>beta_comparison <span class="op">=</span> (beta_combined</span>
+<span id="cb51-1085"><a href="#cb51-1085" aria-hidden="true" tabindex="-1"></a>    .merge(examples, on<span class="op">=</span><span class="st">"symbol"</span>)</span>
+<span id="cb51-1086"><a href="#cb51-1086" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"symbol in ['VIC', 'FPT']"</span>)  <span class="co"># Select two for clarity</span></span>
+<span id="cb51-1087"><a href="#cb51-1087" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1088"><a href="#cb51-1088" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1089"><a href="#cb51-1089" aria-hidden="true" tabindex="-1"></a>comparison_figure <span class="op">=</span> (</span>
+<span id="cb51-1090"><a href="#cb51-1090" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb51-1091"><a href="#cb51-1091" aria-hidden="true" tabindex="-1"></a>        beta_comparison,</span>
+<span id="cb51-1092"><a href="#cb51-1092" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"frequency"</span>, linetype<span class="op">=</span><span class="st">"frequency"</span>)</span>
+<span id="cb51-1093"><a href="#cb51-1093" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-1094"><a href="#cb51-1094" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(size<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb51-1095"><a href="#cb51-1095" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(<span class="st">"~company"</span>, ncol<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb51-1096"><a href="#cb51-1096" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb51-1097"><a href="#cb51-1097" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb51-1098"><a href="#cb51-1098" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Beta"</span>,</span>
+<span id="cb51-1099"><a href="#cb51-1099" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">"Data Frequency"</span>,</span>
+<span id="cb51-1100"><a href="#cb51-1100" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">"Data Frequency"</span>,</span>
+<span id="cb51-1101"><a href="#cb51-1101" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Monthly vs Daily Beta Estimates"</span></span>
+<span id="cb51-1102"><a href="#cb51-1102" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb51-1103"><a href="#cb51-1103" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"2 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb51-1104"><a href="#cb51-1104" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
+<span id="cb51-1105"><a href="#cb51-1105" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"bottom"</span>)</span>
+<span id="cb51-1106"><a href="#cb51-1106" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1107"><a href="#cb51-1107" aria-hidden="true" tabindex="-1"></a>comparison_figure.show()</span>
+<span id="cb51-1108"><a href="#cb51-1108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb51-1109"><a href="#cb51-1109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1110"><a href="#cb51-1110" aria-hidden="true" tabindex="-1"></a>The comparison reveals that daily-based estimates are generally smoother due to the larger number of observations in each window. However, the level and trend of estimates are similar across frequencies, providing validation that both approaches capture the same underlying systematic risk exposure.</span>
+<span id="cb51-1111"><a href="#cb51-1111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1114"><a href="#cb51-1114" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb51-1115"><a href="#cb51-1115" aria-hidden="true" tabindex="-1"></a><span class="co"># Correlation between monthly and daily estimates</span></span>
+<span id="cb51-1116"><a href="#cb51-1116" aria-hidden="true" tabindex="-1"></a>correlation_data <span class="op">=</span> (beta_combined</span>
+<span id="cb51-1117"><a href="#cb51-1117" aria-hidden="true" tabindex="-1"></a>    .pivot_table(index<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>], columns<span class="op">=</span><span class="st">"frequency"</span>, values<span class="op">=</span><span class="st">"beta"</span>)</span>
+<span id="cb51-1118"><a href="#cb51-1118" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
+<span id="cb51-1119"><a href="#cb51-1119" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-1120"><a href="#cb51-1120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1121"><a href="#cb51-1121" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Correlation between monthly and daily betas: </span><span class="sc">{</span>correlation_data<span class="sc">.</span>corr()<span class="sc">.</span>iloc[<span class="dv">0</span>,<span class="dv">1</span>]<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb51-1122"><a href="#cb51-1122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb51-1123"><a href="#cb51-1123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1124"><a href="#cb51-1124" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Correlation between monthly and daily betas: </span><span class="sc">{</span>correlation_data<span class="sc">.</span>corr()<span class="sc">.</span>iloc[<span class="dv">0</span>,<span class="dv">1</span>]<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
-<span id="cb51-1125"><a href="#cb51-1125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb51-1126"><a href="#cb51-1126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1127"><a href="#cb51-1127" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Factor <span class="pp">|</span> Effect <span class="pp">|</span></span>
-<span id="cb51-1128"><a href="#cb51-1128" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------------------------|------------------------------------|</span></span>
-<span id="cb51-1129"><a href="#cb51-1129" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Non-synchronous trading <span class="pp">|</span> Daily betas can be biased downward for illiquid stocks <span class="pp">|</span></span>
-<span id="cb51-1130"><a href="#cb51-1130" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Microstructure noise <span class="pp">|</span> Bid-ask bounce adds noise to daily estimates <span class="pp">|</span></span>
-<span id="cb51-1131"><a href="#cb51-1131" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Different effective windows <span class="pp">|</span> Same calendar period but \~20x more observations for daily <span class="pp">|</span></span>
-<span id="cb51-1132"><a href="#cb51-1132" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Mean reversion speed <span class="pp">|</span> Daily captures faster-moving risk dynamics <span class="pp">|</span></span>
-<span id="cb51-1133"><a href="#cb51-1133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1134"><a href="#cb51-1134" aria-hidden="true" tabindex="-1"></a>: Theoretical Reasons for Imperfect Correlation {#tbl-imperfect-cor}</span>
-<span id="cb51-1135"><a href="#cb51-1135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1136"><a href="#cb51-1136" aria-hidden="true" tabindex="-1"></a>@tbl-imperfect-cor shows several reasons why we might observe imperfect correlation.</span>
-<span id="cb51-1137"><a href="#cb51-1137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1138"><a href="#cb51-1138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
-<span id="cb51-1139"><a href="#cb51-1139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1140"><a href="#cb51-1140" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**CAPM beta** measures a stock's sensitivity to systematic market risk and is fundamental to modern portfolio theory, cost of capital estimation, and risk management.</span>
-<span id="cb51-1141"><a href="#cb51-1141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1142"><a href="#cb51-1142" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Rolling-window estimation** captures time variation in betas, which reflects changes in companies' business models, leverage, and market conditions.</span>
-<span id="cb51-1143"><a href="#cb51-1143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1144"><a href="#cb51-1144" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Parallelization** dramatically reduces computation time for large-scale estimation tasks by distributing work across multiple CPU cores.</span>
-<span id="cb51-1145"><a href="#cb51-1145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1146"><a href="#cb51-1146" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Estimation choices matter**: Window length, return frequency, and minimum observation requirements all affect beta estimates. Researchers should choose parameters appropriate for their specific application.</span>
-<span id="cb51-1147"><a href="#cb51-1147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1148"><a href="#cb51-1148" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>**Industry patterns**: Vietnamese stocks show systematic differences in market sensitivity across industries, with cyclical sectors exhibiting higher betas than defensive sectors.</span>
-<span id="cb51-1149"><a href="#cb51-1149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1150"><a href="#cb51-1150" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>**Time variation**: The cross-sectional distribution of betas in Vietnam has evolved over time, with notable shifts during market stress periods.</span>
-<span id="cb51-1151"><a href="#cb51-1151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1152"><a href="#cb51-1152" aria-hidden="true" tabindex="-1"></a><span class="ss">7.  </span>**Frequency comparison**: Monthly and daily beta estimates are positively correlated but not identical. Daily estimates are smoother while monthly estimates may better capture lower-frequency variation.</span>
-<span id="cb51-1153"><a href="#cb51-1153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-1154"><a href="#cb51-1154" aria-hidden="true" tabindex="-1"></a><span class="ss">8.  </span>**Data quality checks**: Coverage analysis and summary statistics help identify potential issues in estimation procedures before using results in downstream analyses.</span>
+<span id="cb51-1124"><a href="#cb51-1124" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Factor <span class="pp">|</span> Effect <span class="pp">|</span></span>
+<span id="cb51-1125"><a href="#cb51-1125" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------------------------------|------------------------------------|</span></span>
+<span id="cb51-1126"><a href="#cb51-1126" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Non-synchronous trading <span class="pp">|</span> Daily betas can be biased downward for illiquid stocks <span class="pp">|</span></span>
+<span id="cb51-1127"><a href="#cb51-1127" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Microstructure noise <span class="pp">|</span> Bid-ask bounce adds noise to daily estimates <span class="pp">|</span></span>
+<span id="cb51-1128"><a href="#cb51-1128" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Different effective windows <span class="pp">|</span> Same calendar period but \~20x more observations for daily <span class="pp">|</span></span>
+<span id="cb51-1129"><a href="#cb51-1129" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Mean reversion speed <span class="pp">|</span> Daily captures faster-moving risk dynamics <span class="pp">|</span></span>
+<span id="cb51-1130"><a href="#cb51-1130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1131"><a href="#cb51-1131" aria-hidden="true" tabindex="-1"></a>: Theoretical Reasons for Imperfect Correlation {#tbl-imperfect-cor}</span>
+<span id="cb51-1132"><a href="#cb51-1132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1133"><a href="#cb51-1133" aria-hidden="true" tabindex="-1"></a>@tbl-imperfect-cor shows several reasons why we might observe imperfect correlation.</span>
+<span id="cb51-1134"><a href="#cb51-1134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1135"><a href="#cb51-1135" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
+<span id="cb51-1136"><a href="#cb51-1136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1137"><a href="#cb51-1137" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>**CAPM beta** measures a stock's sensitivity to systematic market risk and is fundamental to modern portfolio theory, cost of capital estimation, and risk management.</span>
+<span id="cb51-1138"><a href="#cb51-1138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1139"><a href="#cb51-1139" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>**Rolling-window estimation** captures time variation in betas, which reflects changes in companies' business models, leverage, and market conditions.</span>
+<span id="cb51-1140"><a href="#cb51-1140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1141"><a href="#cb51-1141" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>**Parallelization** dramatically reduces computation time for large-scale estimation tasks by distributing work across multiple CPU cores.</span>
+<span id="cb51-1142"><a href="#cb51-1142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1143"><a href="#cb51-1143" aria-hidden="true" tabindex="-1"></a><span class="ss">4.  </span>**Estimation choices matter**: Window length, return frequency, and minimum observation requirements all affect beta estimates. Researchers should choose parameters appropriate for their specific application.</span>
+<span id="cb51-1144"><a href="#cb51-1144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1145"><a href="#cb51-1145" aria-hidden="true" tabindex="-1"></a><span class="ss">5.  </span>**Industry patterns**: Vietnamese stocks show systematic differences in market sensitivity across industries, with cyclical sectors exhibiting higher betas than defensive sectors.</span>
+<span id="cb51-1146"><a href="#cb51-1146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1147"><a href="#cb51-1147" aria-hidden="true" tabindex="-1"></a><span class="ss">6.  </span>**Time variation**: The cross-sectional distribution of betas in Vietnam has evolved over time, with notable shifts during market stress periods.</span>
+<span id="cb51-1148"><a href="#cb51-1148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1149"><a href="#cb51-1149" aria-hidden="true" tabindex="-1"></a><span class="ss">7.  </span>**Frequency comparison**: Monthly and daily beta estimates are positively correlated but not identical. Daily estimates are smoother while monthly estimates may better capture lower-frequency variation.</span>
+<span id="cb51-1150"><a href="#cb51-1150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-1151"><a href="#cb51-1151" aria-hidden="true" tabindex="-1"></a><span class="ss">8.  </span>**Data quality checks**: Coverage analysis and summary statistics help identify potential issues in estimation procedures before using results in downstream analyses.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© 2026 Mike. All rights reserved.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
 
 
 
