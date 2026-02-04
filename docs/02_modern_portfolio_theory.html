@@ -345,7 +345,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modern Portfolio Theory</span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Modern Portfolio Theory</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -1014,6 +1014,8 @@ Figure&nbsp;3.5: The big dots indicate the location of the minimum-variance and 
 <p>Looking ahead, several important complications arise in practice. First, the inputs to portfolio optimization (expected returns and covariances) must be estimated from data, and estimation error can dramatically affect portfolio performance. Second, real-world constraints such as transaction costs, short-sale restrictions, and position limits modify the optimization problem. Third, the assumption that investors care only about mean and variance may be too restrictive when returns are non-normal or when investors have more complex preferences. We address these extensions in subsequent chapters.</p>
 
 
+<!-- -->
+
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Markowitz1952" class="csl-entry" role="listitem">
 Markowitz, Harry. 1952. <span>“<span class="nocase">Portfolio selection</span>.”</span> <em><span>The Journal of Finance</span></em> 7 (1): 77–91. <a href="https://doi.org/10.1111/j.1540-6261.1952.tb01525.x">https://doi.org/10.1111/j.1540-6261.1952.tb01525.x</a>.
@@ -1092,6 +1094,57 @@ Markowitz, Harry. 1952. <span>“<span class="nocase">Portfolio selection</span>
         container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
       clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -1433,7 +1486,646 @@ Markowitz, Harry. 1952. <span>“<span class="nocase">Portfolio selection</span>
         <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Capital Asset Pricing Model</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Modern Portfolio Theory</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>In the previous chapter, we showed how to download and analyze stock market data with figures and summary statistics. Now, we turn to one of the most fundamental questions in finance: How should an investor allocate their wealth across assets that differ in expected returns, variance, and correlations to optimize their portfolio's performance?</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>This question might seem straightforward at first glance. Why not simply invest everything in the asset with the highest expected return? The answer lies in a profound insight that transformed financial economics: **risk matters, and it can be managed through diversification**.</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>Modern Portfolio Theory (MPT), introduced by @Markowitz1952, revolutionized investment decision-making by formalizing the trade-off between risk and expected return. Before Markowitz, investors largely thought about risk on a security-by-security basis. Markowitz's genius was recognizing that what matters is not the risk of individual securities in isolation, but how they contribute to the risk of the *entire portfolio*. This insight was so influential that it earned him the Sveriges Riksbank Prize in Economic Sciences in 1990 and laid the foundation for much of modern finance.</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Core Insight: Diversification as a Free Lunch</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>MPT relies on a crucial mathematical fact: portfolio risk depends not only on individual asset volatilities but also on the *correlations* between asset returns. This insight reveals the power of diversification—combining assets whose returns don't move in perfect lockstep can reduce overall portfolio risk without necessarily sacrificing expected return.</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>Consider a simple analogy: Imagine you run a business selling both sunscreen and umbrellas. On sunny days, sunscreen sales boom but umbrella sales suffer; on rainy days, the reverse happens. By selling both products, your total revenue becomes more stable than if you sold only one. The "correlation" between sunscreen and umbrella sales is negative, and combining them reduces the variance of your overall income. This is precisely the logic behind portfolio diversification.</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>The fruit basket analogy offers another perspective: If all you have are apples and they spoil, you lose everything. With a variety of fruits, some may spoil, but others will stay fresh. Diversification provides insurance against the idiosyncratic risks of individual assets.</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Mean-Variance Framework</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>At the heart of MPT is **mean-variance analysis**, which evaluates portfolios based on two dimensions:</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Expected return (mean)**: The anticipated average profit from holding the portfolio</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Risk (variance)**: The dispersion of possible returns around the expected value</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>The key assumption is that investors care only about these two moments of the return distribution. This assumption is exactly correct if returns are normally distributed, or if investors have quadratic utility functions. Even when these conditions don't hold precisely, mean-variance analysis often provides a good approximation to optimal portfolio choice.</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>By balancing expected return and risk, investors can construct portfolios that either maximize expected return for a given level of risk, or minimize risk for a desired level of expected return. In this chapter, we derive these optimal portfolio decisions analytically and implement the mean-variance approach computationally.</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adjustText <span class="im">import</span> adjust_text</span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Asset Universe: Setting Up the Problem</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>Suppose $N$ different risky assets are available to the investor. Each asset $i$ is characterized by:</span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Expected return** $\mu_i$: The anticipated profit from holding the asset for one period</span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Variance** $\sigma_i^2$: The dispersion of returns around the mean</span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Covariances** $\sigma_{ij}$: The degree to which asset $i$'s returns move together with asset $j$'s returns</span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a>The investor chooses **portfolio weights** $\omega_i$ for each asset $i$. These weights represent the fraction of total wealth invested in each asset. We impose the constraint that weights sum to one:</span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a>\sum_{i=1}^N \omega_i = 1</span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a>This "budget constraint" ensures that the investor is fully invested—there is no outside option such as keeping money under a mattress. Note that we allow weights to be negative (short selling) or greater than one (leverage), though in practice these positions may face constraints.</span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Two Stages of Portfolio Selection</span></span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a>According to @Markowitz1952, portfolio selection involves two distinct stages:</span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Estimation**: Forming expectations about future security performance based on observations, experience, and economic reasoning</span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Optimization**: Using these expectations to choose an optimal portfolio</span>
+<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a>In practice, these stages cannot be fully separated. The estimation stage determines the inputs ($\mu$, $\Sigma$) that feed into the optimization stage. Poor estimation leads to poor portfolio choices, regardless of how sophisticated the optimization procedure.</span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a>To keep things conceptually clear, we focus primarily on the optimization stage in this chapter. We treat the expected returns and variance-covariance matrix as known, using historical data to compute reasonable proxies. In later chapters, we address the substantial challenges that arise from estimation uncertainty.</span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Loading and Preparing the Data</span></span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a>We work with the VN30 index constituents—the 30 largest and most liquid stocks on Vietnam's Ho Chi Minh Stock Exchange. This provides a realistic asset universe for a domestic Vietnamese investor.</span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a>vn30_symbols <span class="op">=</span> [</span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>,<span class="st">"BCM"</span>,<span class="st">"BID"</span>,<span class="st">"BVH"</span>,<span class="st">"CTG"</span>,<span class="st">"FPT"</span>,<span class="st">"GAS"</span>,<span class="st">"GVR"</span>,<span class="st">"HDB"</span>,<span class="st">"HPG"</span>,</span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>,<span class="st">"MSN"</span>,<span class="st">"MWG"</span>,<span class="st">"PLX"</span>,<span class="st">"POW"</span>,<span class="st">"SAB"</span>,<span class="st">"SHB"</span>,<span class="st">"SSB"</span>,<span class="st">"STB"</span>,<span class="st">"TCB"</span>,</span>
+<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TPB"</span>,<span class="st">"VCB"</span>,<span class="st">"VHM"</span>,<span class="st">"VIB"</span>,<span class="st">"VIC"</span>,<span class="st">"VJC"</span>,<span class="st">"VNM"</span>,<span class="st">"VPB"</span>,<span class="st">"VRE"</span>,<span class="st">"EIB"</span></span>
+<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a>We load the historical price data:</span>
+<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> BytesIO</span>
+<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> boto3</span>
+<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> botocore.client <span class="im">import</span> Config</span>
+<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConnectMinio:</span>
+<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.MINIO_ENDPOINT <span class="op">=</span> os.environ[<span class="st">"MINIO_ENDPOINT"</span>]</span>
+<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.MINIO_ACCESS_KEY <span class="op">=</span> os.environ[<span class="st">"MINIO_ACCESS_KEY"</span>]</span>
+<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.MINIO_SECRET_KEY <span class="op">=</span> os.environ[<span class="st">"MINIO_SECRET_KEY"</span>]</span>
+<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.REGION <span class="op">=</span> os.getenv(<span class="st">"MINIO_REGION"</span>, <span class="st">"us-east-1"</span>)</span>
+<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-111"><a href="#cb22-111" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.s3 <span class="op">=</span> boto3.client(</span>
+<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a>            <span class="st">"s3"</span>,</span>
+<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a>            endpoint_url<span class="op">=</span><span class="va">self</span>.MINIO_ENDPOINT,</span>
+<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a>            aws_access_key_id<span class="op">=</span><span class="va">self</span>.MINIO_ACCESS_KEY,</span>
+<span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a>            aws_secret_access_key<span class="op">=</span><span class="va">self</span>.MINIO_SECRET_KEY,</span>
+<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a>            region_name<span class="op">=</span><span class="va">self</span>.REGION,</span>
+<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a>            config<span class="op">=</span>Config(signature_version<span class="op">=</span><span class="st">"s3v4"</span>),</span>
+<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-120"><a href="#cb22-120" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_connection(<span class="va">self</span>):</span>
+<span id="cb22-121"><a href="#cb22-121" aria-hidden="true" tabindex="-1"></a>        resp <span class="op">=</span> <span class="va">self</span>.s3.list_buckets()</span>
+<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Connected. Buckets:"</span>)</span>
+<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> b <span class="kw">in</span> resp.get(<span class="st">"Buckets"</span>, []):</span>
+<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">" -"</span>, b[<span class="st">"Name"</span>])</span>
+<span id="cb22-125"><a href="#cb22-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-126"><a href="#cb22-126" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> ConnectMinio()</span>
+<span id="cb22-127"><a href="#cb22-127" aria-hidden="true" tabindex="-1"></a>s3 <span class="op">=</span> conn.s3</span>
+<span id="cb22-128"><a href="#cb22-128" aria-hidden="true" tabindex="-1"></a>conn.test_connection()</span>
+<span id="cb22-129"><a href="#cb22-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a>bucket_name <span class="op">=</span> os.environ[<span class="st">"MINIO_BUCKET"</span>]</span>
+<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-132"><a href="#cb22-132" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> pd.read_csv(</span>
+<span id="cb22-133"><a href="#cb22-133" aria-hidden="true" tabindex="-1"></a>    BytesIO(</span>
+<span id="cb22-134"><a href="#cb22-134" aria-hidden="true" tabindex="-1"></a>        s3.get_object(</span>
+<span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a>            Bucket<span class="op">=</span>bucket_name,</span>
+<span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a>            Key<span class="op">=</span><span class="st">"historycal_price/dataset_historical_price.csv"</span></span>
+<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a>        )[<span class="st">"Body"</span>].read()</span>
+<span id="cb22-138"><a href="#cb22-138" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb22-139"><a href="#cb22-139" aria-hidden="true" tabindex="-1"></a>    low_memory<span class="op">=</span><span class="va">False</span></span>
+<span id="cb22-140"><a href="#cb22-140" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-141"><a href="#cb22-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-142"><a href="#cb22-142" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(prices[<span class="st">"date"</span>])</span>
+<span id="cb22-143"><a href="#cb22-143" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"adjusted_close"</span>] <span class="op">=</span> prices[<span class="st">"close_price"</span>] <span class="op">*</span> prices[<span class="st">"adj_ratio"</span>]</span>
+<span id="cb22-144"><a href="#cb22-144" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.rename(columns<span class="op">=</span>{</span>
+<span id="cb22-145"><a href="#cb22-145" aria-hidden="true" tabindex="-1"></a>    <span class="st">"vol_total"</span>: <span class="st">"volume"</span>,</span>
+<span id="cb22-146"><a href="#cb22-146" aria-hidden="true" tabindex="-1"></a>    <span class="st">"open_price"</span>: <span class="st">"open"</span>,</span>
+<span id="cb22-147"><a href="#cb22-147" aria-hidden="true" tabindex="-1"></a>    <span class="st">"low_price"</span>: <span class="st">"low"</span>,</span>
+<span id="cb22-148"><a href="#cb22-148" aria-hidden="true" tabindex="-1"></a>    <span class="st">"high_price"</span>: <span class="st">"high"</span>,</span>
+<span id="cb22-149"><a href="#cb22-149" aria-hidden="true" tabindex="-1"></a>    <span class="st">"close_price"</span>: <span class="st">"close"</span></span>
+<span id="cb22-150"><a href="#cb22-150" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb22-151"><a href="#cb22-151" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span>
+<span id="cb22-152"><a href="#cb22-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-153"><a href="#cb22-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-154"><a href="#cb22-154" aria-hidden="true" tabindex="-1"></a>We filter to keep only the VN30 constituents:</span>
+<span id="cb22-155"><a href="#cb22-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-158"><a href="#cb22-158" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-159"><a href="#cb22-159" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> prices[prices[<span class="st">"symbol"</span>].isin(vn30_symbols)]</span>
+<span id="cb22-160"><a href="#cb22-160" aria-hidden="true" tabindex="-1"></a>prices_daily[[<span class="st">"date"</span>, <span class="st">"symbol"</span>, <span class="st">"adjusted_close"</span>]].head(<span class="dv">3</span>)</span>
+<span id="cb22-161"><a href="#cb22-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-162"><a href="#cb22-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-163"><a href="#cb22-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing Expected Returns</span></span>
+<span id="cb22-164"><a href="#cb22-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-165"><a href="#cb22-165" aria-hidden="true" tabindex="-1"></a>The sample mean return serves as our proxy for expected returns. For each asset $i$, we compute:</span>
+<span id="cb22-166"><a href="#cb22-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-167"><a href="#cb22-167" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-168"><a href="#cb22-168" aria-hidden="true" tabindex="-1"></a>\hat{\mu}_i = \frac{1}{T} \sum_{t=1}^{T} r_{i,t}</span>
+<span id="cb22-169"><a href="#cb22-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-170"><a href="#cb22-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-171"><a href="#cb22-171" aria-hidden="true" tabindex="-1"></a>where $r_{i,t}$ is the return of asset $i$ in period $t$, and $T$ is the total number of periods.</span>
+<span id="cb22-172"><a href="#cb22-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-173"><a href="#cb22-173" aria-hidden="true" tabindex="-1"></a>**Why monthly returns?** While daily data provides more observations, monthly returns offer several advantages for portfolio optimization. First, monthly returns are less noisy and exhibit weaker serial correlation. Second, monthly rebalancing is more realistic for most investors, avoiding excessive transaction costs. Third, the estimation error in mean returns is already substantial—using daily data doesn't materially improve the precision of mean estimates because the mean return scales with the horizon while estimation error scales with the square root of observations.</span>
+<span id="cb22-174"><a href="#cb22-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-177"><a href="#cb22-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-178"><a href="#cb22-178" aria-hidden="true" tabindex="-1"></a>returns_monthly <span class="op">=</span> (prices_daily</span>
+<span id="cb22-179"><a href="#cb22-179" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
+<span id="cb22-180"><a href="#cb22-180" aria-hidden="true" tabindex="-1"></a>    date<span class="op">=</span>prices_daily[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>).dt.to_timestamp()</span>
+<span id="cb22-181"><a href="#cb22-181" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-182"><a href="#cb22-182" aria-hidden="true" tabindex="-1"></a>  .groupby([<span class="st">"symbol"</span>, <span class="st">"date"</span>], as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb22-183"><a href="#cb22-183" aria-hidden="true" tabindex="-1"></a>  .agg(adjusted_close<span class="op">=</span>(<span class="st">"adjusted_close"</span>, <span class="st">"last"</span>))</span>
+<span id="cb22-184"><a href="#cb22-184" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
+<span id="cb22-185"><a href="#cb22-185" aria-hidden="true" tabindex="-1"></a>    ret<span class="op">=</span><span class="kw">lambda</span> x: x.groupby(<span class="st">"symbol"</span>)[<span class="st">"adjusted_close"</span>].pct_change()</span>
+<span id="cb22-186"><a href="#cb22-186" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-187"><a href="#cb22-187" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-188"><a href="#cb22-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-189"><a href="#cb22-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-190"><a href="#cb22-190" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing Volatilities</span></span>
+<span id="cb22-191"><a href="#cb22-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-192"><a href="#cb22-192" aria-hidden="true" tabindex="-1"></a>Individual asset risk in MPT is quantified using variance ($\sigma^2_i$) or its square root, the standard deviation or volatility ($\sigma_i$). We use the sample standard deviation as our proxy:</span>
+<span id="cb22-193"><a href="#cb22-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-194"><a href="#cb22-194" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-195"><a href="#cb22-195" aria-hidden="true" tabindex="-1"></a>\hat{\sigma}_i = \sqrt{\frac{1}{T-1} \sum_{t=1}^{T} (r_{i,t} - \hat{\mu}_i)^2}</span>
+<span id="cb22-196"><a href="#cb22-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-197"><a href="#cb22-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-198"><a href="#cb22-198" aria-hidden="true" tabindex="-1"></a>Alternative risk measures exist, including Value-at-Risk, Expected Shortfall, and higher-order moments such as skewness and kurtosis. However, variance remains the workhorse measure in portfolio theory because of its mathematical tractability and the central role of the normal distribution in finance.</span>
+<span id="cb22-199"><a href="#cb22-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-202"><a href="#cb22-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-203"><a href="#cb22-203" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> (returns_monthly</span>
+<span id="cb22-204"><a href="#cb22-204" aria-hidden="true" tabindex="-1"></a>  .groupby(<span class="st">"symbol"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb22-205"><a href="#cb22-205" aria-hidden="true" tabindex="-1"></a>  .agg(</span>
+<span id="cb22-206"><a href="#cb22-206" aria-hidden="true" tabindex="-1"></a>    mu<span class="op">=</span>(<span class="st">"ret"</span>, <span class="st">"mean"</span>),</span>
+<span id="cb22-207"><a href="#cb22-207" aria-hidden="true" tabindex="-1"></a>    sigma<span class="op">=</span>(<span class="st">"ret"</span>, <span class="st">"std"</span>)</span>
+<span id="cb22-208"><a href="#cb22-208" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-209"><a href="#cb22-209" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-210"><a href="#cb22-210" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-211"><a href="#cb22-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-212"><a href="#cb22-212" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualizing the Risk-Return Trade-off</span></span>
+<span id="cb22-213"><a href="#cb22-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-214"><a href="#cb22-214" aria-hidden="true" tabindex="-1"></a>@fig-201 displays each asset's expected return (vertical axis) against its volatility (horizontal axis). This "mean-standard deviation" space is fundamental to portfolio theory.</span>
+<span id="cb22-215"><a href="#cb22-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-218"><a href="#cb22-218" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-219"><a href="#cb22-219" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-201</span></span>
+<span id="cb22-220"><a href="#cb22-220" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Expected returns and volatilities based on monthly returns adjusted for dividend payments and stock splits."</span></span>
+<span id="cb22-221"><a href="#cb22-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Expected returns and volatilities of VN30 index constituents. The figure is a scatter plot with volatilities on the horizontal and expected returns on the vertical axis."</span></span>
+<span id="cb22-222"><a href="#cb22-222" aria-hidden="true" tabindex="-1"></a>assets_figure <span class="op">=</span> (</span>
+<span id="cb22-223"><a href="#cb22-223" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
+<span id="cb22-224"><a href="#cb22-224" aria-hidden="true" tabindex="-1"></a>    assets, </span>
+<span id="cb22-225"><a href="#cb22-225" aria-hidden="true" tabindex="-1"></a>    aes(x<span class="op">=</span><span class="st">"sigma"</span>, y<span class="op">=</span><span class="st">"mu"</span>, label<span class="op">=</span><span class="st">"symbol"</span>)</span>
+<span id="cb22-226"><a href="#cb22-226" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-227"><a href="#cb22-227" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point()</span>
+<span id="cb22-228"><a href="#cb22-228" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_text(adjust_text<span class="op">=</span>{<span class="st">"arrowprops"</span>: {<span class="st">"arrowstyle"</span>: <span class="st">"-"</span>}})</span>
+<span id="cb22-229"><a href="#cb22-229" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-230"><a href="#cb22-230" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-231"><a href="#cb22-231" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> labs(</span>
+<span id="cb22-232"><a href="#cb22-232" aria-hidden="true" tabindex="-1"></a>      x<span class="op">=</span><span class="st">"Volatility (Standard Deviation)"</span>, </span>
+<span id="cb22-233"><a href="#cb22-233" aria-hidden="true" tabindex="-1"></a>      y<span class="op">=</span><span class="st">"Expected Return"</span>,</span>
+<span id="cb22-234"><a href="#cb22-234" aria-hidden="true" tabindex="-1"></a>      title<span class="op">=</span><span class="st">"Expected returns and volatilities of VN30 index constituents"</span></span>
+<span id="cb22-235"><a href="#cb22-235" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-236"><a href="#cb22-236" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-237"><a href="#cb22-237" aria-hidden="true" tabindex="-1"></a>assets_figure.show()</span>
+<span id="cb22-238"><a href="#cb22-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-239"><a href="#cb22-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-240"><a href="#cb22-240" aria-hidden="true" tabindex="-1"></a>Several observations emerge from this figure. First, there is substantial heterogeneity in both expected returns and volatilities across stocks. Second, the relationship between risk and return is far from linear. Some high-volatility stocks have low or even negative expected returns. Third, most individual stocks appear to offer poor risk-return trade-offs. As we will see, portfolios can substantially improve upon these individual positions.</span>
+<span id="cb22-241"><a href="#cb22-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-242"><a href="#cb22-242" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Variance-Covariance Matrix: Capturing Asset Interactions</span></span>
+<span id="cb22-243"><a href="#cb22-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-244"><a href="#cb22-244" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Correlations Matter</span></span>
+<span id="cb22-245"><a href="#cb22-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-246"><a href="#cb22-246" aria-hidden="true" tabindex="-1"></a>A key innovation of MPT is recognizing that portfolio risk depends critically on how assets move together. The **variance-covariance matrix** $\Sigma$ captures all pairwise interactions between asset returns.</span>
+<span id="cb22-247"><a href="#cb22-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-248"><a href="#cb22-248" aria-hidden="true" tabindex="-1"></a>To understand why correlations matter, consider the variance of a two-asset portfolio:</span>
+<span id="cb22-249"><a href="#cb22-249" aria-hidden="true" tabindex="-1"></a>$$\sigma_p^2 = \omega_1^2\sigma_1^2 + \omega_2^2\sigma_2^2 + 2\omega_1\omega_2\sigma_{12}$$</span>
+<span id="cb22-250"><a href="#cb22-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-251"><a href="#cb22-251" aria-hidden="true" tabindex="-1"></a>The third term involves the covariance $\sigma_{12} = \rho_{12}\sigma_1\sigma_2$, where $\rho_{12}$ is the correlation coefficient. When $\rho_{12} &lt; 1$, the portfolio variance is *less* than the weighted average of individual variances. When $\rho_{12} &lt; 0$, the diversification benefit is even more pronounced.</span>
+<span id="cb22-252"><a href="#cb22-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-253"><a href="#cb22-253" aria-hidden="true" tabindex="-1"></a>This mathematical fact has profound implications: **You can reduce risk without reducing expected return** by combining assets that don't move perfectly together. This is sometimes called the "only free lunch in finance."</span>
+<span id="cb22-254"><a href="#cb22-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-255"><a href="#cb22-255" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing the Variance-Covariance Matrix</span></span>
+<span id="cb22-256"><a href="#cb22-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-257"><a href="#cb22-257" aria-hidden="true" tabindex="-1"></a>We compute the sample covariance matrix as:</span>
+<span id="cb22-258"><a href="#cb22-258" aria-hidden="true" tabindex="-1"></a>$$\hat{\sigma}_{ij} = \frac{1}{T-1} \sum_{t=1}^{T} (r_{i,t} - \hat{\mu}_i)(r_{j,t} - \hat{\mu}_j)$$</span>
+<span id="cb22-259"><a href="#cb22-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-260"><a href="#cb22-260" aria-hidden="true" tabindex="-1"></a>First, we reshape the returns data into a wide format with assets as columns:</span>
+<span id="cb22-261"><a href="#cb22-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-264"><a href="#cb22-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-265"><a href="#cb22-265" aria-hidden="true" tabindex="-1"></a>returns_wide <span class="op">=</span> (returns_monthly</span>
+<span id="cb22-266"><a href="#cb22-266" aria-hidden="true" tabindex="-1"></a>  .pivot(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"symbol"</span>, values<span class="op">=</span><span class="st">"ret"</span>)</span>
+<span id="cb22-267"><a href="#cb22-267" aria-hidden="true" tabindex="-1"></a>  .reset_index()</span>
+<span id="cb22-268"><a href="#cb22-268" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-269"><a href="#cb22-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-270"><a href="#cb22-270" aria-hidden="true" tabindex="-1"></a>sigma <span class="op">=</span> (returns_wide</span>
+<span id="cb22-271"><a href="#cb22-271" aria-hidden="true" tabindex="-1"></a>  .drop(columns<span class="op">=</span>[<span class="st">"date"</span>])</span>
+<span id="cb22-272"><a href="#cb22-272" aria-hidden="true" tabindex="-1"></a>  .cov()</span>
+<span id="cb22-273"><a href="#cb22-273" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-274"><a href="#cb22-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-275"><a href="#cb22-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-276"><a href="#cb22-276" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpreting the Variance-Covariance Matrix</span></span>
+<span id="cb22-277"><a href="#cb22-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-278"><a href="#cb22-278" aria-hidden="true" tabindex="-1"></a>The diagonal elements of $\Sigma$ are the variances of individual assets. The off-diagonal elements are covariances, which can be positive (assets tend to move together), negative (assets tend to move in opposite directions), or zero (no linear relationship).</span>
+<span id="cb22-279"><a href="#cb22-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-280"><a href="#cb22-280" aria-hidden="true" tabindex="-1"></a>For easier interpretation, we often convert covariances to correlations:</span>
+<span id="cb22-281"><a href="#cb22-281" aria-hidden="true" tabindex="-1"></a>$$\rho_{ij} = \frac{\sigma_{ij}}{\sigma_i \sigma_j}$$</span>
+<span id="cb22-282"><a href="#cb22-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-283"><a href="#cb22-283" aria-hidden="true" tabindex="-1"></a>Correlations are bounded between -1 and +1, making them easier to compare across asset pairs.</span>
+<span id="cb22-284"><a href="#cb22-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-285"><a href="#cb22-285" aria-hidden="true" tabindex="-1"></a>@fig-203 visualizes the variance-covariance matrix as a heatmap.</span>
+<span id="cb22-286"><a href="#cb22-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-289"><a href="#cb22-289" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-290"><a href="#cb22-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-203</span></span>
+<span id="cb22-291"><a href="#cb22-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Variances and covariances based on monthly returns adjusted for dividend payments and stock splits." </span></span>
+<span id="cb22-292"><a href="#cb22-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Variance-covariance matrix of VN30 index constituents."</span></span>
+<span id="cb22-293"><a href="#cb22-293" aria-hidden="true" tabindex="-1"></a>sigma_long <span class="op">=</span> (sigma</span>
+<span id="cb22-294"><a href="#cb22-294" aria-hidden="true" tabindex="-1"></a>  .reset_index()</span>
+<span id="cb22-295"><a href="#cb22-295" aria-hidden="true" tabindex="-1"></a>  .melt(id_vars<span class="op">=</span><span class="st">"symbol"</span>, var_name<span class="op">=</span><span class="st">"symbol_b"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb22-296"><a href="#cb22-296" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-297"><a href="#cb22-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-298"><a href="#cb22-298" aria-hidden="true" tabindex="-1"></a>sigma_long[<span class="st">"symbol_b"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb22-299"><a href="#cb22-299" aria-hidden="true" tabindex="-1"></a>  sigma_long[<span class="st">"symbol_b"</span>], </span>
+<span id="cb22-300"><a href="#cb22-300" aria-hidden="true" tabindex="-1"></a>  categories<span class="op">=</span>sigma_long[<span class="st">"symbol_b"</span>].unique()[::<span class="op">-</span><span class="dv">1</span>],</span>
+<span id="cb22-301"><a href="#cb22-301" aria-hidden="true" tabindex="-1"></a>  ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb22-302"><a href="#cb22-302" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-303"><a href="#cb22-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-304"><a href="#cb22-304" aria-hidden="true" tabindex="-1"></a>sigma_figure <span class="op">=</span> (</span>
+<span id="cb22-305"><a href="#cb22-305" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
+<span id="cb22-306"><a href="#cb22-306" aria-hidden="true" tabindex="-1"></a>    sigma_long, </span>
+<span id="cb22-307"><a href="#cb22-307" aria-hidden="true" tabindex="-1"></a>    aes(x<span class="op">=</span><span class="st">"symbol"</span>, y<span class="op">=</span><span class="st">"symbol_b"</span>, fill<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb22-308"><a href="#cb22-308" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-309"><a href="#cb22-309" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_tile()</span>
+<span id="cb22-310"><a href="#cb22-310" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> labs(</span>
+<span id="cb22-311"><a href="#cb22-311" aria-hidden="true" tabindex="-1"></a>      x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>, fill<span class="op">=</span><span class="st">"(Co-)Variance"</span>,</span>
+<span id="cb22-312"><a href="#cb22-312" aria-hidden="true" tabindex="-1"></a>      title<span class="op">=</span><span class="st">"Sample variance-covariance matrix of VN30 index constituents"</span></span>
+<span id="cb22-313"><a href="#cb22-313" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-314"><a href="#cb22-314" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_fill_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-315"><a href="#cb22-315" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> theme(axis_text_x<span class="op">=</span>element_text(angle<span class="op">=</span><span class="dv">45</span>, hjust<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb22-316"><a href="#cb22-316" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-317"><a href="#cb22-317" aria-hidden="true" tabindex="-1"></a>sigma_figure.show()</span>
+<span id="cb22-318"><a href="#cb22-318" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-319"><a href="#cb22-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-320"><a href="#cb22-320" aria-hidden="true" tabindex="-1"></a>The heatmap reveals important patterns. The diagonal (variances) shows which stocks are most volatile. The off-diagonal patterns show which pairs of stocks tend to move together. In general, stocks within the same sector tend to have higher correlations with each other than with stocks from different sectors.</span>
+<span id="cb22-321"><a href="#cb22-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-322"><a href="#cb22-322" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Minimum-Variance Portfolio</span></span>
+<span id="cb22-323"><a href="#cb22-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-324"><a href="#cb22-324" aria-hidden="true" tabindex="-1"></a><span class="fu">### Motivation: Risk Minimization as a Benchmark</span></span>
+<span id="cb22-325"><a href="#cb22-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-326"><a href="#cb22-326" aria-hidden="true" tabindex="-1"></a>Before considering expected returns, let's find the portfolio that minimizes risk entirely. This **minimum-variance portfolio (MVP)** serves as an important benchmark and reference point. It represents what an extremely risk-averse investor—one who cares only about minimizing volatility—would choose.</span>
+<span id="cb22-327"><a href="#cb22-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-328"><a href="#cb22-328" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Optimization Problem</span></span>
+<span id="cb22-329"><a href="#cb22-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-330"><a href="#cb22-330" aria-hidden="true" tabindex="-1"></a>The minimum-variance investor solves:</span>
+<span id="cb22-331"><a href="#cb22-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-332"><a href="#cb22-332" aria-hidden="true" tabindex="-1"></a>\min_{\omega} \omega^{\prime}\Sigma\omega</span>
+<span id="cb22-333"><a href="#cb22-333" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-334"><a href="#cb22-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-335"><a href="#cb22-335" aria-hidden="true" tabindex="-1"></a>subject to the constraint that weights sum to one:</span>
+<span id="cb22-336"><a href="#cb22-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-337"><a href="#cb22-337" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-338"><a href="#cb22-338" aria-hidden="true" tabindex="-1"></a>\omega^{\prime}\iota = 1</span>
+<span id="cb22-339"><a href="#cb22-339" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-340"><a href="#cb22-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-341"><a href="#cb22-341" aria-hidden="true" tabindex="-1"></a>where $\iota$ is an $N \times 1$ vector of ones.</span>
+<span id="cb22-342"><a href="#cb22-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-343"><a href="#cb22-343" aria-hidden="true" tabindex="-1"></a>In words: minimize portfolio variance, subject to being fully invested.</span>
+<span id="cb22-344"><a href="#cb22-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-345"><a href="#cb22-345" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Analytical Solution</span></span>
+<span id="cb22-346"><a href="#cb22-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-347"><a href="#cb22-347" aria-hidden="true" tabindex="-1"></a>This is a classic constrained optimization problem that can be solved using Lagrange multipliers. The Lagrangian is:</span>
+<span id="cb22-348"><a href="#cb22-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-349"><a href="#cb22-349" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-350"><a href="#cb22-350" aria-hidden="true" tabindex="-1"></a>\mathcal{L} = \omega^{\prime}\Sigma\omega - \lambda(\omega^{\prime}\iota - 1)</span>
+<span id="cb22-351"><a href="#cb22-351" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-352"><a href="#cb22-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-353"><a href="#cb22-353" aria-hidden="true" tabindex="-1"></a>Taking the first-order condition with respect to $\omega$:</span>
+<span id="cb22-354"><a href="#cb22-354" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-355"><a href="#cb22-355" aria-hidden="true" tabindex="-1"></a>\frac{\partial \mathcal{L}}{\partial \omega} = 2\Sigma\omega - \lambda\iota = 0</span>
+<span id="cb22-356"><a href="#cb22-356" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-357"><a href="#cb22-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-358"><a href="#cb22-358" aria-hidden="true" tabindex="-1"></a>Solving for $\omega$:</span>
+<span id="cb22-359"><a href="#cb22-359" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-360"><a href="#cb22-360" aria-hidden="true" tabindex="-1"></a>\omega = \frac{\lambda}{2}\Sigma^{-1}\iota</span>
+<span id="cb22-361"><a href="#cb22-361" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-362"><a href="#cb22-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-363"><a href="#cb22-363" aria-hidden="true" tabindex="-1"></a>Using the constraint $\omega^{\prime}\iota = 1$ to solve for $\lambda$:</span>
+<span id="cb22-364"><a href="#cb22-364" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-365"><a href="#cb22-365" aria-hidden="true" tabindex="-1"></a>\frac{\lambda}{2}\iota^{\prime}\Sigma^{-1}\iota = 1 \implies \frac{\lambda}{2} = \frac{1}{\iota^{\prime}\Sigma^{-1}\iota}</span>
+<span id="cb22-366"><a href="#cb22-366" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-367"><a href="#cb22-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-368"><a href="#cb22-368" aria-hidden="true" tabindex="-1"></a>Substituting back:</span>
+<span id="cb22-369"><a href="#cb22-369" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-370"><a href="#cb22-370" aria-hidden="true" tabindex="-1"></a>\omega_{\text{mvp}} = \frac{\Sigma^{-1}\iota}{\iota^{\prime}\Sigma^{-1}\iota}</span>
+<span id="cb22-371"><a href="#cb22-371" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-372"><a href="#cb22-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-373"><a href="#cb22-373" aria-hidden="true" tabindex="-1"></a>This elegant formula shows that the minimum-variance weights depend only on the covariance matrix—expected returns play no role. The inverse covariance matrix $\Sigma^{-1}$ determines how much to invest in each asset based on its variance and its covariances with all other assets.</span>
+<span id="cb22-374"><a href="#cb22-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-375"><a href="#cb22-375" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
+<span id="cb22-376"><a href="#cb22-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-379"><a href="#cb22-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-380"><a href="#cb22-380" aria-hidden="true" tabindex="-1"></a>iota <span class="op">=</span> np.ones(sigma.shape[<span class="dv">0</span>])</span>
+<span id="cb22-381"><a href="#cb22-381" aria-hidden="true" tabindex="-1"></a>sigma_inv <span class="op">=</span> np.linalg.inv(sigma.values)</span>
+<span id="cb22-382"><a href="#cb22-382" aria-hidden="true" tabindex="-1"></a>omega_mvp <span class="op">=</span> (sigma_inv <span class="op">@</span> iota) <span class="op">/</span> (iota <span class="op">@</span> sigma_inv <span class="op">@</span> iota)</span>
+<span id="cb22-383"><a href="#cb22-383" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-384"><a href="#cb22-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-385"><a href="#cb22-385" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualizing the Minimum-Variance Weights</span></span>
+<span id="cb22-386"><a href="#cb22-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-387"><a href="#cb22-387" aria-hidden="true" tabindex="-1"></a>@fig-204 displays the portfolio weights of the minimum-variance portfolio.</span>
+<span id="cb22-388"><a href="#cb22-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-391"><a href="#cb22-391" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-392"><a href="#cb22-392" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-204</span></span>
+<span id="cb22-393"><a href="#cb22-393" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Weights are based on historical moments of monthly returns adjusted for dividend payments and stock splits." </span></span>
+<span id="cb22-394"><a href="#cb22-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Minimum-variance portfolio weights. The figure shows a bar chart with portfolio weights for each VN30 index constituent."</span></span>
+<span id="cb22-395"><a href="#cb22-395" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> assets.assign(omega_mvp<span class="op">=</span>omega_mvp)</span>
+<span id="cb22-396"><a href="#cb22-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-397"><a href="#cb22-397" aria-hidden="true" tabindex="-1"></a>assets[<span class="st">"symbol"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb22-398"><a href="#cb22-398" aria-hidden="true" tabindex="-1"></a>  assets[<span class="st">"symbol"</span>],</span>
+<span id="cb22-399"><a href="#cb22-399" aria-hidden="true" tabindex="-1"></a>  categories<span class="op">=</span>assets.sort_values(<span class="st">"omega_mvp"</span>)[<span class="st">"symbol"</span>],</span>
+<span id="cb22-400"><a href="#cb22-400" aria-hidden="true" tabindex="-1"></a>  ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb22-401"><a href="#cb22-401" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-402"><a href="#cb22-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-403"><a href="#cb22-403" aria-hidden="true" tabindex="-1"></a>omega_figure <span class="op">=</span> (</span>
+<span id="cb22-404"><a href="#cb22-404" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
+<span id="cb22-405"><a href="#cb22-405" aria-hidden="true" tabindex="-1"></a>    assets,</span>
+<span id="cb22-406"><a href="#cb22-406" aria-hidden="true" tabindex="-1"></a>    aes(y<span class="op">=</span><span class="st">"omega_mvp"</span>, x<span class="op">=</span><span class="st">"symbol"</span>, fill<span class="op">=</span><span class="st">"omega_mvp&gt;0"</span>)</span>
+<span id="cb22-407"><a href="#cb22-407" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-408"><a href="#cb22-408" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_col()</span>
+<span id="cb22-409"><a href="#cb22-409" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> coord_flip()</span>
+<span id="cb22-410"><a href="#cb22-410" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-411"><a href="#cb22-411" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> labs(</span>
+<span id="cb22-412"><a href="#cb22-412" aria-hidden="true" tabindex="-1"></a>      x<span class="op">=</span><span class="st">""</span>, </span>
+<span id="cb22-413"><a href="#cb22-413" aria-hidden="true" tabindex="-1"></a>      y<span class="op">=</span><span class="st">"Portfolio Weight"</span>, </span>
+<span id="cb22-414"><a href="#cb22-414" aria-hidden="true" tabindex="-1"></a>      title<span class="op">=</span><span class="st">"Minimum-variance portfolio weights"</span></span>
+<span id="cb22-415"><a href="#cb22-415" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-416"><a href="#cb22-416" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb22-417"><a href="#cb22-417" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-418"><a href="#cb22-418" aria-hidden="true" tabindex="-1"></a>omega_figure.show()</span>
+<span id="cb22-419"><a href="#cb22-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-420"><a href="#cb22-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-421"><a href="#cb22-421" aria-hidden="true" tabindex="-1"></a>Several features of the minimum-variance portfolio are noteworthy. First, many stocks receive zero or near-zero weights. Second, some stocks receive negative weights (short positions). These short positions are not a computational artifact, they reflect the optimizer's attempt to exploit correlations for risk reduction. Third, the weights are quite extreme (both large positive and large negative), which often indicates estimation error amplification, which is a topic we address in later chapters.</span>
+<span id="cb22-422"><a href="#cb22-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-423"><a href="#cb22-423" aria-hidden="true" tabindex="-1"></a><span class="fu">### Portfolio Performance</span></span>
+<span id="cb22-424"><a href="#cb22-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-425"><a href="#cb22-425" aria-hidden="true" tabindex="-1"></a>Let's compute the expected return and volatility of the minimum-variance portfolio:</span>
+<span id="cb22-426"><a href="#cb22-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-429"><a href="#cb22-429" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-430"><a href="#cb22-430" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> assets[<span class="st">"mu"</span>].values</span>
+<span id="cb22-431"><a href="#cb22-431" aria-hidden="true" tabindex="-1"></a>mu_mvp <span class="op">=</span> omega_mvp <span class="op">@</span> mu</span>
+<span id="cb22-432"><a href="#cb22-432" aria-hidden="true" tabindex="-1"></a>sigma_mvp <span class="op">=</span> np.sqrt(omega_mvp <span class="op">@</span> sigma.values <span class="op">@</span> omega_mvp)</span>
+<span id="cb22-433"><a href="#cb22-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-434"><a href="#cb22-434" aria-hidden="true" tabindex="-1"></a>summary_mvp <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb22-435"><a href="#cb22-435" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu"</span>: [mu_mvp],</span>
+<span id="cb22-436"><a href="#cb22-436" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma"</span>: [sigma_mvp],</span>
+<span id="cb22-437"><a href="#cb22-437" aria-hidden="true" tabindex="-1"></a>  <span class="st">"type"</span>: [<span class="st">"Minimum-Variance Portfolio"</span>]</span>
+<span id="cb22-438"><a href="#cb22-438" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb22-439"><a href="#cb22-439" aria-hidden="true" tabindex="-1"></a>summary_mvp</span>
+<span id="cb22-440"><a href="#cb22-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-441"><a href="#cb22-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-442"><a href="#cb22-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-445"><a href="#cb22-445" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-446"><a href="#cb22-446" aria-hidden="true" tabindex="-1"></a>mu_mvp_fmt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>mu_mvp<span class="sc">:.4f}</span><span class="ss">"</span></span>
+<span id="cb22-447"><a href="#cb22-447" aria-hidden="true" tabindex="-1"></a>sigma_mvp_fmt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>sigma_mvp<span class="sc">:.4f}</span><span class="ss">"</span></span>
+<span id="cb22-448"><a href="#cb22-448" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The MVP return is </span><span class="sc">{</span>mu_mvp_fmt<span class="sc">}</span><span class="ss"> and volatility is </span><span class="sc">{</span>sigma_mvp_fmt<span class="sc">}</span><span class="ss">."</span>)</span>
+<span id="cb22-449"><a href="#cb22-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-450"><a href="#cb22-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-451"><a href="#cb22-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-452"><a href="#cb22-452" aria-hidden="true" tabindex="-1"></a>If the expected return is negative, this is not a computational error. The minimum-variance portfolio minimizes risk without regard to expected returns. Because some assets in the sample have negative average returns, the risk-minimizing combination may inherit a negative expected return. This highlights a fundamental limitation of using historical sample means as estimates of expected returns: they are extremely noisy, and can lead to economically unintuitive results even when the optimization mathematics are working correctly.</span>
+<span id="cb22-453"><a href="#cb22-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-454"><a href="#cb22-454" aria-hidden="true" tabindex="-1"></a><span class="fu">## Efficient Portfolios: Balancing Risk and Return</span></span>
+<span id="cb22-455"><a href="#cb22-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-456"><a href="#cb22-456" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Investor's Trade-off</span></span>
+<span id="cb22-457"><a href="#cb22-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-458"><a href="#cb22-458" aria-hidden="true" tabindex="-1"></a>In most cases, minimizing variance is not the investor's sole objective. A more realistic formulation allows the investor to trade off risk against expected return. The investor might be willing to accept higher portfolio variance in exchange for higher expected returns.</span>
+<span id="cb22-459"><a href="#cb22-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-460"><a href="#cb22-460" aria-hidden="true" tabindex="-1"></a>An **efficient portfolio** minimizes variance subject to earning at least some target expected return $\bar{\mu}$. Formally:</span>
+<span id="cb22-461"><a href="#cb22-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-462"><a href="#cb22-462" aria-hidden="true" tabindex="-1"></a>$$\min_{\omega} \omega^{\prime}\Sigma\omega$$</span>
+<span id="cb22-463"><a href="#cb22-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-464"><a href="#cb22-464" aria-hidden="true" tabindex="-1"></a>subject to:</span>
+<span id="cb22-465"><a href="#cb22-465" aria-hidden="true" tabindex="-1"></a>$$\omega^{\prime}\iota = 1 \quad \text{(fully invested)}$$</span>
+<span id="cb22-466"><a href="#cb22-466" aria-hidden="true" tabindex="-1"></a>$$\omega^{\prime}\mu \geq \bar{\mu} \quad \text{(minimum return)}$$</span>
+<span id="cb22-467"><a href="#cb22-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-468"><a href="#cb22-468" aria-hidden="true" tabindex="-1"></a>When $\bar{\mu}$ exceeds the expected return of the minimum-variance portfolio, the investor accepts more risk to earn more return.</span>
+<span id="cb22-469"><a href="#cb22-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-470"><a href="#cb22-470" aria-hidden="true" tabindex="-1"></a><span class="fu">### Setting the Target Return</span></span>
+<span id="cb22-471"><a href="#cb22-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-472"><a href="#cb22-472" aria-hidden="true" tabindex="-1"></a>For illustration, suppose the investor wants to earn at least the historical average return of the best-performing stock:</span>
+<span id="cb22-473"><a href="#cb22-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-476"><a href="#cb22-476" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-477"><a href="#cb22-477" aria-hidden="true" tabindex="-1"></a>mu_bar <span class="op">=</span> assets[<span class="st">"mu"</span>].<span class="bu">max</span>()</span>
+<span id="cb22-478"><a href="#cb22-478" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target expected return: </span><span class="sc">{</span>mu_bar<span class="sc">:.5f}</span><span class="ss">"</span>)</span>
+<span id="cb22-479"><a href="#cb22-479" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-480"><a href="#cb22-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-481"><a href="#cb22-481" aria-hidden="true" tabindex="-1"></a>This is an ambitious target—it means matching the return of the single highest-returning stock while benefiting from diversification to reduce risk.</span>
+<span id="cb22-482"><a href="#cb22-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-483"><a href="#cb22-483" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Analytical Solution</span></span>
+<span id="cb22-484"><a href="#cb22-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-485"><a href="#cb22-485" aria-hidden="true" tabindex="-1"></a>The constrained optimization problem with an inequality constraint on expected returns can be solved using the Karush-Kuhn-Tucker (KKT) conditions. At the optimum (assuming the return constraint binds), the solution is:</span>
+<span id="cb22-486"><a href="#cb22-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-487"><a href="#cb22-487" aria-hidden="true" tabindex="-1"></a>$$\omega_{\text{efp}} = \frac{\lambda^*}{2}\left(\Sigma^{-1}\mu - \frac{D}{C}\Sigma^{-1}\iota\right)$$</span>
+<span id="cb22-488"><a href="#cb22-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-489"><a href="#cb22-489" aria-hidden="true" tabindex="-1"></a>where:</span>
+<span id="cb22-490"><a href="#cb22-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-491"><a href="#cb22-491" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$C = \iota^{\prime}\Sigma^{-1}\iota$ (a scalar measuring the "size" of the inverse covariance matrix)</span>
+<span id="cb22-492"><a href="#cb22-492" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$D = \iota^{\prime}\Sigma^{-1}\mu$ (capturing the interaction between expected returns and the inverse covariance matrix)</span>
+<span id="cb22-493"><a href="#cb22-493" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$E = \mu^{\prime}\Sigma^{-1}\mu$ (measuring the "signal" in expected returns weighted by inverse covariances)</span>
+<span id="cb22-494"><a href="#cb22-494" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\lambda^* = 2\frac{\bar{\mu} - D/C}{E - D^2/C}$ (the shadow price of the return constraint)</span>
+<span id="cb22-495"><a href="#cb22-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-496"><a href="#cb22-496" aria-hidden="true" tabindex="-1"></a>Alternatively, we can express the efficient portfolio as a linear combination of the minimum-variance portfolio and an "excess return" portfolio:</span>
+<span id="cb22-497"><a href="#cb22-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-498"><a href="#cb22-498" aria-hidden="true" tabindex="-1"></a>$$\omega_{\text{efp}} = \omega_{\text{mvp}} + \frac{\lambda^*}{2}\left(\Sigma^{-1}\mu - D \cdot \omega_{\text{mvp}}\right)$$</span>
+<span id="cb22-499"><a href="#cb22-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-500"><a href="#cb22-500" aria-hidden="true" tabindex="-1"></a>This representation reveals important intuition: the efficient portfolio starts from the minimum-variance portfolio and tilts toward higher-expected-return assets, with the tilt magnitude determined by $\lambda^*$.</span>
+<span id="cb22-501"><a href="#cb22-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-502"><a href="#cb22-502" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
+<span id="cb22-503"><a href="#cb22-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-506"><a href="#cb22-506" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-507"><a href="#cb22-507" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> iota <span class="op">@</span> sigma_inv <span class="op">@</span> iota</span>
+<span id="cb22-508"><a href="#cb22-508" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> iota <span class="op">@</span> sigma_inv <span class="op">@</span> mu</span>
+<span id="cb22-509"><a href="#cb22-509" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> mu <span class="op">@</span> sigma_inv <span class="op">@</span> mu</span>
+<span id="cb22-510"><a href="#cb22-510" aria-hidden="true" tabindex="-1"></a>lambda_tilde <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (mu_bar <span class="op">-</span> D <span class="op">/</span> C) <span class="op">/</span> (E <span class="op">-</span> (D <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> C)</span>
+<span id="cb22-511"><a href="#cb22-511" aria-hidden="true" tabindex="-1"></a>omega_efp <span class="op">=</span> omega_mvp <span class="op">+</span> (lambda_tilde <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> (sigma_inv <span class="op">@</span> mu <span class="op">-</span> D <span class="op">*</span> omega_mvp)</span>
+<span id="cb22-512"><a href="#cb22-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-513"><a href="#cb22-513" aria-hidden="true" tabindex="-1"></a>mu_efp <span class="op">=</span> omega_efp <span class="op">@</span> mu</span>
+<span id="cb22-514"><a href="#cb22-514" aria-hidden="true" tabindex="-1"></a>sigma_efp <span class="op">=</span> np.sqrt(omega_efp <span class="op">@</span> sigma.values <span class="op">@</span> omega_efp)</span>
+<span id="cb22-515"><a href="#cb22-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-516"><a href="#cb22-516" aria-hidden="true" tabindex="-1"></a>summary_efp <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb22-517"><a href="#cb22-517" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu"</span>: [mu_efp],</span>
+<span id="cb22-518"><a href="#cb22-518" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma"</span>: [sigma_efp],</span>
+<span id="cb22-519"><a href="#cb22-519" aria-hidden="true" tabindex="-1"></a>  <span class="st">"type"</span>: [<span class="st">"Efficient Portfolio"</span>]</span>
+<span id="cb22-520"><a href="#cb22-520" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb22-521"><a href="#cb22-521" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-522"><a href="#cb22-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-523"><a href="#cb22-523" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparing the Portfolios</span></span>
+<span id="cb22-524"><a href="#cb22-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-525"><a href="#cb22-525" aria-hidden="true" tabindex="-1"></a>@fig-205 plots both portfolios alongside the individual assets.</span>
+<span id="cb22-526"><a href="#cb22-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-529"><a href="#cb22-529" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-530"><a href="#cb22-530" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-205</span></span>
+<span id="cb22-531"><a href="#cb22-531" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The big dots indicate the location of the minimum-variance and the efficient portfolio that delivers the expected return of the stock with the highest return, respectively. The small dots indicate the location of the individual constituents." </span></span>
+<span id="cb22-532"><a href="#cb22-532" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Efficient &amp; minimum-variance portfolios. The figure shows big dots indicating the location of the minimum-variance and the efficient portfolio that delivers the expected return of the stock with the higehst return, respectively. The small dots indicate the location of the individual constituents."</span></span>
+<span id="cb22-533"><a href="#cb22-533" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb22-534"><a href="#cb22-534" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> pd.concat(</span>
+<span id="cb22-535"><a href="#cb22-535" aria-hidden="true" tabindex="-1"></a>  [assets, summary_mvp, summary_efp], ignore_index<span class="op">=</span><span class="va">True</span></span>
+<span id="cb22-536"><a href="#cb22-536" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-537"><a href="#cb22-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-538"><a href="#cb22-538" aria-hidden="true" tabindex="-1"></a>summaries_figure <span class="op">=</span> (</span>
+<span id="cb22-539"><a href="#cb22-539" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
+<span id="cb22-540"><a href="#cb22-540" aria-hidden="true" tabindex="-1"></a>    summaries, </span>
+<span id="cb22-541"><a href="#cb22-541" aria-hidden="true" tabindex="-1"></a>    aes(x<span class="op">=</span><span class="st">"sigma"</span>, y<span class="op">=</span><span class="st">"mu"</span>)</span>
+<span id="cb22-542"><a href="#cb22-542" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-543"><a href="#cb22-543" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point(data<span class="op">=</span>summaries.query(<span class="st">"type.isna()"</span>))</span>
+<span id="cb22-544"><a href="#cb22-544" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point(data<span class="op">=</span>summaries.query(<span class="st">"type.notna()"</span>), color<span class="op">=</span><span class="st">"#F21A00"</span>, size<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb22-545"><a href="#cb22-545" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_label(aes(label<span class="op">=</span><span class="st">"type"</span>), adjust_text<span class="op">=</span>{<span class="st">"arrowprops"</span>: {<span class="st">"arrowstyle"</span>: <span class="st">"-"</span>}})</span>
+<span id="cb22-546"><a href="#cb22-546" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-547"><a href="#cb22-547" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-548"><a href="#cb22-548" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> labs(</span>
+<span id="cb22-549"><a href="#cb22-549" aria-hidden="true" tabindex="-1"></a>      x<span class="op">=</span><span class="st">"Volatility (Standard Deviation)"</span>, </span>
+<span id="cb22-550"><a href="#cb22-550" aria-hidden="true" tabindex="-1"></a>      y<span class="op">=</span><span class="st">"Expected Return"</span>,</span>
+<span id="cb22-551"><a href="#cb22-551" aria-hidden="true" tabindex="-1"></a>      title<span class="op">=</span><span class="st">"Efficient &amp; minimum-variance portfolios"</span></span>
+<span id="cb22-552"><a href="#cb22-552" aria-hidden="true" tabindex="-1"></a>    ) </span>
+<span id="cb22-553"><a href="#cb22-553" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-554"><a href="#cb22-554" aria-hidden="true" tabindex="-1"></a>summaries_figure.show()</span>
+<span id="cb22-555"><a href="#cb22-555" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-556"><a href="#cb22-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-557"><a href="#cb22-557" aria-hidden="true" tabindex="-1"></a>The figure demonstrates the substantial diversification benefits of portfolio optimization. The efficient portfolio achieves the same expected return as the highest-returning individual stock but with substantially lower volatility. This "free lunch" from diversification is the central insight of Modern Portfolio Theory.</span>
+<span id="cb22-558"><a href="#cb22-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-559"><a href="#cb22-559" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Role of Risk Aversion</span></span>
+<span id="cb22-560"><a href="#cb22-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-561"><a href="#cb22-561" aria-hidden="true" tabindex="-1"></a>The target return $\bar{\mu}$ implicitly reflects the investor's risk aversion. Less risk-averse investors choose higher $\bar{\mu}$, accepting more variance to earn more expected return. More risk-averse investors choose $\bar{\mu}$ closer to the minimum-variance portfolio's expected return.</span>
+<span id="cb22-562"><a href="#cb22-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-563"><a href="#cb22-563" aria-hidden="true" tabindex="-1"></a>Equivalently, the mean-variance framework can be derived from the optimal decisions of an investor with a mean-variance utility function:</span>
+<span id="cb22-564"><a href="#cb22-564" aria-hidden="true" tabindex="-1"></a>$$U(\omega) = \omega^{\prime}\mu - \frac{\gamma}{2}\omega^{\prime}\Sigma\omega$$</span>
+<span id="cb22-565"><a href="#cb22-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-566"><a href="#cb22-566" aria-hidden="true" tabindex="-1"></a>where $\gamma$ is the coefficient of relative risk aversion. The Appendix shows there is a one-to-one mapping between $\gamma$ and $\bar{\mu}$, so both formulations yield identical efficient portfolios.</span>
+<span id="cb22-567"><a href="#cb22-567" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-568"><a href="#cb22-568" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Efficient Frontier: The Menu of Optimal Portfolios</span></span>
+<span id="cb22-569"><a href="#cb22-569" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-570"><a href="#cb22-570" aria-hidden="true" tabindex="-1"></a>The **efficient frontier** is the set of all portfolios for which no other portfolio offers higher expected return at the same or lower variance. Geometrically, it traces the upper boundary of achievable (volatility, expected return) combinations.</span>
+<span id="cb22-571"><a href="#cb22-571" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-572"><a href="#cb22-572" aria-hidden="true" tabindex="-1"></a>Every rational mean-variance investor should hold a portfolio on the efficient frontier. Portfolios below the frontier are "dominated," there exists another portfolio with either higher return for the same risk, or lower risk for the same return.</span>
+<span id="cb22-573"><a href="#cb22-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-574"><a href="#cb22-574" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Mutual Fund Separation Theorem</span></span>
+<span id="cb22-575"><a href="#cb22-575" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-576"><a href="#cb22-576" aria-hidden="true" tabindex="-1"></a>A remarkable result simplifies the construction of the efficient frontier. The **mutual fund separation theorem** (sometimes called the two-fund theorem) states that any efficient portfolio can be expressed as a linear combination of any two distinct efficient portfolios.</span>
+<span id="cb22-577"><a href="#cb22-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-578"><a href="#cb22-578" aria-hidden="true" tabindex="-1"></a>Formally, if $\omega_{\mu_1}$ and $\omega_{\mu_2}$ are efficient portfolios earning expected returns $\mu_1$ and $\mu_2$ respectively, then the portfolio:</span>
+<span id="cb22-579"><a href="#cb22-579" aria-hidden="true" tabindex="-1"></a>$$\omega_{a\mu_1 + (1-a)\mu_2} = a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2}$$</span>
+<span id="cb22-580"><a href="#cb22-580" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-581"><a href="#cb22-581" aria-hidden="true" tabindex="-1"></a>is also efficient and earns expected return $a\mu_1 + (1-a)\mu_2$.</span>
+<span id="cb22-582"><a href="#cb22-582" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-583"><a href="#cb22-583" aria-hidden="true" tabindex="-1"></a>This result has profound practical implications: an investor needs access to only two efficient "mutual funds" to construct any portfolio on the efficient frontier. The specific funds don't matter—any two distinct efficient portfolios span the entire frontier.</span>
+<span id="cb22-584"><a href="#cb22-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-585"><a href="#cb22-585" aria-hidden="true" tabindex="-1"></a><span class="fu">### Proof of the Separation Theorem</span></span>
+<span id="cb22-586"><a href="#cb22-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-587"><a href="#cb22-587" aria-hidden="true" tabindex="-1"></a>The proof follows directly from the analytical solution for efficient portfolios. Consider:</span>
+<span id="cb22-588"><a href="#cb22-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-589"><a href="#cb22-589" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-590"><a href="#cb22-590" aria-hidden="true" tabindex="-1"></a>a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2} = \left(\frac{a\mu_1 + (1-a)\mu_2 - D/C}{E - D^2/C}\right)\left(\Sigma^{-1}\mu - \frac{D}{C}\Sigma^{-1}\iota\right)</span>
+<span id="cb22-591"><a href="#cb22-591" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-592"><a href="#cb22-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-593"><a href="#cb22-593" aria-hidden="true" tabindex="-1"></a>This expression has exactly the form of the efficient portfolio earning expected return $a\mu_1 + (1-a)\mu_2$, proving the theorem.</span>
+<span id="cb22-594"><a href="#cb22-594" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-595"><a href="#cb22-595" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computing the Efficient Frontier</span></span>
+<span id="cb22-596"><a href="#cb22-596" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-597"><a href="#cb22-597" aria-hidden="true" tabindex="-1"></a>Using the minimum-variance portfolio and our efficient portfolio as the two "funds," we can trace out the entire efficient frontier:</span>
+<span id="cb22-598"><a href="#cb22-598" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-601"><a href="#cb22-601" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-602"><a href="#cb22-602" aria-hidden="true" tabindex="-1"></a>efficient_frontier <span class="op">=</span> (</span>
+<span id="cb22-603"><a href="#cb22-603" aria-hidden="true" tabindex="-1"></a>  pd.DataFrame({</span>
+<span id="cb22-604"><a href="#cb22-604" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>: np.arange(<span class="op">-</span><span class="dv">1</span>, <span class="fl">2.01</span>, <span class="fl">0.01</span>)</span>
+<span id="cb22-605"><a href="#cb22-605" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb22-606"><a href="#cb22-606" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
+<span id="cb22-607"><a href="#cb22-607" aria-hidden="true" tabindex="-1"></a>    omega<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"a"</span>].<span class="bu">map</span>(<span class="kw">lambda</span> a: a <span class="op">*</span> omega_efp <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> a) <span class="op">*</span> omega_mvp)</span>
+<span id="cb22-608"><a href="#cb22-608" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-609"><a href="#cb22-609" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
+<span id="cb22-610"><a href="#cb22-610" aria-hidden="true" tabindex="-1"></a>    mu<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"omega"</span>].<span class="bu">map</span>(<span class="kw">lambda</span> w: w <span class="op">@</span> mu),</span>
+<span id="cb22-611"><a href="#cb22-611" aria-hidden="true" tabindex="-1"></a>    sigma<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"omega"</span>].<span class="bu">map</span>(<span class="kw">lambda</span> w: np.sqrt(w <span class="op">@</span> sigma <span class="op">@</span> w))</span>
+<span id="cb22-612"><a href="#cb22-612" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-613"><a href="#cb22-613" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-614"><a href="#cb22-614" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-615"><a href="#cb22-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-616"><a href="#cb22-616" aria-hidden="true" tabindex="-1"></a>Note that we allow $a$ to range from -1 to 2, which means some portfolios involve shorting one of the two basis funds and leveraging into the other. This traces out both the upper and lower portions of the frontier hyperbola.</span>
+<span id="cb22-617"><a href="#cb22-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-618"><a href="#cb22-618" aria-hidden="true" tabindex="-1"></a><span class="fu">### Visualizing the Efficient Frontier</span></span>
+<span id="cb22-619"><a href="#cb22-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-620"><a href="#cb22-620" aria-hidden="true" tabindex="-1"></a>@fig-206 displays the efficient frontier alongside individual assets and the benchmark portfolios.</span>
+<span id="cb22-621"><a href="#cb22-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-624"><a href="#cb22-624" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb22-625"><a href="#cb22-625" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-206</span></span>
+<span id="cb22-626"><a href="#cb22-626" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The big dots indicate the location of the minimum-variance and the efficient portfolio. The small dots indicate the location of the individual constituents."</span></span>
+<span id="cb22-627"><a href="#cb22-627" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Efficient frontier constructed from historical data for VN30 index constituents. The figure shows VN30 index constituents in a mean-variance diagram. A hyperbola indicates the efficient frontier of portfolios that dominate the individual holdings in the sense that they deliver higher expected returns for the same level of volatility."</span></span>
+<span id="cb22-628"><a href="#cb22-628" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb22-629"><a href="#cb22-629" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> pd.concat(</span>
+<span id="cb22-630"><a href="#cb22-630" aria-hidden="true" tabindex="-1"></a>  [summaries, efficient_frontier], ignore_index<span class="op">=</span><span class="va">True</span></span>
+<span id="cb22-631"><a href="#cb22-631" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-632"><a href="#cb22-632" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-633"><a href="#cb22-633" aria-hidden="true" tabindex="-1"></a>summaries_figure <span class="op">=</span> (</span>
+<span id="cb22-634"><a href="#cb22-634" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
+<span id="cb22-635"><a href="#cb22-635" aria-hidden="true" tabindex="-1"></a>    summaries, </span>
+<span id="cb22-636"><a href="#cb22-636" aria-hidden="true" tabindex="-1"></a>    aes(x<span class="op">=</span><span class="st">"sigma"</span>, y<span class="op">=</span><span class="st">"mu"</span>)</span>
+<span id="cb22-637"><a href="#cb22-637" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-638"><a href="#cb22-638" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point(data<span class="op">=</span>summaries.query(<span class="st">"type.isna()"</span>))</span>
+<span id="cb22-639"><a href="#cb22-639" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_line(data<span class="op">=</span>efficient_frontier, color<span class="op">=</span><span class="st">"blue"</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb22-640"><a href="#cb22-640" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point(data<span class="op">=</span>summaries.query(<span class="st">"type.notna()"</span>), color<span class="op">=</span><span class="st">"#F21A00"</span>, size<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb22-641"><a href="#cb22-641" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_label(aes(label<span class="op">=</span><span class="st">"type"</span>), adjust_text<span class="op">=</span>{<span class="st">"arrowprops"</span>: {<span class="st">"arrowstyle"</span>: <span class="st">"-"</span>}})</span>
+<span id="cb22-642"><a href="#cb22-642" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-643"><a href="#cb22-643" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb22-644"><a href="#cb22-644" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> labs(</span>
+<span id="cb22-645"><a href="#cb22-645" aria-hidden="true" tabindex="-1"></a>      x<span class="op">=</span><span class="st">"Volatility (Standard Deviation)"</span>, </span>
+<span id="cb22-646"><a href="#cb22-646" aria-hidden="true" tabindex="-1"></a>      y<span class="op">=</span><span class="st">"Expected Return"</span>,</span>
+<span id="cb22-647"><a href="#cb22-647" aria-hidden="true" tabindex="-1"></a>      title<span class="op">=</span><span class="st">"The Efficient Frontier and VN30 Constituents"</span></span>
+<span id="cb22-648"><a href="#cb22-648" aria-hidden="true" tabindex="-1"></a>    ) </span>
+<span id="cb22-649"><a href="#cb22-649" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-650"><a href="#cb22-650" aria-hidden="true" tabindex="-1"></a>summaries_figure.show()</span>
+<span id="cb22-651"><a href="#cb22-651" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-652"><a href="#cb22-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-653"><a href="#cb22-653" aria-hidden="true" tabindex="-1"></a>The efficient frontier has a characteristic hyperbolic shape. The leftmost point is the minimum-variance portfolio. Moving up and to the right along the frontier, expected return increases but so does volatility. The upper portion of the hyperbola (above the minimum-variance portfolio) is the "efficient" part—these portfolios offer the highest return for each level of risk. The lower portion is "inefficient"—these portfolios are dominated by their mirror images on the upper portion.</span>
+<span id="cb22-654"><a href="#cb22-654" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-655"><a href="#cb22-655" aria-hidden="true" tabindex="-1"></a>The figure also reveals how dramatically diversification improves upon individual stock positions. Nearly all individual stocks lie well inside the efficient frontier, meaning investors can achieve the same expected return with much less risk, or much higher expected return with the same risk, simply by diversifying.</span>
+<span id="cb22-656"><a href="#cb22-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-657"><a href="#cb22-657" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
+<span id="cb22-658"><a href="#cb22-658" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-659"><a href="#cb22-659" aria-hidden="true" tabindex="-1"></a>This chapter introduced the concepts of Modern Portfolio Theory. The main insights are:</span>
+<span id="cb22-660"><a href="#cb22-660" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-661"><a href="#cb22-661" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Portfolio risk depends on correlations**: The variance of a portfolio is not simply the weighted average of individual variances. Covariances between assets play a crucial role, creating opportunities for diversification.</span>
+<span id="cb22-662"><a href="#cb22-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-663"><a href="#cb22-663" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Diversification is the "only free lunch" in finance**: By combining assets that don't move perfectly together, investors can reduce risk without sacrificing expected return. This insight is the cornerstone of modern investment practice.</span>
+<span id="cb22-664"><a href="#cb22-664" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-665"><a href="#cb22-665" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**The minimum-variance portfolio minimizes risk**: This portfolio depends only on the covariance matrix and serves as an important benchmark. It represents the least risky way to be fully invested in risky assets.</span>
+<span id="cb22-666"><a href="#cb22-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-667"><a href="#cb22-667" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Efficient portfolios balance risk and return**: By accepting more variance, investors can earn higher expected returns. Efficient portfolios are those that offer the best possible trade-off.</span>
+<span id="cb22-668"><a href="#cb22-668" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-669"><a href="#cb22-669" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**The efficient frontier characterizes optimal portfolios**: This boundary in mean-standard deviation space represents the menu of optimal choices available to mean-variance investors.</span>
+<span id="cb22-670"><a href="#cb22-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-671"><a href="#cb22-671" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Two-fund separation simplifies implementation**: Any efficient portfolio can be constructed from any two distinct efficient portfolios, reducing the computational burden of portfolio optimization.</span>
+<span id="cb22-672"><a href="#cb22-672" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-673"><a href="#cb22-673" aria-hidden="true" tabindex="-1"></a>Looking ahead, several important complications arise in practice. First, the inputs to portfolio optimization (expected returns and covariances) must be estimated from data, and estimation error can dramatically affect portfolio performance. Second, real-world constraints such as transaction costs, short-sale restrictions, and position limits modify the optimization problem. Third, the assumption that investors care only about mean and variance may be too restrictive when returns are non-normal or when investors have more complex preferences. We address these extensions in subsequent chapters.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 

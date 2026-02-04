@@ -6,6 +6,10 @@ execute:
   cache: true     # This enables caching for all chapters
   freeze: auto    # Recommended: only re-renders files that have changed
 
+repo-url: https://github.com/mikenguyen13/tidy_finance_vn
+repo-actions: [source]
+
+
 book:
   title: "Tidy Finance in Vietnam"
   author: "Mike"
@@ -41,5 +45,6 @@ format:
     theme:
       - cosmo
       - brand
+    code-tools: true
   pdf:
     documentclass: scrreprt

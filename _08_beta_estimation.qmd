@@ -47,13 +47,13 @@ where $\alpha_i$ represents abnormal return (Jensen's alpha), $\beta_i$ is the m
 
 Several practical considerations affect beta estimation:
 
-1. **Estimation Window**: Longer windows provide more observations and thus more precise estimates, but may include outdated information if betas change over time. Common choices range from 36 to 60 months for monthly data.
+1.  **Estimation Window**: Longer windows provide more observations and thus more precise estimates, but may include outdated information if betas change over time. Common choices range from 36 to 60 months for monthly data.
 
-2. **Return Frequency**: Monthly returns reduce noise but provide fewer observations. Daily returns offer more data points but may introduce microstructure effects and non-synchronous trading biases.
+2.  **Return Frequency**: Monthly returns reduce noise but provide fewer observations. Daily returns offer more data points but may introduce microstructure effects and non-synchronous trading biases.
 
-3. **Market Proxy**: The theoretical market portfolio includes all assets, but in practice we use a broad equity index. For Vietnam, we use the value-weighted market return constructed from our stock universe.
+3.  **Market Proxy**: The theoretical market portfolio includes all assets, but in practice we use a broad equity index. For Vietnam, we use the value-weighted market return constructed from our stock universe.
 
-4. **Minimum Observations**: Requiring a minimum number of observations (e.g., 48 out of 60 months) helps avoid unreliable estimates from sparse data.
+4.  **Minimum Observations**: Requiring a minimum number of observations (e.g., 48 out of 60 months) helps avoid unreliable estimates from sparse data.
 
 ## Setting Up the Environment
 
@@ -261,10 +261,10 @@ print(model_vic.summary())
 
 The regression output provides several important pieces of information:
 
-- **Beta (mkt_excess coefficient)**: The estimated market sensitivity. A beta above 1 indicates VIC amplifies market movements.
-- **Alpha (Intercept)**: The abnormal return not explained by market exposure. Under CAPM, this should be zero.
-- **R-squared**: The proportion of return variation explained by market movements.
-- **t-statistics**: Test whether coefficients differ significantly from zero.
+-   **Beta (mkt_excess coefficient)**: The estimated market sensitivity. A beta above 1 indicates VIC amplifies market movements.
+-   **Alpha (Intercept)**: The abnormal return not explained by market exposure. Under CAPM, this should be zero.
+-   **R-squared**: The proportion of return variation explained by market movements.
+-   **t-statistics**: Test whether coefficients differ significantly from zero.
 
 ```{python}
 # Extract key estimates
@@ -343,8 +343,8 @@ Stock betas are not constant over time. A company's business mix, leverage, and 
 
 Rolling-window estimation involves a trade-off:
 
-- **Longer windows** provide more observations and thus more precise estimates, but may include stale information.
-- **Shorter windows** are more responsive to changes but produce noisier estimates.
+-   **Longer windows** provide more observations and thus more precise estimates, but may include stale information.
+-   **Shorter windows** are more responsive to changes but produce noisier estimates.
 
 A common choice in academic research is 60 months (5 years) of monthly data, requiring at least 48 valid observations for estimation.
 
@@ -492,11 +492,11 @@ rolling_beta_figure.show()
 
 Several patterns emerge from the figure:
 
-1. **Industry differences**: Technology and banking stocks may exhibit different beta patterns than real estate or consumer goods companies.
+1.  **Industry differences**: Technology and banking stocks may exhibit different beta patterns than real estate or consumer goods companies.
 
-2. **Time variation**: Betas are not constant. They respond to changes in business conditions, leverage, and market regimes.
+2.  **Time variation**: Betas are not constant. They respond to changes in business conditions, leverage, and market regimes.
 
-3. **Crisis periods**: Market stress periods (e.g., 2008 financial crisis, 2020 COVID-19) often see beta estimates change as correlations across stocks increase.
+3.  **Crisis periods**: Market stress periods (e.g., 2008 financial crisis, 2020 COVID-19) often see beta estimates change as correlations across stocks increase.
 
 ## Parallelized Estimation for the Full Market
 
@@ -610,15 +610,15 @@ print(f"Loaded {len(capm_monthly):,} CAPM estimates")
 
 While monthly returns are standard in academic research, some applications benefit from higher-frequency data:
 
-- **Shorter estimation windows**: Daily data allows meaningful estimation over shorter periods (e.g., 3 months rather than 5 years).
-- **More responsive estimates**: Daily betas capture changes more quickly.
-- **Event studies**: High-frequency betas are useful for analyzing market reactions to specific events.
+-   **Shorter estimation windows**: Daily data allows meaningful estimation over shorter periods (e.g., 3 months rather than 5 years).
+-   **More responsive estimates**: Daily betas capture changes more quickly.
+-   **Event studies**: High-frequency betas are useful for analyzing market reactions to specific events.
 
 However, daily data introduces additional challenges:
 
-- **Microstructure noise**: Bid-ask bounce and other trading frictions add noise to returns.
-- **Non-synchronous trading**: Less liquid stocks may not trade every day, biasing beta estimates downward.
-- **Computational burden**: Daily data is roughly 21 times larger than monthly data.
+-   **Microstructure noise**: Bid-ask bounce and other trading frictions add noise to returns.
+-   **Non-synchronous trading**: Less liquid stocks may not trade every day, biasing beta estimates downward.
+-   **Computational burden**: Daily data is roughly 21 times larger than monthly data.
 
 ### Batch Processing for Daily Data
 
@@ -757,7 +757,6 @@ def estimate_daily_betas_batch(symbols, tidy_finance, n_cores, batch_size=500,
         return pd.DataFrame()
 ```
 
-
 ```{python}
 #| eval: false
 symbols = prices_monthly["symbol"].unique().tolist()
@@ -773,7 +772,6 @@ capm_daily = estimate_daily_betas_batch(
 
 print(f"Daily beta estimates: {len(capm_daily):,}")
 ```
-
 
 ```{python}
 #| eval: false
@@ -853,7 +851,6 @@ print(f"Stocks with beta > 2: {(beta_monthly.groupby('symbol')['beta'].mean() > 
 Different industries have different exposures to systematic market risk based on their business models, operating leverage, and financial leverage. @fig-beta-by-industry shows the distribution of firm-level average betas across Vietnamese industries.
 
 ```{python}
-#| eval: false
 # Merge betas with industry information
 beta_with_industry = (beta_monthly
     .merge(
@@ -892,7 +889,6 @@ beta_by_industry_filtered = beta_by_industry.query("icb_name_vi in @top_industri
 
 ```{python}
 #| label: fig-beta-by-industry
-#| eval: false
 #| fig-cap: "Distribution of firm-level average betas across Vietnamese industries. Box plots show the median, interquartile range, and outliers for each industry."
 #| fig-alt: "Box plots showing beta distributions by industry, ordered by median beta."
 beta_industry_figure = (
@@ -954,11 +950,11 @@ beta_quantiles_figure.show()
 
 The figure reveals several interesting patterns:
 
-1. **Level shifts**: The entire distribution of betas can shift over time, reflecting changes in market-wide correlation.
+1.  **Level shifts**: The entire distribution of betas can shift over time, reflecting changes in market-wide correlation.
 
-2. **Dispersion changes**: During market stress, the spread between high and low beta stocks may change as correlations move.
+2.  **Dispersion changes**: During market stress, the spread between high and low beta stocks may change as correlations move.
 
-3. **Trends**: Some periods show trending behavior in betas, possibly reflecting structural changes in the economy.
+3.  **Trends**: Some periods show trending behavior in betas, possibly reflecting structural changes in the economy.
 
 ### Coverage Analysis
 
@@ -966,7 +962,6 @@ We verify that our estimation procedure produces reasonable coverage across the 
 
 ```{python}
 #| label: fig-beta-coverage
-#| eval: false
 #| fig-cap: "Share of stocks with available beta estimates over time. Coverage increases as more stocks accumulate sufficient return history."
 #| fig-alt: "Line chart showing the percentage of stocks with beta estimates available each month."
 # Count stocks with and without betas
@@ -1005,7 +1000,6 @@ Coverage is lower in early years because stocks need sufficient return history (
 When both monthly and daily beta estimates are available, we can compare them to understand how estimation frequency affects results.
 
 ```{python}
-#| eval: false
 # Combine monthly and daily estimates
 beta_daily = (capm_daily
     .query("coefficient == 'beta'")
@@ -1019,7 +1013,6 @@ beta_combined = pd.concat([beta_monthly, beta_daily], ignore_index=True)
 
 ```{python}
 #| label: fig-beta-comparison
-#| eval: false
 #| fig-cap: "Comparison of beta estimates using monthly versus daily returns for selected stocks. Daily estimates are smoother due to more observations per estimation window."
 #| fig-alt: "Line chart comparing monthly and daily beta estimates over time for example stocks."
 # Filter to example stocks
@@ -1052,7 +1045,6 @@ comparison_figure.show()
 The comparison reveals that daily-based estimates are generally smoother due to the larger number of observations in each window. However, the level and trend of estimates are similar across frequencies, providing validation that both approaches capture the same underlying systematic risk exposure.
 
 ```{python}
-#| eval: false
 # Correlation between monthly and daily estimates
 correlation_data = (beta_combined
     .pivot_table(index=["symbol", "date"], columns="frequency", values="beta")
@@ -1062,20 +1054,32 @@ correlation_data = (beta_combined
 print(f"Correlation between monthly and daily betas: {correlation_data.corr().iloc[0,1]:.3f}")
 ```
 
+: Summary statistics of firm characteristics {#tbl-summary}
+
+
+**Theoretical Reasons for Imperfect Correlation**
+
+| Factor | Effect |
+|----|----|
+| Non-synchronous trading | Daily betas can be biased downward for illiquid stocks |
+| Microstructure noise | Bid-ask bounce adds noise to daily estimates |
+| Different effective windows | Same calendar period but \~20x more observations for daily |
+| Mean reversion speed | Daily captures faster-moving risk dynamics |
+
 ## Key Takeaways
 
-1. **CAPM beta** measures a stock's sensitivity to systematic market risk and is fundamental to modern portfolio theory, cost of capital estimation, and risk management.
+1.  **CAPM beta** measures a stock's sensitivity to systematic market risk and is fundamental to modern portfolio theory, cost of capital estimation, and risk management.
 
-2. **Rolling-window estimation** captures time variation in betas, which reflects changes in companies' business models, leverage, and market conditions.
+2.  **Rolling-window estimation** captures time variation in betas, which reflects changes in companies' business models, leverage, and market conditions.
 
-3. **Parallelization** dramatically reduces computation time for large-scale estimation tasks by distributing work across multiple CPU cores.
+3.  **Parallelization** dramatically reduces computation time for large-scale estimation tasks by distributing work across multiple CPU cores.
 
-4. **Estimation choices matter**: Window length, return frequency, and minimum observation requirements all affect beta estimates. Researchers should choose parameters appropriate for their specific application.
+4.  **Estimation choices matter**: Window length, return frequency, and minimum observation requirements all affect beta estimates. Researchers should choose parameters appropriate for their specific application.
 
-5. **Industry patterns**: Vietnamese stocks show systematic differences in market sensitivity across industries, with cyclical sectors exhibiting higher betas than defensive sectors.
+5.  **Industry patterns**: Vietnamese stocks show systematic differences in market sensitivity across industries, with cyclical sectors exhibiting higher betas than defensive sectors.
 
-6. **Time variation**: The cross-sectional distribution of betas in Vietnam has evolved over time, with notable shifts during market stress periods.
+6.  **Time variation**: The cross-sectional distribution of betas in Vietnam has evolved over time, with notable shifts during market stress periods.
 
-7. **Frequency comparison**: Monthly and daily beta estimates are positively correlated but not identical. Daily estimates are smoother while monthly estimates may better capture lower-frequency variation.
+7.  **Frequency comparison**: Monthly and daily beta estimates are positively correlated but not identical. Daily estimates are smoother while monthly estimates may better capture lower-frequency variation.
 
-8. **Data quality checks**: Coverage analysis and summary statistics help identify potential issues in estimation procedures before using results in downstream analyses.
+8.  **Data quality checks**: Coverage analysis and summary statistics help identify potential issues in estimation procedures before using results in downstream analyses.

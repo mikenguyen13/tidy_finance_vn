@@ -309,7 +309,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Beta Estimation</span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Beta Estimation</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -1128,6 +1128,8 @@ Figure&nbsp;9.5
 </ul>
 
 
+<!-- -->
+
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Lintner1965" class="csl-entry" role="listitem">
 Lintner, John. 1965. <span>“<span class="nocase">Security prices, risk, and maximal gains from diversification</span>.”</span> <em><span>The Journal of Finance</span></em> 20 (4): 587–615. <a href="https://doi.org/10.1111/j.1540-6261.1965.tb02930.x">https://doi.org/10.1111/j.1540-6261.1965.tb02930.x</a>.
@@ -1212,6 +1214,57 @@ Sharpe, William F. 1964. <span>“<span class="nocase">Capital asset prices: A t
         container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
       clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -1553,7 +1606,620 @@ Sharpe, William F. 1964. <span>“<span class="nocase">Capital asset prices: A t
         <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Univariate Portfolio Sorts</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Beta Estimation</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>In this chapter, we introduce an important concept in financial economics: The exposure of an individual stock to changes in the market portfolio. According to the Capital Asset Pricing Model (CAPM) of @Sharpe1964, @Lintner1965, and @Mossin1966, cross-sectional variation in expected asset returns should be a function of the covariance between the excess return of the asset and the excess return on the market portfolio.\index{CAPM} The regression coefficient of excess market returns on excess stock returns is usually called the market beta. We show an estimation procedure for the market betas.\index{Beta} We provide details about all the functions that we use to compute the results. In particular, we leverage useful computational concepts: Rolling-window estimation and parallelization.</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>We use the following Python packages throughout this chapter:</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed, cpu_count</span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dateutil.relativedelta <span class="im">import</span> relativedelta</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating Beta Using Monthly Returns</span></span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>The estimation procedure is based on a rolling-window estimation, where we may use either monthly or daily returns and different window lengths. First, let us start with loading the monthly Stock data from our SQLite database introduced in <span class="co">[</span><span class="ot">Accessing and Managing Financial Data</span><span class="co">](accessing-and-managing-financial-data.qmd)</span> and <span class="co">[</span><span class="ot">DataCore</span><span class="co">](datacore_data.qmd)</span>.</span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare accounting data with a 'year' column for merging</span></span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>comp_vn <span class="op">=</span> (pd.read_sql_query(</span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT symbol, datadate, icb_name_vi FROM comp_vn"</span>,</span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>{<span class="st">"datadate"</span>})</span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>  .assign(year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"datadate"</span>].dt.year)</span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>  .dropna()</span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure prices_monthly has a 'year' column and is merged correctly</span></span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> (pd.read_sql_query(</span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT symbol, date, ret_excess FROM prices_monthly"</span>,</span>
+<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>{<span class="st">"date"</span>})</span>
+<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a>  .assign(year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"date"</span>].dt.year)</span>
+<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a>  sql<span class="op">=</span><span class="st">"SELECT date, mkt_excess FROM factors_ff3_monthly"</span>,</span>
+<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a>  con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a>  parse_dates<span class="op">=</span>{<span class="st">"date"</span>}</span>
+<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> (prices_monthly</span>
+<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>  .merge(factors_ff3_monthly, how<span class="op">=</span><span class="st">"left"</span>, on<span class="op">=</span><span class="st">"date"</span>)</span>
+<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a>  .merge(comp_vn, how<span class="op">=</span><span class="st">"left"</span>, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>])</span>
+<span id="cb32-70"><a href="#cb32-70" aria-hidden="true" tabindex="-1"></a>  .dropna()</span>
+<span id="cb32-71"><a href="#cb32-71" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-72"><a href="#cb32-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-73"><a href="#cb32-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-74"><a href="#cb32-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-77"><a href="#cb32-77" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-78"><a href="#cb32-78" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats.mstats <span class="im">import</span> winsorize</span>
+<span id="cb32-79"><a href="#cb32-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-80"><a href="#cb32-80" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply 1% winsorization to returns</span></span>
+<span id="cb32-81"><a href="#cb32-81" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> (prices_monthly</span>
+<span id="cb32-82"><a href="#cb32-82" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
+<span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a>    ret_excess <span class="op">=</span> <span class="kw">lambda</span> x: winsorize(x[<span class="st">"ret_excess"</span>], limits<span class="op">=</span>[<span class="fl">0.01</span>, <span class="fl">0.01</span>]),</span>
+<span id="cb32-84"><a href="#cb32-84" aria-hidden="true" tabindex="-1"></a>    mkt_excess <span class="op">=</span> <span class="kw">lambda</span> x: winsorize(x[<span class="st">"mkt_excess"</span>], limits<span class="op">=</span>[<span class="fl">0.01</span>, <span class="fl">0.01</span>])</span>
+<span id="cb32-85"><a href="#cb32-85" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-86"><a href="#cb32-86" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-87"><a href="#cb32-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-88"><a href="#cb32-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-89"><a href="#cb32-89" aria-hidden="true" tabindex="-1"></a>To estimate the CAPM regression coefficients</span>
+<span id="cb32-90"><a href="#cb32-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-91"><a href="#cb32-91" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb32-92"><a href="#cb32-92" aria-hidden="true" tabindex="-1"></a>r_{i, t} - r_{f, t} = \alpha_i + \beta_i(r_{m, t}-r_{f,t})+\varepsilon_{i, t},</span>
+<span id="cb32-93"><a href="#cb32-93" aria-hidden="true" tabindex="-1"></a>$${#eq-capm-equation}</span>
+<span id="cb32-94"><a href="#cb32-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-95"><a href="#cb32-95" aria-hidden="true" tabindex="-1"></a>we regress stock excess returns <span class="in">`ret_excess`</span> on excess returns of the market portfolio <span class="in">`mkt_excess`</span>. </span>
+<span id="cb32-96"><a href="#cb32-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-97"><a href="#cb32-97" aria-hidden="true" tabindex="-1"></a>Python provides a simple solution to estimate (linear) models with the function <span class="in">`smf.ols()`</span>. The function requires a formula as input that is specified in a compact symbolic form. An expression of the form <span class="in">`y ~ model`</span> is interpreted as a specification that the response <span class="in">`y`</span> is modeled by a linear predictor specified symbolically by <span class="in">`model`</span>. Such a model consists of a series of terms separated by <span class="in">`+`</span> operators. In addition to standard linear models, <span class="in">`smf.ols()`</span> provides a lot of flexibility. To start, we restrict the data only to the time series of observations in Stock data that correspond to a company's stock  and compute $\hat\alpha_i$ as well as $\hat\beta_i$.</span>
+<span id="cb32-98"><a href="#cb32-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-101"><a href="#cb32-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-102"><a href="#cb32-102" aria-hidden="true" tabindex="-1"></a>model_fit <span class="op">=</span> smf.ols(</span>
+<span id="cb32-103"><a href="#cb32-103" aria-hidden="true" tabindex="-1"></a>    formula<span class="op">=</span><span class="st">"ret_excess ~ mkt_excess"</span>, </span>
+<span id="cb32-104"><a href="#cb32-104" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>prices_monthly.query(<span class="st">"symbol == 'VIN'"</span>)</span>
+<span id="cb32-105"><a href="#cb32-105" aria-hidden="true" tabindex="-1"></a>).fit()</span>
+<span id="cb32-106"><a href="#cb32-106" aria-hidden="true" tabindex="-1"></a>coefficients <span class="op">=</span> model_fit.summary2().tables[<span class="dv">1</span>]</span>
+<span id="cb32-107"><a href="#cb32-107" aria-hidden="true" tabindex="-1"></a>coefficients</span>
+<span id="cb32-108"><a href="#cb32-108" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-109"><a href="#cb32-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-110"><a href="#cb32-110" aria-hidden="true" tabindex="-1"></a><span class="in">`smf.ols()`</span> returns an object of class <span class="in">`RegressionModel`</span>, which contains all the information we usually care about with linear models. <span class="in">`summary2()`</span> returns information about the estimated parameters. The output above indicates that Apple moves excessively with the market as the estimated $\hat\beta_i$ is above one ($\hat\beta_i \approx 1.4$). </span>
+<span id="cb32-111"><a href="#cb32-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-112"><a href="#cb32-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## Rolling-Window Estimation</span></span>
+<span id="cb32-113"><a href="#cb32-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-114"><a href="#cb32-114" aria-hidden="true" tabindex="-1"></a>After we estimated the regression coefficients on an example, we scale the estimation of  $\beta_i$ to a whole different level and perform rolling-window estimations for the entire CRSP sample.\index{Rolling-window estimation} The following function implements the CAPM regression for a data frame (or a part thereof) containing at least <span class="in">`min_obs`</span> observations to avoid huge fluctuations if the time series is too short. The function conveniently returns the regression results as a data frame, which ensures that our approach is scalable. If the <span class="in">`min_obs`</span>-condition is violated, that is, the time series is too short, the function returns an empty data frame for consistency. </span>
+<span id="cb32-115"><a href="#cb32-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-118"><a href="#cb32-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-119"><a href="#cb32-119" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_capm(data, min_obs<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb32-120"><a href="#cb32-120" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> data.shape[<span class="dv">0</span>] <span class="op">&lt;</span> min_obs:</span>
+<span id="cb32-121"><a href="#cb32-121" aria-hidden="true" tabindex="-1"></a>        capm <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb32-122"><a href="#cb32-122" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb32-123"><a href="#cb32-123" aria-hidden="true" tabindex="-1"></a>        fit <span class="op">=</span> smf.ols(formula<span class="op">=</span><span class="st">"ret_excess ~ mkt_excess"</span>, data<span class="op">=</span>data).fit()</span>
+<span id="cb32-124"><a href="#cb32-124" aria-hidden="true" tabindex="-1"></a>        coefficients <span class="op">=</span> fit.summary2().tables[<span class="dv">1</span>]</span>
+<span id="cb32-125"><a href="#cb32-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-126"><a href="#cb32-126" aria-hidden="true" tabindex="-1"></a>        capm <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb32-127"><a href="#cb32-127" aria-hidden="true" tabindex="-1"></a>            {</span>
+<span id="cb32-128"><a href="#cb32-128" aria-hidden="true" tabindex="-1"></a>                <span class="st">"coefficient"</span>: coefficients.index,</span>
+<span id="cb32-129"><a href="#cb32-129" aria-hidden="true" tabindex="-1"></a>                <span class="st">"estimate"</span>: coefficients[<span class="st">"Coef."</span>],</span>
+<span id="cb32-130"><a href="#cb32-130" aria-hidden="true" tabindex="-1"></a>                <span class="st">"t_statistic"</span>: coefficients[<span class="st">"t"</span>],</span>
+<span id="cb32-131"><a href="#cb32-131" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb32-132"><a href="#cb32-132" aria-hidden="true" tabindex="-1"></a>        ).assign(</span>
+<span id="cb32-133"><a href="#cb32-133" aria-hidden="true" tabindex="-1"></a>            coefficient<span class="op">=</span><span class="kw">lambda</span> x: np.where(</span>
+<span id="cb32-134"><a href="#cb32-134" aria-hidden="true" tabindex="-1"></a>                x[<span class="st">"coefficient"</span>] <span class="op">==</span> <span class="st">"Intercept"</span>, <span class="st">"alpha"</span>, x[<span class="st">"coefficient"</span>]</span>
+<span id="cb32-135"><a href="#cb32-135" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb32-136"><a href="#cb32-136" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-137"><a href="#cb32-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-138"><a href="#cb32-138" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> capm</span>
+<span id="cb32-139"><a href="#cb32-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-140"><a href="#cb32-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-141"><a href="#cb32-141" aria-hidden="true" tabindex="-1"></a>Next, we define a function that does the rolling estimation. We use a simple for-loop to implement the sliding window estimation in a straightforward manner. The following function takes input data and slides across the <span class="in">`date`</span> vector, considering only a total of <span class="in">`look_back`</span> months. The function essentially performs three steps: (i) arrange all rows, (ii) compute betas by sliding across months, and (iii) return a tibble with dates and corresponding parameter estimates. As we demonstrate further below, we can also apply the same function to daily return data.</span>
+<span id="cb32-142"><a href="#cb32-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-145"><a href="#cb32-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-146"><a href="#cb32-146" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> roll_capm_estimation(data, look_back<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">48</span>):</span>
+<span id="cb32-147"><a href="#cb32-147" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb32-148"><a href="#cb32-148" aria-hidden="true" tabindex="-1"></a>    dates <span class="op">=</span> data[<span class="st">"date"</span>].sort_values().drop_duplicates()</span>
+<span id="cb32-149"><a href="#cb32-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-150"><a href="#cb32-150" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(look_back <span class="op">-</span> <span class="dv">1</span>, <span class="bu">len</span>(dates)):</span>
+<span id="cb32-151"><a href="#cb32-151" aria-hidden="true" tabindex="-1"></a>        end_date <span class="op">=</span> dates.iloc[i]</span>
+<span id="cb32-152"><a href="#cb32-152" aria-hidden="true" tabindex="-1"></a>        start_date <span class="op">=</span> end_date <span class="op">-</span> relativedelta(months<span class="op">=</span>look_back <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb32-153"><a href="#cb32-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-154"><a href="#cb32-154" aria-hidden="true" tabindex="-1"></a>        window_data <span class="op">=</span> data.query(<span class="st">"date &gt;= @start_date &amp; date &lt;= @end_date"</span>)</span>
+<span id="cb32-155"><a href="#cb32-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-156"><a href="#cb32-156" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> estimate_capm(window_data, min_obs<span class="op">=</span>min_obs)</span>
+<span id="cb32-157"><a href="#cb32-157" aria-hidden="true" tabindex="-1"></a>        result[<span class="st">"date"</span>] <span class="op">=</span> np.<span class="bu">max</span>(window_data[<span class="st">"date"</span>])</span>
+<span id="cb32-158"><a href="#cb32-158" aria-hidden="true" tabindex="-1"></a>        results.append(result)</span>
+<span id="cb32-159"><a href="#cb32-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-160"><a href="#cb32-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> results:</span>
+<span id="cb32-161"><a href="#cb32-161" aria-hidden="true" tabindex="-1"></a>        rolling_capm_estimation <span class="op">=</span> pd.concat(results, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-162"><a href="#cb32-162" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb32-163"><a href="#cb32-163" aria-hidden="true" tabindex="-1"></a>        rolling_capm_estimation <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb32-164"><a href="#cb32-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-165"><a href="#cb32-165" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> rolling_capm_estimation</span>
+<span id="cb32-166"><a href="#cb32-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-167"><a href="#cb32-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-168"><a href="#cb32-168" aria-hidden="true" tabindex="-1"></a>Before we approach the whole Stock sample, let us focus on a couple of examples for well-known firms.</span>
+<span id="cb32-169"><a href="#cb32-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-172"><a href="#cb32-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-173"><a href="#cb32-173" aria-hidden="true" tabindex="-1"></a>examples <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb32-174"><a href="#cb32-174" aria-hidden="true" tabindex="-1"></a>    <span class="st">"symbol"</span>: [<span class="st">"FPT"</span>, <span class="st">"VNM"</span>, <span class="st">"VIC"</span>, <span class="st">"HPG"</span>],</span>
+<span id="cb32-175"><a href="#cb32-175" aria-hidden="true" tabindex="-1"></a>    <span class="st">"company"</span>: [<span class="st">"FPT Corporation"</span>, <span class="st">"Vinamilk"</span>, <span class="st">"Vingroup"</span>, <span class="st">"Hoa Phat Group"</span>]</span>
+<span id="cb32-176"><a href="#cb32-176" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb32-177"><a href="#cb32-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-178"><a href="#cb32-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-181"><a href="#cb32-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-182"><a href="#cb32-182" aria-hidden="true" tabindex="-1"></a><span class="co"># Check how many months of data each example firm has</span></span>
+<span id="cb32-183"><a href="#cb32-183" aria-hidden="true" tabindex="-1"></a>(prices_monthly</span>
+<span id="cb32-184"><a href="#cb32-184" aria-hidden="true" tabindex="-1"></a>  .query(<span class="st">"symbol in @examples['symbol']"</span>)</span>
+<span id="cb32-185"><a href="#cb32-185" aria-hidden="true" tabindex="-1"></a>  .groupby(<span class="st">"symbol"</span>)</span>
+<span id="cb32-186"><a href="#cb32-186" aria-hidden="true" tabindex="-1"></a>  .size()</span>
+<span id="cb32-187"><a href="#cb32-187" aria-hidden="true" tabindex="-1"></a>  .reset_index(name<span class="op">=</span><span class="st">"obs_count"</span>)</span>
+<span id="cb32-188"><a href="#cb32-188" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-189"><a href="#cb32-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-190"><a href="#cb32-190" aria-hidden="true" tabindex="-1"></a>prices_monthly[prices_monthly[<span class="st">'symbol'</span>] <span class="op">==</span> <span class="st">"FPT"</span>]</span>
+<span id="cb32-191"><a href="#cb32-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-192"><a href="#cb32-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-193"><a href="#cb32-193" aria-hidden="true" tabindex="-1"></a>The main idea is to apply the function to each stock individually and then combine the results into a single data frame. First, we nest the data by <span class="in">`symbol`</span>. Nested data means we now have a list of <span class="in">`symbol`</span> with corresponding grouped time series data. We get one row of output for each unique combination of non-nested variables which is only <span class="in">`symbol`</span> in this case.</span>
+<span id="cb32-194"><a href="#cb32-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-197"><a href="#cb32-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-198"><a href="#cb32-198" aria-hidden="true" tabindex="-1"></a>capm_examples_nested <span class="op">=</span> (prices_monthly</span>
+<span id="cb32-199"><a href="#cb32-199" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"symbol in @examples['symbol']"</span>)</span>
+<span id="cb32-200"><a href="#cb32-200" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"symbol"</span>, group_keys<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-201"><a href="#cb32-201" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-202"><a href="#cb32-202" aria-hidden="true" tabindex="-1"></a>capm_examples_nested</span>
+<span id="cb32-203"><a href="#cb32-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-204"><a href="#cb32-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-205"><a href="#cb32-205" aria-hidden="true" tabindex="-1"></a>Next, we want to apply the <span class="in">`roll_capm_estimation()`</span> function to each stock. This situation is an ideal use case for <span class="in">`apply()`</span>, which takes a list or vector as input and returns an object of the same length as the input. In our case, <span class="in">`apply()`</span> returns a single data frame with a time series of beta estimates for each stock. Therefore, we use <span class="in">`reset_index()`</span> to transform the list of outputs to a tidy data frame. </span>
+<span id="cb32-206"><a href="#cb32-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-209"><a href="#cb32-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-210"><a href="#cb32-210" aria-hidden="true" tabindex="-1"></a><span class="co"># use this after fixing the data</span></span>
+<span id="cb32-211"><a href="#cb32-211" aria-hidden="true" tabindex="-1"></a>capm_examples <span class="op">=</span> (capm_examples_nested</span>
+<span id="cb32-212"><a href="#cb32-212" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: roll_capm_estimation(x), include_groups<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-213"><a href="#cb32-213" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb32-214"><a href="#cb32-214" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"coefficient"</span>, <span class="st">"estimate"</span>, <span class="st">"t_statistic"</span>])</span>
+<span id="cb32-215"><a href="#cb32-215" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-216"><a href="#cb32-216" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-217"><a href="#cb32-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-218"><a href="#cb32-218" aria-hidden="true" tabindex="-1"></a>@fig-601 displays the resulting beta estimates, focusing exclusively on the coefficient fo <span class="in">`"mkt_excess"`</span>.</span>
+<span id="cb32-219"><a href="#cb32-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-222"><a href="#cb32-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-223"><a href="#cb32-223" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-601</span></span>
+<span id="cb32-224"><a href="#cb32-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The figure shows monthly beta estimates for example stocks using five years of data. The CAPM betas are estimated with monthly data and a rolling window of length five years based on adjusted excess returns from Stock Data."</span></span>
+<span id="cb32-225"><a href="#cb32-225" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Monthly beta estimates for example stocks using five years of data. The figure shows a time series of beta estimates based on five years of monthly data. The estimated betas vary over time and across varies but are always positive for each stock."</span></span>
+<span id="cb32-226"><a href="#cb32-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-pos: "htb"</span></span>
+<span id="cb32-227"><a href="#cb32-227" aria-hidden="true" tabindex="-1"></a>beta_examples_sub <span class="op">=</span> capm_examples.merge(examples, how<span class="op">=</span><span class="st">"left"</span>, on<span class="op">=</span><span class="st">"symbol"</span>).query(</span>
+<span id="cb32-228"><a href="#cb32-228" aria-hidden="true" tabindex="-1"></a>    <span class="st">"coefficient == 'mkt_excess'"</span></span>
+<span id="cb32-229"><a href="#cb32-229" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-230"><a href="#cb32-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-231"><a href="#cb32-231" aria-hidden="true" tabindex="-1"></a>beta_figure <span class="op">=</span> (</span>
+<span id="cb32-232"><a href="#cb32-232" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb32-233"><a href="#cb32-233" aria-hidden="true" tabindex="-1"></a>        beta_examples_sub,</span>
+<span id="cb32-234"><a href="#cb32-234" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"estimate"</span>, color<span class="op">=</span><span class="st">"company"</span>, linetype<span class="op">=</span><span class="st">"company"</span>),</span>
+<span id="cb32-235"><a href="#cb32-235" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-236"><a href="#cb32-236" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb32-237"><a href="#cb32-237" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb32-238"><a href="#cb32-238" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-239"><a href="#cb32-239" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-240"><a href="#cb32-240" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-241"><a href="#cb32-241" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-242"><a href="#cb32-242" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Monthly beta estimates for example stocks using 5 years of data"</span>,</span>
+<span id="cb32-243"><a href="#cb32-243" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-244"><a href="#cb32-244" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"5 year"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb32-245"><a href="#cb32-245" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-246"><a href="#cb32-246" aria-hidden="true" tabindex="-1"></a>beta_figure.show()</span>
+<span id="cb32-247"><a href="#cb32-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-248"><a href="#cb32-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-249"><a href="#cb32-249" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parallelized Rolling-Window Estimation</span></span>
+<span id="cb32-250"><a href="#cb32-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-251"><a href="#cb32-251" aria-hidden="true" tabindex="-1"></a>Even though we could now just apply the function using <span class="in">`.groubby()`</span> on the whole Stock sample, we advise against doing it as it is computationally quite expensive. Remember that we have to perform rolling-window estimations across all stocks and time periods. However, this estimation problem is an ideal scenario to employ the power of parallelization. Parallelization means that we split the tasks which perform rolling-window estimations across different workers (or cores on your local machine). </span>
+<span id="cb32-252"><a href="#cb32-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-253"><a href="#cb32-253" aria-hidden="true" tabindex="-1"></a>If you have a Windows or Mac machine, it makes most sense use the default parallelization backend of <span class="in">`joblib`</span>, which means that separate Python processes are running in the background on the same machine to perform the individual jobs. If you check out the documentation of <span class="in">`joblib.parallel_config()`</span>, you can also see other ways to resolve the parallelization in different environments. Note that we use <span class="in">`availableCores()`</span> to determine the number of cores available for parallelization, but keep one core free for other tasks. Some machines might freeze if all cores are busy with Python jobs. </span>
+<span id="cb32-254"><a href="#cb32-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-257"><a href="#cb32-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-258"><a href="#cb32-258" aria-hidden="true" tabindex="-1"></a>n_cores <span class="op">=</span> cpu_count() <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb32-259"><a href="#cb32-259" aria-hidden="true" tabindex="-1"></a>n_cores</span>
+<span id="cb32-260"><a href="#cb32-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-261"><a href="#cb32-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-262"><a href="#cb32-262" aria-hidden="true" tabindex="-1"></a>You can speed up things considerably by having more cores available to share the workload or by having more powerful cores. Instead of using <span class="in">`.apply()`</span> on groups, we use <span class="in">`Parallel()`</span> to execute multiple tasks concurrently and <span class="in">`delayed()`</span> to wrap each function call, allowing the calls to be queued and distributed to worker processes rather than executed immediately.</span>
+<span id="cb32-263"><a href="#cb32-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-266"><a href="#cb32-266" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-267"><a href="#cb32-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-268"><a href="#cb32-268" aria-hidden="true" tabindex="-1"></a>prices_monthly_nested <span class="op">=</span> (prices_monthly</span>
+<span id="cb32-269"><a href="#cb32-269" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"symbol"</span>, group_keys<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-270"><a href="#cb32-270" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-271"><a href="#cb32-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-272"><a href="#cb32-272" aria-hidden="true" tabindex="-1"></a>capm_monthly <span class="op">=</span> pd.concat(</span>
+<span id="cb32-273"><a href="#cb32-273" aria-hidden="true" tabindex="-1"></a>    Parallel(n_jobs<span class="op">=</span>n_cores)(</span>
+<span id="cb32-274"><a href="#cb32-274" aria-hidden="true" tabindex="-1"></a>        delayed(</span>
+<span id="cb32-275"><a href="#cb32-275" aria-hidden="true" tabindex="-1"></a>            <span class="kw">lambda</span> name, group: roll_capm_estimation(group).assign(symbol<span class="op">=</span>name)</span>
+<span id="cb32-276"><a href="#cb32-276" aria-hidden="true" tabindex="-1"></a>        )(</span>
+<span id="cb32-277"><a href="#cb32-277" aria-hidden="true" tabindex="-1"></a>            name, group</span>
+<span id="cb32-278"><a href="#cb32-278" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-279"><a href="#cb32-279" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> name, group <span class="kw">in</span> prices_monthly_nested</span>
+<span id="cb32-280"><a href="#cb32-280" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-281"><a href="#cb32-281" aria-hidden="true" tabindex="-1"></a>).get([<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"coefficient"</span>, <span class="st">"estimate"</span>, <span class="st">"t_statistic"</span>])</span>
+<span id="cb32-282"><a href="#cb32-282" aria-hidden="true" tabindex="-1"></a>capm_monthly</span>
+<span id="cb32-283"><a href="#cb32-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-284"><a href="#cb32-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-287"><a href="#cb32-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-288"><a href="#cb32-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb32-289"><a href="#cb32-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-290"><a href="#cb32-290" aria-hidden="true" tabindex="-1"></a>(capm_monthly</span>
+<span id="cb32-291"><a href="#cb32-291" aria-hidden="true" tabindex="-1"></a>  .to_sql(name<span class="op">=</span><span class="st">"capm_monthly"</span>, </span>
+<span id="cb32-292"><a href="#cb32-292" aria-hidden="true" tabindex="-1"></a>          con<span class="op">=</span>tidy_finance, </span>
+<span id="cb32-293"><a href="#cb32-293" aria-hidden="true" tabindex="-1"></a>          if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb32-294"><a href="#cb32-294" aria-hidden="true" tabindex="-1"></a>          index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-295"><a href="#cb32-295" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-296"><a href="#cb32-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-297"><a href="#cb32-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-300"><a href="#cb32-300" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-301"><a href="#cb32-301" aria-hidden="true" tabindex="-1"></a>capm_monthly <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb32-302"><a href="#cb32-302" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM capm_monthly"</span>, </span>
+<span id="cb32-303"><a href="#cb32-303" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-304"><a href="#cb32-304" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>{<span class="st">"date"</span>}</span>
+<span id="cb32-305"><a href="#cb32-305" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-306"><a href="#cb32-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-307"><a href="#cb32-307" aria-hidden="true" tabindex="-1"></a>capm_monthly.head()</span>
+<span id="cb32-308"><a href="#cb32-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-309"><a href="#cb32-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-310"><a href="#cb32-310" aria-hidden="true" tabindex="-1"></a><span class="fu">## Estimating Beta Using Daily Returns</span></span>
+<span id="cb32-311"><a href="#cb32-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-312"><a href="#cb32-312" aria-hidden="true" tabindex="-1"></a>Before we provide some descriptive statistics of our beta estimates, we implement the estimation for the daily CRSP sample as well. Depending on the application, you might either use longer horizon beta estimates based on monthly data or shorter horizon estimates based on daily returns. As loading the full daily CRSP data requires relatively large amounts of memory, we split the beta estimation into smaller chunks.\index{Parallelization} The logic follows the approach that we use to download the daily CRSP data (see <span class="co">[</span><span class="ot">WRDS, CRSP, and Compustat</span><span class="co">](wrds-crsp-and-compustat.qmd)</span>).</span>
+<span id="cb32-313"><a href="#cb32-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-314"><a href="#cb32-314" aria-hidden="true" tabindex="-1"></a>First, we load the daily Fama-French market excess returns and extract the vector of dates.</span>
+<span id="cb32-315"><a href="#cb32-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-318"><a href="#cb32-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-319"><a href="#cb32-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-320"><a href="#cb32-320" aria-hidden="true" tabindex="-1"></a>factors_ff3_daily <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb32-321"><a href="#cb32-321" aria-hidden="true" tabindex="-1"></a>  sql<span class="op">=</span><span class="st">"SELECT date, mkt_excess FROM factors_ff3_daily"</span>,</span>
+<span id="cb32-322"><a href="#cb32-322" aria-hidden="true" tabindex="-1"></a>  con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-323"><a href="#cb32-323" aria-hidden="true" tabindex="-1"></a>  parse_dates<span class="op">=</span>{<span class="st">"date"</span>}</span>
+<span id="cb32-324"><a href="#cb32-324" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-325"><a href="#cb32-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-326"><a href="#cb32-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-327"><a href="#cb32-327" aria-hidden="true" tabindex="-1"></a>We use the stocks from the monthly Stock dataset as our reference point and process them in batches of 500. To estimate the CAPM over a consistent lookback window while accommodating different return frequencies, we adjust the minimum required number of observations accordingly. Specifically, we require at least 1,000 daily returns over a five‑year period for a valid estimation. This threshold is consistent with the monthly requirement of 48 observations out of 60 months, given that there are roughly 252 trading days in a year.</span>
+<span id="cb32-328"><a href="#cb32-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-331"><a href="#cb32-331" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-332"><a href="#cb32-332" aria-hidden="true" tabindex="-1"></a>symbols <span class="op">=</span> <span class="bu">list</span>(prices_monthly[<span class="st">"symbol"</span>].unique().astype(<span class="bu">str</span>))</span>
+<span id="cb32-333"><a href="#cb32-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-334"><a href="#cb32-334" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">500</span></span>
+<span id="cb32-335"><a href="#cb32-335" aria-hidden="true" tabindex="-1"></a>batches <span class="op">=</span> np.ceil(<span class="bu">len</span>(symbols)<span class="op">/</span>batch_size).astype(<span class="bu">int</span>)</span>
+<span id="cb32-336"><a href="#cb32-336" aria-hidden="true" tabindex="-1"></a>min_obs <span class="op">=</span> <span class="dv">1_000</span></span>
+<span id="cb32-337"><a href="#cb32-337" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-338"><a href="#cb32-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-339"><a href="#cb32-339" aria-hidden="true" tabindex="-1"></a>We then proceed to perform the same steps as with the monthly Stock data, just in batches: Load in daily returns, nest the data by stock, and parallelize the beta estimation across stocks. Note that we also convert the daily date to the beginning of the month so that we can still look back over 60 months and get one beta estimate per month, even though we are using daily data.</span>
+<span id="cb32-340"><a href="#cb32-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-343"><a href="#cb32-343" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-344"><a href="#cb32-344" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-345"><a href="#cb32-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb32-346"><a href="#cb32-346" aria-hidden="true" tabindex="-1"></a>capm_daily <span class="op">=</span> []</span>
+<span id="cb32-347"><a href="#cb32-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-348"><a href="#cb32-348" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, batches<span class="op">+</span><span class="dv">1</span>):  </span>
+<span id="cb32-349"><a href="#cb32-349" aria-hidden="true" tabindex="-1"></a>    symbol_batch <span class="op">=</span> symbols[</span>
+<span id="cb32-350"><a href="#cb32-350" aria-hidden="true" tabindex="-1"></a>      ((j<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>batch_size):(<span class="bu">min</span>(j<span class="op">*</span>batch_size, <span class="bu">len</span>(symbols)))</span>
+<span id="cb32-351"><a href="#cb32-351" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb32-352"><a href="#cb32-352" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-353"><a href="#cb32-353" aria-hidden="true" tabindex="-1"></a>    symbol_batch_formatted <span class="op">=</span> (</span>
+<span id="cb32-354"><a href="#cb32-354" aria-hidden="true" tabindex="-1"></a>      <span class="st">", "</span>.join(<span class="ss">f"'</span><span class="sc">{</span>symbol<span class="sc">}</span><span class="ss">'"</span> <span class="cf">for</span> symbol <span class="kw">in</span> symbol_batch)</span>
+<span id="cb32-355"><a href="#cb32-355" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-356"><a href="#cb32-356" aria-hidden="true" tabindex="-1"></a>    symbol_string <span class="op">=</span> <span class="ss">f"(</span><span class="sc">{</span>symbol_batch_formatted<span class="sc">}</span><span class="ss">)"</span></span>
+<span id="cb32-357"><a href="#cb32-357" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-358"><a href="#cb32-358" aria-hidden="true" tabindex="-1"></a>    prices_daily_sub_query <span class="op">=</span> (</span>
+<span id="cb32-359"><a href="#cb32-359" aria-hidden="true" tabindex="-1"></a>      <span class="st">"SELECT symbol, date, ret_excess "</span></span>
+<span id="cb32-360"><a href="#cb32-360" aria-hidden="true" tabindex="-1"></a>        <span class="st">"FROM prices_daily "</span></span>
+<span id="cb32-361"><a href="#cb32-361" aria-hidden="true" tabindex="-1"></a>       <span class="ss">f"WHERE symbol IN </span><span class="sc">{</span>symbol_string<span class="sc">}</span><span class="ss">"</span> </span>
+<span id="cb32-362"><a href="#cb32-362" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-363"><a href="#cb32-363" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb32-364"><a href="#cb32-364" aria-hidden="true" tabindex="-1"></a>    prices_daily_sub <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb32-365"><a href="#cb32-365" aria-hidden="true" tabindex="-1"></a>      sql<span class="op">=</span>prices_daily_sub_query,</span>
+<span id="cb32-366"><a href="#cb32-366" aria-hidden="true" tabindex="-1"></a>      con<span class="op">=</span>tidy_finance,</span>
+<span id="cb32-367"><a href="#cb32-367" aria-hidden="true" tabindex="-1"></a>      dtype<span class="op">=</span>{<span class="st">"symbol"</span>: <span class="bu">int</span>},</span>
+<span id="cb32-368"><a href="#cb32-368" aria-hidden="true" tabindex="-1"></a>      parse_dates<span class="op">=</span>{<span class="st">"date"</span>}</span>
+<span id="cb32-369"><a href="#cb32-369" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-370"><a href="#cb32-370" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-371"><a href="#cb32-371" aria-hidden="true" tabindex="-1"></a>    prices_daily_sub_nested <span class="op">=</span> (prices_daily_sub</span>
+<span id="cb32-372"><a href="#cb32-372" aria-hidden="true" tabindex="-1"></a>      .merge(factors_ff3_daily, how<span class="op">=</span><span class="st">"inner"</span>, on<span class="op">=</span><span class="st">"date"</span>)</span>
+<span id="cb32-373"><a href="#cb32-373" aria-hidden="true" tabindex="-1"></a>      .assign(</span>
+<span id="cb32-374"><a href="#cb32-374" aria-hidden="true" tabindex="-1"></a>          date <span class="op">=</span> <span class="kw">lambda</span> x: </span>
+<span id="cb32-375"><a href="#cb32-375" aria-hidden="true" tabindex="-1"></a>            x[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>).dt.to_timestamp()</span>
+<span id="cb32-376"><a href="#cb32-376" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-377"><a href="#cb32-377" aria-hidden="true" tabindex="-1"></a>      .groupby(<span class="st">"symbol"</span>, group_keys<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-378"><a href="#cb32-378" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-379"><a href="#cb32-379" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-380"><a href="#cb32-380" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> Parallel(n_jobs<span class="op">=</span>n_cores)(</span>
+<span id="cb32-381"><a href="#cb32-381" aria-hidden="true" tabindex="-1"></a>        delayed(</span>
+<span id="cb32-382"><a href="#cb32-382" aria-hidden="true" tabindex="-1"></a>            <span class="kw">lambda</span> name, group: roll_capm_estimation(group, min_obs<span class="op">=</span>min_obs).assign(symbol<span class="op">=</span>name)</span>
+<span id="cb32-383"><a href="#cb32-383" aria-hidden="true" tabindex="-1"></a>        )(</span>
+<span id="cb32-384"><a href="#cb32-384" aria-hidden="true" tabindex="-1"></a>            name, group</span>
+<span id="cb32-385"><a href="#cb32-385" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-386"><a href="#cb32-386" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> name, group <span class="kw">in</span> prices_daily_sub_nested</span>
+<span id="cb32-387"><a href="#cb32-387" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-388"><a href="#cb32-388" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-389"><a href="#cb32-389" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> results:</span>
+<span id="cb32-390"><a href="#cb32-390" aria-hidden="true" tabindex="-1"></a>        capm_daily_sub <span class="op">=</span> pd.concat(results).get(</span>
+<span id="cb32-391"><a href="#cb32-391" aria-hidden="true" tabindex="-1"></a>            [<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"coefficient"</span>, <span class="st">"estimate"</span>, <span class="st">"t_statistic"</span>]</span>
+<span id="cb32-392"><a href="#cb32-392" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-393"><a href="#cb32-393" aria-hidden="true" tabindex="-1"></a>        capm_daily.append(capm_daily_sub)</span>
+<span id="cb32-394"><a href="#cb32-394" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb32-395"><a href="#cb32-395" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Warning: Batch </span><span class="sc">{</span>j<span class="sc">}</span><span class="ss"> produced no results (insufficient data)"</span>)</span>
+<span id="cb32-396"><a href="#cb32-396" aria-hidden="true" tabindex="-1"></a>              </span>
+<span id="cb32-397"><a href="#cb32-397" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Batch </span><span class="sc">{</span>j<span class="sc">}</span><span class="ss"> out of </span><span class="sc">{</span>batches<span class="sc">}</span><span class="ss"> done (</span><span class="sc">{</span>(j<span class="op">/</span>batches)<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%)</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb32-398"><a href="#cb32-398" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb32-399"><a href="#cb32-399" aria-hidden="true" tabindex="-1"></a>capm_daily <span class="op">=</span> pd.concat(capm_daily)</span>
+<span id="cb32-400"><a href="#cb32-400" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-401"><a href="#cb32-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-402"><a href="#cb32-402" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparing Beta Estimates</span></span>
+<span id="cb32-403"><a href="#cb32-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-404"><a href="#cb32-404" aria-hidden="true" tabindex="-1"></a>What is a typical value for stock betas? First, let us extract the relevant estimates from our CAPM results based on monthly returns.</span>
+<span id="cb32-405"><a href="#cb32-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-408"><a href="#cb32-408" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-409"><a href="#cb32-409" aria-hidden="true" tabindex="-1"></a>beta_monthly <span class="op">=</span> (capm_monthly</span>
+<span id="cb32-410"><a href="#cb32-410" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'mkt_excess'"</span>)</span>
+<span id="cb32-411"><a href="#cb32-411" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"estimate"</span>])</span>
+<span id="cb32-412"><a href="#cb32-412" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"estimate"</span>: <span class="st">"beta"</span>})</span>
+<span id="cb32-413"><a href="#cb32-413" aria-hidden="true" tabindex="-1"></a>    .assign(return_type<span class="op">=</span><span class="st">"monthly"</span>)</span>
+<span id="cb32-414"><a href="#cb32-414" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-415"><a href="#cb32-415" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-416"><a href="#cb32-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-419"><a href="#cb32-419" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-420"><a href="#cb32-420" aria-hidden="true" tabindex="-1"></a>(beta_monthly.to_sql(</span>
+<span id="cb32-421"><a href="#cb32-421" aria-hidden="true" tabindex="-1"></a>  name<span class="op">=</span><span class="st">"beta_monthly"</span>, </span>
+<span id="cb32-422"><a href="#cb32-422" aria-hidden="true" tabindex="-1"></a>  con<span class="op">=</span>tidy_finance, </span>
+<span id="cb32-423"><a href="#cb32-423" aria-hidden="true" tabindex="-1"></a>  if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb32-424"><a href="#cb32-424" aria-hidden="true" tabindex="-1"></a>  index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb32-425"><a href="#cb32-425" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-426"><a href="#cb32-426" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-427"><a href="#cb32-427" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-428"><a href="#cb32-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-429"><a href="#cb32-429" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-430"><a href="#cb32-430" aria-hidden="true" tabindex="-1"></a>To get some feeling, we illustrate the dispersion of the estimated $\hat\beta_i$ across different industries and across time below. @fig-602 shows that typical business models across industries imply different exposure to the general market economy. </span>
+<span id="cb32-431"><a href="#cb32-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-434"><a href="#cb32-434" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-435"><a href="#cb32-435" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-602 </span></span>
+<span id="cb32-436"><a href="#cb32-436" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The box plots show the average firm-specific beta estimates by industry."</span></span>
+<span id="cb32-437"><a href="#cb32-437" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.alt: "Title: Firm-specific beta distributions by industry. The figure shows box plots for each industry. Firms with the highest average CAPM beta belong to the public administration industry. Firms from the utility sector have the lowest average CAPM beta. The figure indicates very few outliers with negative CAPM betas. The large majority of all stocks has CAPM betas between 0.5 and 1.5."</span></span>
+<span id="cb32-438"><a href="#cb32-438" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-pos: "htb"</span></span>
+<span id="cb32-439"><a href="#cb32-439" aria-hidden="true" tabindex="-1"></a>beta_industries <span class="op">=</span> (beta_monthly</span>
+<span id="cb32-440"><a href="#cb32-440" aria-hidden="true" tabindex="-1"></a>    .merge(prices_monthly, how<span class="op">=</span><span class="st">"inner"</span>, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span>
+<span id="cb32-441"><a href="#cb32-441" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span><span class="st">"beta"</span>)</span>
+<span id="cb32-442"><a href="#cb32-442" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"icb_name_vi"</span>, <span class="st">"symbol"</span>])[<span class="st">"beta"</span>]</span>
+<span id="cb32-443"><a href="#cb32-443" aria-hidden="true" tabindex="-1"></a>    .aggregate(<span class="st">"mean"</span>)</span>
+<span id="cb32-444"><a href="#cb32-444" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb32-445"><a href="#cb32-445" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-446"><a href="#cb32-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-447"><a href="#cb32-447" aria-hidden="true" tabindex="-1"></a>industry_order <span class="op">=</span> (beta_industries</span>
+<span id="cb32-448"><a href="#cb32-448" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"icb_name_vi"</span>)[<span class="st">"beta"</span>]</span>
+<span id="cb32-449"><a href="#cb32-449" aria-hidden="true" tabindex="-1"></a>    .aggregate(<span class="st">"median"</span>)</span>
+<span id="cb32-450"><a href="#cb32-450" aria-hidden="true" tabindex="-1"></a>    .sort_values()</span>
+<span id="cb32-451"><a href="#cb32-451" aria-hidden="true" tabindex="-1"></a>    .index.tolist()</span>
+<span id="cb32-452"><a href="#cb32-452" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-453"><a href="#cb32-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-454"><a href="#cb32-454" aria-hidden="true" tabindex="-1"></a><span class="co"># To show the 10 industries with the highest median beta</span></span>
+<span id="cb32-455"><a href="#cb32-455" aria-hidden="true" tabindex="-1"></a>top_10_industries <span class="op">=</span> industry_order[<span class="op">-</span><span class="dv">10</span>:]</span>
+<span id="cb32-456"><a href="#cb32-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-457"><a href="#cb32-457" aria-hidden="true" tabindex="-1"></a><span class="co"># To show the 10 industries with the lowest median beta</span></span>
+<span id="cb32-458"><a href="#cb32-458" aria-hidden="true" tabindex="-1"></a>bottom_10_industries <span class="op">=</span> industry_order[:<span class="dv">10</span>]</span>
+<span id="cb32-459"><a href="#cb32-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-460"><a href="#cb32-460" aria-hidden="true" tabindex="-1"></a><span class="co"># Update the plot call</span></span>
+<span id="cb32-461"><a href="#cb32-461" aria-hidden="true" tabindex="-1"></a>beta_industries_figure <span class="op">=</span> (</span>
+<span id="cb32-462"><a href="#cb32-462" aria-hidden="true" tabindex="-1"></a>    ggplot(beta_industries, aes(x<span class="op">=</span><span class="st">"icb_name_vi"</span>, y<span class="op">=</span><span class="st">"beta"</span>))</span>
+<span id="cb32-463"><a href="#cb32-463" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_boxplot()</span>
+<span id="cb32-464"><a href="#cb32-464" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
+<span id="cb32-465"><a href="#cb32-465" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_discrete(limits<span class="op">=</span>top_10_industries) <span class="co"># Use the sliced list here</span></span>
+<span id="cb32-466"><a href="#cb32-466" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Top 10 Industries by Beta"</span>)</span>
+<span id="cb32-467"><a href="#cb32-467" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-468"><a href="#cb32-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-469"><a href="#cb32-469" aria-hidden="true" tabindex="-1"></a><span class="co"># beta_industries_figure = (</span></span>
+<span id="cb32-470"><a href="#cb32-470" aria-hidden="true" tabindex="-1"></a><span class="co">#     ggplot(</span></span>
+<span id="cb32-471"><a href="#cb32-471" aria-hidden="true" tabindex="-1"></a><span class="co">#         beta_industries, </span></span>
+<span id="cb32-472"><a href="#cb32-472" aria-hidden="true" tabindex="-1"></a><span class="co">#         aes(x="icb_name_vi", y="beta") </span></span>
+<span id="cb32-473"><a href="#cb32-473" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span>
+<span id="cb32-474"><a href="#cb32-474" aria-hidden="true" tabindex="-1"></a><span class="co">#     + geom_boxplot()</span></span>
+<span id="cb32-475"><a href="#cb32-475" aria-hidden="true" tabindex="-1"></a><span class="co">#     + coord_flip()</span></span>
+<span id="cb32-476"><a href="#cb32-476" aria-hidden="true" tabindex="-1"></a><span class="co">#     + labs(</span></span>
+<span id="cb32-477"><a href="#cb32-477" aria-hidden="true" tabindex="-1"></a><span class="co">#         x="",</span></span>
+<span id="cb32-478"><a href="#cb32-478" aria-hidden="true" tabindex="-1"></a><span class="co">#         y="Beta", </span></span>
+<span id="cb32-479"><a href="#cb32-479" aria-hidden="true" tabindex="-1"></a><span class="co">#         title="Firm-specific beta distributions by industry"</span></span>
+<span id="cb32-480"><a href="#cb32-480" aria-hidden="true" tabindex="-1"></a><span class="co">#     )</span></span>
+<span id="cb32-481"><a href="#cb32-481" aria-hidden="true" tabindex="-1"></a><span class="co">#     + scale_x_discrete(limits=industry_order)</span></span>
+<span id="cb32-482"><a href="#cb32-482" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
+<span id="cb32-483"><a href="#cb32-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-484"><a href="#cb32-484" aria-hidden="true" tabindex="-1"></a>beta_industries_figure.show()</span>
+<span id="cb32-485"><a href="#cb32-485" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-486"><a href="#cb32-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-487"><a href="#cb32-487" aria-hidden="true" tabindex="-1"></a>Next, we illustrate the time-variation in the cross-section of estimated betas. @fig-603 shows the monthly deciles of estimated betas (based on monthly data) and indicates an interesting pattern: First, betas seem to vary over time in the sense that during some periods, there is a clear trend across all deciles. Second, the sample exhibits periods where the dispersion across stocks increases in the sense that the lower decile decreases and the upper decile increases, which indicates that for some stocks the correlation with the market increases while for others it decreases. Note also here: stocks with negative betas are a rare exception.</span>
+<span id="cb32-488"><a href="#cb32-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-491"><a href="#cb32-491" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-492"><a href="#cb32-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-603</span></span>
+<span id="cb32-493"><a href="#cb32-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The figure shows monthly deciles of estimated betas. Each line corresponds to the monthly cross-sectional quantile of the estimated CAPM beta."</span></span>
+<span id="cb32-494"><a href="#cb32-494" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Monthly deciles of estimated betas. The figure shows time series of deciles of estimated betas to illustrate the distribution of betas over time."</span></span>
+<span id="cb32-495"><a href="#cb32-495" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-pos: "htb"</span></span>
+<span id="cb32-496"><a href="#cb32-496" aria-hidden="true" tabindex="-1"></a>beta_quantiles <span class="op">=</span> (</span>
+<span id="cb32-497"><a href="#cb32-497" aria-hidden="true" tabindex="-1"></a>    beta_monthly.groupby(<span class="st">"date"</span>)[<span class="st">"beta"</span>]</span>
+<span id="cb32-498"><a href="#cb32-498" aria-hidden="true" tabindex="-1"></a>    .quantile(q<span class="op">=</span>np.arange(<span class="fl">0.1</span>, <span class="fl">1.0</span>, <span class="fl">0.1</span>))</span>
+<span id="cb32-499"><a href="#cb32-499" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb32-500"><a href="#cb32-500" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"level_1"</span>: <span class="st">"quantile"</span>})</span>
+<span id="cb32-501"><a href="#cb32-501" aria-hidden="true" tabindex="-1"></a>    .assign(quantile<span class="op">=</span><span class="kw">lambda</span> x: (x[<span class="st">"quantile"</span>] <span class="op">*</span> <span class="dv">100</span>).astype(<span class="bu">int</span>))</span>
+<span id="cb32-502"><a href="#cb32-502" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
+<span id="cb32-503"><a href="#cb32-503" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-504"><a href="#cb32-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-505"><a href="#cb32-505" aria-hidden="true" tabindex="-1"></a>linetypes <span class="op">=</span> [<span class="st">"-"</span>, <span class="st">"--"</span>, <span class="st">"-."</span>, <span class="st">":"</span>]</span>
+<span id="cb32-506"><a href="#cb32-506" aria-hidden="true" tabindex="-1"></a>n_quantiles <span class="op">=</span> beta_quantiles[<span class="st">"quantile"</span>].nunique()</span>
+<span id="cb32-507"><a href="#cb32-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-508"><a href="#cb32-508" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure <span class="op">=</span> (</span>
+<span id="cb32-509"><a href="#cb32-509" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb32-510"><a href="#cb32-510" aria-hidden="true" tabindex="-1"></a>        beta_quantiles,</span>
+<span id="cb32-511"><a href="#cb32-511" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"factor(quantile)"</span>, linetype<span class="op">=</span><span class="st">"factor(quantile)"</span>),</span>
+<span id="cb32-512"><a href="#cb32-512" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-513"><a href="#cb32-513" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb32-514"><a href="#cb32-514" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb32-515"><a href="#cb32-515" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>, color<span class="op">=</span><span class="st">""</span>, linetype<span class="op">=</span><span class="st">""</span>, title<span class="op">=</span><span class="st">"Monthly deciles of estimated betas"</span></span>
+<span id="cb32-516"><a href="#cb32-516" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-517"><a href="#cb32-517" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"5 year"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb32-518"><a href="#cb32-518" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_linetype_manual(</span>
+<span id="cb32-519"><a href="#cb32-519" aria-hidden="true" tabindex="-1"></a>        values<span class="op">=</span>[linetypes[l <span class="op">%</span> <span class="bu">len</span>(linetypes)] <span class="cf">for</span> l <span class="kw">in</span> <span class="bu">range</span>(n_quantiles)]</span>
+<span id="cb32-520"><a href="#cb32-520" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-521"><a href="#cb32-521" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-522"><a href="#cb32-522" aria-hidden="true" tabindex="-1"></a>beta_quantiles_figure.show()</span>
+<span id="cb32-523"><a href="#cb32-523" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-524"><a href="#cb32-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-525"><a href="#cb32-525" aria-hidden="true" tabindex="-1"></a>To compare the difference between daily and monthly data, we combine beta estimates to a single table. </span>
+<span id="cb32-526"><a href="#cb32-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-529"><a href="#cb32-529" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-530"><a href="#cb32-530" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-531"><a href="#cb32-531" aria-hidden="true" tabindex="-1"></a>beta_daily <span class="op">=</span> (capm_daily</span>
+<span id="cb32-532"><a href="#cb32-532" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'mkt_excess'"</span>)</span>
+<span id="cb32-533"><a href="#cb32-533" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"estimate"</span>])</span>
+<span id="cb32-534"><a href="#cb32-534" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"estimate"</span>: <span class="st">"beta"</span>})</span>
+<span id="cb32-535"><a href="#cb32-535" aria-hidden="true" tabindex="-1"></a>    .assign(return_type<span class="op">=</span><span class="st">"daily"</span>)</span>
+<span id="cb32-536"><a href="#cb32-536" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-537"><a href="#cb32-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-538"><a href="#cb32-538" aria-hidden="true" tabindex="-1"></a>beta <span class="op">=</span> pd.concat([beta_monthly, beta_daily], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-539"><a href="#cb32-539" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-540"><a href="#cb32-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-541"><a href="#cb32-541" aria-hidden="true" tabindex="-1"></a>To compare the difference between daily and monthly data, we combine beta estimates to a single table. Then, we use the table to plot a comparison of beta estimates for our example stocks in @fig-604. </span>
+<span id="cb32-542"><a href="#cb32-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-545"><a href="#cb32-545" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-546"><a href="#cb32-546" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-604</span></span>
+<span id="cb32-547"><a href="#cb32-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-548"><a href="#cb32-548" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The figure shows the comparison of beta estimates using monthly and daily data. CAPM betas are computed using five years of monthly or three months of daily data. The two lines show the monthly estimates based on a rolling window for few exemplary stocks."</span></span>
+<span id="cb32-549"><a href="#cb32-549" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Comparison of beta estimates using monthly and daily data. The figure shows a time series of beta estimates using five years of monthly versus three years of daily data. The estimates based on longer periods of monthly data are smooth relative to the estimates based on daily data. However, the general trend and level is similar, irrespective of the choice of frequency."</span></span>
+<span id="cb32-550"><a href="#cb32-550" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-pos: "h!tb"</span></span>
+<span id="cb32-551"><a href="#cb32-551" aria-hidden="true" tabindex="-1"></a>beta_comparison <span class="op">=</span> beta.merge(examples, how<span class="op">=</span><span class="st">"inner"</span>, on<span class="op">=</span><span class="st">"symbol"</span>)</span>
+<span id="cb32-552"><a href="#cb32-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-553"><a href="#cb32-553" aria-hidden="true" tabindex="-1"></a>beta_comparison_figure <span class="op">=</span> (</span>
+<span id="cb32-554"><a href="#cb32-554" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb32-555"><a href="#cb32-555" aria-hidden="true" tabindex="-1"></a>        beta_comparison,</span>
+<span id="cb32-556"><a href="#cb32-556" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"beta"</span>, color<span class="op">=</span><span class="st">"return_type"</span>, linetype<span class="op">=</span><span class="st">"return_type"</span>),</span>
+<span id="cb32-557"><a href="#cb32-557" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-558"><a href="#cb32-558" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb32-559"><a href="#cb32-559" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(<span class="st">"~company"</span>, ncol<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb32-560"><a href="#cb32-560" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb32-561"><a href="#cb32-561" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-562"><a href="#cb32-562" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-563"><a href="#cb32-563" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-564"><a href="#cb32-564" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-565"><a href="#cb32-565" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Comparison of beta estimates using monthly and daily data"</span>,</span>
+<span id="cb32-566"><a href="#cb32-566" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-567"><a href="#cb32-567" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"10 years"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb32-568"><a href="#cb32-568" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(figure_size<span class="op">=</span>(<span class="fl">6.4</span>, <span class="fl">6.4</span>))</span>
+<span id="cb32-569"><a href="#cb32-569" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-570"><a href="#cb32-570" aria-hidden="true" tabindex="-1"></a>beta_comparison_figure.show()</span>
+<span id="cb32-571"><a href="#cb32-571" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-572"><a href="#cb32-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-573"><a href="#cb32-573" aria-hidden="true" tabindex="-1"></a>The estimates in @fig-604 look as expected. As you can see, it really depends on the data frequency how your beta estimates turn out because the estimates based on daily data are much smoother due to the higher number of observations in each regression. </span>
+<span id="cb32-574"><a href="#cb32-574" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-575"><a href="#cb32-575" aria-hidden="true" tabindex="-1"></a>Finally, we write the estimates to our database so that we can use them in later chapters. </span>
+<span id="cb32-576"><a href="#cb32-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-579"><a href="#cb32-579" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-580"><a href="#cb32-580" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-581"><a href="#cb32-581" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb32-582"><a href="#cb32-582" aria-hidden="true" tabindex="-1"></a>(beta.to_sql(</span>
+<span id="cb32-583"><a href="#cb32-583" aria-hidden="true" tabindex="-1"></a>  name<span class="op">=</span><span class="st">"beta"</span>, </span>
+<span id="cb32-584"><a href="#cb32-584" aria-hidden="true" tabindex="-1"></a>  con<span class="op">=</span>tidy_finance, </span>
+<span id="cb32-585"><a href="#cb32-585" aria-hidden="true" tabindex="-1"></a>  if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb32-586"><a href="#cb32-586" aria-hidden="true" tabindex="-1"></a>  index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb32-587"><a href="#cb32-587" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-588"><a href="#cb32-588" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-589"><a href="#cb32-589" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-590"><a href="#cb32-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-591"><a href="#cb32-591" aria-hidden="true" tabindex="-1"></a>Whenever you perform some kind of estimation, it also makes sense to do rough plausibility tests. A possible check is to plot the share of stocks with beta estimates over time. This descriptive helps us discover potential errors in our data preparation or estimation procedure. For instance, suppose there was a gap in our output where we do not have any betas. In this case, we would have to go back and check all previous steps to find out what went wrong. </span>
+<span id="cb32-592"><a href="#cb32-592" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-595"><a href="#cb32-595" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-596"><a href="#cb32-596" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-605</span></span>
+<span id="cb32-597"><a href="#cb32-597" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-598"><a href="#cb32-598" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The figure shows end-of-month share of securities with beta estimates. The two lines show the share of securities with beta estimates using five years of monthly or three months of daily data."</span></span>
+<span id="cb32-599"><a href="#cb32-599" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: End-of-month share of securities with beta estimates. The figure shows two time series with end-of-year shares of securities with beta estimates using five years of monthly or three months of daily data. There is almost no missing data for the estimates based on daily data. For the beta estimates based on monthly data, around 75 percent of all stock-month combinations provide sufficient long historical periods to estimate the beta."</span></span>
+<span id="cb32-600"><a href="#cb32-600" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-pos: "htb"</span></span>
+<span id="cb32-601"><a href="#cb32-601" aria-hidden="true" tabindex="-1"></a>return_types <span class="op">=</span> pd.DataFrame({<span class="st">"return_type"</span>: [<span class="st">"monthly"</span>, <span class="st">"daily"</span>]})</span>
+<span id="cb32-602"><a href="#cb32-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-603"><a href="#cb32-603" aria-hidden="true" tabindex="-1"></a>beta_coverage <span class="op">=</span> (</span>
+<span id="cb32-604"><a href="#cb32-604" aria-hidden="true" tabindex="-1"></a>    prices_monthly.merge(return_types, how<span class="op">=</span><span class="st">"cross"</span>)</span>
+<span id="cb32-605"><a href="#cb32-605" aria-hidden="true" tabindex="-1"></a>    .merge(beta, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"return_type"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb32-606"><a href="#cb32-606" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"date"</span>, <span class="st">"return_type"</span>], as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb32-607"><a href="#cb32-607" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: pd.Series({<span class="st">"share"</span>: x[<span class="st">"beta"</span>].notna().<span class="bu">sum</span>() <span class="op">/</span> <span class="bu">len</span>(x)}))</span>
+<span id="cb32-608"><a href="#cb32-608" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-609"><a href="#cb32-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-610"><a href="#cb32-610" aria-hidden="true" tabindex="-1"></a>beta_coverage_figure <span class="op">=</span> (</span>
+<span id="cb32-611"><a href="#cb32-611" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb32-612"><a href="#cb32-612" aria-hidden="true" tabindex="-1"></a>        beta_coverage,</span>
+<span id="cb32-613"><a href="#cb32-613" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"share"</span>, color<span class="op">=</span><span class="st">"return_type"</span>, linetype<span class="op">=</span><span class="st">"return_type"</span>),</span>
+<span id="cb32-614"><a href="#cb32-614" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-615"><a href="#cb32-615" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb32-616"><a href="#cb32-616" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb32-617"><a href="#cb32-617" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-618"><a href="#cb32-618" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-619"><a href="#cb32-619" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-620"><a href="#cb32-620" aria-hidden="true" tabindex="-1"></a>        linetype<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb32-621"><a href="#cb32-621" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"End-of-month share of securities with beta estimates"</span>,</span>
+<span id="cb32-622"><a href="#cb32-622" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb32-623"><a href="#cb32-623" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb32-624"><a href="#cb32-624" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_datetime(date_breaks<span class="op">=</span><span class="st">"10 year"</span>, date_labels<span class="op">=</span><span class="st">"%Y"</span>)</span>
+<span id="cb32-625"><a href="#cb32-625" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-626"><a href="#cb32-626" aria-hidden="true" tabindex="-1"></a>beta_coverage_figure.show()</span>
+<span id="cb32-627"><a href="#cb32-627" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-628"><a href="#cb32-628" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-629"><a href="#cb32-629" aria-hidden="true" tabindex="-1"></a>@fig-605 shows no issues, as the two coverage lines track each other closely, so we can proceed to the next check.</span>
+<span id="cb32-630"><a href="#cb32-630" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-631"><a href="#cb32-631" aria-hidden="true" tabindex="-1"></a>We also encourage everyone to always look at the distributional summary statistics of variables. You can easily spot outliers or weird distributions when looking at such tables.\index{Summary statistics}</span>
+<span id="cb32-632"><a href="#cb32-632" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-635"><a href="#cb32-635" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-636"><a href="#cb32-636" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-637"><a href="#cb32-637" aria-hidden="true" tabindex="-1"></a>(beta</span>
+<span id="cb32-638"><a href="#cb32-638" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"return_type"</span>)[<span class="st">"beta"</span>]</span>
+<span id="cb32-639"><a href="#cb32-639" aria-hidden="true" tabindex="-1"></a>    .describe()</span>
+<span id="cb32-640"><a href="#cb32-640" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb32-641"><a href="#cb32-641" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-642"><a href="#cb32-642" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-643"><a href="#cb32-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-644"><a href="#cb32-644" aria-hidden="true" tabindex="-1"></a>The summary statistics also look plausible for the two estimation procedures. </span>
+<span id="cb32-645"><a href="#cb32-645" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-646"><a href="#cb32-646" aria-hidden="true" tabindex="-1"></a>Finally, since we have two different estimators for the same theoretical object, we expect the estimators to be at least positively correlated (although not perfectly as the estimators are based on different sample periods and frequencies).</span>
+<span id="cb32-647"><a href="#cb32-647" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-650"><a href="#cb32-650" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb32-651"><a href="#cb32-651" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb32-652"><a href="#cb32-652" aria-hidden="true" tabindex="-1"></a>(beta</span>
+<span id="cb32-653"><a href="#cb32-653" aria-hidden="true" tabindex="-1"></a>    .pivot_table(index<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"date"</span>], columns<span class="op">=</span><span class="st">"return_type"</span>, values<span class="op">=</span><span class="st">"beta"</span>)</span>
+<span id="cb32-654"><a href="#cb32-654" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb32-655"><a href="#cb32-655" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"monthly"</span>, <span class="st">"daily"</span>])</span>
+<span id="cb32-656"><a href="#cb32-656" aria-hidden="true" tabindex="-1"></a>    .corr()</span>
+<span id="cb32-657"><a href="#cb32-657" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb32-658"><a href="#cb32-658" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb32-659"><a href="#cb32-659" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb32-660"><a href="#cb32-660" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-661"><a href="#cb32-661" aria-hidden="true" tabindex="-1"></a>Indeed, we find a positive correlation between our beta estimates. In the subsequent chapters, we mainly use the estimates based on monthly data, as most readers should be able to replicate them due to potential memory limitations that might arise with the daily data. </span>
+<span id="cb32-662"><a href="#cb32-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-663"><a href="#cb32-663" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
+<span id="cb32-664"><a href="#cb32-664" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-665"><a href="#cb32-665" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>CAPM betas can be estimated using rolling-window estimation  and processed in parallel via <span class="in">`joblib`</span>.</span>
+<span id="cb32-666"><a href="#cb32-666" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Both monthly and daily return data can be used to estimate betas with different frequencies and window lengths, depending on the application.</span>
+<span id="cb32-667"><a href="#cb32-667" aria-hidden="true" tabindex="-1"></a><span class="ss">-  </span>Summary statistics, visualization, and plausibility checks help to validate beta estimates across time and industries.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 

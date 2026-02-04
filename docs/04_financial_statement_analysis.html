@@ -347,7 +347,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Financial Statement Analysis</span></h1>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Financial Statement Analysis</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 </div>
 
 
@@ -1622,6 +1622,8 @@ Figure&nbsp;5.8: Rankings on Fama-French variables connect financial statement a
 <p>Looking ahead, subsequent chapters will explore how these fundamental variables interact with market prices in asset pricing models, and how to construct factor portfolios based on financial statement characteristics.</p>
 
 
+<!-- -->
+
 </section>
 
 </main> <!-- /main -->
@@ -1695,6 +1697,57 @@ Figure&nbsp;5.8: Rankings on Fama-French variables connect financial statement a
         container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
       clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
@@ -2036,7 +2089,857 @@ Figure&nbsp;5.8: Rankings on Fama-French variables connect financial statement a
         <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Discounted Cash Flow Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
-</nav>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Financial Statement Analysis</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">  echo: true</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">  cache: true</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## From Market Prices to Fundamental Value</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>The previous chapters focused on how financial markets price assets in equilibrium. The <span class="co">[</span><span class="ot">Capital Asset Pricing Model</span><span class="co">](03_capm.qmd)</span> showed that expected returns depend on systematic risk exposure, while <span class="co">[</span><span class="ot">Modern Portfolio Theory</span><span class="co">](02_modern_portfolio_theory.qmd)</span> demonstrated how to construct efficient portfolios. But these frameworks take expected returns and risk as given, they don't explain where these expectations come from.</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>Financial statement analysis addresses this gap. By examining a company's accounting records, investors can form independent assessments of firm value, identify mispriced securities, and understand the economic forces driving business performance. Financial statements provide the primary source of standardized information about a company's operations, financial position, and cash generation. Their legal requirements and standardized formats make them particularly valuable. Every publicly traded company must file them, creating a level playing field for analysis.</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>This chapter introduces the three primary financial statements: the balance sheet, income statement, and cash flow statement. We then demonstrate how to transform raw accounting data into meaningful financial ratios that facilitate comparison across companies and over time. These ratios serve multiple purposes: they enable investors to benchmark companies against peers, help creditors assess default risk, and provide inputs for asset pricing models like the Fama-French factors we will encounter in later chapters.</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>Our analysis combines theoretical frameworks with practical implementation using Vietnamese market data. By the end of this chapter, you will understand how to access financial statements, calculate key ratios across multiple categories, and interpret these metrics in context.</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adjustText <span class="im">import</span> adjust_text</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Three Financial Statements</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>Before diving into ratios and analysis, we need to understand the three interconnected statements that form the foundation of financial reporting. Each statement answers a different question about the company, and together they provide a comprehensive picture of financial health.</span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Balance Sheet: A Snapshot of Financial Position</span></span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>The balance sheet captures a company's financial position at a specific moment in time, think of it as a photograph rather than a movie. It lists everything the company owns (assets), everything it owes (liabilities), and the residual claim belonging to shareholders (equity). These three components are linked by the fundamental accounting equation:</span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>\text{Assets} = \text{Liabilities} + \text{Equity}</span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>This equation is not merely a definition, it reflects a core economic principle. A company's resources (assets) must be financed from somewhere: either borrowed from creditors (liabilities) or contributed by owners (equity). Every transaction affects both sides equally, maintaining the balance.</span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>**Assets** represent resources the company controls that are expected to generate future economic benefits:</span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Current assets** can be converted to cash within one year: cash and equivalents, short-term investments, accounts receivable (money owed by customers), and inventory (raw materials, work-in-progress, and finished goods)</span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Non-current assets** support operations beyond one year: property, plant, and equipment (PP&amp;E), long-term investments, and intangible assets like patents, trademarks, and goodwill</span>
+<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>**Liabilities** encompass obligations to external parties:</span>
+<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Current liabilities** come due within one year: accounts payable (money owed to suppliers), short-term debt, accrued expenses, and the current portion of long-term debt</span>
+<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Non-current liabilities** extend beyond one year: long-term debt, bonds payable, pension obligations, and deferred tax liabilities</span>
+<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a>**Shareholders' equity** represents the owners' residual claim:</span>
+<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Common stock** and additional paid-in capital from share issuance</span>
+<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Retained earnings** (i.e., accumulated profits reinvested rather than distributed as dividends)</span>
+<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Treasury stock**: shares repurchased by the company</span>
+<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a>Understanding these categories is essential for ratio analysis. Current assets and liabilities determine short-term liquidity, while the mix of debt and equity reveals capital structure choices.</span>
+<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Income Statement: Performance Over Time</span></span>
+<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a>While the balance sheet provides a snapshot, the income statement (also called the profit and loss statement, or P&amp;L) measures financial performance over a period (e.g., a quarter or year). It follows a hierarchical structure that progressively captures different levels of profitability:</span>
+<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a>\text{Revenue} - \text{COGS} = \text{Gross Profit}</span>
+<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a>\text{Gross Profit} - \text{Operating Expenses} = \text{Operating Income (EBIT)}</span>
+<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a>\text{EBIT} - \text{Interest} - \text{Taxes} = \text{Net Income}</span>
+<span id="cb21-82"><a href="#cb21-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-83"><a href="#cb21-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a>Each line reveals something different about the business:</span>
+<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Revenue (Sales)**: Total income from goods or services sold (i.e., the "top line")</span>
+<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cost of Goods Sold (COGS)**: Direct costs of producing what was sold (materials, direct labor, manufacturing overhead)</span>
+<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Gross Profit**: Revenue minus COGS, measuring basic profitability from core operations</span>
+<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Operating Expenses**: Costs of running the business beyond production (selling, general &amp; administrative expenses, research &amp; development)</span>
+<span id="cb21-90"><a href="#cb21-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Operating Income (EBIT)**: Earnings Before Interest and Taxes, measuring profitability from operations before financing decisions and taxes</span>
+<span id="cb21-91"><a href="#cb21-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interest Expense**: The cost of debt financing</span>
+<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Net Income**: The "bottom line" (i.e., total profit after all expenses)</span>
+<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a>The income statement's hierarchical structure allows analysts to identify where profitability problems originate. A company with strong gross margins but weak net income might have bloated overhead costs. One with weak gross margins faces fundamental pricing or production challenges.</span>
+<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Cash Flow Statement: Following the Money</span></span>
+<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a>The cash flow statement bridges a critical gap: profitable companies can run out of cash, and unprofitable companies can generate positive cash flow. This happens because accrual accounting (used in the income statement) recognizes revenue when earned and expenses when incurred, not when cash changes hands.</span>
+<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a>The cash flow statement tracks actual cash movements, divided into three categories:</span>
+<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Operating activities**: Cash generated from core business operations. Starts with net income, then adjusts for non-cash items (depreciation, changes in working capital)</span>
+<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Investing activities**: Cash spent on or received from long-term investments (e.g., purchasing equipment, acquiring businesses, selling assets)</span>
+<span id="cb21-104"><a href="#cb21-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Financing activities**: Cash flows from capital structure decisions (e.g., issuing stock, borrowing, repaying debt, paying dividends, buying back shares)</span>
+<span id="cb21-105"><a href="#cb21-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-106"><a href="#cb21-106" aria-hidden="true" tabindex="-1"></a>A company can show strong net income while burning cash if it's building inventory, extending generous credit terms, or making large capital expenditures. Conversely, a company reporting losses might generate positive operating cash flow by collecting receivables faster than it pays suppliers.</span>
+<span id="cb21-107"><a href="#cb21-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-108"><a href="#cb21-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### Illustrating with FPT's Financial Statements</span></span>
+<span id="cb21-109"><a href="#cb21-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-110"><a href="#cb21-110" aria-hidden="true" tabindex="-1"></a>To see these concepts in practice, let's examine FPT Corporation's 2023 financial statements. FPT is one of Vietnam's largest technology companies, providing IT services, telecommunications, and education.</span>
+<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT balance sheet visualization</span></span>
+<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice, this would display the actual PDF or cleaned data</span></span>
+<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a><span class="co"># from DataCore's acquisition pipeline</span></span>
+<span id="cb21-118"><a href="#cb21-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-119"><a href="#cb21-119" aria-hidden="true" tabindex="-1"></a><span class="co"># Example structure of what the balance sheet data looks like:</span></span>
+<span id="cb21-120"><a href="#cb21-120" aria-hidden="true" tabindex="-1"></a><span class="co"># Assets: Current assets (cash, receivables, inventory) + Non-current assets (PP&amp;E, intangibles)</span></span>
+<span id="cb21-121"><a href="#cb21-121" aria-hidden="true" tabindex="-1"></a><span class="co"># Liabilities: Current liabilities (payables, short-term debt) + Non-current liabilities (long-term debt)</span></span>
+<span id="cb21-122"><a href="#cb21-122" aria-hidden="true" tabindex="-1"></a><span class="co"># Equity: Common stock + Retained earnings</span></span>
+<span id="cb21-123"><a href="#cb21-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-124"><a href="#cb21-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-125"><a href="#cb21-125" aria-hidden="true" tabindex="-1"></a>The balance sheet demonstrates the fundamental accounting equation in action. FPT's assets (e.g., spanning cash, receivables, technology infrastructure, and intangible assets like software) exactly equal the sum of its liabilities and equity.</span>
+<span id="cb21-126"><a href="#cb21-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT income statement visualization</span></span>
+<span id="cb21-131"><a href="#cb21-131" aria-hidden="true" tabindex="-1"></a><span class="co"># Shows the progression from revenue through various profit measures to net income</span></span>
+<span id="cb21-132"><a href="#cb21-132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-133"><a href="#cb21-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-134"><a href="#cb21-134" aria-hidden="true" tabindex="-1"></a>FPT's income statement reveals how the company transforms revenue into profit. The progression from gross profit through operating income to net income shows the impact of operating expenses, interest costs, and taxes.</span>
+<span id="cb21-135"><a href="#cb21-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-138"><a href="#cb21-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-139"><a href="#cb21-139" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT cash flow statement visualization</span></span>
+<span id="cb21-140"><a href="#cb21-140" aria-hidden="true" tabindex="-1"></a><span class="co"># Reconciles net income with actual cash generation</span></span>
+<span id="cb21-141"><a href="#cb21-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-142"><a href="#cb21-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-143"><a href="#cb21-143" aria-hidden="true" tabindex="-1"></a>The cash flow statement shows how FPT's reported profits translate into actual cash. Differences between net income and operating cash flow reveal the impact of working capital management and non-cash expenses.</span>
+<span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading Financial Statement Data</span></span>
+<span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a>We now turn to systematic analysis across multiple companies. We load financial statement data for the VN30 index constituents (i.e., the 30 largest and most liquid stocks on Vietnam's Ho Chi Minh Stock Exchange).</span>
+<span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-151"><a href="#cb21-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-152"><a href="#cb21-152" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
+<span id="cb21-153"><a href="#cb21-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-154"><a href="#cb21-154" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span>
+<span id="cb21-155"><a href="#cb21-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-156"><a href="#cb21-156" aria-hidden="true" tabindex="-1"></a>comp_vn <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb21-157"><a href="#cb21-157" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM comp_vn"</span>,</span>
+<span id="cb21-158"><a href="#cb21-158" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
+<span id="cb21-159"><a href="#cb21-159" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>{<span class="st">"datadate"</span>}</span>
+<span id="cb21-160"><a href="#cb21-160" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-161"><a href="#cb21-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-162"><a href="#cb21-162" aria-hidden="true" tabindex="-1"></a>comp_vn.head(<span class="dv">3</span>)</span>
+<span id="cb21-163"><a href="#cb21-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-164"><a href="#cb21-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-167"><a href="#cb21-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-168"><a href="#cb21-168" aria-hidden="true" tabindex="-1"></a>vn30_symbols <span class="op">=</span> [</span>
+<span id="cb21-169"><a href="#cb21-169" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>, <span class="st">"BCM"</span>, <span class="st">"BID"</span>, <span class="st">"BVH"</span>, <span class="st">"CTG"</span>, <span class="st">"FPT"</span>, <span class="st">"GAS"</span>, <span class="st">"GVR"</span>, <span class="st">"HDB"</span>, <span class="st">"HPG"</span>,</span>
+<span id="cb21-170"><a href="#cb21-170" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>, <span class="st">"MSN"</span>, <span class="st">"MWG"</span>, <span class="st">"PLX"</span>, <span class="st">"POW"</span>, <span class="st">"SAB"</span>, <span class="st">"SHB"</span>, <span class="st">"SSB"</span>, <span class="st">"STB"</span>, <span class="st">"TCB"</span>,</span>
+<span id="cb21-171"><a href="#cb21-171" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TPB"</span>, <span class="st">"VCB"</span>, <span class="st">"VHM"</span>, <span class="st">"VIB"</span>, <span class="st">"VIC"</span>, <span class="st">"VJC"</span>, <span class="st">"VNM"</span>, <span class="st">"VPB"</span>, <span class="st">"VRE"</span>, <span class="st">"EIB"</span></span>
+<span id="cb21-172"><a href="#cb21-172" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb21-173"><a href="#cb21-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-174"><a href="#cb21-174" aria-hidden="true" tabindex="-1"></a>comp_vn30 <span class="op">=</span> comp_vn[comp_vn[<span class="st">"symbol"</span>].isin(vn30_symbols)]</span>
+<span id="cb21-175"><a href="#cb21-175" aria-hidden="true" tabindex="-1"></a>comp_vn30.head(<span class="dv">3</span>)</span>
+<span id="cb21-176"><a href="#cb21-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-177"><a href="#cb21-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-178"><a href="#cb21-178" aria-hidden="true" tabindex="-1"></a>This dataset provides the foundation for calculating financial ratios and conducting cross-sectional comparisons. Each row contains balance sheet, income statement, and cash flow items for a company-year observation.</span>
+<span id="cb21-179"><a href="#cb21-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-180"><a href="#cb21-180" aria-hidden="true" tabindex="-1"></a><span class="fu">## Liquidity Ratios: Can the Company Pay Its Bills?</span></span>
+<span id="cb21-181"><a href="#cb21-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-182"><a href="#cb21-182" aria-hidden="true" tabindex="-1"></a>Liquidity ratios assess a company's ability to meet short-term obligations. These metrics matter most to creditors, suppliers, and employees who need assurance that the company can pay its bills. They're calculated using balance sheet items, comparing liquid assets against near-term liabilities.</span>
+<span id="cb21-183"><a href="#cb21-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-184"><a href="#cb21-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Current Ratio</span></span>
+<span id="cb21-185"><a href="#cb21-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-186"><a href="#cb21-186" aria-hidden="true" tabindex="-1"></a>The most basic liquidity measure compares all current assets to current liabilities:</span>
+<span id="cb21-187"><a href="#cb21-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-188"><a href="#cb21-188" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-189"><a href="#cb21-189" aria-hidden="true" tabindex="-1"></a>\text{Current Ratio} = \frac{\text{Current Assets}}{\text{Current Liabilities}}</span>
+<span id="cb21-190"><a href="#cb21-190" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-191"><a href="#cb21-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-192"><a href="#cb21-192" aria-hidden="true" tabindex="-1"></a>A ratio above one indicates the company has enough current assets to cover obligations due within one year. However, the interpretation depends heavily on the composition of current assets. A company with current assets tied up in slow-moving inventory is less liquid than one holding cash.</span>
+<span id="cb21-193"><a href="#cb21-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-194"><a href="#cb21-194" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Quick Ratio</span></span>
+<span id="cb21-195"><a href="#cb21-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-196"><a href="#cb21-196" aria-hidden="true" tabindex="-1"></a>The quick ratio (or "acid test") provides a more stringent measure by excluding inventory:</span>
+<span id="cb21-197"><a href="#cb21-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-198"><a href="#cb21-198" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-199"><a href="#cb21-199" aria-hidden="true" tabindex="-1"></a>\text{Quick Ratio} = \frac{\text{Current Assets} - \text{Inventory}}{\text{Current Liabilities}}</span>
+<span id="cb21-200"><a href="#cb21-200" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-201"><a href="#cb21-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-202"><a href="#cb21-202" aria-hidden="true" tabindex="-1"></a>Why exclude inventory? Inventory is typically the least liquid current asset. It must be sold (potentially at a discount) before generating cash. A company facing a liquidity crisis cannot easily convert raw materials or finished goods into immediate cash. The quick ratio answers: "Can we pay our bills without relying on inventory sales?"</span>
+<span id="cb21-203"><a href="#cb21-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-204"><a href="#cb21-204" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Cash Ratio</span></span>
+<span id="cb21-205"><a href="#cb21-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-206"><a href="#cb21-206" aria-hidden="true" tabindex="-1"></a>The most conservative liquidity measure focuses solely on the most liquid assets:</span>
+<span id="cb21-207"><a href="#cb21-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-208"><a href="#cb21-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-209"><a href="#cb21-209" aria-hidden="true" tabindex="-1"></a>\text{Cash Ratio} = \frac{\text{Cash and Cash Equivalents}}{\text{Current Liabilities}}</span>
+<span id="cb21-210"><a href="#cb21-210" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-211"><a href="#cb21-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-212"><a href="#cb21-212" aria-hidden="true" tabindex="-1"></a>While a ratio of one indicates robust liquidity, most companies maintain lower cash ratios to avoid holding excessive non-productive assets. Cash sitting in bank accounts could otherwise be invested in growth opportunities, returned to shareholders, or used to pay down costly debt.</span>
+<span id="cb21-213"><a href="#cb21-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-214"><a href="#cb21-214" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculating Liquidity Ratios</span></span>
+<span id="cb21-215"><a href="#cb21-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-216"><a href="#cb21-216" aria-hidden="true" tabindex="-1"></a>Let's compute these ratios for our VN30 sample:</span>
+<span id="cb21-217"><a href="#cb21-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-220"><a href="#cb21-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-221"><a href="#cb21-221" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements <span class="op">=</span> (comp_vn30</span>
+<span id="cb21-222"><a href="#cb21-222" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-223"><a href="#cb21-223" aria-hidden="true" tabindex="-1"></a>        fiscal_year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"year"</span>].astype(<span class="bu">int</span>),</span>
+<span id="cb21-224"><a href="#cb21-224" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-225"><a href="#cb21-225" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Current Ratio: Current Assets / Current Liabilities</span></span>
+<span id="cb21-226"><a href="#cb21-226" aria-hidden="true" tabindex="-1"></a>        current_ratio<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"act"</span>] <span class="op">/</span> x[<span class="st">"lct"</span>],</span>
+<span id="cb21-227"><a href="#cb21-227" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-228"><a href="#cb21-228" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Quick Ratio: (Current Assets - Inventory) / Current Liabilities</span></span>
+<span id="cb21-229"><a href="#cb21-229" aria-hidden="true" tabindex="-1"></a>        quick_ratio<span class="op">=</span><span class="kw">lambda</span> x: (x[<span class="st">"act"</span>] <span class="op">-</span> x[<span class="st">"inv"</span>]) <span class="op">/</span> x[<span class="st">"lct"</span>],</span>
+<span id="cb21-230"><a href="#cb21-230" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-231"><a href="#cb21-231" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Cash Ratio: Cash and Equivalents / Current Liabilities</span></span>
+<span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>        cash_ratio<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"ca_cce"</span>] <span class="op">/</span> x[<span class="st">"lct"</span>],</span>
+<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="kw">lambda</span> x: np.where(</span>
+<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a>            x[<span class="st">"symbol"</span>].isin(vn30_symbols), x[<span class="st">"symbol"</span>], np.nan</span>
+<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements.head(<span class="dv">3</span>)</span>
+<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-243"><a href="#cb21-243" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cross-Sectional Comparison of Liquidity</span></span>
+<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a>@fig-409 compares liquidity ratios across companies for the most recent fiscal year. This cross-sectional view reveals how different business models and industries maintain different liquidity profiles.</span>
+<span id="cb21-246"><a href="#cb21-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-250"><a href="#cb21-250" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-409</span></span>
+<span id="cb21-251"><a href="#cb21-251" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Liquidity ratios measure a company's ability to meet short-term obligations. Higher values indicate greater liquidity, though excessively high ratios may suggest inefficient use of assets."</span></span>
+<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Liquidity ratios for VN30 stocks. The figure shows a grouped bar chart comparing current, quick, and cash ratios across companies."</span></span>
+<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a>liquidity_ratios <span class="op">=</span> (balance_sheet_statements</span>
+<span id="cb21-255"><a href="#cb21-255" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023 &amp; label.notna()"</span>)</span>
+<span id="cb21-256"><a href="#cb21-256" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"current_ratio"</span>, <span class="st">"quick_ratio"</span>, <span class="st">"cash_ratio"</span>])</span>
+<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a>    .melt(id_vars<span class="op">=</span>[<span class="st">"symbol"</span>], var_name<span class="op">=</span><span class="st">"name"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb21-258"><a href="#cb21-258" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a>        name<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"name"</span>].<span class="bu">str</span>.replace(<span class="st">"_"</span>, <span class="st">" "</span>).<span class="bu">str</span>.title()</span>
+<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-261"><a href="#cb21-261" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-262"><a href="#cb21-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a>liquidity_ratios_figure <span class="op">=</span> (</span>
+<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a>    ggplot(liquidity_ratios, aes(y<span class="op">=</span><span class="st">"value"</span>, x<span class="op">=</span><span class="st">"name"</span>, fill<span class="op">=</span><span class="st">"symbol"</span>))</span>
+<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_col(position<span class="op">=</span><span class="st">"dodge"</span>)</span>
+<span id="cb21-266"><a href="#cb21-266" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
+<span id="cb21-267"><a href="#cb21-267" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Ratio Value"</span>, fill<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Liquidity Ratios for VN30 Stocks (2023)"</span></span>
+<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a>liquidity_ratios_figure.show()</span>
+<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-275"><a href="#cb21-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-276"><a href="#cb21-276" aria-hidden="true" tabindex="-1"></a>Several patterns emerge from this comparison. Banks and financial institutions typically show different liquidity profiles than industrial companies due to their unique business models. Companies with high inventory (retailers, manufacturers) often show larger gaps between current and quick ratios.</span>
+<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a><span class="fu">## Leverage Ratios: How Is the Company Financed?</span></span>
+<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-280"><a href="#cb21-280" aria-hidden="true" tabindex="-1"></a>Leverage ratios examine a company's capital structure (i.e., the mix of debt and equity financing). These metrics reveal financial risk and long-term solvency, helping investors understand how much of the company's operations are funded by borrowed money.</span>
+<span id="cb21-281"><a href="#cb21-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Capital Structure Matters</span></span>
+<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a>A company's financing choice involves fundamental trade-offs:</span>
+<span id="cb21-285"><a href="#cb21-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-286"><a href="#cb21-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Debt** offers tax advantages (interest is deductible) and doesn't dilute ownership, but creates fixed obligations that must be met regardless of business performance</span>
+<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Equity** provides flexibility (no required payments) but dilutes existing shareholders and may be more expensive than debt</span>
+<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a>Companies with high leverage amplify both gains and losses. In good times, shareholders capture more upside because profits aren't shared with additional equity holders. In bad times, fixed interest payments can push the company toward distress. This is why beta (systematic risk) tends to increase with leverage.</span>
+<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a><span class="fu">### Debt-to-Equity Ratio</span></span>
+<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-293"><a href="#cb21-293" aria-hidden="true" tabindex="-1"></a>This ratio indicates how much debt financing the company uses relative to shareholder investment:</span>
+<span id="cb21-294"><a href="#cb21-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-295"><a href="#cb21-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-296"><a href="#cb21-296" aria-hidden="true" tabindex="-1"></a>\text{Debt-to-Equity} = \frac{\text{Total Debt}}{\text{Total Equity}}</span>
+<span id="cb21-297"><a href="#cb21-297" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-298"><a href="#cb21-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-299"><a href="#cb21-299" aria-hidden="true" tabindex="-1"></a>A ratio of 1.0 means equal parts debt and equity financing. Higher ratios indicate more aggressive use of leverage, which can enhance returns in good times but increases bankruptcy risk.</span>
+<span id="cb21-300"><a href="#cb21-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-301"><a href="#cb21-301" aria-hidden="true" tabindex="-1"></a><span class="fu">### Debt-to-Asset Ratio</span></span>
+<span id="cb21-302"><a href="#cb21-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a>This ratio shows what percentage of assets are financed through debt:</span>
+<span id="cb21-304"><a href="#cb21-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-305"><a href="#cb21-305" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a>\text{Debt-to-Asset} = \frac{\text{Total Debt}}{\text{Total Assets}}</span>
+<span id="cb21-307"><a href="#cb21-307" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a>A ratio of 0.5 means half the company's assets are debt-financed. This metric is bounded between 0 and 1 (assuming positive equity), making it easier to compare across companies than the debt-to-equity ratio.</span>
+<span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interest Coverage Ratio</span></span>
+<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-313"><a href="#cb21-313" aria-hidden="true" tabindex="-1"></a>While the above ratios measure leverage levels, interest coverage assesses the ability to service that debt:</span>
+<span id="cb21-314"><a href="#cb21-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-316"><a href="#cb21-316" aria-hidden="true" tabindex="-1"></a>\text{Interest Coverage} = \frac{\text{EBIT}}{\text{Interest Expense}}</span>
+<span id="cb21-317"><a href="#cb21-317" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-318"><a href="#cb21-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-319"><a href="#cb21-319" aria-hidden="true" tabindex="-1"></a>This ratio answers: "How many times over can current operating profits cover interest obligations?" A ratio below 1.0 means operating income doesn't cover interest payments, which is a dangerous position. Ratios above 3-5 generally indicate comfortable coverage.</span>
+<span id="cb21-320"><a href="#cb21-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-321"><a href="#cb21-321" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculating Leverage Ratios</span></span>
+<span id="cb21-322"><a href="#cb21-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-325"><a href="#cb21-325" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-326"><a href="#cb21-326" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements <span class="op">=</span> balance_sheet_statements.assign(</span>
+<span id="cb21-327"><a href="#cb21-327" aria-hidden="true" tabindex="-1"></a>    debt_to_equity<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_debt"</span>] <span class="op">/</span> x[<span class="st">"total_equity"</span>],</span>
+<span id="cb21-328"><a href="#cb21-328" aria-hidden="true" tabindex="-1"></a>    debt_to_asset<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_debt"</span>] <span class="op">/</span> x[<span class="st">"at"</span>]</span>
+<span id="cb21-329"><a href="#cb21-329" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-330"><a href="#cb21-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-331"><a href="#cb21-331" aria-hidden="true" tabindex="-1"></a>income_statements <span class="op">=</span> (comp_vn30</span>
+<span id="cb21-332"><a href="#cb21-332" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-333"><a href="#cb21-333" aria-hidden="true" tabindex="-1"></a>        year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"year"</span>].astype(<span class="bu">int</span>),</span>
+<span id="cb21-334"><a href="#cb21-334" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Handle zero interest expense to avoid infinity</span></span>
+<span id="cb21-335"><a href="#cb21-335" aria-hidden="true" tabindex="-1"></a>        interest_coverage<span class="op">=</span><span class="kw">lambda</span> x: np.where(</span>
+<span id="cb21-336"><a href="#cb21-336" aria-hidden="true" tabindex="-1"></a>            x[<span class="st">"cfo_interest_expense"</span>] <span class="op">&gt;</span> <span class="dv">0</span>,</span>
+<span id="cb21-337"><a href="#cb21-337" aria-hidden="true" tabindex="-1"></a>            x[<span class="st">"is_net_business_profit"</span>] <span class="op">/</span> x[<span class="st">"cfo_interest_expense"</span>],</span>
+<span id="cb21-338"><a href="#cb21-338" aria-hidden="true" tabindex="-1"></a>            np.nan</span>
+<span id="cb21-339"><a href="#cb21-339" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb21-340"><a href="#cb21-340" aria-hidden="true" tabindex="-1"></a>        label<span class="op">=</span><span class="kw">lambda</span> x: np.where(</span>
+<span id="cb21-341"><a href="#cb21-341" aria-hidden="true" tabindex="-1"></a>            x[<span class="st">"symbol"</span>].isin(vn30_symbols), x[<span class="st">"symbol"</span>], np.nan</span>
+<span id="cb21-342"><a href="#cb21-342" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-343"><a href="#cb21-343" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-344"><a href="#cb21-344" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-345"><a href="#cb21-345" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-346"><a href="#cb21-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-347"><a href="#cb21-347" aria-hidden="true" tabindex="-1"></a><span class="fu">### Leverage Trends Over Time</span></span>
+<span id="cb21-348"><a href="#cb21-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-349"><a href="#cb21-349" aria-hidden="true" tabindex="-1"></a>@fig-410 tracks how debt-to-asset ratios have evolved over time. Time-series analysis reveals whether companies are becoming more or less leveraged.</span>
+<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-353"><a href="#cb21-353" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-354"><a href="#cb21-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-410</span></span>
+<span id="cb21-355"><a href="#cb21-355" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Debt-to-asset ratios show the proportion of assets financed by debt. Changes over time reflect evolving capital structure strategies and market conditions."</span></span>
+<span id="cb21-356"><a href="#cb21-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Debt-to-asset ratios of VN30 stocks over time. The figure shows a line chart with years on the horizontal axis and debt-to-asset ratios on the vertical axis."</span></span>
+<span id="cb21-357"><a href="#cb21-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-358"><a href="#cb21-358" aria-hidden="true" tabindex="-1"></a>debt_to_asset <span class="op">=</span> balance_sheet_statements.query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
+<span id="cb21-359"><a href="#cb21-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-360"><a href="#cb21-360" aria-hidden="true" tabindex="-1"></a>debt_to_asset_figure <span class="op">=</span> (</span>
+<span id="cb21-361"><a href="#cb21-361" aria-hidden="true" tabindex="-1"></a>    ggplot(debt_to_asset, aes(x<span class="op">=</span><span class="st">"year"</span>, y<span class="op">=</span><span class="st">"debt_to_asset"</span>, color<span class="op">=</span><span class="st">"symbol"</span>))</span>
+<span id="cb21-362"><a href="#cb21-362" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(size<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb21-363"><a href="#cb21-363" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-364"><a href="#cb21-364" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-365"><a href="#cb21-365" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Debt-to-Asset Ratio"</span>, color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-366"><a href="#cb21-366" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Debt-to-Asset Ratios of VN30 Stocks Over Time"</span></span>
+<span id="cb21-367"><a href="#cb21-367" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-368"><a href="#cb21-368" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-369"><a href="#cb21-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-370"><a href="#cb21-370" aria-hidden="true" tabindex="-1"></a>debt_to_asset_figure.show()</span>
+<span id="cb21-371"><a href="#cb21-371" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-372"><a href="#cb21-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-373"><a href="#cb21-373" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cross-Sectional Leverage Comparison</span></span>
+<span id="cb21-374"><a href="#cb21-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-375"><a href="#cb21-375" aria-hidden="true" tabindex="-1"></a>@fig-411 provides a snapshot of leverage across all VN30 constituents for the most recent year.</span>
+<span id="cb21-376"><a href="#cb21-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-379"><a href="#cb21-379" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-380"><a href="#cb21-380" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-411</span></span>
+<span id="cb21-381"><a href="#cb21-381" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Cross-sectional comparison of debt-to-asset ratios reveals industry patterns and company-specific financing strategies."</span></span>
+<span id="cb21-382"><a href="#cb21-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Debt-to-asset ratios of VN30 stocks in 2023. The figure shows a horizontal bar chart with companies sorted by their debt-to-asset ratio."</span></span>
+<span id="cb21-383"><a href="#cb21-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-384"><a href="#cb21-384" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison <span class="op">=</span> balance_sheet_statements.query(<span class="st">"year == 2023"</span>)</span>
+<span id="cb21-385"><a href="#cb21-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-386"><a href="#cb21-386" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison[<span class="st">"symbol"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb21-387"><a href="#cb21-387" aria-hidden="true" tabindex="-1"></a>    debt_to_asset_comparison[<span class="st">"symbol"</span>],</span>
+<span id="cb21-388"><a href="#cb21-388" aria-hidden="true" tabindex="-1"></a>    categories<span class="op">=</span>debt_to_asset_comparison.sort_values(<span class="st">"debt_to_asset"</span>)[<span class="st">"symbol"</span>],</span>
+<span id="cb21-389"><a href="#cb21-389" aria-hidden="true" tabindex="-1"></a>    ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb21-390"><a href="#cb21-390" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-391"><a href="#cb21-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-392"><a href="#cb21-392" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison_figure <span class="op">=</span> (</span>
+<span id="cb21-393"><a href="#cb21-393" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb21-394"><a href="#cb21-394" aria-hidden="true" tabindex="-1"></a>        debt_to_asset_comparison,</span>
+<span id="cb21-395"><a href="#cb21-395" aria-hidden="true" tabindex="-1"></a>        aes(y<span class="op">=</span><span class="st">"debt_to_asset"</span>, x<span class="op">=</span><span class="st">"symbol"</span>, fill<span class="op">=</span><span class="st">"label"</span>)</span>
+<span id="cb21-396"><a href="#cb21-396" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-397"><a href="#cb21-397" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_col()</span>
+<span id="cb21-398"><a href="#cb21-398" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_flip()</span>
+<span id="cb21-399"><a href="#cb21-399" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-400"><a href="#cb21-400" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-401"><a href="#cb21-401" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Debt-to-Asset Ratio"</span>, fill<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-402"><a href="#cb21-402" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Debt-to-Asset Ratios of VN30 Stocks (2023)"</span></span>
+<span id="cb21-403"><a href="#cb21-403" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-404"><a href="#cb21-404" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb21-405"><a href="#cb21-405" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-406"><a href="#cb21-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-407"><a href="#cb21-407" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison_figure.show()</span>
+<span id="cb21-408"><a href="#cb21-408" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-409"><a href="#cb21-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-410"><a href="#cb21-410" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Leverage-Coverage Trade-off</span></span>
+<span id="cb21-411"><a href="#cb21-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-412"><a href="#cb21-412" aria-hidden="true" tabindex="-1"></a>@fig-412 examines the relationship between leverage levels and debt-servicing ability. Companies with higher debt loads should ideally have stronger interest coverage to maintain financial stability.</span>
+<span id="cb21-413"><a href="#cb21-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-416"><a href="#cb21-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-417"><a href="#cb21-417" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-412</span></span>
+<span id="cb21-418"><a href="#cb21-418" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The relationship between leverage and interest coverage reveals whether companies can comfortably service their debt. High leverage with low coverage indicates elevated financial risk."</span></span>
+<span id="cb21-419"><a href="#cb21-419" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Debt-to-asset ratios versus interest coverage. The figure shows a scatter plot with debt-to-asset on the horizontal axis and interest coverage on the vertical axis."</span></span>
+<span id="cb21-420"><a href="#cb21-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-421"><a href="#cb21-421" aria-hidden="true" tabindex="-1"></a>interest_coverage <span class="op">=</span> (income_statements</span>
+<span id="cb21-422"><a href="#cb21-422" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
+<span id="cb21-423"><a href="#cb21-423" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"interest_coverage"</span>])</span>
+<span id="cb21-424"><a href="#cb21-424" aria-hidden="true" tabindex="-1"></a>    .merge(balance_sheet_statements, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb21-425"><a href="#cb21-425" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-426"><a href="#cb21-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-427"><a href="#cb21-427" aria-hidden="true" tabindex="-1"></a>interest_coverage_figure <span class="op">=</span> (</span>
+<span id="cb21-428"><a href="#cb21-428" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb21-429"><a href="#cb21-429" aria-hidden="true" tabindex="-1"></a>        interest_coverage,</span>
+<span id="cb21-430"><a href="#cb21-430" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"debt_to_asset"</span>, y<span class="op">=</span><span class="st">"interest_coverage"</span>, color<span class="op">=</span><span class="st">"label"</span>)</span>
+<span id="cb21-431"><a href="#cb21-431" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-432"><a href="#cb21-432" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(size<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb21-433"><a href="#cb21-433" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_label(</span>
+<span id="cb21-434"><a href="#cb21-434" aria-hidden="true" tabindex="-1"></a>        aes(label<span class="op">=</span><span class="st">"label"</span>),</span>
+<span id="cb21-435"><a href="#cb21-435" aria-hidden="true" tabindex="-1"></a>        adjust_text<span class="op">=</span>{<span class="st">"arrowprops"</span>: {<span class="st">"arrowstyle"</span>: <span class="st">"-"</span>}}</span>
+<span id="cb21-436"><a href="#cb21-436" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-437"><a href="#cb21-437" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-438"><a href="#cb21-438" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-439"><a href="#cb21-439" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Debt-to-Asset Ratio"</span>, y<span class="op">=</span><span class="st">"Interest Coverage Ratio"</span>,</span>
+<span id="cb21-440"><a href="#cb21-440" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Leverage versus Interest Coverage for VN30 Stocks (2023)"</span></span>
+<span id="cb21-441"><a href="#cb21-441" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-442"><a href="#cb21-442" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb21-443"><a href="#cb21-443" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-444"><a href="#cb21-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-445"><a href="#cb21-445" aria-hidden="true" tabindex="-1"></a>interest_coverage_figure.show()</span>
+<span id="cb21-446"><a href="#cb21-446" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-447"><a href="#cb21-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-448"><a href="#cb21-448" aria-hidden="true" tabindex="-1"></a>The scatter plot reveals important patterns. Companies in the upper-left quadrant (low leverage, high coverage) have conservative financing with ample debt capacity. Those in the lower-right (high leverage, low coverage) face elevated financial risk.</span>
+<span id="cb21-449"><a href="#cb21-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-450"><a href="#cb21-450" aria-hidden="true" tabindex="-1"></a><span class="fu">## Efficiency Ratios: How Well Are Assets Managed?</span></span>
+<span id="cb21-451"><a href="#cb21-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-452"><a href="#cb21-452" aria-hidden="true" tabindex="-1"></a>Efficiency ratios measure how effectively a company utilizes its assets and manages operations. These metrics help identify whether management is extracting maximum value from the company's resource base.</span>
+<span id="cb21-453"><a href="#cb21-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-454"><a href="#cb21-454" aria-hidden="true" tabindex="-1"></a><span class="fu">### Asset Turnover</span></span>
+<span id="cb21-455"><a href="#cb21-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-456"><a href="#cb21-456" aria-hidden="true" tabindex="-1"></a>This ratio measures how efficiently a company uses total assets to generate revenue:</span>
+<span id="cb21-457"><a href="#cb21-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-458"><a href="#cb21-458" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-459"><a href="#cb21-459" aria-hidden="true" tabindex="-1"></a>\text{Asset Turnover} = \frac{\text{Revenue}}{\text{Total Assets}}</span>
+<span id="cb21-460"><a href="#cb21-460" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-461"><a href="#cb21-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-462"><a href="#cb21-462" aria-hidden="true" tabindex="-1"></a>A higher ratio indicates more efficient asset utilization: the company generates more sales per dollar of assets. However, optimal levels vary dramatically across industries. Retailers with minimal fixed assets might achieve turnovers above 2.0, while capital-intensive manufacturers might operate below 0.5.</span>
+<span id="cb21-463"><a href="#cb21-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-464"><a href="#cb21-464" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inventory Turnover</span></span>
+<span id="cb21-465"><a href="#cb21-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-466"><a href="#cb21-466" aria-hidden="true" tabindex="-1"></a>For companies carrying inventory, this ratio reveals how quickly stock moves through the business:</span>
+<span id="cb21-467"><a href="#cb21-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-468"><a href="#cb21-468" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-469"><a href="#cb21-469" aria-hidden="true" tabindex="-1"></a>\text{Inventory Turnover} = \frac{\text{Cost of Goods Sold}}{\text{Inventory}}</span>
+<span id="cb21-470"><a href="#cb21-470" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-471"><a href="#cb21-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-472"><a href="#cb21-472" aria-hidden="true" tabindex="-1"></a>Higher turnover suggests efficient inventory management (i.e., goods don't sit on shelves collecting dust). However, extremely high turnover might indicate stockout risks, while very low turnover could signal obsolete inventory or overinvestment in working capital.</span>
+<span id="cb21-473"><a href="#cb21-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-474"><a href="#cb21-474" aria-hidden="true" tabindex="-1"></a>We use COGS rather than revenue in the numerator because inventory is recorded at cost, not selling price. Using revenue would overstate turnover for high-margin businesses.</span>
+<span id="cb21-475"><a href="#cb21-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-476"><a href="#cb21-476" aria-hidden="true" tabindex="-1"></a><span class="fu">### Receivables Turnover</span></span>
+<span id="cb21-477"><a href="#cb21-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-478"><a href="#cb21-478" aria-hidden="true" tabindex="-1"></a>This ratio measures how effectively a company collects payments from customers:</span>
+<span id="cb21-479"><a href="#cb21-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-480"><a href="#cb21-480" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-481"><a href="#cb21-481" aria-hidden="true" tabindex="-1"></a>\text{Receivables Turnover} = \frac{\text{Revenue}}{\text{Accounts Receivable}}</span>
+<span id="cb21-482"><a href="#cb21-482" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-483"><a href="#cb21-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-484"><a href="#cb21-484" aria-hidden="true" tabindex="-1"></a>Higher turnover indicates faster collection (i.e., customers pay promptly). Converting this to "days sales outstanding" (365 / turnover) gives the average collection period in days. Companies must balance collection efficiency against the sales impact of restrictive credit policies.</span>
+<span id="cb21-485"><a href="#cb21-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-486"><a href="#cb21-486" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculating Efficiency Ratios</span></span>
+<span id="cb21-487"><a href="#cb21-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-490"><a href="#cb21-490" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-491"><a href="#cb21-491" aria-hidden="true" tabindex="-1"></a>combined_statements <span class="op">=</span> (balance_sheet_statements</span>
+<span id="cb21-492"><a href="#cb21-492" aria-hidden="true" tabindex="-1"></a>    .get([</span>
+<span id="cb21-493"><a href="#cb21-493" aria-hidden="true" tabindex="-1"></a>        <span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"label"</span>, <span class="st">"current_ratio"</span>, <span class="st">"quick_ratio"</span>,</span>
+<span id="cb21-494"><a href="#cb21-494" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cash_ratio"</span>, <span class="st">"debt_to_equity"</span>, <span class="st">"debt_to_asset"</span>, <span class="st">"total_asset"</span>,</span>
+<span id="cb21-495"><a href="#cb21-495" aria-hidden="true" tabindex="-1"></a>        <span class="st">"total_equity"</span></span>
+<span id="cb21-496"><a href="#cb21-496" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb21-497"><a href="#cb21-497" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
+<span id="cb21-498"><a href="#cb21-498" aria-hidden="true" tabindex="-1"></a>        (income_statements</span>
+<span id="cb21-499"><a href="#cb21-499" aria-hidden="true" tabindex="-1"></a>            .get([</span>
+<span id="cb21-500"><a href="#cb21-500" aria-hidden="true" tabindex="-1"></a>                <span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"interest_coverage"</span>, <span class="st">"is_revenue"</span>,</span>
+<span id="cb21-501"><a href="#cb21-501" aria-hidden="true" tabindex="-1"></a>                <span class="st">"is_cogs"</span>, <span class="st">"selling_general_and_administrative_expenses"</span>,</span>
+<span id="cb21-502"><a href="#cb21-502" aria-hidden="true" tabindex="-1"></a>                <span class="st">"is_interest_expense"</span>, <span class="st">"is_gross_profit"</span>, <span class="st">"is_eat"</span></span>
+<span id="cb21-503"><a href="#cb21-503" aria-hidden="true" tabindex="-1"></a>            ])</span>
+<span id="cb21-504"><a href="#cb21-504" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb21-505"><a href="#cb21-505" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>],</span>
+<span id="cb21-506"><a href="#cb21-506" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb21-507"><a href="#cb21-507" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-508"><a href="#cb21-508" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
+<span id="cb21-509"><a href="#cb21-509" aria-hidden="true" tabindex="-1"></a>        (comp_vn30</span>
+<span id="cb21-510"><a href="#cb21-510" aria-hidden="true" tabindex="-1"></a>            .assign(year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"year"</span>].astype(<span class="bu">int</span>))</span>
+<span id="cb21-511"><a href="#cb21-511" aria-hidden="true" tabindex="-1"></a>            .get([<span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"ca_total_inventory"</span>, <span class="st">"ca_acc_receiv"</span>])</span>
+<span id="cb21-512"><a href="#cb21-512" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb21-513"><a href="#cb21-513" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>],</span>
+<span id="cb21-514"><a href="#cb21-514" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb21-515"><a href="#cb21-515" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-516"><a href="#cb21-516" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-517"><a href="#cb21-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-518"><a href="#cb21-518" aria-hidden="true" tabindex="-1"></a>combined_statements <span class="op">=</span> combined_statements.assign(</span>
+<span id="cb21-519"><a href="#cb21-519" aria-hidden="true" tabindex="-1"></a>    asset_turnover<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_revenue"</span>] <span class="op">/</span> x[<span class="st">"total_asset"</span>],</span>
+<span id="cb21-520"><a href="#cb21-520" aria-hidden="true" tabindex="-1"></a>    inventory_turnover<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_cogs"</span>] <span class="op">/</span> x[<span class="st">"ca_total_inventory"</span>],</span>
+<span id="cb21-521"><a href="#cb21-521" aria-hidden="true" tabindex="-1"></a>    receivables_turnover<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_revenue"</span>] <span class="op">/</span> x[<span class="st">"ca_acc_receiv"</span>]</span>
+<span id="cb21-522"><a href="#cb21-522" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-523"><a href="#cb21-523" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-524"><a href="#cb21-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-525"><a href="#cb21-525" aria-hidden="true" tabindex="-1"></a>Efficiency ratios vary dramatically across industries, making peer comparison essential. A grocery store and a shipbuilder will have fundamentally different asset and inventory dynamics.</span>
+<span id="cb21-526"><a href="#cb21-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-527"><a href="#cb21-527" aria-hidden="true" tabindex="-1"></a><span class="fu">## Profitability Ratios: Is the Company Making Money?</span></span>
+<span id="cb21-528"><a href="#cb21-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-529"><a href="#cb21-529" aria-hidden="true" tabindex="-1"></a>Profitability ratios evaluate how effectively a company converts activity into earnings. These metrics directly measure financial success and are among the most closely watched indicators by investors.</span>
+<span id="cb21-530"><a href="#cb21-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-531"><a href="#cb21-531" aria-hidden="true" tabindex="-1"></a><span class="fu">### Gross Margin</span></span>
+<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-533"><a href="#cb21-533" aria-hidden="true" tabindex="-1"></a>The gross margin reveals what percentage of revenue remains after direct production costs:</span>
+<span id="cb21-534"><a href="#cb21-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-535"><a href="#cb21-535" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-536"><a href="#cb21-536" aria-hidden="true" tabindex="-1"></a>\text{Gross Margin} = \frac{\text{Gross Profit}}{\text{Revenue}} = \frac{\text{Revenue} - \text{COGS}}{\text{Revenue}}</span>
+<span id="cb21-537"><a href="#cb21-537" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-538"><a href="#cb21-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-539"><a href="#cb21-539" aria-hidden="true" tabindex="-1"></a>Higher gross margins indicate stronger pricing power, more efficient production, or a favorable product mix. This metric is particularly useful for comparing companies within an industry, as it reveals relative efficiency in core operations before overhead costs.</span>
+<span id="cb21-540"><a href="#cb21-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-541"><a href="#cb21-541" aria-hidden="true" tabindex="-1"></a><span class="fu">### Profit Margin</span></span>
+<span id="cb21-542"><a href="#cb21-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-543"><a href="#cb21-543" aria-hidden="true" tabindex="-1"></a>The profit margin shows what percentage of revenue ultimately becomes net income:</span>
+<span id="cb21-544"><a href="#cb21-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-545"><a href="#cb21-545" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-546"><a href="#cb21-546" aria-hidden="true" tabindex="-1"></a>\text{Profit Margin} = \frac{\text{Net Income}}{\text{Revenue}}</span>
+<span id="cb21-547"><a href="#cb21-547" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-548"><a href="#cb21-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-549"><a href="#cb21-549" aria-hidden="true" tabindex="-1"></a>This comprehensive measure accounts for all costs (e.g., production, operations, interest, and taxes). Higher profit margins suggest effective overall cost management. However, optimal margins vary by industry: software companies routinely achieve 20%+ margins, while grocery stores operate on razor-thin 2-3% margins.</span>
+<span id="cb21-550"><a href="#cb21-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-551"><a href="#cb21-551" aria-hidden="true" tabindex="-1"></a><span class="fu">### Return on Equity (ROE)</span></span>
+<span id="cb21-552"><a href="#cb21-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-553"><a href="#cb21-553" aria-hidden="true" tabindex="-1"></a>ROE measures how efficiently a company uses shareholders' investment to generate profits:</span>
+<span id="cb21-554"><a href="#cb21-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-555"><a href="#cb21-555" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-556"><a href="#cb21-556" aria-hidden="true" tabindex="-1"></a>\text{Return on Equity} = \frac{\text{Net Income}}{\text{Total Equity}}</span>
+<span id="cb21-557"><a href="#cb21-557" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-558"><a href="#cb21-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-559"><a href="#cb21-559" aria-hidden="true" tabindex="-1"></a>This metric directly addresses what shareholders care about: returns on their invested capital. Higher ROE indicates more effective use of equity, though interpretation requires caution. High leverage can artificially inflate ROE by reducing the equity base (e.g., a company financed 90% by debt will show spectacular ROE on modest profits).</span>
+<span id="cb21-560"><a href="#cb21-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-561"><a href="#cb21-561" aria-hidden="true" tabindex="-1"></a><span class="fu">### The DuPont Decomposition</span></span>
+<span id="cb21-562"><a href="#cb21-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-563"><a href="#cb21-563" aria-hidden="true" tabindex="-1"></a>The DuPont framework decomposes ROE into three components that reveal different aspects of performance:</span>
+<span id="cb21-564"><a href="#cb21-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-565"><a href="#cb21-565" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-566"><a href="#cb21-566" aria-hidden="true" tabindex="-1"></a>\text{ROE} = \underbrace{\frac{\text{Net Income}}{\text{Revenue}}}_{\text{Profit Margin}} \times \underbrace{\frac{\text{Revenue}}{\text{Assets}}}_{\text{Asset Turnover}} \times \underbrace{\frac{\text{Assets}}{\text{Equity}}}_{\text{Leverage}}</span>
+<span id="cb21-567"><a href="#cb21-567" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-568"><a href="#cb21-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-569"><a href="#cb21-569" aria-hidden="true" tabindex="-1"></a>This decomposition shows that high ROE can come from different sources: strong profit margins (pricing power, cost control), efficient asset use (high turnover), or aggressive leverage. Understanding which driver dominates helps assess sustainability. ROE driven by margins is generally more sustainable than ROE driven by leverage.</span>
+<span id="cb21-570"><a href="#cb21-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-571"><a href="#cb21-571" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculating Profitability Ratios</span></span>
+<span id="cb21-572"><a href="#cb21-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-575"><a href="#cb21-575" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-576"><a href="#cb21-576" aria-hidden="true" tabindex="-1"></a>combined_statements <span class="op">=</span> combined_statements.assign(</span>
+<span id="cb21-577"><a href="#cb21-577" aria-hidden="true" tabindex="-1"></a>    gross_margin<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_gross_profit"</span>] <span class="op">/</span> x[<span class="st">"is_revenue"</span>],</span>
+<span id="cb21-578"><a href="#cb21-578" aria-hidden="true" tabindex="-1"></a>    profit_margin<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_eat"</span>] <span class="op">/</span> x[<span class="st">"is_revenue"</span>],</span>
+<span id="cb21-579"><a href="#cb21-579" aria-hidden="true" tabindex="-1"></a>    after_tax_roe<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_eat"</span>] <span class="op">/</span> x[<span class="st">"total_equity"</span>]</span>
+<span id="cb21-580"><a href="#cb21-580" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-581"><a href="#cb21-581" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-582"><a href="#cb21-582" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-583"><a href="#cb21-583" aria-hidden="true" tabindex="-1"></a><span class="fu">### Gross Margin Trends</span></span>
+<span id="cb21-584"><a href="#cb21-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-585"><a href="#cb21-585" aria-hidden="true" tabindex="-1"></a>@fig-413 tracks gross margin evolution over time, revealing whether companies are maintaining pricing power and production efficiency.</span>
+<span id="cb21-586"><a href="#cb21-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-589"><a href="#cb21-589" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-590"><a href="#cb21-590" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-413</span></span>
+<span id="cb21-591"><a href="#cb21-591" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gross margin trends reveal changes in pricing power and production efficiency. Declining margins may signal increased competition or rising input costs."</span></span>
+<span id="cb21-592"><a href="#cb21-592" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Gross margins for VN30 stocks over time. The figure shows a line chart with years on the horizontal axis and gross margins on the vertical axis."</span></span>
+<span id="cb21-593"><a href="#cb21-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-594"><a href="#cb21-594" aria-hidden="true" tabindex="-1"></a>gross_margins <span class="op">=</span> combined_statements.query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
+<span id="cb21-595"><a href="#cb21-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-596"><a href="#cb21-596" aria-hidden="true" tabindex="-1"></a>gross_margins_figure <span class="op">=</span> (</span>
+<span id="cb21-597"><a href="#cb21-597" aria-hidden="true" tabindex="-1"></a>    ggplot(gross_margins, aes(x<span class="op">=</span><span class="st">"year"</span>, y<span class="op">=</span><span class="st">"gross_margin"</span>, color<span class="op">=</span><span class="st">"symbol"</span>))</span>
+<span id="cb21-598"><a href="#cb21-598" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
+<span id="cb21-599"><a href="#cb21-599" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-600"><a href="#cb21-600" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-601"><a href="#cb21-601" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"Gross Margin"</span>, color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-602"><a href="#cb21-602" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Gross Margins for VN30 Stocks (2019-2023)"</span></span>
+<span id="cb21-603"><a href="#cb21-603" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-604"><a href="#cb21-604" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-605"><a href="#cb21-605" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-606"><a href="#cb21-606" aria-hidden="true" tabindex="-1"></a>gross_margins_figure.show()</span>
+<span id="cb21-607"><a href="#cb21-607" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-608"><a href="#cb21-608" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-609"><a href="#cb21-609" aria-hidden="true" tabindex="-1"></a><span class="fu">### From Gross to Net: Where Do Profits Go?</span></span>
+<span id="cb21-610"><a href="#cb21-610" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-611"><a href="#cb21-611" aria-hidden="true" tabindex="-1"></a>@fig-414 examines the relationship between gross and profit margins. The gap between them reveals the impact of operating expenses, interest, and taxes.</span>
+<span id="cb21-612"><a href="#cb21-612" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-615"><a href="#cb21-615" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-616"><a href="#cb21-616" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-414</span></span>
+<span id="cb21-617"><a href="#cb21-617" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Comparing gross and profit margins reveals how much of gross profit survives operating expenses, interest, and taxes. Companies far below the diagonal have high overhead relative to gross profit."</span></span>
+<span id="cb21-618"><a href="#cb21-618" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Gross versus profit margins for VN30 stocks. The figure shows a scatter plot with gross margins on the horizontal axis and profit margins on the vertical axis."</span></span>
+<span id="cb21-619"><a href="#cb21-619" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-620"><a href="#cb21-620" aria-hidden="true" tabindex="-1"></a>profit_margins <span class="op">=</span> combined_statements.query(<span class="st">"year == 2023"</span>)</span>
+<span id="cb21-621"><a href="#cb21-621" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-622"><a href="#cb21-622" aria-hidden="true" tabindex="-1"></a>profit_margins_figure <span class="op">=</span> (</span>
+<span id="cb21-623"><a href="#cb21-623" aria-hidden="true" tabindex="-1"></a>    ggplot(</span>
+<span id="cb21-624"><a href="#cb21-624" aria-hidden="true" tabindex="-1"></a>        profit_margins,</span>
+<span id="cb21-625"><a href="#cb21-625" aria-hidden="true" tabindex="-1"></a>        aes(x<span class="op">=</span><span class="st">"gross_margin"</span>, y<span class="op">=</span><span class="st">"profit_margin"</span>, color<span class="op">=</span><span class="st">"label"</span>)</span>
+<span id="cb21-626"><a href="#cb21-626" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-627"><a href="#cb21-627" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(size<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb21-628"><a href="#cb21-628" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_label(</span>
+<span id="cb21-629"><a href="#cb21-629" aria-hidden="true" tabindex="-1"></a>        aes(label<span class="op">=</span><span class="st">"label"</span>),</span>
+<span id="cb21-630"><a href="#cb21-630" aria-hidden="true" tabindex="-1"></a>        adjust_text<span class="op">=</span>{<span class="st">"arrowprops"</span>: {<span class="st">"arrowstyle"</span>: <span class="st">"-"</span>}}</span>
+<span id="cb21-631"><a href="#cb21-631" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-632"><a href="#cb21-632" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-633"><a href="#cb21-633" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_y_continuous(labels<span class="op">=</span>percent_format())</span>
+<span id="cb21-634"><a href="#cb21-634" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-635"><a href="#cb21-635" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Gross Margin"</span>, y<span class="op">=</span><span class="st">"Profit Margin"</span>,</span>
+<span id="cb21-636"><a href="#cb21-636" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Gross versus Profit Margins for VN30 Stocks (2023)"</span></span>
+<span id="cb21-637"><a href="#cb21-637" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-638"><a href="#cb21-638" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
+<span id="cb21-639"><a href="#cb21-639" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-640"><a href="#cb21-640" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-641"><a href="#cb21-641" aria-hidden="true" tabindex="-1"></a>profit_margins_figure.show()</span>
+<span id="cb21-642"><a href="#cb21-642" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-643"><a href="#cb21-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-644"><a href="#cb21-644" aria-hidden="true" tabindex="-1"></a>Companies along the diagonal convert gross profit to net income efficiently. Those well below the diagonal face high operating costs, interest burdens, or tax rates that erode profitability.</span>
+<span id="cb21-645"><a href="#cb21-645" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-646"><a href="#cb21-646" aria-hidden="true" tabindex="-1"></a><span class="fu">## Combining Financial Ratios: A Holistic View</span></span>
+<span id="cb21-647"><a href="#cb21-647" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-648"><a href="#cb21-648" aria-hidden="true" tabindex="-1"></a>Individual ratios provide specific insights, but combining them offers a more complete picture. A company might excel in profitability while struggling with liquidity, or maintain conservative leverage while underperforming on efficiency.</span>
+<span id="cb21-649"><a href="#cb21-649" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-650"><a href="#cb21-650" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ranking Companies Across Categories</span></span>
+<span id="cb21-651"><a href="#cb21-651" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-652"><a href="#cb21-652" aria-hidden="true" tabindex="-1"></a>@fig-415 compares company rankings across four ratio categories. Rankings closer to 1 indicate better performance within each category, enabling quick identification of relative strengths and weaknesses.</span>
+<span id="cb21-653"><a href="#cb21-653" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-656"><a href="#cb21-656" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-657"><a href="#cb21-657" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-415</span></span>
+<span id="cb21-658"><a href="#cb21-658" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Ranking companies across multiple ratio categories reveals overall financial profiles. Companies with consistently low ranks across categories demonstrate broad-based financial strength."</span></span>
+<span id="cb21-659"><a href="#cb21-659" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Average rank in financial ratio categories. The figure shows a scatter plot with ranks for companies across liquidity, leverage, efficiency, and profitability categories."</span></span>
+<span id="cb21-660"><a href="#cb21-660" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-661"><a href="#cb21-661" aria-hidden="true" tabindex="-1"></a>financial_ratios <span class="op">=</span> (combined_statements</span>
+<span id="cb21-662"><a href="#cb21-662" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
+<span id="cb21-663"><a href="#cb21-663" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(</span>
+<span id="cb21-664"><a href="#cb21-664" aria-hidden="true" tabindex="-1"></a>        items<span class="op">=</span>[<span class="st">"symbol"</span>] <span class="op">+</span> [</span>
+<span id="cb21-665"><a href="#cb21-665" aria-hidden="true" tabindex="-1"></a>            col <span class="cf">for</span> col <span class="kw">in</span> combined_statements.columns</span>
+<span id="cb21-666"><a href="#cb21-666" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> col <span class="cf">for</span> x <span class="kw">in</span> [</span>
+<span id="cb21-667"><a href="#cb21-667" aria-hidden="true" tabindex="-1"></a>                <span class="st">"ratio"</span>, <span class="st">"margin"</span>, <span class="st">"roe"</span>, <span class="st">"_to_"</span>, <span class="st">"turnover"</span>, <span class="st">"interest_coverage"</span></span>
+<span id="cb21-668"><a href="#cb21-668" aria-hidden="true" tabindex="-1"></a>            ])</span>
+<span id="cb21-669"><a href="#cb21-669" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb21-670"><a href="#cb21-670" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-671"><a href="#cb21-671" aria-hidden="true" tabindex="-1"></a>    .melt(id_vars<span class="op">=</span>[<span class="st">"symbol"</span>], var_name<span class="op">=</span><span class="st">"name"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb21-672"><a href="#cb21-672" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-673"><a href="#cb21-673" aria-hidden="true" tabindex="-1"></a>        <span class="bu">type</span><span class="op">=</span><span class="kw">lambda</span> x: np.select(</span>
+<span id="cb21-674"><a href="#cb21-674" aria-hidden="true" tabindex="-1"></a>            [</span>
+<span id="cb21-675"><a href="#cb21-675" aria-hidden="true" tabindex="-1"></a>                x[<span class="st">"name"</span>].isin([<span class="st">"current_ratio"</span>, <span class="st">"quick_ratio"</span>, <span class="st">"cash_ratio"</span>]),</span>
+<span id="cb21-676"><a href="#cb21-676" aria-hidden="true" tabindex="-1"></a>                x[<span class="st">"name"</span>].isin([<span class="st">"debt_to_equity"</span>, <span class="st">"debt_to_asset"</span>, <span class="st">"interest_coverage"</span>]),</span>
+<span id="cb21-677"><a href="#cb21-677" aria-hidden="true" tabindex="-1"></a>                x[<span class="st">"name"</span>].isin([<span class="st">"asset_turnover"</span>, <span class="st">"inventory_turnover"</span>, <span class="st">"receivables_turnover"</span>]),</span>
+<span id="cb21-678"><a href="#cb21-678" aria-hidden="true" tabindex="-1"></a>                x[<span class="st">"name"</span>].isin([<span class="st">"gross_margin"</span>, <span class="st">"profit_margin"</span>, <span class="st">"after_tax_roe"</span>]),</span>
+<span id="cb21-679"><a href="#cb21-679" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb21-680"><a href="#cb21-680" aria-hidden="true" tabindex="-1"></a>            [</span>
+<span id="cb21-681"><a href="#cb21-681" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Liquidity Ratios"</span>,</span>
+<span id="cb21-682"><a href="#cb21-682" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Leverage Ratios"</span>,</span>
+<span id="cb21-683"><a href="#cb21-683" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Efficiency Ratios"</span>,</span>
+<span id="cb21-684"><a href="#cb21-684" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Profitability Ratios"</span></span>
+<span id="cb21-685"><a href="#cb21-685" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb21-686"><a href="#cb21-686" aria-hidden="true" tabindex="-1"></a>            default<span class="op">=</span><span class="st">"Other"</span></span>
+<span id="cb21-687"><a href="#cb21-687" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-688"><a href="#cb21-688" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-689"><a href="#cb21-689" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-690"><a href="#cb21-690" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-691"><a href="#cb21-691" aria-hidden="true" tabindex="-1"></a>financial_ratios[<span class="st">"rank"</span>] <span class="op">=</span> (financial_ratios</span>
+<span id="cb21-692"><a href="#cb21-692" aria-hidden="true" tabindex="-1"></a>    .sort_values([<span class="st">"type"</span>, <span class="st">"name"</span>, <span class="st">"value"</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">True</span>, <span class="va">False</span>])</span>
+<span id="cb21-693"><a href="#cb21-693" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"type"</span>, <span class="st">"name"</span>])</span>
+<span id="cb21-694"><a href="#cb21-694" aria-hidden="true" tabindex="-1"></a>    .cumcount() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb21-695"><a href="#cb21-695" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-696"><a href="#cb21-696" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-697"><a href="#cb21-697" aria-hidden="true" tabindex="-1"></a>final_ranks <span class="op">=</span> (financial_ratios</span>
+<span id="cb21-698"><a href="#cb21-698" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"symbol"</span>, <span class="st">"type"</span>], as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-699"><a href="#cb21-699" aria-hidden="true" tabindex="-1"></a>    .agg(rank<span class="op">=</span>(<span class="st">"rank"</span>, <span class="st">"mean"</span>))</span>
+<span id="cb21-700"><a href="#cb21-700" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
+<span id="cb21-701"><a href="#cb21-701" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-702"><a href="#cb21-702" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-703"><a href="#cb21-703" aria-hidden="true" tabindex="-1"></a>final_ranks_figure <span class="op">=</span> (</span>
+<span id="cb21-704"><a href="#cb21-704" aria-hidden="true" tabindex="-1"></a>    ggplot(final_ranks, aes(x<span class="op">=</span><span class="st">"rank"</span>, y<span class="op">=</span><span class="st">"type"</span>, color<span class="op">=</span><span class="st">"symbol"</span>))</span>
+<span id="cb21-705"><a href="#cb21-705" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(shape<span class="op">=</span><span class="st">"^"</span>, size<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb21-706"><a href="#cb21-706" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-707"><a href="#cb21-707" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Average Rank (Lower is Better)"</span>, y<span class="op">=</span><span class="st">""</span>, color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-708"><a href="#cb21-708" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Average Rank Across Financial Ratio Categories"</span></span>
+<span id="cb21-709"><a href="#cb21-709" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-710"><a href="#cb21-710" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_cartesian(xlim<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">30</span>])</span>
+<span id="cb21-711"><a href="#cb21-711" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-712"><a href="#cb21-712" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-713"><a href="#cb21-713" aria-hidden="true" tabindex="-1"></a>final_ranks_figure.show()</span>
+<span id="cb21-714"><a href="#cb21-714" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-715"><a href="#cb21-715" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-716"><a href="#cb21-716" aria-hidden="true" tabindex="-1"></a>The combined view reveals how different business strategies manifest in financial profiles. A company might deliberately accept lower profitability rankings in exchange for stronger liquidity, or use aggressive leverage to boost returns at the cost of financial flexibility.</span>
+<span id="cb21-717"><a href="#cb21-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-718"><a href="#cb21-718" aria-hidden="true" tabindex="-1"></a><span class="fu">## Financial Ratios in Asset Pricing</span></span>
+<span id="cb21-719"><a href="#cb21-719" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-720"><a href="#cb21-720" aria-hidden="true" tabindex="-1"></a>Beyond evaluating individual companies, financial ratios serve as crucial inputs for asset pricing models. The Fama-French five-factor model, which we explore in detail in <span class="co">[</span><span class="ot">Fama-French Factors</span><span class="co">](12_fama_french.qmd)</span>, uses several accounting-based measures to explain cross-sectional variation in stock returns.</span>
+<span id="cb21-721"><a href="#cb21-721" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-722"><a href="#cb21-722" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Fama-French Factors</span></span>
+<span id="cb21-723"><a href="#cb21-723" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-724"><a href="#cb21-724" aria-hidden="true" tabindex="-1"></a>The model incorporates four company characteristics derived from financial statements:</span>
+<span id="cb21-725"><a href="#cb21-725" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-726"><a href="#cb21-726" aria-hidden="true" tabindex="-1"></a>**Size** is measured as the logarithm of market capitalization:</span>
+<span id="cb21-727"><a href="#cb21-727" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-728"><a href="#cb21-728" aria-hidden="true" tabindex="-1"></a>\text{Size} = \ln(\text{Market Cap})</span>
+<span id="cb21-729"><a href="#cb21-729" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-730"><a href="#cb21-730" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-731"><a href="#cb21-731" aria-hidden="true" tabindex="-1"></a>This captures the empirical finding that smaller firms tend to outperform larger firms on a risk-adjusted basis (i.e., the "size premium").</span>
+<span id="cb21-732"><a href="#cb21-732" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-733"><a href="#cb21-733" aria-hidden="true" tabindex="-1"></a>**Book-to-Market** relates accounting value to market value:</span>
+<span id="cb21-734"><a href="#cb21-734" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-735"><a href="#cb21-735" aria-hidden="true" tabindex="-1"></a>\text{Book-to-Market} = \frac{\text{Book Equity}}{\text{Market Cap}}</span>
+<span id="cb21-736"><a href="#cb21-736" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-737"><a href="#cb21-737" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-738"><a href="#cb21-738" aria-hidden="true" tabindex="-1"></a>High book-to-market stocks ("value" stocks) have historically outperformed low book-to-market stocks ("growth" stocks) (i.e., the "value premium").</span>
+<span id="cb21-739"><a href="#cb21-739" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-740"><a href="#cb21-740" aria-hidden="true" tabindex="-1"></a>**Operating Profitability** measures profit generation relative to equity:</span>
+<span id="cb21-741"><a href="#cb21-741" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-742"><a href="#cb21-742" aria-hidden="true" tabindex="-1"></a>\text{Profitability} = \frac{\text{Revenue} - \text{COGS} - \text{SG<span class="sc">\&amp;</span>A} - \text{Interest}}{\text{Book Equity}}</span>
+<span id="cb21-743"><a href="#cb21-743" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-744"><a href="#cb21-744" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-745"><a href="#cb21-745" aria-hidden="true" tabindex="-1"></a>More profitable firms tend to earn higher returns (i.e., the "profitability premium").</span>
+<span id="cb21-746"><a href="#cb21-746" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-747"><a href="#cb21-747" aria-hidden="true" tabindex="-1"></a>**Investment** captures asset growth:</span>
+<span id="cb21-748"><a href="#cb21-748" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-749"><a href="#cb21-749" aria-hidden="true" tabindex="-1"></a>\text{Investment} = \frac{\text{Total Assets}_t}{\text{Total Assets}_{t-1}} - 1</span>
+<span id="cb21-750"><a href="#cb21-750" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-751"><a href="#cb21-751" aria-hidden="true" tabindex="-1"></a>Firms investing aggressively tend to underperform conservative investors (i.e., the "investment premium").</span>
+<span id="cb21-752"><a href="#cb21-752" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-753"><a href="#cb21-753" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculating Fama-French Variables</span></span>
+<span id="cb21-754"><a href="#cb21-754" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-757"><a href="#cb21-757" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-758"><a href="#cb21-758" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> pd.read_sql_query(</span>
+<span id="cb21-759"><a href="#cb21-759" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM prices_monthly"</span>,</span>
+<span id="cb21-760"><a href="#cb21-760" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
+<span id="cb21-761"><a href="#cb21-761" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>{<span class="st">"datadate"</span>}</span>
+<span id="cb21-762"><a href="#cb21-762" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-763"><a href="#cb21-763" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-764"><a href="#cb21-764" aria-hidden="true" tabindex="-1"></a><span class="co"># Use December prices for annual calculations</span></span>
+<span id="cb21-765"><a href="#cb21-765" aria-hidden="true" tabindex="-1"></a>prices_december <span class="op">=</span> (prices_monthly</span>
+<span id="cb21-766"><a href="#cb21-766" aria-hidden="true" tabindex="-1"></a>    .assign(date<span class="op">=</span><span class="kw">lambda</span> x: pd.to_datetime(x[<span class="st">"date"</span>]))</span>
+<span id="cb21-767"><a href="#cb21-767" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"date.dt.month == 12"</span>)</span>
+<span id="cb21-768"><a href="#cb21-768" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-769"><a href="#cb21-769" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-770"><a href="#cb21-770" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-773"><a href="#cb21-773" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-774"><a href="#cb21-774" aria-hidden="true" tabindex="-1"></a>combined_statements_ff <span class="op">=</span> (combined_statements</span>
+<span id="cb21-775"><a href="#cb21-775" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
+<span id="cb21-776"><a href="#cb21-776" aria-hidden="true" tabindex="-1"></a>    .merge(prices_december, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb21-777"><a href="#cb21-777" aria-hidden="true" tabindex="-1"></a>    .merge(</span>
+<span id="cb21-778"><a href="#cb21-778" aria-hidden="true" tabindex="-1"></a>        (balance_sheet_statements</span>
+<span id="cb21-779"><a href="#cb21-779" aria-hidden="true" tabindex="-1"></a>            .query(<span class="st">"year == 2022"</span>)</span>
+<span id="cb21-780"><a href="#cb21-780" aria-hidden="true" tabindex="-1"></a>            .get([<span class="st">"symbol"</span>, <span class="st">"total_asset"</span>])</span>
+<span id="cb21-781"><a href="#cb21-781" aria-hidden="true" tabindex="-1"></a>            .rename(columns<span class="op">=</span>{<span class="st">"total_asset"</span>: <span class="st">"total_assets_lag"</span>})</span>
+<span id="cb21-782"><a href="#cb21-782" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb21-783"><a href="#cb21-783" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span><span class="st">"symbol"</span>,</span>
+<span id="cb21-784"><a href="#cb21-784" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">"left"</span></span>
+<span id="cb21-785"><a href="#cb21-785" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-786"><a href="#cb21-786" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-787"><a href="#cb21-787" aria-hidden="true" tabindex="-1"></a>        size<span class="op">=</span><span class="kw">lambda</span> x: np.log(x[<span class="st">"mktcap"</span>]),</span>
+<span id="cb21-788"><a href="#cb21-788" aria-hidden="true" tabindex="-1"></a>        book_to_market<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_equity"</span>] <span class="op">/</span> x[<span class="st">"mktcap"</span>],</span>
+<span id="cb21-789"><a href="#cb21-789" aria-hidden="true" tabindex="-1"></a>        operating_profitability<span class="op">=</span><span class="kw">lambda</span> x: (</span>
+<span id="cb21-790"><a href="#cb21-790" aria-hidden="true" tabindex="-1"></a>            (x[<span class="st">"is_revenue"</span>] <span class="op">-</span> x[<span class="st">"is_cogs"</span>] <span class="op">-</span></span>
+<span id="cb21-791"><a href="#cb21-791" aria-hidden="true" tabindex="-1"></a>             x[<span class="st">"selling_general_and_administrative_expenses"</span>] <span class="op">-</span></span>
+<span id="cb21-792"><a href="#cb21-792" aria-hidden="true" tabindex="-1"></a>             x[<span class="st">"is_interest_expense"</span>]) <span class="op">/</span> x[<span class="st">"total_equity"</span>]</span>
+<span id="cb21-793"><a href="#cb21-793" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb21-794"><a href="#cb21-794" aria-hidden="true" tabindex="-1"></a>        investment<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_asset"</span>] <span class="op">/</span> x[<span class="st">"total_assets_lag"</span>] <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb21-795"><a href="#cb21-795" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-796"><a href="#cb21-796" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-797"><a href="#cb21-797" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-798"><a href="#cb21-798" aria-hidden="true" tabindex="-1"></a>combined_statements_ff.head(<span class="dv">3</span>)</span>
+<span id="cb21-799"><a href="#cb21-799" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-800"><a href="#cb21-800" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-801"><a href="#cb21-801" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fama-French Factor Rankings</span></span>
+<span id="cb21-802"><a href="#cb21-802" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-803"><a href="#cb21-803" aria-hidden="true" tabindex="-1"></a>@fig-416 shows how VN30 companies rank on each Fama-French variable, connecting fundamental analysis to asset pricing.</span>
+<span id="cb21-804"><a href="#cb21-804" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-807"><a href="#cb21-807" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-808"><a href="#cb21-808" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-416</span></span>
+<span id="cb21-809"><a href="#cb21-809" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Rankings on Fama-French variables connect financial statement analysis to asset pricing. According to factor models, smaller, higher book-to-market, more profitable, and lower-investment firms should earn higher expected returns."</span></span>
+<span id="cb21-810"><a href="#cb21-810" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "Title: Rank in Fama-French variables for VN30 stocks. The figure shows a scatter plot with company ranks for size, book-to-market, profitability, and investment factors."</span></span>
+<span id="cb21-811"><a href="#cb21-811" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-812"><a href="#cb21-812" aria-hidden="true" tabindex="-1"></a>factors_ranks <span class="op">=</span> (combined_statements_ff</span>
+<span id="cb21-813"><a href="#cb21-813" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"size"</span>, <span class="st">"book_to_market"</span>, <span class="st">"operating_profitability"</span>, <span class="st">"investment"</span>])</span>
+<span id="cb21-814"><a href="#cb21-814" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{</span>
+<span id="cb21-815"><a href="#cb21-815" aria-hidden="true" tabindex="-1"></a>        <span class="st">"size"</span>: <span class="st">"Size"</span>,</span>
+<span id="cb21-816"><a href="#cb21-816" aria-hidden="true" tabindex="-1"></a>        <span class="st">"book_to_market"</span>: <span class="st">"Book-to-Market"</span>,</span>
+<span id="cb21-817"><a href="#cb21-817" aria-hidden="true" tabindex="-1"></a>        <span class="st">"operating_profitability"</span>: <span class="st">"Profitability"</span>,</span>
+<span id="cb21-818"><a href="#cb21-818" aria-hidden="true" tabindex="-1"></a>        <span class="st">"investment"</span>: <span class="st">"Investment"</span></span>
+<span id="cb21-819"><a href="#cb21-819" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb21-820"><a href="#cb21-820" aria-hidden="true" tabindex="-1"></a>    .melt(id_vars<span class="op">=</span>[<span class="st">"symbol"</span>], var_name<span class="op">=</span><span class="st">"name"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb21-821"><a href="#cb21-821" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
+<span id="cb21-822"><a href="#cb21-822" aria-hidden="true" tabindex="-1"></a>        rank<span class="op">=</span><span class="kw">lambda</span> x: (</span>
+<span id="cb21-823"><a href="#cb21-823" aria-hidden="true" tabindex="-1"></a>            x.sort_values([<span class="st">"name"</span>, <span class="st">"value"</span>], ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>])</span>
+<span id="cb21-824"><a href="#cb21-824" aria-hidden="true" tabindex="-1"></a>            .groupby(<span class="st">"name"</span>)</span>
+<span id="cb21-825"><a href="#cb21-825" aria-hidden="true" tabindex="-1"></a>            .cumcount() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb21-826"><a href="#cb21-826" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-827"><a href="#cb21-827" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-828"><a href="#cb21-828" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
+<span id="cb21-829"><a href="#cb21-829" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-830"><a href="#cb21-830" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-831"><a href="#cb21-831" aria-hidden="true" tabindex="-1"></a>factors_ranks_figure <span class="op">=</span> (</span>
+<span id="cb21-832"><a href="#cb21-832" aria-hidden="true" tabindex="-1"></a>    ggplot(factors_ranks, aes(x<span class="op">=</span><span class="st">"rank"</span>, y<span class="op">=</span><span class="st">"name"</span>, color<span class="op">=</span><span class="st">"symbol"</span>))</span>
+<span id="cb21-833"><a href="#cb21-833" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(shape<span class="op">=</span><span class="st">"^"</span>, size<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb21-834"><a href="#cb21-834" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(</span>
+<span id="cb21-835"><a href="#cb21-835" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">"Rank"</span>, y<span class="op">=</span><span class="st">""</span>, color<span class="op">=</span><span class="st">""</span>,</span>
+<span id="cb21-836"><a href="#cb21-836" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="st">"Rank in Fama-French Variables for VN30 Stocks"</span></span>
+<span id="cb21-837"><a href="#cb21-837" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb21-838"><a href="#cb21-838" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> coord_cartesian(xlim<span class="op">=</span>[<span class="dv">1</span>, <span class="dv">30</span>])</span>
+<span id="cb21-839"><a href="#cb21-839" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-840"><a href="#cb21-840" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-841"><a href="#cb21-841" aria-hidden="true" tabindex="-1"></a>factors_ranks_figure.show()</span>
+<span id="cb21-842"><a href="#cb21-842" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-843"><a href="#cb21-843" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-844"><a href="#cb21-844" aria-hidden="true" tabindex="-1"></a>These rankings have implications for expected returns according to factor models. A small, high book-to-market, highly profitable company with conservative investment should, in theory, earn higher risk-adjusted returns than its opposite.</span>
+<span id="cb21-845"><a href="#cb21-845" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-846"><a href="#cb21-846" aria-hidden="true" tabindex="-1"></a><span class="fu">## Limitations and Practical Considerations</span></span>
+<span id="cb21-847"><a href="#cb21-847" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-848"><a href="#cb21-848" aria-hidden="true" tabindex="-1"></a>While financial ratios provide powerful analytical tools, several limitations deserve attention:</span>
+<span id="cb21-849"><a href="#cb21-849" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-850"><a href="#cb21-850" aria-hidden="true" tabindex="-1"></a><span class="fu">### Accounting Discretion</span></span>
+<span id="cb21-851"><a href="#cb21-851" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-852"><a href="#cb21-852" aria-hidden="true" tabindex="-1"></a>Companies have significant discretion in how they apply accounting standards. Revenue recognition timing, depreciation methods, inventory valuation (FIFO vs. LIFO), and capitalization versus expensing decisions all affect reported numbers. Sophisticated analysis requires understanding these choices and their impact.</span>
+<span id="cb21-853"><a href="#cb21-853" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-854"><a href="#cb21-854" aria-hidden="true" tabindex="-1"></a><span class="fu">### Industry Comparability</span></span>
+<span id="cb21-855"><a href="#cb21-855" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-856"><a href="#cb21-856" aria-hidden="true" tabindex="-1"></a>Ratios vary dramatically across industries. Comparing a bank's leverage to a retailer's is meaningless (e.g., banks naturally operate with much higher leverage due to their business model). Always benchmark against industry peers rather than absolute standards.</span>
+<span id="cb21-857"><a href="#cb21-857" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-858"><a href="#cb21-858" aria-hidden="true" tabindex="-1"></a><span class="fu">### Point-in-Time Limitations</span></span>
+<span id="cb21-859"><a href="#cb21-859" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-860"><a href="#cb21-860" aria-hidden="true" tabindex="-1"></a>Balance sheet ratios capture a single moment, which may not represent typical conditions. Companies often "window dress" by temporarily improving metrics at reporting dates. Trend analysis and quarter-over-quarter comparisons can reveal such practices.</span>
+<span id="cb21-861"><a href="#cb21-861" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-862"><a href="#cb21-862" aria-hidden="true" tabindex="-1"></a><span class="fu">### Backward-Looking Nature</span></span>
+<span id="cb21-863"><a href="#cb21-863" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-864"><a href="#cb21-864" aria-hidden="true" tabindex="-1"></a>Financial statements report historical results. Past profitability doesn't guarantee future performance, especially for companies in rapidly changing industries or facing disruption.</span>
+<span id="cb21-865"><a href="#cb21-865" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-866"><a href="#cb21-866" aria-hidden="true" tabindex="-1"></a><span class="fu">### Quality of Earnings</span></span>
+<span id="cb21-867"><a href="#cb21-867" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-868"><a href="#cb21-868" aria-hidden="true" tabindex="-1"></a>Not all profits are created equal. Earnings driven by one-time gains, accounting adjustments, or aggressive revenue recognition may not recur. Cash flow analysis helps assess earnings quality. Profits that don't convert to cash warrant skepticism.</span>
+<span id="cb21-869"><a href="#cb21-869" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-870"><a href="#cb21-870" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Takeaways</span></span>
+<span id="cb21-871"><a href="#cb21-871" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-872"><a href="#cb21-872" aria-hidden="true" tabindex="-1"></a>This chapter introduced financial statement analysis as a tool for understanding company fundamentals. The main insights are:</span>
+<span id="cb21-873"><a href="#cb21-873" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-874"><a href="#cb21-874" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Three statements, three perspectives**: The balance sheet shows financial position at a point in time, the income statement measures performance over a period, and the cash flow statement tracks actual cash movements. Together, they provide a complete picture of financial health.</span>
+<span id="cb21-875"><a href="#cb21-875" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-876"><a href="#cb21-876" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Liquidity ratios assess short-term survival**: Current, quick, and cash ratios measure the ability to meet near-term obligations. Higher ratios indicate greater liquidity but may suggest inefficient asset use.</span>
+<span id="cb21-877"><a href="#cb21-877" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-878"><a href="#cb21-878" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Leverage ratios reveal capital structure risk**: Debt-to-equity, debt-to-asset, and interest coverage ratios show how the company finances operations and whether it can service its debt. Higher leverage amplifies both returns and risk.</span>
+<span id="cb21-879"><a href="#cb21-879" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-880"><a href="#cb21-880" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Efficiency ratios measure management effectiveness**: Asset turnover, inventory turnover, and receivables turnover reveal how well the company converts resources into revenue. Industry context is essential for interpretation.</span>
+<span id="cb21-881"><a href="#cb21-881" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-882"><a href="#cb21-882" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Profitability ratios quantify financial success**: Gross margin, profit margin, and ROE measure the ability to generate earnings. The DuPont decomposition reveals whether ROE comes from margins, turnover, or leverage.</span>
+<span id="cb21-883"><a href="#cb21-883" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-884"><a href="#cb21-884" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Ratios connect to asset pricing**: Financial statement variables like book-to-market, profitability, and investment form the basis of factor models that explain cross-sectional return differences.</span>
+<span id="cb21-885"><a href="#cb21-885" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-886"><a href="#cb21-886" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Context matters for interpretation**: Ratios must be compared against industry peers, tracked over time, and considered alongside qualitative factors. No single ratio tells the complete story.</span>
+<span id="cb21-887"><a href="#cb21-887" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-888"><a href="#cb21-888" aria-hidden="true" tabindex="-1"></a>Looking ahead, subsequent chapters will explore how these fundamental variables interact with market prices in asset pricing models, and how to construct factor portfolios based on financial statement characteristics.</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
 </div> <!-- /content -->
 
 
