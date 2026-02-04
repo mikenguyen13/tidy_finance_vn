@@ -1,0 +1,9 @@
+---
+title: "Privacy Policy"
+---
+
+This website uses Google Analytics to understand how readers interact with the content. Google Analytics collects anonymized usage data such as pages visited, time on page, and device type.
+
+We do not collect personally identifiable information.
+
+By continuing to use this site, you consent to the use of analytics and cookies for research and improvement purposes.

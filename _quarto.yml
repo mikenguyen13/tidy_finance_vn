@@ -53,6 +53,8 @@ book:
     - 20_conclusion.qmd
 
     - references.qmd
+  appendices:
+    - privacy.qmd
 
 bibliography: references.bib
 
