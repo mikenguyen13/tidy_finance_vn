@@ -63,23 +63,15 @@ Before we build our size portfolios, we investigate the distribution of the vari
 #| fig-cap: "The figure shows the percentage of total market capitalization in largest stocks. We report the aggregate market capitalization of all stocks that belong to the 1, 5, 10, and 25 percent quantile of the largest firms in the monthly cross-section relative to the market capitalization of all stocks during the month."
 #| fig-alt: "Title: Percentage of total market capitalization in largest stocks. The figure shows a line chart with four different lines that are relatively stable during the entire CRSP sample period. The largest 1 percent of all stocks on average comprise around 40 percent of the entire market capitalization. For the largest 25 percent, the share is around 90 percent."
 #| fig-pos: "htb"
+
 market_cap_concentration = (prices_monthly
   .groupby("date")
-  .apply(lambda x: x.assign(
-    top01=(x["mktcap"] >= np.quantile(x["mktcap"], 0.99)),
-    top05=(x["mktcap"] >= np.quantile(x["mktcap"], 0.95)),
-    top10=(x["mktcap"] >= np.quantile(x["mktcap"], 0.90)),
-    top25=(x["mktcap"] >= np.quantile(x["mktcap"], 0.75)))
-  )
-  .reset_index(drop=True)
-  .groupby("date")
   .apply(lambda x: pd.Series({
-    "Largest 1%": x["mktcap"][x["top01"]].sum()/x["mktcap"].sum(),
-    "Largest 5%": x["mktcap"][x["top05"]].sum()/x["mktcap"].sum(),
-    "Largest 10%": x["mktcap"][x["top10"]].sum()/x["mktcap"].sum(),
-    "Largest 25%": x["mktcap"][x["top25"]].sum()/x["mktcap"].sum()
-    })
-  )
+    "Largest 1%": x.loc[x["mktcap"] >= x["mktcap"].quantile(0.99), "mktcap"].sum() / x["mktcap"].sum(),
+    "Largest 5%": x.loc[x["mktcap"] >= x["mktcap"].quantile(0.95), "mktcap"].sum() / x["mktcap"].sum(),
+    "Largest 10%": x.loc[x["mktcap"] >= x["mktcap"].quantile(0.90), "mktcap"].sum() / x["mktcap"].sum(),
+    "Largest 25%": x.loc[x["mktcap"] >= x["mktcap"].quantile(0.75), "mktcap"].sum() / x["mktcap"].sum()
+  }), include_groups=False)
   .reset_index()
   .melt(id_vars="date", var_name="name", value_name="value")
 )
@@ -88,15 +80,15 @@ market_cap_concentration_figure = (
   ggplot(
     market_cap_concentration, 
     aes(x="date", y="value", color="name", linetype="name")
-  )
-  + geom_line()
-  + scale_y_continuous(labels=percent_format())
-  + scale_x_date(name="", date_labels="%Y")
-  + labs(
-      x="", y="", color="", linetype="", 
-      title="Percentage of total market capitalization in largest stocks"
-    )
-  + theme(legend_title=element_blank())
+  ) +
+  geom_line() +
+  scale_y_continuous(labels=percent_format()) +
+  scale_x_date(name="", date_labels="%Y") +
+  labs(
+    x="", y="", color="", linetype="",
+    title="Percentage of total market capitalization in largest stocks"
+  ) +
+  theme(legend_title=element_blank())
 )
 market_cap_concentration_figure.show()
 ```
@@ -105,6 +97,7 @@ Next, firm sizes also differ across listing exchanges. The primary listings of s
 
 ```{python}
 #| label: fig-802
+#| eval: false
 #| fig-cap: "The figure shows the share of total market capitalization per listing exchange. Years are on the horizontal axis and the corresponding share of total market capitalization per listing exchange on the vertical axis."
 #| fig.alt: "Title: Share of total market capitalization per listing exchange. The figure shows stacked area plots with a steady decline in the market capitalization of NYSE listed stocks since 1970. As of 2023, NYSE-listed stocks comprise around 50 percent of the entire CRSP market capitalization. The remainder is essentially listed on NASDAQ. Other exchanges are negligible."
 #| fig-pos: "htb"
@@ -141,19 +134,18 @@ Finally, we consider the distribution of firm size across listing exchanges and 
 The resulting table shows that firms listed on NYSE in December 2023 are significantly larger on average than firms listed on the other exchanges. Moreover, NASDAQ lists the largest number of firms. This discrepancy between firm sizes across listing exchanges motivated researchers to form breakpoints exclusively on the NYSE sample and apply those breakpoints to all stocks. In the following, we use this distinction to update our portfolio sort procedure.
 
 ```{python}
+#| eval: false
 def compute_summary(data, variable, filter_variable, percentiles):
     """Compute summary statistics for a given variable and percentiles."""
     
-    summary = (data
-      .get([filter_variable, variable])
+    summary = (data[[filter_variable, variable]]
       .groupby(filter_variable)
       .describe(percentiles=percentiles)
     ) 
     
     summary.columns = summary.columns.droplevel(0)
     
-    summary_overall = (data
-      .get(variable)
+    summary_overall = (data[variable]
       .describe(percentiles=percentiles)
     )
     

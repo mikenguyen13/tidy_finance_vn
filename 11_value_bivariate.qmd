@@ -33,9 +33,9 @@ First, we load the necessary data from our SQLite database introduced in [Access
 ```{python}
 tidy_finance = sqlite3.connect(database="data/tidy_finance_python.sqlite")
 
-crsp_monthly = (pd.read_sql_query(
-    sql=("SELECT permno, gvkey, date, ret_excess, mktcap, " 
-         "mktcap_lag, exchange FROM crsp_monthly"),
+prices_monthly = (pd.read_sql_query(
+    sql=("SELECT symbol, date, ret_excess, mktcap, " 
+         "mktcap_lag, exchange FROM prices_monthly"),
     con=tidy_finance,
     parse_dates={"date"})
   .dropna()
@@ -46,7 +46,7 @@ Further, we utilize accounting data. The most common source of accounting data i
 
 ```{python}
 book_equity = (pd.read_sql_query(
-    sql="SELECT gvkey, datadate, be FROM compustat",
+    sql="SELECT symbol, datadate, be FROM compustat",
     con=tidy_finance, 
     parse_dates={"datadate"})
   .dropna()
@@ -64,39 +64,39 @@ A fundamental problem in handling accounting data is the *look-ahead bias*; we m
 
 As in the previous chapter, we continue to lag firm size by one month.\index{Market capitalization}\index{Firm size} Then, we compute the book-to-market ratio, which relates a firm's book equity to its market equity.\index{Book equity}\index{Book-to-market ratio} Firms with high (low) book-to-market ratio are called value (growth) firms. After matching the accounting and market equity information from the same month, we lag book-to-market by six months. This is a sufficiently conservative approach because accounting information is usually released well before six months pass. However, in the asset pricing literature, even longer lags are used as well.^[The definition of a time lag is another choice a researcher has to make, similar to breakpoint choices as we describe in [Size Sorts and P-Hacking](size-sorts-and-p-hacking.qmd).]
 
-Having both variables, i.e., firm size lagged by one month and book-to-market lagged by six months, we merge these sorting variables to our returns using the `sorting_date`-column created for this purpose. The final step in our data preparation deals with differences in the frequency of our variables. Returns and firm size are recorded monthly. Yet, the accounting information is only released on an annual basis. Hence, we only match book-to-market to one month per year and have eleven empty observations. To solve this frequency issue, we carry the latest book-to-market ratio of each firm to the subsequent months, i.e., we fill the missing observations with the most current report. This is done via the `fillna(method="ffill")`-function after sorting by date and firm (which we identify by `permno` and `gvkey`) and on a firm basis (which we do by `.groupby()` as usual). We filter out all observations with accounting data that is older than a year. As the last step, we remove all rows with missing entries because the returns cannot be matched to any annual report.
+Having both variables, i.e., firm size lagged by one month and book-to-market lagged by six months, we merge these sorting variables to our returns using the `sorting_date`-column created for this purpose. The final step in our data preparation deals with differences in the frequency of our variables. Returns and firm size are recorded monthly. Yet, the accounting information is only released on an annual basis. Hence, we only match book-to-market to one month per year and have eleven empty observations. To solve this frequency issue, we carry the latest book-to-market ratio of each firm to the subsequent months, i.e., we fill the missing observations with the most current report. This is done via the `fillna(method="ffill")`-function after sorting by date and firm (which we identify by `symbol` and `symbol`) and on a firm basis (which we do by `.groupby()` as usual). We filter out all observations with accounting data that is older than a year. As the last step, we remove all rows with missing entries because the returns cannot be matched to any annual report.
 
 ```{python}
-size = (crsp_monthly
+size = (prices_monthly
   .assign(sorting_date=lambda x: x["date"]+pd.DateOffset(months=1))
   .rename(columns={"mktcap": "size"})
-  .get(["permno", "sorting_date", "size"])
+  .get(["symbol", "sorting_date", "size"])
 )
 
 bm = (book_equity
-  .merge(crsp_monthly, how="inner", on=["gvkey", "date"])
+  .merge(prices_monthly, how="inner", on=["symbol", "date"])
   .assign(bm=lambda x: x["be"]/x["mktcap"],
           sorting_date=lambda x: x["date"]+pd.DateOffset(months=6))
   .assign(accounting_date=lambda x: x["sorting_date"])
-  .get(["permno", "gvkey", "sorting_date", "accounting_date", "bm"])
+  .get(["symbol", "symbol", "sorting_date", "accounting_date", "bm"])
 )
 
-data_for_sorts = (crsp_monthly
+data_for_sorts = (prices_monthly
   .merge(bm, 
          how="left", 
-         left_on=["permno", "gvkey", "date"], 
-         right_on=["permno", "gvkey", "sorting_date"])
+         left_on=["symbol", "symbol", "date"], 
+         right_on=["symbol", "symbol", "sorting_date"])
   .merge(size, 
          how="left", 
-         left_on=["permno", "date"], 
-         right_on=["permno", "sorting_date"])
-  .get(["permno", "gvkey", "date", "ret_excess", 
+         left_on=["symbol", "date"], 
+         right_on=["symbol", "sorting_date"])
+  .get(["symbol", "symbol", "date", "ret_excess", 
         "mktcap_lag", "size", "bm", "exchange", "accounting_date"])
 )
 
 data_for_sorts = (data_for_sorts
-  .sort_values(by=["permno", "gvkey", "date"])
-  .groupby(["permno", "gvkey"])
+  .sort_values(by=["symbol", "symbol", "date"])
+  .groupby(["symbol", "symbol"])
   .apply(lambda x: x.assign(
       bm=x["bm"].fillna(method="ffill"), 
       accounting_date=x["accounting_date"].fillna(method="ffill")
