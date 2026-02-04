@@ -19,10 +19,10 @@ website:
     left: |
       <span id="copyright"></span> Mike. All rights reserved.
     # right: "Built with Quarto"
-  announcement:
-    content: "Welcome"
-    type: primary
-    position: below-navbar
+  # announcement:
+  #   content: "Welcome"
+  #   type: primary
+  #   position: below-navbar
 
 
 
@@ -53,8 +53,8 @@ book:
     - 20_conclusion.qmd
 
     - references.qmd
-  appendices:
-    - privacy.qmd
+  # appendices:
+  #   - privacy.qmd
 
 bibliography: references.bib
 
@@ -71,7 +71,7 @@ format:
     # include-after-body: includes/cookie-consent.html
     # include-after-body: includes/year.js
     include-after-body:
-      - includes/cookie-consent.html
+      # - includes/cookie-consent.html
       - includes/year.js
 
   pdf:
