@@ -294,49 +294,6 @@ plt.show()
 
 ```
 
-### The "Predicted vs. Realized" Scatter Plot
-
-The ultimate test of an asset pricing model is whether it can price the test assets. If you group your stocks into portfolios (e.g., 25 portfolios sorted by Size and Beta), the model's predicted return should match the actual average return.
-
-**Action:** Compare the model's prediction against reality.
-
-1. Calculate the average realized return for each stock .
-2. Calculate the predicted return: .
-3. Scatter plot them. They should align along the 45-degree line.
-
-```{python}
-# Calculate average characteristics for each stock
-stock_means = data_fm.groupby("symbol")[["ret_excess_lead", "beta", "log_mktcap", "bm"]].mean()
-
-# Note: Ensure you grab the 'Premium (%)' divided by 100 if it was scaled
-# Or use the raw mean from risk_premiums
-lambda_beta = risk_premiums["beta"].mean()
-lambda_size = risk_premiums["log_mktcap"].mean()
-lambda_bm = risk_premiums["bm"].mean()
-const = risk_premiums["Intercept"].mean()
-
-stock_means["predicted_ret"] = (
-    const +
-    stock_means["beta"] * lambda_beta + 
-    stock_means["log_mktcap"] * lambda_size + 
-    stock_means["bm"] * lambda_bm
-)
-
-# Plot
-fig, ax = plt.subplots(figsize=(8, 8))
-ax.scatter(stock_means["predicted_ret"], stock_means["ret_excess_lead"], alpha=0.3)
-ax.plot([0, 0.05], [0, 0.05], color='r', linestyle='--') # 45-degree line
-ax.set_xlabel("Predicted Average Return")
-ax.set_ylabel("Realized Average Return")
-ax.set_title("Model Fit: Predicted vs Realized")
-plt.show()
-
-```
-
-The scatter plot compares each stock’s average realized excess return to the return predicted by the estimated risk premia and its characteristics. If the model priced assets well, the points would cluster around the 45 degree line. Instead, the cloud is centered near zero on the horizontal axis, while realized returns vary widely on the vertical axis. The fitted line is nearly flat, indicating that differences in predicted returns explain very little of the variation in realized returns across stocks.
-
-This pattern implies that, over this sample period, the estimated factor premia have weak cross sectional explanatory power at the individual stock level. Such weak fit is common in emerging markets and in short samples, where idiosyncratic volatility, thin trading, and episodic market regimes dominate the cross section of returns. It also reflects the well known fact that Fama MacBeth tests tend to have low power when applied to individual securities rather than diversified portfolios.
-
 ### Correlation of Characteristics (Multicollinearity)
 
 In Vietnam, large-cap stocks (high `log_mktcap`) are often the ones with high Book-to-Market ratios (banks/utilities) or specific Betas. If your factors are highly correlated, the Fama-MacBeth coefficients will be unstable and insignificant (low t-stats), even if the factors actually matter.

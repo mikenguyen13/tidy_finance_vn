@@ -386,7 +386,7 @@ r_{i,t+1} = \alpha + \beta_{i,t} \lambda + \epsilon_{i,t+1}
 <section id="data-preparation" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">12.2</span> Data Preparation</h2>
 <p>We utilize data from our local SQLite database. In Vietnam, the fiscal year typically ends in December, and audited reports are required by April. To ensure no look-ahead bias, we lag accounting data (Book Equity) to match returns starting in July (a 6-month conservative lag, similar to Fama-French, but adapted for Vietnamese reporting delays).</p>
-<div id="fa437833" class="cell" data-execution_count="1">
+<div id="fa437833" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
@@ -424,7 +424,7 @@ r_{i,t+1} = \alpha + \beta_{i,t} \lambda + \epsilon_{i,t+1}
 <li><strong>Size (ln(ME)):</strong> The natural log of market capitalization.</li>
 <li><strong>Value (BM):</strong> The ratio of Book Equity to Market Equity.</li>
 </ol>
-<div id="62519682" class="cell" data-execution_count="2">
+<div id="62519682" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare Characteristics</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> (</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    comp_vn</span>
@@ -501,7 +501,7 @@ r_{i,t+1} = \alpha + \beta_{i,t} \lambda + \epsilon_{i,t+1}
 </div>
 </div>
 </div>
-<div id="3e7a08f4" class="cell" data-execution_count="3">
+<div id="3e7a08f4" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge back to monthly return panel</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>data_fm <span class="op">=</span> (prices_monthly</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  .merge(characteristics, </span>
@@ -549,7 +549,7 @@ Data ready: 5,075 observations from 2017-06-30 to 2023-06-30</code></pre>
 <h2 data-number="12.3" class="anchored" data-anchor-id="step-1-cross-sectional-regressions-with-wls"><span class="header-section-number">12.3</span> Step 1: Cross-Sectional Regressions with WLS</h2>
 <p><span class="citation" data-cites="Hou2020">Hou, Xue, and Zhang (<a href="references.html#ref-Hou2020" role="doc-biblioref">2020</a>)</span> argue that micro-cap stocks distorts inference because they have high transaction costs and idiosyncratic volatility. In Vietnam, this is exacerbated by “penny stock” speculation.</p>
 <p>We implement <strong>Weighted Least Squares (WLS)</strong> where weights are the market capitalization of the prior month. This tests if the factors are priced in the <em>investable</em> universe, not just the equal-weighted average of tiny stocks.</p>
-<div id="bb634f49" class="cell" data-execution_count="4">
+<div id="bb634f49" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_cross_section(df):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Standardize inputs for numerical stability</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note: We do NOT standardize the dependent variable (returns)</span></span>
@@ -589,7 +589,7 @@ Data ready: 5,075 observations from 2017-06-30 to 2023-06-30</code></pre>
 <h2 data-number="12.4" class="anchored" data-anchor-id="step-2-time-series-aggregation-hypothesis-testing"><span class="header-section-number">12.4</span> Step 2: Time-Series Aggregation &amp; Hypothesis Testing</h2>
 <p>We now possess the time-series of risk premiums. We calculate the arithmetic mean and the -statistics.</p>
 <p>Crucially, we use <strong>Newey-West (HAC)</strong> standard errors. Risk premiums in Vietnam often exhibit autocorrelation (momentum in factor performance). A simple standard error formula would be invalid.</p>
-<div id="7d00d465" class="cell" data-execution_count="5">
+<div id="7d00d465" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_fama_macbeth_stats(df, lags<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    summary <span class="op">=</span> []</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -632,7 +632,7 @@ Data ready: 5,075 observations from 2017-06-30 to 2023-06-30</code></pre>
 <section id="visualizing-the-time-varying-risk-premium" class="level3" data-number="12.4.1">
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="visualizing-the-time-varying-risk-premium"><span class="header-section-number">12.4.1</span> Visualizing the Time-Varying Risk Premium</h3>
 <p>One major advantage of the FM approach is that we can inspect the volatility of the risk premiums over time. In Vietnam, we expect the “Size” premium to be highly volatile during periods of retail liquidity injection (e.g., 2020-2021).</p>
-<div id="cell-fig-cumulative-premiums" class="cell" data-execution_count="6">
+<div id="cell-fig-cumulative-premiums" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> mtick</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -679,7 +679,7 @@ Figure&nbsp;12.1: Cumulative Risk Premiums in Vietnam.
 <h3 data-number="12.5.1" class="anchored" data-anchor-id="time-series-volatility-check"><span class="header-section-number">12.5.1</span> Time-Series Volatility Check</h3>
 <p>Fama-MacBeth relies on the assumption that the risk premium varies over time. If your <code>bm</code> premium is truly near zero every month, the method fails.</p>
 <p><strong>Action:</strong> Plot the time series of the estimated coefficients . You want to see “noise” around a mean. If you see a flat line or a single massive spike, your data is corrupted.</p>
-<div id="d4524192" class="cell" data-execution_count="7">
+<div id="d4524192" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the time series of the BM risk premium</span></span>
@@ -706,7 +706,7 @@ Figure&nbsp;12.1: Cumulative Risk Premiums in Vietnam.
 <li>Calculate the predicted return: .</li>
 <li>Scatter plot them. They should align along the 45-degree line.</li>
 </ol>
-<div id="56c34afe" class="cell" data-execution_count="8">
+<div id="56c34afe" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average characteristics for each stock</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>stock_means <span class="op">=</span> data_fm.groupby(<span class="st">"symbol"</span>)[[<span class="st">"ret_excess_lead"</span>, <span class="st">"beta"</span>, <span class="st">"log_mktcap"</span>, <span class="st">"bm"</span>]].mean()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -747,7 +747,7 @@ Figure&nbsp;12.1: Cumulative Risk Premiums in Vietnam.
 <h3 data-number="12.5.3" class="anchored" data-anchor-id="correlation-of-characteristics-multicollinearity"><span class="header-section-number">12.5.3</span> Correlation of Characteristics (Multicollinearity)</h3>
 <p>In Vietnam, large-cap stocks (high <code>log_mktcap</code>) are often the ones with high Book-to-Market ratios (banks/utilities) or specific Betas. If your factors are highly correlated, the Fama-MacBeth coefficients will be unstable and insignificant (low t-stats), even if the factors actually matter.</p>
 <p><strong>Action:</strong> Check the cross-sectional correlation.</p>
-<div id="7bacac48" class="cell" data-execution_count="9">
+<div id="7bacac48" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check correlation of the characteristics</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> data_fm[[<span class="st">"beta"</span>, <span class="st">"log_mktcap"</span>, <span class="st">"bm"</span>]].corr()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(corr_matrix)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1538,66 +1538,23 @@ Hou, Kewei, Chen Xue, and Lu Zhang. 2020. <span>“<span class="nocase">Replicat
 <span id="cb14-308"><a href="#cb14-308" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-309"><a href="#cb14-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb14-310"><a href="#cb14-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-311"><a href="#cb14-311" aria-hidden="true" tabindex="-1"></a><span class="fu">### The "Predicted vs. Realized" Scatter Plot</span></span>
+<span id="cb14-311"><a href="#cb14-311" aria-hidden="true" tabindex="-1"></a><span class="fu">### Correlation of Characteristics (Multicollinearity)</span></span>
 <span id="cb14-312"><a href="#cb14-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-313"><a href="#cb14-313" aria-hidden="true" tabindex="-1"></a>The ultimate test of an asset pricing model is whether it can price the test assets. If you group your stocks into portfolios (e.g., 25 portfolios sorted by Size and Beta), the model's predicted return should match the actual average return.</span>
+<span id="cb14-313"><a href="#cb14-313" aria-hidden="true" tabindex="-1"></a>In Vietnam, large-cap stocks (high <span class="in">`log_mktcap`</span>) are often the ones with high Book-to-Market ratios (banks/utilities) or specific Betas. If your factors are highly correlated, the Fama-MacBeth coefficients will be unstable and insignificant (low t-stats), even if the factors actually matter.</span>
 <span id="cb14-314"><a href="#cb14-314" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-315"><a href="#cb14-315" aria-hidden="true" tabindex="-1"></a>**Action:** Compare the model's prediction against reality.</span>
+<span id="cb14-315"><a href="#cb14-315" aria-hidden="true" tabindex="-1"></a>**Action:** Check the cross-sectional correlation.</span>
 <span id="cb14-316"><a href="#cb14-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-317"><a href="#cb14-317" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calculate the average realized return for each stock .</span>
-<span id="cb14-318"><a href="#cb14-318" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Calculate the predicted return: .</span>
-<span id="cb14-319"><a href="#cb14-319" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Scatter plot them. They should align along the 45-degree line.</span>
-<span id="cb14-320"><a href="#cb14-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb14-324"><a href="#cb14-324" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate average characteristics for each stock</span></span>
-<span id="cb14-325"><a href="#cb14-325" aria-hidden="true" tabindex="-1"></a>stock_means <span class="op">=</span> data_fm.groupby(<span class="st">"symbol"</span>)[[<span class="st">"ret_excess_lead"</span>, <span class="st">"beta"</span>, <span class="st">"log_mktcap"</span>, <span class="st">"bm"</span>]].mean()</span>
-<span id="cb14-326"><a href="#cb14-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: Ensure you grab the 'Premium (%)' divided by 100 if it was scaled</span></span>
-<span id="cb14-328"><a href="#cb14-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Or use the raw mean from risk_premiums</span></span>
-<span id="cb14-329"><a href="#cb14-329" aria-hidden="true" tabindex="-1"></a>lambda_beta <span class="op">=</span> risk_premiums[<span class="st">"beta"</span>].mean()</span>
-<span id="cb14-330"><a href="#cb14-330" aria-hidden="true" tabindex="-1"></a>lambda_size <span class="op">=</span> risk_premiums[<span class="st">"log_mktcap"</span>].mean()</span>
-<span id="cb14-331"><a href="#cb14-331" aria-hidden="true" tabindex="-1"></a>lambda_bm <span class="op">=</span> risk_premiums[<span class="st">"bm"</span>].mean()</span>
-<span id="cb14-332"><a href="#cb14-332" aria-hidden="true" tabindex="-1"></a>const <span class="op">=</span> risk_premiums[<span class="st">"Intercept"</span>].mean()</span>
-<span id="cb14-333"><a href="#cb14-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-334"><a href="#cb14-334" aria-hidden="true" tabindex="-1"></a>stock_means[<span class="st">"predicted_ret"</span>] <span class="op">=</span> (</span>
-<span id="cb14-335"><a href="#cb14-335" aria-hidden="true" tabindex="-1"></a>    const <span class="op">+</span></span>
-<span id="cb14-336"><a href="#cb14-336" aria-hidden="true" tabindex="-1"></a>    stock_means[<span class="st">"beta"</span>] <span class="op">*</span> lambda_beta <span class="op">+</span> </span>
-<span id="cb14-337"><a href="#cb14-337" aria-hidden="true" tabindex="-1"></a>    stock_means[<span class="st">"log_mktcap"</span>] <span class="op">*</span> lambda_size <span class="op">+</span> </span>
-<span id="cb14-338"><a href="#cb14-338" aria-hidden="true" tabindex="-1"></a>    stock_means[<span class="st">"bm"</span>] <span class="op">*</span> lambda_bm</span>
-<span id="cb14-339"><a href="#cb14-339" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-340"><a href="#cb14-340" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-341"><a href="#cb14-341" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb14-342"><a href="#cb14-342" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
-<span id="cb14-343"><a href="#cb14-343" aria-hidden="true" tabindex="-1"></a>ax.scatter(stock_means[<span class="st">"predicted_ret"</span>], stock_means[<span class="st">"ret_excess_lead"</span>], alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb14-344"><a href="#cb14-344" aria-hidden="true" tabindex="-1"></a>ax.plot([<span class="dv">0</span>, <span class="fl">0.05</span>], [<span class="dv">0</span>, <span class="fl">0.05</span>], color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>) <span class="co"># 45-degree line</span></span>
-<span id="cb14-345"><a href="#cb14-345" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Predicted Average Return"</span>)</span>
-<span id="cb14-346"><a href="#cb14-346" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Realized Average Return"</span>)</span>
-<span id="cb14-347"><a href="#cb14-347" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Model Fit: Predicted vs Realized"</span>)</span>
-<span id="cb14-348"><a href="#cb14-348" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
-<span id="cb14-349"><a href="#cb14-349" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-350"><a href="#cb14-350" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-351"><a href="#cb14-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-352"><a href="#cb14-352" aria-hidden="true" tabindex="-1"></a>The scatter plot compares each stock’s average realized excess return to the return predicted by the estimated risk premia and its characteristics. If the model priced assets well, the points would cluster around the 45 degree line. Instead, the cloud is centered near zero on the horizontal axis, while realized returns vary widely on the vertical axis. The fitted line is nearly flat, indicating that differences in predicted returns explain very little of the variation in realized returns across stocks.</span>
-<span id="cb14-353"><a href="#cb14-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-354"><a href="#cb14-354" aria-hidden="true" tabindex="-1"></a>This pattern implies that, over this sample period, the estimated factor premia have weak cross sectional explanatory power at the individual stock level. Such weak fit is common in emerging markets and in short samples, where idiosyncratic volatility, thin trading, and episodic market regimes dominate the cross section of returns. It also reflects the well known fact that Fama MacBeth tests tend to have low power when applied to individual securities rather than diversified portfolios.</span>
-<span id="cb14-355"><a href="#cb14-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-356"><a href="#cb14-356" aria-hidden="true" tabindex="-1"></a><span class="fu">### Correlation of Characteristics (Multicollinearity)</span></span>
-<span id="cb14-357"><a href="#cb14-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-358"><a href="#cb14-358" aria-hidden="true" tabindex="-1"></a>In Vietnam, large-cap stocks (high <span class="in">`log_mktcap`</span>) are often the ones with high Book-to-Market ratios (banks/utilities) or specific Betas. If your factors are highly correlated, the Fama-MacBeth coefficients will be unstable and insignificant (low t-stats), even if the factors actually matter.</span>
-<span id="cb14-359"><a href="#cb14-359" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-360"><a href="#cb14-360" aria-hidden="true" tabindex="-1"></a>**Action:** Check the cross-sectional correlation.</span>
-<span id="cb14-361"><a href="#cb14-361" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-364"><a href="#cb14-364" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb14-365"><a href="#cb14-365" aria-hidden="true" tabindex="-1"></a><span class="co"># Check correlation of the characteristics</span></span>
-<span id="cb14-366"><a href="#cb14-366" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> data_fm[[<span class="st">"beta"</span>, <span class="st">"log_mktcap"</span>, <span class="st">"bm"</span>]].corr()</span>
-<span id="cb14-367"><a href="#cb14-367" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(corr_matrix)</span>
-<span id="cb14-368"><a href="#cb14-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-369"><a href="#cb14-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb14-370"><a href="#cb14-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-371"><a href="#cb14-371" aria-hidden="true" tabindex="-1"></a>**Interpretation:**</span>
-<span id="cb14-372"><a href="#cb14-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-373"><a href="#cb14-373" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>If correlation &gt; 0.7 (absolute value), the regression struggles to distinguish between the two factors.</span>
-<span id="cb14-374"><a href="#cb14-374" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>For example, if <span class="in">`Size`</span> and <span class="in">`Liquidity`</span> are -0.8 correlated, the model cannot tell which one is driving the return, often resulting in both having insignificant t-stats.</span>
+<span id="cb14-319"><a href="#cb14-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb14-320"><a href="#cb14-320" aria-hidden="true" tabindex="-1"></a><span class="co"># Check correlation of the characteristics</span></span>
+<span id="cb14-321"><a href="#cb14-321" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="op">=</span> data_fm[[<span class="st">"beta"</span>, <span class="st">"log_mktcap"</span>, <span class="st">"bm"</span>]].corr()</span>
+<span id="cb14-322"><a href="#cb14-322" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(corr_matrix)</span>
+<span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-324"><a href="#cb14-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-325"><a href="#cb14-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-326"><a href="#cb14-326" aria-hidden="true" tabindex="-1"></a>**Interpretation:**</span>
+<span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-328"><a href="#cb14-328" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>If correlation &gt; 0.7 (absolute value), the regression struggles to distinguish between the two factors.</span>
+<span id="cb14-329"><a href="#cb14-329" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>For example, if <span class="in">`Size`</span> and <span class="in">`Liquidity`</span> are -0.8 correlated, the model cannot tell which one is driving the return, often resulting in both having insignificant t-stats.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
