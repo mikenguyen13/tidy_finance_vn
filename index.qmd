@@ -1,6 +1,17 @@
 # Preface {.unnumbered}
 
-> This book is an independent scholarly work inspired by reproducible research principles popularized in Tidy Finance. It is not affiliated with, endorsed by, or authored by the creators of the original Tidy Finance book. All content, code, and empirical applications are original and tailored to the Vietnamese market.
+::: callout-note
+## Attribution
+
+This book is an independent derivative work inspired by reproducible research principles developed in [**Tidy Finance**](https://www.tidy-finance.org/). It is not affiliated with, or officially provided by the creators of the original Tidy Finance books. All content, code, and empirical applications are original and tailored to the Vietnamese market.
+
+This work builds directly on the methodological foundation established in:
+
+-   Scheuch, C., Voigt, S., & Weiss, P. (2023). *Tidy Finance with R*. Chapman and Hall/CRC. <https://www.tidy-finance.org/r/> [@scheuch2023tidy]
+-   Scheuch, C., Voigt, S., Weiss, P., & Frey, C. (2024). *Tidy Finance with Python*. Chapman and Hall/CRC. <https://www.tidy-finance.org/python/> [@scheuch2024tidy]
+
+We gratefully acknowledge the Tidy Finance authors for developing an open, reproducible approach to empirical finance that made this market-specific adaptation possible.
+:::
 
 ## Motivation
 
@@ -10,7 +21,7 @@ Despite this progress, the adoption of reproducible research practices has been 
 
 This book addresses that gap.
 
-It develops a reproducible empirical finance framework designed explicitly for emerging and frontier markets, using Vietnam as a primary empirical case. Rather than adapting developed-market research pipelines post hoc, the book begins from the institutional and data realities of a fast-growing, retail-dominated, regulation-intensive market and builds methodological solutions accordingly. The objective is not merely to analyze Vietnam’s financial markets, but to demonstrate how reproducible finance principles can be extended, stress-tested, and refined in environments characterized by data scarcity, institutional heterogeneity, and rapid structural change.
+It develops a reproducible empirical finance framework designed explicitly for emerging and frontier markets, using Vietnam as a primary empirical case. Rather than adapting developed-market research pipelines post hoc, the book begins from the institutional and data realities of a fast-growing, retail-dominated, regulation-intensive market and builds methodological solutions accordingly. The objective is not merely to analyze Vietnam's financial markets, but to demonstrate how reproducible finance principles, as developed in the Tidy Finance framework, can be extended, stress-tested, and refined in environments characterized by data scarcity, institutional heterogeneity, and rapid structural change.
 
 ## Why Emerging Markets Require Different Empirical Infrastructure
 
@@ -28,24 +39,34 @@ In this book, reproducibility extends beyond the narrow notion of code availabil
 
 First, all datasets are constructed from raw inputs through documented, deterministic transformations, ensuring clear data provenance. Second, empirical methods are implemented in a manner that makes modeling assumptions explicit and modifiable. Third, results are generated through scripted pipelines rather than interactive analysis, guaranteeing that updates to data or parameters propagate consistently throughout the analysis. Finally, empirical designs are modular, allowing researchers to substitute markets, sample periods, or variable definitions without rewriting entire workflows.
 
-This approach draws methodological inspiration from the broader reproducible research movement in economics and finance (e.g., @gentzkow2014code; @vilhuber2020reproducibility), while deliberately extending it beyond its original institutional and data environment. The goal is not to reproduce existing studies, but to enable new ones, particularly those that would otherwise be impractical due to fragmented data and institutional complexity.
+This approach draws methodological inspiration from the broader reproducible research movement in economics and finance [e.g., @gentzkow2014code; @vilhuber2020reproducibility], while deliberately extending it beyond its original institutional and data environment. The goal is not to reproduce existing studies, but to enable new ones—particularly those that would otherwise be impractical due to fragmented data and institutional complexity.
 
 ## Vietnam as a Case, Not an Exception
 
 Vietnam serves as the central empirical case throughout the book, but it is not treated as an idiosyncratic exception. Instead, it is presented as a representative example of a class of markets that occupy an intermediate position between frontier and emerging status: large enough to sustain active equity trading, yet still evolving in terms of regulation, disclosure quality, and investor composition.
 
-By grounding methodological development in Vietnam’s market structure, the book aims to produce insights that generalize to other contexts, including Southeast Asia, South Asia, Sub-Saharan Africa, and parts of Latin America. Each empirical chapter emphasizes which components are market-specific and which are portable, encouraging readers to adapt the framework rather than adopt it wholesale.
+By grounding methodological development in Vietnam's market structure, the book aims to produce insights that generalize to other contexts, including Southeast Asia, South Asia, Sub-Saharan Africa, and parts of Latin America. Each empirical chapter emphasizes which components are market-specific and which are portable, encouraging readers to adapt the framework rather than adopt it wholesale.
+
+## Data Access
+
+The empirical analyses in this book rely on Vietnamese equity market data provided by [Datacore](https://datacore.vn/). To ensure reproducibility while respecting data licensing constraints, we provide the following resources:
+
+-   **Sample datasets**: A subset of anonymized data is available in [DataCore's Sample Dataset](https://datacore.vn/en/demo/dataset-groups) for readers to run example code.
+-   **Data construction scripts**: All scripts used to clean and transform raw data are fully documented and available in the repository.
+-   **Replication guidance**: Readers with access to Vietnamese market data from commercial providers can use our scripts to construct equivalent datasets.
+
+For questions about data access or replication, please contact the author.
 
 ## Contribution and Audience
 
 This book makes three primary contributions.
 
-First, it proposes a reproducible empirical finance framework explicitly designed for emerging and frontier markets, integrating institutional detail into data construction and model design. Second, it provides original empirical evidence on asset pricing, liquidity, and market microstructure in Vietnam using consistently constructed datasets. Third, it delivers publication-ready, end-to-end research workflows suitable for academic research, policy analysis, and applied financial work.
+First, it proposes a reproducible empirical finance framework explicitly designed for emerging and frontier markets, integrating institutional detail into data construction and model design. Second, it provides original empirical evidence on asset pricing, liquidity, and market microstructure in Vietnam using consistently constructed datasets. Third, it provides publication-ready, end-to-end research workflows suitable for academic research, policy analysis, and applied finance.
 
-The intended audience includes graduate students in finance and economics, academic researchers working on non-developed markets, and practitioners interested in systematic analysis of emerging market equities. Familiarity with basic asset pricing theory and statistical programming is assumed, but no prior experience with Vietnam or similar markets is required.
+The intended audience includes graduate students in finance and economics, academic researchers studying non-developed markets, and practitioners interested in the systematic analysis of emerging-market equities. Familiarity with basic asset pricing theory and statistical programming is assumed, but no prior experience with Vietnam or similar markets is required.
 
 ## Structure of the Book
 
-The chapters that follow progress from data infrastructure to empirical application. Early chapters focus on institutional context, data construction, and reproducible workflow design. Subsequent chapters develop asset pricing tests, liquidity measures, and market microstructure analyses tailored to Vietnam’s equity market. Each chapter is designed to be self-contained, yet all are linked through a common data and code architecture to ensure internal consistency.
+The chapters that follow progress from data infrastructure to empirical application. The book begins with an introduction to the data sources and infrastructure used throughout, followed by chapters on institutional context, data construction, and reproducible workflow design. Subsequent chapters develop asset pricing tests, liquidity measures, and market microstructure analyses tailored to Vietnam's equity market. Each chapter is designed to be self-contained, yet all are linked through a common data and code architecture to ensure internal consistency.
 
 The book concludes by reflecting on the broader implications of reproducible empirical finance for emerging markets research and by outlining directions for future methodological and empirical work.

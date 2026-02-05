@@ -24,7 +24,7 @@ execute:
 
 
 book:
-  title: "Tidy Finance in Vietnam"
+  title: "Applying Tidy Finance with Python to Vietnam"
   author: "Mike"
   date: "2/1/2026"
   site-url: "https://github.com/mikenguyen13/tidy_finance_vn"
@@ -103,6 +103,9 @@ format:
 
     # Site search box in navbar
     search: true
+
+    footnotes-hover: true
+    citations-hover: true
 
     # Social sharing preview cards
     open-graph: true

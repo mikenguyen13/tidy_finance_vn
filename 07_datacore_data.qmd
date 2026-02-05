@@ -1,5 +1,5 @@
 ---
-title: DataCore Data
+title: Datacore Data
 format:
   html:
     toc: true
@@ -11,7 +11,21 @@ execute:
   message: false
 ---
 
-This chapter demonstrates how to connect to [Datacore](https://datacore.vn/), Vietnam's premier provider of financial and economic data for research applications. We use this connection to download the most commonly used data for stock prices and firm characteristics, including historical trading data and company fundamentals. While Datacore requires a subscription, most students and researchers typically have access through their university libraries or research institutions. For those without access, Datacore provides [demo datasets](https://datacore.vn/demo/dataset-groups) that allow you to run the code examples in this book with sample data.
+This chapter introduces [Datacore](https://datacore.vn/), Vietnam's data platform for academic, corporate, and government research. Datacore provides comprehensive financial and economic datasets, including historical trading data, company fundamentals, and macroeconomic indicators essential for reproducible finance research. We use Datacore as the primary data source throughout this book.
+
+## Data Access Options
+
+Readers can access the data used in this book through several channels:
+
+1. **Institutional subscription**: Many universities and research institutions subscribe to Datacore. Check with your library or research office for access credentials. If your institution does not yet have a subscription, consider requesting one through your library's acquisition process—Datacore offers institutional pricing for academic use.
+
+2. **Demo datasets**: Datacore provides [demo datasets](https://datacore.vn/demo/dataset-groups) that allow you to run the code examples in this book with sample data.
+   
+<!-- 3. **Sample data repository**: To ensure reproducibility, we provide a subset of anonymized data in the book's [GitHub repository](https://github.com/mikenguyen13/tidy_finance_vn). This sample covers a limited number of securities and time periods but is sufficient to execute all code examples. -->
+
+<!-- 4. **Alternative data sources**: For readers without Datacore access, we provide guidance on adapting the code to work with publicly available data from sources such as [CafeF](https://cafef.vn/), though coverage and data quality may differ. -->
+
+## Chapter Overview
 
 The chapter is organized as follows. We first establish the connection to Datacore's cloud storage infrastructure. Then, we download and prepare company fundamentals data, including balance sheet items, income statement variables, and derived metrics essential for asset pricing research. Next, we retrieve and process stock price data, computing returns, market capitalizations, and excess returns. We conclude by merging these datasets and providing descriptive statistics that characterize the Vietnamese equity market.
 
