@@ -69,7 +69,8 @@ book:
     - 16_institutional_ownership.qmd
     - 17_sue.qmd
     - 18_event_studies.qmd
-    - 20_conclusion.qmd
+    - 19_pe_ratio.qmd
+    - 50_conclusion.qmd
 
     - references.qmd
   # appendices:
