@@ -1199,7 +1199,7 @@ $$ {#eq-fol-util}
 Stocks are classified by FOL proximity (@tbl-fol-zones).
 
 | FOL Zone   | Utilization Range | Market Implication                            |
-|:-----------------|:-----------------|:-----------------------------------|
+|:------------------|:------------------|:-----------------------------------|
 | **Green**  | \< 50%            | Ample foreign room; normal trading            |
 | **Yellow** | 50-80%            | Moderate room; some foreign interest pressure |
 | **Orange** | 80-95%            | Limited room; foreign premium emerging        |
@@ -2523,7 +2523,7 @@ def compute_herding_vietnam(trades: pd.DataFrame,
 @tbl-summary-all summarizes all institutional ownership measures developed in this chapter for the Vietnamese market.
 
 | Measure | Definition | Key Adaptation for Vietnam | Python Function |
-|:-----------------|:-----------------|:-------------------|:-----------------|
+|:-----------------|:-----------------|:------------------|:-----------------|
 | IO Ratio | Inst. shares / TSO | Decomposed into state, foreign, domestic | `compute_ownership_decomposition()` |
 | HHI Concentration | $\sum w_j^2$ | Separate HHI for total, non-state, foreign | `compute_io_metrics_vietnam()` |
 | ΔBreadth | Lehavy-Sloan adjusted | Applied to irregular disclosure intervals | `compute_io_metrics_vietnam()` |

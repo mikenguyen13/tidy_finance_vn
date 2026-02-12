@@ -1,0 +1,1566 @@
+# Momentum Strategies
+
+Momentum is one of the most robust and pervasive anomalies in financial economics. Stocks that have performed well over the past three to twelve months tend to continue performing well over the subsequent three to twelve months, and stocks that have performed poorly tend to continue underperforming. This pattern, first documented by @jegadeesh1993returns, has been replicated across virtually every equity market, asset class, and time period examined, earning it a central place in the canon of empirical asset pricing.
+
+In this chapter, we provide an implementation of momentum strategies following the methodology of @jegadeesh1993returns. We construct momentum portfolios based on past cumulative returns, evaluate their performance across different formation and holding period combinations, and examine whether the momentum premium exists in the Vietnamese equity market..
+
+## Theoretical Background
+
+### The Momentum Effect
+
+The momentum effect refers to the tendency of assets with high recent returns to continue generating high returns, and assets with low recent returns to continue generating low returns. More formally, if we define the cumulative return of stock $i$ over the past $J$ months as
+
+$$
+R_{i,t-J:t-1} = \prod_{s=t-J}^{t-1} (1 + r_{i,s}) - 1
+$$ {#eq-cumret}
+
+then momentum predicts a positive cross-sectional relationship between $R_{i,t-J:t-1}$ and future returns $r_{i,t}$. That is, stocks in the top decile of past returns (winners) should outperform stocks in the bottom decile (losers) in subsequent months.
+
+The @jegadeesh1993returns framework parameterizes momentum strategies by two key dimensions:
+
+1.  **Formation period** ($J$): The number of months over which past returns are computed to rank stocks. Typical values range from 3 to 12 months.
+2.  **Holding period** ($K$): The number of months for which the momentum portfolios are held after formation. Typical values also range from 3 to 12 months.
+
+A strategy is therefore characterized by the pair $(J, K)$. For example, a $(6, 6)$ strategy ranks stocks based on their cumulative returns over the past 6 months and holds the resulting portfolios for 6 months.
+
+### Overlapping Portfolios and Calendar-Time Returns
+
+A critical implementation detail in @jegadeesh1993returns is the use of overlapping portfolios. In each month $t$, a new set of portfolios is formed based on the most recent $J$-month returns. However, portfolios formed in months $t-1$, $t-2$, $\ldots$, $t-K+1$ are still within their holding periods and therefore remain active. The return of the momentum strategy in month $t$ is thus the equally weighted average across all $K$ active cohorts:
+
+$$
+r_{p,t} = \frac{1}{K} \sum_{k=0}^{K-1} r_{p,t}^{(t-k)}
+$$ {#eq-overlapping}
+
+where $r_{p,t}^{(t-k)}$ denotes the return in month $t$ of the portfolio formed in month $t-k$. This overlapping portfolio approach serves two purposes. First, it reduces the impact of any single formation date on the strategy's performance. Second, it produces a monthly return series that can be analyzed using standard time-series methods, even when the holding period $K$ exceeds one month.
+
+### Theoretical Explanations
+
+The academic literature offers two broad classes of explanations for the momentum effect.
+
+1.  **Behavioral explanations** attribute momentum to systematic cognitive biases among investors. @daniel1998investor propose a model based on investor overconfidence and biased self-attribution: investors overweight private signals and attribute confirming outcomes to their own skill, leading to initial underreaction followed by delayed overreaction. @hong1999unified develop a model in which information diffuses gradually across heterogeneous investors, generating underreaction to firm-specific news. @barberis1998model formalize a model combining conservatism bias (slow updating of beliefs in response to new evidence) and representativeness heuristic (extrapolation of recent trends).
+2.  **Risk-based explanations** argue that momentum profits represent compensation for systematic risk that varies over time. @johnson2002rational show that momentum can arise in a rational framework if expected returns are stochastic and time-varying. @grundy2001understanding document that momentum portfolios have substantial time-varying factor exposures, suggesting that at least part of the momentum premium reflects dynamic risk. However, standard risk models such as the Fama-French three-factor model have generally struggled to explain momentum returns, which motivated the development of explicit momentum factors such as the Winners-Minus-Losers (WML) factor in @carhart1997persistence.
+
+### Momentum in Emerging Markets
+
+The behavior of momentum in emerging markets differs substantially from developed markets, and understanding these differences is essential for interpreting our Vietnamese market results.
+
+@rouwenhorst1998international provides early evidence that momentum profits exist in European markets. @chan2000profitability extend the analysis to international equity markets and find that momentum profits are present in most developed markets but are weaker or absent in several Asian markets. @chui2010individualism offer a cultural explanation, documenting that momentum profits are positively related to a country's degree of individualism as measured by @hofstede2001culture. Countries with collectivist cultures, including many in East and Southeast Asia, tend to exhibit weaker momentum effects.
+
+Several market microstructure features common in emerging markets may attenuate momentum:
+
+-   **Trading band limits** constrain daily price movements, potentially slowing the adjustment process that generates momentum. Vietnam's HOSE imposes a $\pm 7\%$ daily limit, while HNX allows $\pm 10\%$.
+-   **Lower liquidity and higher transaction costs** can erode momentum profits, as documented by @lesmond2004illusory.
+-   **Foreign ownership limits** segment the investor base, potentially altering the information diffusion dynamics that underlie momentum.
+-   **Shorter market history** limits the statistical power available to detect the effect.
+
+These considerations motivate our careful empirical analysis of whether, and to what extent, momentum manifests in Vietnamese equities.
+
+## Setting Up the Environment
+
+We begin by loading the necessary Python packages. The core packages include `pandas` for data manipulation, `numpy` for numerical operations, and `sqlite3` for database connectivity. We also import `plotnine` for creating publication-quality figures and `scipy` for statistical tests.
+
+```{python}
+import pandas as pd
+import numpy as np
+import sqlite3
+from datetime import datetime
+from itertools import product
+
+from plotnine import *
+from mizani.formatters import comma_format, percent_format
+from scipy import stats
+```
+
+We connect to our SQLite database, which stores the cleaned datasets prepared in [Accessing and Managing Financial Data](accessing-and-managing-financial-data.qmd) and [DataCore Data](datacore-data.qmd).
+
+```{python}
+tidy_finance = sqlite3.connect(
+    database="data/tidy_finance_python.sqlite"
+)
+```
+
+## Data Preparation
+
+### Loading Monthly Stock Returns
+
+We load the monthly stock price data from our database. The `prices_monthly` table contains adjusted returns, market capitalizations, and other variables for all stocks listed on HOSE and HNX.
+
+```{python}
+# prices_monthly = pd.read_sql_query(
+#     sql=("SELECT symbol, date, ret, ret_excess, mktcap, mktcap_lag, "
+#         #  "exchange "
+#          "FROM prices_monthly"),
+#     con=tidy_finance,
+#     parse_dates={"date"}
+# )
+prices_monthly = pd.read_sql_query(
+    sql="""
+        SELECT symbol, date, ret, ret_excess, mktcap, mktcap_lag, risk_free
+        FROM prices_monthly
+    """,
+    con=tidy_finance,
+    parse_dates={"date"}
+).dropna()
+
+print(f"Total monthly observations: {len(prices_monthly):,}")
+print(f"Unique stocks: {prices_monthly['symbol'].nunique():,}")
+print(f"Date range: {prices_monthly['date'].min().date()} "
+      f"to {prices_monthly['date'].max().date()}")
+```
+
+### Inspecting the Data
+
+Before proceeding with portfolio construction, we examine the key variables in our dataset. @tbl-data-summary presents the summary statistics for the main variables used in momentum portfolio construction.
+
+```{python}
+#| label: tbl-data-summary
+#| tbl-cap: "Summary statistics for monthly stock return data. The table reports the count, mean, standard deviation, minimum, 25th percentile, median, 75th percentile, and maximum for monthly returns (ret), excess returns (ret_excess), and market capitalization (mktcap, in billion VND)."
+summary_stats = (prices_monthly
+    [["ret", "ret_excess", "mktcap"]]
+    .describe()
+    .T
+    .round(4)
+)
+summary_stats
+```
+
+We also examine the cross-sectional distribution of stocks over time, which is important for understanding whether we have sufficient breadth for decile portfolio construction.
+
+```{python}
+#| label: fig-stock-count
+#| fig-cap: "Number of stocks with available return data over time. The figure shows the monthly cross-section of stocks available for momentum portfolio construction. A minimum number of stocks is needed to form meaningful decile portfolios."
+#| fig-alt: "A line chart showing the number of stocks with available monthly returns over time, generally increasing from a small number in the early 2000s to several hundred in recent years."
+stock_counts = (prices_monthly
+    .groupby("date")["symbol"]
+    .nunique()
+    .reset_index()
+    .rename(columns={"symbol": "n_stocks"})
+)
+
+plot_stock_counts = (
+    ggplot(stock_counts, aes(x="date", y="n_stocks")) +
+    geom_line(color="#1f77b4") +
+    labs(
+        x="", y="Number of stocks",
+        title="Cross-Sectional Breadth Over Time"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 5))
+)
+plot_stock_counts
+```
+
+### Loading Factor Data
+
+We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in [Fama-French Factors](fama-french-factors.qmd).
+
+```{python}
+factors_ff3_monthly = pd.read_sql_query(
+    sql="SELECT date, mkt_excess, smb, hml, risk_free FROM factors_ff3_monthly",
+    con=tidy_finance,
+    parse_dates={"date"}
+)
+
+print(f"Factor observations: {len(factors_ff3_monthly):,}")
+print(f"Date range: {factors_ff3_monthly['date'].min().date()} "
+      f"to {factors_ff3_monthly['date'].max().date()}")
+```
+
+### Data Quality Filters
+
+Momentum strategies require continuous return histories for the formation period. We apply several filters to ensure data quality:
+
+1.  **Minimum price filter**: We exclude penny stocks with prices below 1,000 VND, which are subject to extreme microstructure noise.
+2.  **Return availability**: We require non-missing returns for the entire formation period.
+3.  **Market capitalization**: We require positive lagged market capitalization for portfolio weighting.
+
+```{python}
+# Filter for stocks with positive market cap and non-missing returns
+prices_clean = (prices_monthly
+    .dropna(subset=["ret", "mktcap"])
+    .query("mktcap > 0")
+    .sort_values(["symbol", "date"])
+    .reset_index(drop=True)
+)
+
+print(f"Observations after filtering: {len(prices_clean):,}")
+print(f"Stocks after filtering: {prices_clean['symbol'].nunique():,}")
+```
+
+## Momentum Portfolio Construction
+
+### Computing Formation Period Returns
+
+The first step in constructing momentum portfolios is to compute cumulative returns over the formation period. For a formation period of $J$ months, we compute the cumulative return for each stock $i$ at the end of month $t$ as specified in @eq-cumret.
+
+We implement this using a rolling product of gross returns. A key detail is that we require non-missing returns for all $J$ months in the formation window. If any monthly return is missing, the cumulative return is set to missing, and the stock is excluded from portfolio formation in that month.
+
+```{python}
+def compute_formation_returns(data, J):
+    """
+    Compute J-month cumulative returns for momentum portfolio formation.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Panel data with columns 'symbol', 'date', 'ret'.
+    J : int
+        Formation period length in months (typically 3-12).
+    
+    Returns
+    -------
+    pd.DataFrame
+        Original data augmented with 'cum_return' column.
+    """
+    df = data.sort_values(["symbol", "date"]).copy()
+    
+    # Compute rolling J-month cumulative return
+    # Using gross returns: (1+r1)*(1+r2)*...*(1+rJ) - 1
+    df["gross_ret"] = 1 + df["ret"]
+    
+    df["cum_return"] = (
+        df.groupby("symbol")["gross_ret"]
+        .rolling(window=J, min_periods=J)
+        .apply(np.prod, raw=True)
+        .reset_index(level=0, drop=True)
+        - 1
+    )
+    
+    df = df.drop(columns=["gross_ret"])
+    
+    return df
+```
+
+Let us apply this function for our baseline case with $J = 6$ months:
+
+```{python}
+J = 6  # Formation period: 6 months
+
+prices_with_cumret = compute_formation_returns(prices_clean, J)
+
+# Check the result
+print(f"Observations with valid {J}-month cumulative returns: "
+      f"{prices_with_cumret['cum_return'].notna().sum():,}")
+print(f"\nCumulative return distribution:")
+print(prices_with_cumret["cum_return"].describe().round(4))
+```
+
+### Assigning Momentum Decile Portfolios
+
+Each month, we sort all stocks with valid cumulative returns into decile portfolios based on their past $J$-month performance. Portfolio 1 contains the bottom decile (losers) and portfolio 10 contains the top decile (winners).
+
+```{python}
+def assign_momentum_portfolios(data, n_portfolios=10):
+    """
+    Assign stocks to momentum portfolios based on formation-period returns.
+
+    For each cross-section (month), stocks are sorted into 
+    n_portfolios quantile groups according to their cumulative return.
+    
+    Portfolio 1 = lowest past returns (Losers)
+    Portfolio n_portfolios = highest past returns (Winners)
+
+    This implementation uses `groupby().transform()` rather than 
+    `groupby().apply()` to preserve the original DataFrame structure 
+    and avoid index mutation issues.
+
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Panel data containing at minimum:
+        - 'symbol' : stock identifier
+        - 'date' : formation month
+        - 'cum_return' : cumulative return over formation window
+
+    n_portfolios : int, optional
+        Number of portfolios to form (default = 10 for deciles).
+
+    Returns
+    -------
+    pd.DataFrame
+        Original data augmented with:
+        - 'momr' : integer momentum rank (1 to n_portfolios)
+    """
+
+    # Drop observations without formation-period returns
+    # These cannot be ranked into portfolios
+    df = data.dropna(subset=["cum_return"]).copy()
+
+    def safe_qcut(x):
+        """
+        Assign quantile portfolio labels within a single cross-section.
+
+        Uses pd.qcut to create approximately equal-sized portfolios.
+        If too few unique return values exist (which can happen in 
+        small markets or illiquid samples), fall back to rank-based 
+        binning to ensure portfolios are still formed.
+        """
+        try:
+            # Standard quantile sorting
+            return pd.qcut(
+                x,
+                q=n_portfolios,
+                labels=range(1, n_portfolios + 1),
+                duplicates="drop"  # prevents crash if quantile edges duplicate
+            )
+        except ValueError:
+            # Fallback: rank then evenly cut into bins
+            return pd.cut(
+                x.rank(method="first"),
+                bins=n_portfolios,
+                labels=range(1, n_portfolios + 1)
+            )
+
+    # Cross-sectional portfolio assignment:
+    # For each month, compute portfolio ranks based on cum_return.
+    # transform ensures:
+    # - original row order preserved
+    # - no index mutation
+    # - no loss of 'date' column
+    df["momr"] = (
+        df.groupby("date")["cum_return"]
+          .transform(safe_qcut)
+          .astype(int)
+    )
+
+    return df
+
+```
+
+```{python}
+portfolios = assign_momentum_portfolios(prices_with_cumret)
+
+print(f"Stocks assigned to portfolios: {len(portfolios):,}")
+print(f"\nPortfolio distribution (should be approximately equal):")
+print(portfolios.groupby("momr")["symbol"].count().to_frame("count"))
+```
+
+### Defining Holding Period Dates
+
+After forming portfolios at the end of month $t$, we hold them from the beginning of month $t+1$ through the end of month $t+K$. This one-month gap between the formation period and the start of the holding period is standard in the literature and avoids the well-documented short-term reversal effect at the one-month horizon [@jegadeesh1990evidence].
+
+```{python}
+K = 6  # Holding period: 6 months
+
+portfolios_with_dates = portfolios.copy()
+portfolios_with_dates = portfolios_with_dates.rename(
+    columns={"date": "form_date"}
+)
+
+# Define holding period start and end dates
+portfolios_with_dates["hdate1"] = (
+    portfolios_with_dates["form_date"] + pd.offsets.MonthBegin(1)
+)
+portfolios_with_dates["hdate2"] = (
+    portfolios_with_dates["form_date"] + pd.offsets.MonthEnd(K)
+)
+
+print(portfolios_with_dates[
+    ["symbol", "form_date", "cum_return", "momr", "hdate1", "hdate2"]
+].head(10))
+```
+
+### Computing Portfolio Holding Period Returns
+
+We now compute the returns of each portfolio during its holding period. For each stock-formation date combination, we merge in the actual returns realized during the holding window. This produces a panel of stock returns indexed by formation date, holding date, and momentum portfolio rank.
+
+```{python}
+# Merge: for each portfolio assignment, get all returns during holding period
+portfolio_returns = portfolios_with_dates.merge(
+    prices_clean[["symbol", "date", "ret"]].rename(
+        columns={"ret": "hret", "date": "hdate"}
+    ),
+    on="symbol",
+    how="inner"
+)
+
+# Keep only returns within the holding period
+portfolio_returns = portfolio_returns.query(
+    "hdate >= hdate1 and hdate <= hdate2"
+)
+
+print(f"Portfolio-holding period observations: {len(portfolio_returns):,}")
+```
+
+### Computing Equally Weighted Portfolio Returns
+
+The @jegadeesh1993returns methodology uses equally weighted portfolios. For each holding month, each momentum decile has $K$ active cohorts (one formed in each of the past $K$ months). We first compute the equally weighted return within each cohort, then average across cohorts to get the final monthly portfolio return.
+
+```{python}
+# Step 1: Average return within each cohort (form_date × momr × hdate)
+cohort_returns = (portfolio_returns
+    .groupby(["hdate", "momr", "form_date"])
+    .agg(cohort_ret=("hret", "mean"))
+    .reset_index()
+)
+
+# Step 2: Average across cohorts for each momentum portfolio × month
+ewret = (cohort_returns
+    .groupby(["hdate", "momr"])
+    .agg(
+        ewret=("cohort_ret", "mean"),
+        ewret_std=("cohort_ret", "std"),
+        n_cohorts=("cohort_ret", "count")
+    )
+    .reset_index()
+    .rename(columns={"hdate": "date"})
+)
+
+print(f"Monthly portfolio return observations: {len(ewret):,}")
+print(f"Date range: {ewret['date'].min().date()} to {ewret['date'].max().date()}")
+```
+
+We should verify that we have the expected number of active cohorts per month. Once the strategy has been running for at least $K$ months, each momentum decile should have exactly $K$ active cohorts.
+
+```{python}
+#| label: fig-cohort-count
+#| fig-cap: "Number of active cohorts per momentum portfolio over time. After an initial ramp-up period of K months, each portfolio should have exactly K active cohorts contributing to its monthly return."
+#| fig-alt: "A line chart showing the number of active cohorts per momentum portfolio over time, ramping up from 1 to K during the initial months and then remaining stable at K."
+cohort_check = (ewret
+    .groupby("date")["n_cohorts"]
+    .mean()
+    .reset_index()
+    .rename(columns={"n_cohorts": "avg_cohorts"})
+)
+
+plot_cohorts = (
+    ggplot(cohort_check, aes(x="date", y="avg_cohorts")) +
+    geom_line(color="#1f77b4") +
+    geom_hline(yintercept=K, linetype="dashed", color="red") +
+    labs(
+        x="", y="Average number of cohorts",
+        title=f"Active Cohorts per Portfolio (K={K})"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 4))
+)
+plot_cohorts
+```
+
+## Baseline Results: J=6, K=6 Strategy
+
+### Summary Statistics by Momentum Decile
+
+We now examine the average monthly returns for each momentum decile portfolio. @tbl-momentum-deciles presents the mean, $t$-statistic, and $p$-value for each of the ten portfolios.
+
+```{python}
+#| label: tbl-momentum-deciles
+#| tbl-cap: "Average monthly returns of momentum decile portfolios for the J=6, K=6 strategy. Portfolio 1 contains past losers and portfolio 10 contains past winners. The table reports the number of months, mean monthly return, t-statistic, and p-value for each decile."
+
+def compute_portfolio_stats(group):
+    """Compute mean, t-stat, and p-value for a return series."""
+    n = len(group)
+    mean_ret = group.mean()
+    std_ret = group.std()
+    t_stat = mean_ret / (std_ret / np.sqrt(n)) if std_ret > 0 else np.nan
+    p_val = 2 * (1 - stats.t.cdf(abs(t_stat), df=n-1)) if not np.isnan(t_stat) else np.nan
+    return pd.Series({
+        "N": n,
+        "Mean (%)": mean_ret * 100,
+        "Std (%)": std_ret * 100,
+        "t-stat": t_stat,
+        "p-value": p_val
+    })
+
+momentum_stats = (ewret
+    .groupby("momr")["ewret"]
+    .apply(compute_portfolio_stats)
+    .unstack()
+    .round(4)
+)
+
+momentum_stats
+```
+
+### The Long-Short Momentum Portfolio
+
+The key test of the momentum effect is whether the spread between winners and losers—the long-short momentum portfolio—generates statistically significant positive returns. We construct this spread portfolio by going long the top decile (portfolio 10) and short the bottom decile (portfolio 1).
+
+```{python}
+# Pivot to wide format
+ewret_wide = ewret.pivot(
+    index="date", columns="momr", values="ewret"
+).reset_index()
+
+ewret_wide.columns = ["date"] + [f"port{i}" for i in range(1, 11)]
+
+# Compute long-short return
+ewret_wide["winners"] = ewret_wide["port10"]
+ewret_wide["losers"] = ewret_wide["port1"]
+ewret_wide["long_short"] = ewret_wide["winners"] - ewret_wide["losers"]
+```
+
+```{python}
+#| label: tbl-long-short
+#| tbl-cap: "Performance of the momentum long-short strategy (J=6, K=6). Winners is the top decile, Losers is the bottom decile, and Long-Short is Winners minus Losers. The table reports the number of months, mean monthly return, t-statistic, and p-value."
+
+ls_stats = pd.DataFrame()
+for col in ["winners", "losers", "long_short"]:
+    series = ewret_wide[col].dropna()
+    n = len(series)
+    mean_val = series.mean()
+    std_val = series.std()
+    t_val = mean_val / (std_val / np.sqrt(n))
+    p_val = 2 * (1 - stats.t.cdf(abs(t_val), df=n-1))
+    ls_stats[col] = [n, mean_val * 100, std_val * 100, t_val, p_val]
+
+ls_stats.index = ["N", "Mean (%)", "Std (%)", "t-stat", "p-value"]
+ls_stats.columns = ["Winners", "Losers", "Long-Short"]
+ls_stats = ls_stats.round(4)
+ls_stats
+```
+
+### Cumulative Returns
+
+The time-series evolution of cumulative returns provides visual evidence of the momentum strategy's performance. @fig-cumret-winners-losers shows the cumulative returns of the winner and loser portfolios, while @fig-cumret-long-short shows the cumulative return of the long-short momentum strategy.
+
+```{python}
+# Compute cumulative returns
+ewret_wide = ewret_wide.sort_values("date").reset_index(drop=True)
+
+for col in ["winners", "losers", "long_short"]:
+    ewret_wide[f"cumret_{col}"] = (1 + ewret_wide[col]).cumprod() - 1
+```
+
+```{python}
+#| label: fig-cumret-winners-losers
+#| fig-cap: "Cumulative returns of momentum winner and loser portfolios. The winner portfolio (blue) contains stocks in the top decile of past 6-month returns, and the loser portfolio (red) contains stocks in the bottom decile. The spread between the two lines reflects the cumulative momentum premium."
+#| fig-alt: "A line chart showing cumulative returns of the winner and loser momentum portfolios over time. The winner portfolio generally accumulates higher returns than the loser portfolio, though both exhibit substantial variation."
+
+cumret_plot_data = (ewret_wide
+    [["date", "cumret_winners", "cumret_losers"]]
+    .melt(id_vars="date", var_name="portfolio", value_name="cumret")
+)
+cumret_plot_data["portfolio"] = cumret_plot_data["portfolio"].map({
+    "cumret_winners": "Winners (P10)",
+    "cumret_losers": "Losers (P1)"
+})
+
+plot_cumret = (
+    ggplot(cumret_plot_data, 
+           aes(x="date", y="cumret", color="portfolio")) +
+    geom_line(size=1) +
+    scale_y_continuous(labels=percent_format()) +
+    scale_color_manual(values=["#d62728", "#1f77b4"]) +
+    labs(
+        x="", y="Cumulative return",
+        color="Portfolio",
+        title="Cumulative Returns: Winners vs. Losers"
+    ) +
+    theme_minimal() +
+    theme(
+        figure_size=(10, 6),
+        legend_position="bottom"
+    )
+)
+plot_cumret
+```
+
+```{python}
+#| label: fig-cumret-long-short
+#| fig-cap: "Cumulative return of the momentum long-short strategy (Winners minus Losers). Upward-sloping periods indicate momentum profits; sharp drawdowns often coincide with market reversals or crisis episodes."
+#| fig-alt: "A line chart showing the cumulative return of the long-short momentum strategy over time, exhibiting periods of accumulation interspersed with sharp drawdowns."
+
+plot_ls = (
+    ggplot(ewret_wide, aes(x="date", y="cumret_long_short")) +
+    geom_line(size=1, color="#2ca02c") +
+    geom_hline(yintercept=0, linetype="dashed", color="gray") +
+    scale_y_continuous(labels=percent_format()) +
+    labs(
+        x="", y="Cumulative return",
+        title="Cumulative Return: Long-Short Momentum Strategy"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 6))
+)
+plot_ls
+```
+
+### Monthly Return Distribution
+
+Beyond the mean, the full distribution of monthly long-short returns provides insight into the risk profile of the momentum strategy. @fig-return-distribution shows the histogram of monthly returns.
+
+```{python}
+#| label: fig-return-distribution
+#| fig-cap: "Distribution of monthly long-short momentum returns. The histogram shows the frequency distribution of monthly Winners-minus-Losers returns. The vertical dashed line indicates the mean monthly return."
+#| fig-alt: "A histogram of monthly long-short momentum returns, approximately centered near zero or slightly positive, with tails extending in both directions."
+
+mean_ls = ewret_wide["long_short"].mean()
+
+plot_dist = (
+    ggplot(ewret_wide, aes(x="long_short")) +
+    geom_histogram(bins=50, fill="#1f77b4", alpha=0.7) +
+    geom_vline(xintercept=mean_ls, linetype="dashed", color="red") +
+    scale_x_continuous(labels=percent_format()) +
+    labs(
+        x="Monthly long-short return",
+        y="Frequency",
+        title="Distribution of Monthly Momentum Returns"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 5))
+)
+plot_dist
+```
+
+## Extending to Multiple Formation and Holding Periods
+
+### The J × K Grid
+
+@jegadeesh1993returns evaluate momentum strategies across a comprehensive grid of formation periods $J \in \{3, 6, 9, 12\}$ and holding periods $K \in \{3, 6, 9, 12\}$. This produces 16 different strategy specifications, allowing us to assess the robustness of the momentum effect across different horizons.
+
+We now implement a function that computes the full momentum strategy for any given $(J, K)$ pair, wrapping the steps developed above into a single reusable pipeline.
+
+```{python}
+def momentum_strategy(data, J, K, n_portfolios=10):
+    """
+    Implement the full Jegadeesh-Titman momentum strategy.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Panel of stock returns with columns: symbol, date, ret.
+    J : int
+        Formation period in months.
+    K : int
+        Holding period in months.
+    n_portfolios : int
+        Number of portfolios (default: 10 for deciles).
+    
+    Returns
+    -------
+    pd.DataFrame
+        Monthly returns for each momentum portfolio and the long-short spread.
+    """
+    # Step 1: Compute formation period cumulative returns
+    df = data.sort_values(["symbol", "date"]).copy()
+    df["gross_ret"] = 1 + df["ret"]
+    df["cum_return"] = (
+        df.groupby("symbol")["gross_ret"]
+        .rolling(window=J, min_periods=J)
+        .apply(np.prod, raw=True)
+        .reset_index(level=0, drop=True)
+        - 1
+    )
+    df = df.drop(columns=["gross_ret"]).dropna(subset=["cum_return"])
+    
+    # Step 2: Assign to momentum portfolios
+    def assign_rank(group):
+        try:
+            group["momr"] = pd.qcut(
+                group["cum_return"],
+                q=n_portfolios,
+                labels=range(1, n_portfolios + 1),
+                duplicates="drop"
+            ).astype(int)
+        except ValueError:
+            group["momr"] = pd.cut(
+                group["cum_return"].rank(method="first"),
+                bins=n_portfolios,
+                labels=range(1, n_portfolios + 1)
+            ).astype(int)
+        return group
+    
+    df = df.groupby("date", group_keys=False).apply(assign_rank)
+    
+    # Step 3: Define holding period dates
+    df = df.rename(columns={"date": "form_date"})
+    df["hdate1"] = df["form_date"] + pd.offsets.MonthBegin(1)
+    df["hdate2"] = df["form_date"] + pd.offsets.MonthEnd(K)
+    
+    # Step 4: Merge with holding period returns
+    port_ret = df[["symbol", "form_date", "momr", "hdate1", "hdate2"]].merge(
+        data[["symbol", "date", "ret"]].rename(
+            columns={"ret": "hret", "date": "hdate"}
+        ),
+        on="symbol",
+        how="inner"
+    )
+    port_ret = port_ret.query("hdate >= hdate1 and hdate <= hdate2")
+    
+    # Step 5: Compute equally weighted returns (two-stage averaging)
+    cohort_ret = (port_ret
+        .groupby(["hdate", "momr", "form_date"])
+        .agg(cohort_ret=("hret", "mean"))
+        .reset_index()
+    )
+    
+    monthly_ret = (cohort_ret
+        .groupby(["hdate", "momr"])
+        .agg(ewret=("cohort_ret", "mean"))
+        .reset_index()
+        .rename(columns={"hdate": "date"})
+    )
+    
+    # Step 6: Compute long-short spread
+    wide = monthly_ret.pivot(
+        index="date", columns="momr", values="ewret"
+    ).reset_index()
+    
+    wide.columns = ["date"] + [f"port{i}" for i in range(1, n_portfolios + 1)]
+    wide["winners"] = wide[f"port{n_portfolios}"]
+    wide["losers"] = wide["port1"]
+    wide["long_short"] = wide["winners"] - wide["losers"]
+    
+    return monthly_ret, wide
+```
+
+### Running the Full Grid
+
+We now run the momentum strategy for all 16 $(J, K)$ combinations. This is computationally intensive, so we store the key summary statistics for each specification.
+
+```{python}
+J_values = [3, 6, 9, 12]
+K_values = [3, 6, 9, 12]
+
+results_grid = []
+
+for J_val, K_val in product(J_values, K_values):
+    print(f"Computing J={J_val}, K={K_val}...", end=" ")
+    
+    try:
+        _, wide_result = momentum_strategy(prices_clean, J_val, K_val)
+        
+        for portfolio_name in ["winners", "losers", "long_short"]:
+            series = wide_result[portfolio_name].dropna()
+            n = len(series)
+            mean_ret = series.mean()
+            std_ret = series.std()
+            t_stat = mean_ret / (std_ret / np.sqrt(n)) if std_ret > 0 else np.nan
+            p_val = (2 * (1 - stats.t.cdf(abs(t_stat), df=n-1)) 
+                     if not np.isnan(t_stat) else np.nan)
+            
+            results_grid.append({
+                "J": J_val,
+                "K": K_val,
+                "portfolio": portfolio_name,
+                "n_months": n,
+                "mean_ret": mean_ret,
+                "std_ret": std_ret,
+                "t_stat": t_stat,
+                "p_value": p_val
+            })
+        
+        print("Done.")
+    except Exception as e:
+        print(f"Error: {e}")
+
+results_df = pd.DataFrame(results_grid)
+```
+
+### Winners Portfolio Returns
+
+@tbl-winners-grid presents the average monthly returns of the winner portfolio (portfolio 10) across all $(J, K)$ combinations.
+
+```{python}
+#| label: tbl-winners-grid
+#| tbl-cap: "Average monthly returns (%) of the winner portfolio across formation periods (J) and holding periods (K). t-statistics are reported in parentheses."
+
+winners_grid = (results_df
+    .query("portfolio == 'winners'")
+    .assign(
+        display=lambda x: (
+            x["mean_ret"].apply(lambda v: f"{v*100:.2f}") + 
+            "\n(" + x["t_stat"].apply(lambda v: f"{v:.2f}") + ")"
+        )
+    )
+    .pivot(index="J", columns="K", values="display")
+)
+winners_grid.columns = [f"K={k}" for k in winners_grid.columns]
+winners_grid.index = [f"J={j}" for j in winners_grid.index]
+winners_grid
+```
+
+### Losers Portfolio Returns
+
+@tbl-losers-grid presents the corresponding results for the loser portfolio.
+
+```{python}
+#| label: tbl-losers-grid
+#| tbl-cap: "Average monthly returns (%) of the loser portfolio across formation periods (J) and holding periods (K). t-statistics are reported in parentheses."
+
+losers_grid = (results_df
+    .query("portfolio == 'losers'")
+    .assign(
+        display=lambda x: (
+            x["mean_ret"].apply(lambda v: f"{v*100:.2f}") + 
+            "\n(" + x["t_stat"].apply(lambda v: f"{v:.2f}") + ")"
+        )
+    )
+    .pivot(index="J", columns="K", values="display")
+)
+losers_grid.columns = [f"K={k}" for k in losers_grid.columns]
+losers_grid.index = [f"J={j}" for j in losers_grid.index]
+losers_grid
+```
+
+### Long-Short Momentum Returns
+
+@tbl-ls-grid presents the most important results: the average monthly returns of the long-short momentum portfolio across all specifications.
+
+```{python}
+#| label: tbl-ls-grid
+#| tbl-cap: "Average monthly returns (%) of the momentum long-short portfolio (Winners minus Losers) across formation periods (J) and holding periods (K). t-statistics are reported in parentheses. This table replicates the format of Table 1 in Jegadeesh and Titman (1993)."
+
+ls_grid = (results_df
+    .query("portfolio == 'long_short'")
+    .assign(
+        display=lambda x: (
+            x["mean_ret"].apply(lambda v: f"{v*100:.2f}") + 
+            "\n(" + x["t_stat"].apply(lambda v: f"{v:.2f}") + ")"
+        )
+    )
+    .pivot(index="J", columns="K", values="display")
+)
+ls_grid.columns = [f"K={k}" for k in ls_grid.columns]
+ls_grid.index = [f"J={j}" for j in ls_grid.index]
+ls_grid
+```
+
+### Visualizing the Momentum Premium Across Specifications
+
+@fig-momentum-heatmap provides a visual summary of the long-short momentum premium across all $(J, K)$ combinations.
+
+```{python}
+#| label: fig-momentum-heatmap
+#| fig-cap: "Heatmap of average monthly long-short momentum returns (%) across formation periods (J) and holding periods (K). Darker shades indicate higher momentum profits. Asterisks denote statistical significance at the 5% level."
+#| fig-alt: "A heatmap with formation period J on the y-axis and holding period K on the x-axis, with cell colors indicating the magnitude of the momentum premium."
+
+ls_heatmap_data = (results_df
+    .query("portfolio == 'long_short'")
+    .assign(
+        mean_pct=lambda x: x["mean_ret"] * 100,
+        significant=lambda x: x["p_value"] < 0.05,
+        label=lambda x: x.apply(
+            lambda row: f"{row['mean_ret']*100:.2f}{'*' if row['p_value'] < 0.05 else ''}", 
+            axis=1
+        )
+    )
+)
+
+plot_heatmap = (
+    ggplot(ls_heatmap_data, 
+           aes(x="K.astype(str)", y="J.astype(str)", fill="mean_pct")) +
+    geom_tile(color="white", size=2) +
+    geom_text(aes(label="label"), size=10, color="white") +
+    scale_fill_gradient2(
+        low="#d62728", mid="#f7f7f7", high="#1f77b4", midpoint=0,
+        name="Monthly\nReturn (%)"
+    ) +
+    labs(
+        x="Holding Period (K months)",
+        y="Formation Period (J months)",
+        title="Momentum Premium Across J×K Specifications"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(8, 6))
+)
+plot_heatmap
+```
+
+## Risk-Adjusted Performance
+
+### CAPM Alpha
+
+A natural question is whether the momentum premium is explained by exposure to the market factor. We estimate the CAPM alpha of the long-short momentum portfolio by regressing its returns on the market excess return:
+
+$$
+r_{\text{WML},t} = \alpha + \beta \cdot r_{\text{MKT},t} + \epsilon_t
+$$ {#eq-capm-alpha}
+
+```{python}
+# Merge momentum returns with factor data (baseline J=6, K=6)
+ewret_factors = (ewret_wide
+    [["date", "winners", "losers", "long_short"]]
+    .merge(factors_ff3_monthly, on="date", how="inner")
+)
+
+# CAPM regression for long-short portfolio
+from statsmodels.formula.api import ols as ols_formula
+import statsmodels.api as sm
+
+X_capm = sm.add_constant(ewret_factors["mkt_excess"])
+y_ls = ewret_factors["long_short"]
+
+capm_model = sm.OLS(y_ls, X_capm).fit(cov_type="HAC", cov_kwds={"maxlags": 6})
+
+print("CAPM Regression: Long-Short Momentum Returns")
+print("=" * 60)
+print(f"Alpha (monthly):  {capm_model.params['const']*100:.4f}% "
+      f"(t={capm_model.tvalues['const']:.2f})")
+print(f"Market Beta:      {capm_model.params['mkt_excess']:.4f} "
+      f"(t={capm_model.tvalues['mkt_excess']:.2f})")
+print(f"R-squared:        {capm_model.rsquared:.4f}")
+print(f"N observations:   {capm_model.nobs:.0f}")
+```
+
+### Fama-French Three-Factor Alpha
+
+We extend the risk adjustment to the Fama-French three-factor model, which includes the size (SMB) and value (HML) factors in addition to the market factor:
+
+$$
+r_{\text{WML},t} = \alpha + \beta_1 \cdot r_{\text{MKT},t} + \beta_2 \cdot \text{SMB}_t + \beta_3 \cdot \text{HML}_t + \epsilon_t
+$$ {#eq-ff3-alpha}
+
+```{python}
+#| label: tbl-ff3-regression
+#| tbl-cap: "Fama-French three-factor regression for the momentum long-short portfolio. The dependent variable is the monthly return of the Winners-minus-Losers portfolio. Alpha is the intercept, representing the risk-adjusted abnormal return. HAC standard errors with 6 lags are used."
+
+X_ff3 = sm.add_constant(
+    ewret_factors[["mkt_excess", "smb", "hml"]]
+)
+y_ls = ewret_factors["long_short"]
+
+ff3_model = sm.OLS(y_ls, X_ff3).fit(cov_type="HAC", cov_kwds={"maxlags": 6})
+
+# Display results as a clean table
+ff3_results = pd.DataFrame({
+    "Coefficient": ff3_model.params,
+    "Std Error": ff3_model.bse,
+    "t-stat": ff3_model.tvalues,
+    "p-value": ff3_model.pvalues
+}).round(4)
+
+ff3_results.index = ["Alpha", "MKT", "SMB", "HML"]
+ff3_results
+```
+
+```{python}
+print(f"\nR-squared: {ff3_model.rsquared:.4f}")
+print(f"Adjusted R-squared: {ff3_model.rsquared_adj:.4f}")
+print(f"Alpha (annualized): {ff3_model.params['const'] * 12 * 100:.2f}%")
+```
+
+### Interpretation of Risk Exposures
+
+The factor loadings from the three-factor regression reveal the risk characteristics of the momentum strategy in the Vietnamese market. Several patterns are commonly observed:
+
+1.  **Market beta**: Momentum portfolios typically have moderate market exposure. In the U.S., @grundy2001understanding document that the market beta of the long-short portfolio is close to zero on average but highly time-varying, spiking during market reversals.
+
+2.  **Size exposure (SMB)**: Momentum strategies often load positively on the size factor, reflecting the tendency for smaller stocks to exhibit stronger momentum patterns.
+
+3.  **Value exposure (HML)**: The long-short momentum portfolio typically loads negatively on HML, indicating that winners tend to be growth stocks while losers tend to be value stocks. This creates a natural tension between momentum and value strategies.
+
+## Momentum and Market States
+
+### Conditional Performance
+
+An important finding in the momentum literature is that momentum profits vary with market conditions. @cooper2004market document that momentum strategies perform well following market gains (UP markets) but experience severe losses following market declines (DOWN markets). This asymmetry is particularly relevant for emerging markets, which experience more extreme market states.
+
+We define market states based on the cumulative market return over the prior 12 months:
+
+$$
+\text{Market State}_t = \begin{cases} \text{UP} & \text{if } \prod_{s=t-12}^{t-1}(1 + r_{m,s}) - 1 > 0 \\ \text{DOWN} & \text{otherwise} \end{cases}
+$$ {#eq-market-state}
+
+```{python}
+# Compute 12-month lagged market return
+market_returns = factors_ff3_monthly[["date", "mkt_excess"]].copy()
+market_returns = market_returns.sort_values("date")
+market_returns["mkt_cum_12m"] = (
+    (1 + market_returns["mkt_excess"])
+    .rolling(window=12, min_periods=12)
+    .apply(np.prod, raw=True)
+    - 1
+)
+market_returns["market_state"] = np.where(
+    market_returns["mkt_cum_12m"] > 0, "UP", "DOWN"
+)
+
+# Merge with momentum returns
+ewret_states = ewret_wide[["date", "long_short"]].merge(
+    market_returns[["date", "market_state"]], on="date", how="inner"
+).dropna()
+```
+
+```{python}
+#| label: tbl-market-states
+#| tbl-cap: "Momentum long-short returns conditional on market states. UP markets are defined as periods where the cumulative market return over the prior 12 months is positive; DOWN markets are periods with negative prior 12-month returns."
+
+state_stats = []
+for state in ["UP", "DOWN"]:
+    subset = ewret_states.query(f"market_state == '{state}'")["long_short"]
+    n = len(subset)
+    mean_ret = subset.mean()
+    std_ret = subset.std()
+    t_stat = mean_ret / (std_ret / np.sqrt(n)) if std_ret > 0 else np.nan
+    p_val = 2 * (1 - stats.t.cdf(abs(t_stat), df=n-1)) if not np.isnan(t_stat) else np.nan
+    state_stats.append({
+        "Market State": state,
+        "N Months": n,
+        "Mean (%)": mean_ret * 100,
+        "Std (%)": std_ret * 100,
+        "t-stat": t_stat,
+        "p-value": p_val
+    })
+
+state_stats_df = pd.DataFrame(state_stats).round(4)
+state_stats_df
+```
+
+```{python}
+#| label: fig-momentum-states
+#| fig-cap: "Distribution of monthly momentum returns by market state. The box plots show the distribution of long-short momentum returns separately for UP and DOWN market states, defined by the sign of the prior 12-month cumulative market return."
+#| fig-alt: "Side-by-side box plots comparing the distribution of momentum returns in UP versus DOWN market states."
+
+plot_states = (
+    ggplot(ewret_states, aes(x="market_state", y="long_short", 
+                              fill="market_state")) +
+    geom_boxplot(alpha=0.7) +
+    geom_hline(yintercept=0, linetype="dashed", color="gray") +
+    scale_y_continuous(labels=percent_format()) +
+    scale_fill_manual(values={"UP": "#1f77b4", "DOWN": "#d62728"}) +
+    labs(
+        x="Market State (Prior 12-Month Return)",
+        y="Monthly Long-Short Return",
+        title="Momentum Returns by Market State"
+    ) +
+    theme_minimal() +
+    theme(
+        figure_size=(8, 6),
+        legend_position="none"
+    )
+)
+plot_states
+```
+
+## Momentum Crashes
+
+### Understanding Momentum Drawdowns
+
+One of the most important risk characteristics of momentum strategies is their susceptibility to sudden, severe losses—known as momentum crashes. @daniel2016momentum document that momentum strategies experience infrequent but extreme losses, typically during market rebounds following bear markets. These crashes occur because the loser portfolio, which has been short, is heavily loaded with high-beta stocks that surge when markets reverse.
+
+We identify the worst drawdowns of the momentum strategy and examine their market context.
+
+```{python}
+#| label: tbl-worst-months
+#| tbl-cap: "Ten worst months for the momentum long-short strategy. The table reports the date, long-short return, winner return, loser return, and concurrent market return for the ten months with the largest momentum losses."
+
+worst_months = (ewret_wide
+    [["date", "long_short", "winners", "losers"]]
+    .merge(factors_ff3_monthly[["date", "mkt_excess"]], on="date", how="left")
+    .sort_values("long_short")
+    .head(10)
+    .assign(
+        long_short_pct=lambda x: (x["long_short"] * 100).round(2),
+        winners_pct=lambda x: (x["winners"] * 100).round(2),
+        losers_pct=lambda x: (x["losers"] * 100).round(2),
+        mkt_pct=lambda x: (x["mkt_excess"] * 100).round(2)
+    )
+    [["date", "long_short_pct", "winners_pct", "losers_pct", "mkt_pct"]]
+    .rename(columns={
+        "date": "Date",
+        "long_short_pct": "L/S (%)",
+        "winners_pct": "Winners (%)",
+        "losers_pct": "Losers (%)",
+        "mkt_pct": "Market (%)"
+    })
+)
+worst_months
+```
+
+### Maximum Drawdown Analysis
+
+The maximum drawdown provides a measure of the worst peak-to-trough decline experienced by the strategy. This metric is particularly relevant for practitioners evaluating the risk of momentum strategies.
+
+```{python}
+# Compute running maximum and drawdown
+ewret_wide["cum_wealth"] = (1 + ewret_wide["long_short"]).cumprod()
+ewret_wide["running_max"] = ewret_wide["cum_wealth"].cummax()
+ewret_wide["drawdown"] = (
+    ewret_wide["cum_wealth"] / ewret_wide["running_max"] - 1
+)
+
+max_dd = ewret_wide["drawdown"].min()
+max_dd_date = ewret_wide.loc[ewret_wide["drawdown"].idxmin(), "date"]
+
+print(f"Maximum drawdown: {max_dd*100:.2f}%")
+print(f"Date of maximum drawdown: {max_dd_date.date()}")
+```
+
+```{python}
+#| label: fig-drawdown
+#| fig-cap: "Drawdown of the momentum long-short strategy over time. The chart shows the percentage decline from the previous peak in cumulative wealth. Deeper drawdowns represent more severe momentum crashes."
+#| fig-alt: "A time series chart showing the drawdown of the momentum strategy, with several deep troughs corresponding to momentum crash episodes."
+
+plot_dd = (
+    ggplot(ewret_wide, aes(x="date", y="drawdown")) +
+    geom_area(fill="#d62728", alpha=0.5) +
+    geom_line(color="#d62728", size=0.5) +
+    scale_y_continuous(labels=percent_format()) +
+    labs(
+        x="", y="Drawdown",
+        title="Momentum Strategy Drawdown"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 5))
+)
+plot_dd
+```
+
+## Value-Weighted Momentum Portfolios
+
+The baseline @jegadeesh1993returns implementation uses equally weighted portfolios. However, equally weighted returns can be dominated by small, illiquid stocks that may be difficult to trade in practice. Value-weighted portfolios, where each stock's contribution is proportional to its market capitalization, provide a more investable benchmark and are more representative of the returns that large investors could actually achieve.
+
+```{python}
+def momentum_strategy_vw(data, J, K, n_portfolios=10):
+    """
+    Value-weighted momentum strategy implementation.
+    
+    Same as the equally-weighted version but uses lagged market 
+    capitalization as weights when computing portfolio returns.
+    
+    Parameters
+    ----------
+    data : pd.DataFrame
+        Panel with columns: symbol, date, ret, mktcap_lag.
+    J : int
+        Formation period in months.
+    K : int
+        Holding period in months.
+    n_portfolios : int
+        Number of portfolios.
+    
+    Returns
+    -------
+    pd.DataFrame
+        Monthly value-weighted portfolio returns.
+    """
+    # Step 1: Formation period returns
+    df = data.sort_values(["symbol", "date"]).copy()
+    df["gross_ret"] = 1 + df["ret"]
+    df["cum_return"] = (
+        df.groupby("symbol")["gross_ret"]
+        .rolling(window=J, min_periods=J)
+        .apply(np.prod, raw=True)
+        .reset_index(level=0, drop=True)
+        - 1
+    )
+    df = df.drop(columns=["gross_ret"]).dropna(subset=["cum_return"])
+    
+    # Step 2: Portfolio assignment
+    def assign_rank(group):
+        try:
+            group["momr"] = pd.qcut(
+                group["cum_return"],
+                q=n_portfolios,
+                labels=range(1, n_portfolios + 1),
+                duplicates="drop"
+            ).astype(int)
+        except ValueError:
+            group["momr"] = pd.cut(
+                group["cum_return"].rank(method="first"),
+                bins=n_portfolios,
+                labels=range(1, n_portfolios + 1)
+            ).astype(int)
+        return group
+    
+    df = df.groupby("date", group_keys=False).apply(assign_rank)
+    
+    # Step 3: Holding period
+    df = df.rename(columns={"date": "form_date"})
+    df["hdate1"] = df["form_date"] + pd.offsets.MonthBegin(1)
+    df["hdate2"] = df["form_date"] + pd.offsets.MonthEnd(K)
+    
+    # Step 4: Merge with holding period returns AND weights
+    port_ret = df[
+        ["symbol", "form_date", "momr", "hdate1", "hdate2"]
+    ].merge(
+        data[["symbol", "date", "ret", "mktcap_lag"]].rename(
+            columns={"ret": "hret", "date": "hdate"}
+        ),
+        on="symbol",
+        how="inner"
+    )
+    port_ret = port_ret.query("hdate >= hdate1 and hdate <= hdate2")
+    port_ret = port_ret.dropna(subset=["mktcap_lag"])
+    port_ret = port_ret.query("mktcap_lag > 0")
+    
+    # Step 5: Value-weighted returns within each cohort
+    def vw_mean(group):
+        weights = group["mktcap_lag"]
+        return np.average(group["hret"], weights=weights)
+    
+    cohort_ret = (port_ret
+        .groupby(["hdate", "momr", "form_date"])
+        .apply(vw_mean)
+        .reset_index(name="cohort_ret")
+    )
+    
+    monthly_ret = (cohort_ret
+        .groupby(["hdate", "momr"])
+        .agg(vwret=("cohort_ret", "mean"))
+        .reset_index()
+        .rename(columns={"hdate": "date"})
+    )
+    
+    # Step 6: Long-short
+    wide = monthly_ret.pivot(
+        index="date", columns="momr", values="vwret"
+    ).reset_index()
+    wide.columns = ["date"] + [f"port{i}" for i in range(1, n_portfolios + 1)]
+    wide["winners"] = wide[f"port{n_portfolios}"]
+    wide["losers"] = wide["port1"]
+    wide["long_short"] = wide["winners"] - wide["losers"]
+    
+    return monthly_ret, wide
+```
+
+```{python}
+# Run value-weighted J=6, K=6 strategy
+_, vw_results = momentum_strategy_vw(prices_clean, J=6, K=6)
+```
+
+```{python}
+#| label: tbl-ew-vs-vw
+#| tbl-cap: "Comparison of equally weighted (EW) and value-weighted (VW) momentum strategies for J=6, K=6. The table reports mean monthly returns, t-statistics, and p-values for winners, losers, and long-short portfolios under both weighting schemes."
+
+comparison = []
+for scheme, df in [("EW", ewret_wide), ("VW", vw_results)]:
+    for col in ["winners", "losers", "long_short"]:
+        series = df[col].dropna()
+        n = len(series)
+        mean_ret = series.mean()
+        std_ret = series.std()
+        t_stat = mean_ret / (std_ret / np.sqrt(n))
+        p_val = 2 * (1 - stats.t.cdf(abs(t_stat), df=n-1))
+        comparison.append({
+            "Weighting": scheme,
+            "Portfolio": col.replace("_", " ").title(),
+            "Mean (%)": round(mean_ret * 100, 4),
+            "Std (%)": round(std_ret * 100, 4),
+            "t-stat": round(t_stat, 2),
+            "p-value": round(p_val, 4)
+        })
+
+pd.DataFrame(comparison)
+```
+
+```{python}
+#| label: fig-ew-vs-vw
+#| fig-cap: "Cumulative returns of equally weighted (EW) versus value-weighted (VW) long-short momentum strategies. Differences between the two lines reflect the impact of firm size on momentum profitability."
+#| fig-alt: "A line chart comparing the cumulative returns of EW and VW momentum long-short strategies over time."
+
+vw_results = vw_results.sort_values("date")
+vw_results["cumret_ls_vw"] = (1 + vw_results["long_short"]).cumprod() - 1
+
+ew_vs_vw = (ewret_wide[["date", "cumret_long_short"]]
+    .rename(columns={"cumret_long_short": "cumret"})
+    .assign(scheme="Equally Weighted")
+    .append(
+        vw_results[["date", "cumret_ls_vw"]]
+        .rename(columns={"cumret_ls_vw": "cumret"})
+        .assign(scheme="Value Weighted"),
+        ignore_index=True
+    )
+)
+
+plot_ew_vw = (
+    ggplot(ew_vs_vw, aes(x="date", y="cumret", color="scheme")) +
+    geom_line(size=1) +
+    scale_y_continuous(labels=percent_format()) +
+    scale_color_manual(values=["#1f77b4", "#ff7f0e"]) +
+    labs(
+        x="", y="Cumulative return",
+        color="Weighting Scheme",
+        title="EW vs. VW Momentum Long-Short Strategy"
+    ) +
+    theme_minimal() +
+    theme(
+        figure_size=(10, 6),
+        legend_position="bottom"
+    )
+)
+plot_ew_vw
+```
+
+## Daily Momentum Analysis
+
+While momentum strategies are typically evaluated at the monthly frequency following @jegadeesh1993returns, analyzing daily return patterns provides additional insights into the dynamics of momentum profits. Daily data allows us to examine how momentum profits accrue within the holding period, measure intra-month volatility of the strategy, and compute more precise risk measures.
+
+### Loading Daily Data
+
+```{python}
+prices_daily = pd.read_sql_query(
+    sql=("SELECT symbol, date, ret, ret_excess, mktcap_lag "
+         "FROM prices_daily"),
+    con=tidy_finance,
+    parse_dates={"date"}
+)
+
+print(f"Daily observations: {len(prices_daily):,}")
+print(f"Unique stocks: {prices_daily['symbol'].nunique():,}")
+print(f"Date range: {prices_daily['date'].min().date()} "
+      f"to {prices_daily['date'].max().date()}")
+```
+
+### Daily Returns of Monthly Momentum Portfolios
+
+Rather than forming momentum portfolios at the daily frequency (which would require daily rebalancing and is impractical), we use the monthly portfolio assignments and track their daily returns. This gives us the daily return series of the monthly momentum strategy.
+
+```{python}
+# Use the monthly portfolio assignments from the J=6 baseline
+monthly_assignments = portfolios_with_dates[
+    ["symbol", "form_date", "momr", "hdate1", "hdate2"]
+].copy()
+
+# Merge with daily returns
+daily_mom_returns = monthly_assignments.merge(
+    prices_daily[["symbol", "date", "ret"]].rename(
+        columns={"ret": "dret", "date": "ddate"}
+    ),
+    on="symbol",
+    how="inner"
+)
+
+# Keep only daily returns within each holding period
+daily_mom_returns = daily_mom_returns.query(
+    "ddate >= hdate1 and ddate <= hdate2"
+)
+
+print(f"Daily portfolio return observations: {len(daily_mom_returns):,}")
+```
+
+```{python}
+# Compute daily equally weighted portfolio returns
+# Stage 1: Average within each cohort
+daily_cohort_ret = (daily_mom_returns
+    .groupby(["ddate", "momr", "form_date"])
+    .agg(cohort_ret=("dret", "mean"))
+    .reset_index()
+)
+
+# Stage 2: Average across cohorts
+daily_ewret = (daily_cohort_ret
+    .groupby(["ddate", "momr"])
+    .agg(ewret=("cohort_ret", "mean"))
+    .reset_index()
+    .rename(columns={"ddate": "date"})
+)
+
+# Compute daily long-short returns
+daily_wide = daily_ewret.pivot(
+    index="date", columns="momr", values="ewret"
+).reset_index()
+daily_wide.columns = ["date"] + [f"port{i}" for i in range(1, 11)]
+daily_wide["winners"] = daily_wide["port10"]
+daily_wide["losers"] = daily_wide["port1"]
+daily_wide["long_short"] = daily_wide["winners"] - daily_wide["losers"]
+
+print(f"Daily long-short return observations: {len(daily_wide):,}")
+```
+
+### Daily Cumulative Returns
+
+```{python}
+#| label: fig-daily-cumret
+#| fig-cap: "Cumulative daily returns of the momentum long-short strategy. This figure shows the same strategy as the monthly analysis but tracked at daily frequency, revealing intra-month dynamics and the precise timing of momentum gains and losses."
+#| fig-alt: "A line chart showing the cumulative daily returns of the momentum long-short strategy, with finer granularity than the monthly version."
+
+daily_wide = daily_wide.sort_values("date")
+daily_wide["cumret_ls"] = (1 + daily_wide["long_short"]).cumprod() - 1
+
+plot_daily_cumret = (
+    ggplot(daily_wide, aes(x="date", y="cumret_ls")) +
+    geom_line(size=0.5, color="#2ca02c") +
+    geom_hline(yintercept=0, linetype="dashed", color="gray") +
+    scale_y_continuous(labels=percent_format()) +
+    labs(
+        x="", y="Cumulative return",
+        title="Daily Cumulative Return: Momentum Long-Short Strategy"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 6))
+)
+plot_daily_cumret
+```
+
+### Annualized Risk Metrics from Daily Data
+
+Daily data enables more precise estimation of risk metrics through higher-frequency sampling.
+
+```{python}
+#| label: tbl-daily-risk
+#| tbl-cap: "Annualized risk metrics for the momentum long-short strategy computed from daily returns. Volatility is annualized using the square root of 252 rule. The Sharpe ratio, maximum drawdown, skewness, and kurtosis provide a comprehensive risk profile."
+
+daily_ls = daily_wide["long_short"].dropna()
+
+# Annualized metrics
+ann_mean = daily_ls.mean() * 252
+ann_vol = daily_ls.std() * np.sqrt(252)
+sharpe = ann_mean / ann_vol if ann_vol > 0 else np.nan
+
+# Drawdown
+daily_wealth = (1 + daily_ls).cumprod()
+daily_running_max = daily_wealth.cummax()
+daily_dd = (daily_wealth / daily_running_max - 1).min()
+
+# Higher moments
+skew = daily_ls.skew()
+kurt = daily_ls.kurtosis()
+
+# VaR and CVaR
+var_95 = daily_ls.quantile(0.05)
+cvar_95 = daily_ls[daily_ls <= var_95].mean()
+
+risk_metrics = pd.DataFrame({
+    "Metric": [
+        "Annualized Mean Return",
+        "Annualized Volatility", 
+        "Sharpe Ratio",
+        "Maximum Drawdown",
+        "Skewness",
+        "Excess Kurtosis",
+        "Daily VaR (5%)",
+        "Daily CVaR (5%)"
+    ],
+    "Value": [
+        f"{ann_mean*100:.2f}%",
+        f"{ann_vol*100:.2f}%",
+        f"{sharpe:.2f}",
+        f"{daily_dd*100:.2f}%",
+        f"{skew:.2f}",
+        f"{kurt:.2f}",
+        f"{var_95*100:.2f}%",
+        f"{cvar_95*100:.2f}%"
+    ]
+})
+risk_metrics
+```
+
+### Realized Volatility of Momentum Returns
+
+Using daily returns, we can compute the monthly realized volatility of the momentum strategy and examine how it varies over time.
+
+```{python}
+#| label: fig-realized-vol
+#| fig-cap: "Monthly realized volatility of the momentum long-short strategy, computed from daily returns within each month. Higher values indicate periods of greater uncertainty in momentum profits, often coinciding with market stress."
+#| fig-alt: "A time series chart of monthly realized volatility, showing spikes during periods of market stress."
+
+daily_wide["year_month"] = daily_wide["date"].dt.to_period("M")
+
+realized_vol = (daily_wide
+    .groupby("year_month")["long_short"]
+    .std()
+    .reset_index()
+    .rename(columns={"long_short": "realized_vol"})
+)
+realized_vol["date"] = realized_vol["year_month"].dt.to_timestamp()
+realized_vol["realized_vol_ann"] = realized_vol["realized_vol"] * np.sqrt(252)
+
+plot_rvol = (
+    ggplot(realized_vol, aes(x="date", y="realized_vol_ann")) +
+    geom_line(color="#d62728", size=0.8) +
+    scale_y_continuous(labels=percent_format()) +
+    labs(
+        x="", y="Annualized Realized Volatility",
+        title="Realized Volatility of Momentum Strategy"
+    ) +
+    theme_minimal() +
+    theme(figure_size=(10, 5))
+)
+plot_rvol
+```
+
+## Saving Results to the Database
+
+We save the momentum portfolio returns to our database for use in subsequent chapters, including factor model construction and portfolio optimization.
+
+```{python}
+# Save monthly equally weighted momentum portfolio returns
+ewret_to_save = ewret[["date", "momr", "ewret"]].copy()
+ewret_to_save.to_sql(
+    name="momentum_portfolios_monthly",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
+print(f"Saved {len(ewret_to_save):,} monthly momentum portfolio observations.")
+
+# Save the long-short return series
+momentum_factor = ewret_wide[["date", "long_short"]].dropna().copy()
+momentum_factor = momentum_factor.rename(columns={"long_short": "wml"})
+momentum_factor.to_sql(
+    name="momentum_factor_monthly",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
+print(f"Saved {len(momentum_factor):,} monthly WML factor observations.")
+
+# Save the daily long-short return series
+daily_momentum_factor = daily_wide[["date", "long_short"]].dropna().copy()
+daily_momentum_factor = daily_momentum_factor.rename(
+    columns={"long_short": "wml"}
+)
+daily_momentum_factor.to_sql(
+    name="momentum_factor_daily",
+    con=tidy_finance,
+    if_exists="replace",
+    index=False
+)
+print(f"Saved {len(daily_momentum_factor):,} daily WML factor observations.")
+```
+
+## Practical Considerations
+
+### Transaction Costs
+
+Momentum strategies involve substantial portfolio turnover, as stocks enter and exit the extreme decile portfolios each month. @korajczyk2004momentum examine whether momentum profits survive transaction costs and find that profitability declines significantly for large institutional investors, though smaller portfolios can still capture meaningful returns.
+
+In the Vietnamese market, transaction costs include:
+
+-   **Brokerage commissions**: Typically 0.15%–0.25% of transaction value for institutional investors.
+-   **Exchange fees**: Approximately 0.03% per trade.
+-   **Market impact**: Particularly relevant for smaller, less liquid stocks that dominate the extreme momentum portfolios. Vietnam's lower liquidity compared to developed markets may amplify this cost.
+-   **Trading band limits**: The $\pm 7\%$ daily price limit on HOSE can prevent immediate execution of trades, introducing tracking error relative to the theoretical portfolio.
+
+### Implementation Lag
+
+Our baseline implementation assumes that portfolios can be formed and rebalanced instantaneously at the end of each month. In practice, there is a lag between observing the formation period returns and executing the portfolio trades. The one-month gap between the formation period and the start of the holding period (@jegadeesh1990evidence) partially addresses this concern, but practitioners should consider additional implementation delays.
+
+### Survivorship Bias
+
+Our dataset from DataCore includes both active and delisted stocks, which mitigates survivorship bias. However, the treatment of delisted stocks can affect momentum results. Stocks that are delisted during the holding period may generate extreme returns (both positive for acquisitions and negative for failures). We retain delisted returns as reported in the database, which is consistent with the treatment in @jegadeesh1993returns.
+
+### Small Sample Considerations
+
+The Vietnamese stock market has a relatively short history compared to the U.S. market studied in @jegadeesh1993returns. Our sample spans approximately two decades, compared to the nearly three decades in the original study. This shorter sample period implies wider confidence intervals and greater sensitivity to specific episodes (such as the 2007–2009 financial crisis, which had a severe impact on Vietnamese equities). Results should be interpreted with this caveat in mind.
+
+## Key Takeaways
+
+This chapter has provided an implementation and analysis of momentum strategies in the Vietnamese equity market, following the methodology of @jegadeesh1993returns. The main findings and methodological contributions are:
+
+1.  **Methodology**: We implemented the full @jegadeesh1993returns overlapping portfolio methodology, including the two-stage averaging procedure (within-cohort, then across-cohort) that handles the $K$ active portfolios in each month.
+
+2.  **Baseline results**: The $J=6$, $K=6$ strategy provides a natural benchmark. The spread between winner and loser portfolios reveals whether cross-sectional momentum exists in Vietnamese equities.
+
+3.  **Robustness across horizons**: By computing the full $J \times K$ grid with $J, K \in \{3, 6, 9, 12\}$, we assessed whether the momentum premium is robust to the choice of formation and holding periods, following the approach in @jegadeesh1993returns Table 1.
+
+4.  **Risk adjustment**: CAPM and Fama-French three-factor alphas measure whether the momentum premium is explained by standard risk factors, building on the analysis in @fama1996multifactor who show that their three-factor model fails to explain momentum.
+
+5.  **Market state dependence**: Following @cooper2004market, we examined whether momentum profits vary with market conditions, which is particularly relevant in emerging markets with pronounced boom-bust cycles.
+
+6.  **Value weighting**: The comparison of equally weighted and value-weighted strategies addresses practical implementability and isolates the role of firm size in driving momentum profits.
+
+7.  **Daily analysis**: By tracking momentum portfolios at the daily frequency, we computed precise risk metrics including realized volatility, maximum drawdown, VaR, and CVaR, providing a complete risk profile of the strategy.
+
+8.  **Emerging market context**: Throughout the analysis, we have highlighted features specific to the Vietnamese market—trading band limits, foreign ownership restrictions, shorter sample history, and higher transaction costs—that affect the interpretation and practical viability of momentum strategies.
+
+```{=html}
+<!-- ## Exercises
+
+1.  **Skip-month momentum**: Modify the implementation to skip one month between the formation and holding periods (i.e., form portfolios based on months $t-J-1$ through $t-2$ rather than $t-J$ through $t-1$). Does this improve momentum profits by avoiding short-term reversal? Compare with the results in @jegadeesh1993returns.
+
+2.  **Quintile portfolios**: Repeat the analysis using quintile (5-group) portfolios instead of deciles. How do the results change? In the Vietnamese market with fewer stocks, quintiles may produce more stable portfolios.
+
+3.  **Exchange-specific momentum**: Separately analyze momentum on HOSE and HNX. Do the two exchanges exhibit different momentum patterns, potentially due to differences in liquidity, firm size, and investor composition?
+
+4.  **Industry momentum**: Following @moskowitz1999industries, decompose stock-level momentum into an industry component and a stock-specific component. Assign each stock the equally weighted return of its industry group as the industry momentum signal. Is momentum in Vietnam primarily driven by industry rotation or stock selection?
+
+5.  **Momentum and volume**: @lee2000price document an interaction between momentum and trading volume. Construct double-sorted portfolios based on past returns and past trading volume. Do high-volume winners outperform low-volume winners?
+
+6.  **Seasonal patterns**: Examine whether momentum profits exhibit seasonal patterns. In the U.S., @jegadeesh1993returns document that January returns of momentum portfolios are particularly unusual. Does a similar pattern exist in the Vietnamese market, potentially around the Lunar New Year (Tết)?
+
+7.  **Carhart four-factor model**: Using the WML factor saved to the database in this chapter, estimate the @carhart1997persistence four-factor model for the momentum portfolios. This adds the momentum factor to the Fama-French three-factor model: $r_{i,t} - r_{f,t} = \alpha_i + \beta_{1,i} \text{MKT}_t + \beta_{2,i} \text{SMB}_t + \beta_{3,i} \text{HML}_t + \beta_{4,i} \text{WML}_t + \epsilon_{i,t}$. -->
+```

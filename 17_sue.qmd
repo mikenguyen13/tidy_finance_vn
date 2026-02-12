@@ -194,6 +194,7 @@ markdown_table = results_2024.to_markdown(index=False, floatfmt=".4f")
 display(Markdown(markdown_table))
 ```
 
+```{=html}
 <!-- | ticker | fiscal_qtr | sue_1_pct | sue_2_pct | sue_3_pct |
 |--------|------------|-----------|-----------|-----------|
 | HPG    | 1          | 0.8000    | 0.7449    | 0.2000    |
@@ -208,13 +209,15 @@ display(Markdown(markdown_table))
 | VNM    | 2          | 0.2000    | 0.2255    | 0.1333    |
 | VNM    | 3          | 0.0685    | 0.0685    | -0.0411   |
 | VNM    | 4          | 0.2143    | 0.1914    | 0.0714    | -->
+```
 
-
+```{=html}
 <!-- The analysis of the VNM (Vinamilk), VCB (Vietcombank), and HPG (Hoa Phat Group) data reveals distinct divergences between the three methods.
 
 1.  **Analyst Efficiency (Method 3):** Note that SUE 3 is generally smaller in magnitude than SUE 1 or 2. This is expected, as analysts incorporate recent information into their forecasts, making the "surprise" smaller than a simple seasonal model would suggest.
 2.  **Impact of Special Items (Method 2 vs 1):** In the case of HPG in Q1 2024, there was a significant special item adjustment. SUE 1 (0.8000%) differs from SUE 2 (0.7449%), showing that the raw EPS growth was partially driven by one-off events. Using Method 1 alone would have overstated the sustainable earnings surprise.
 3.  **Sector Volatility:** HPG (Steel sector) shows higher volatility in surprises compared to VNM (Consumer Staples), reflecting the cyclical nature of the construction materials market in Vietnam. -->
+```
 
 ### Visualization
 

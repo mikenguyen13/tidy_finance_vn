@@ -86,7 +86,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./17_sue.html" rel="next">
-<link href="./13_fama_macbeth.html" rel="prev">
+<link href="./14_fama_macbeth.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -443,7 +443,7 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./13_fama_macbeth.html" class="sidebar-item-text sidebar-link">
+  <a href="./14_fama_macbeth.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Fama-MacBeth Regressions</span></span></a>
   </div>
 </li>
@@ -473,8 +473,14 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./20_divop.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Measuring Divergence of Investor Opinion</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./50_conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -650,7 +656,7 @@ Table&nbsp;13.1: DataCore.vn Data Tables Used in This Chapter
 </div>
 </figure>
 </div>
-<div id="datacore-reader" class="cell" data-execution_count="3">
+<div id="datacore-reader" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DataCoreReader:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Unified data reader for DataCore.vn datasets.</span></span>
@@ -771,7 +777,7 @@ Table&nbsp;13.1: DataCore.vn Data Tables Used in This Chapter
 <section id="sec-price-pipeline" class="level3" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="sec-price-pipeline"><span class="header-section-number">13.3.1</span> Stock Price Data and Corporate Action Adjustments</h3>
 <p>Vietnam’s equity market is notorious for frequent corporate actions, particularly stock dividends and bonus share issuances, that dramatically alter share counts. A company issuing a 30% stock dividend means every 100 shares become 130 shares, and the reference price adjusts downward proportionally. Failure to properly adjust historical shares and prices for these events is the single most common source of error in Vietnamese equity research.</p>
-<div id="corporate-actions" class="cell" data-execution_count="4">
+<div id="corporate-actions" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Corporate Action Adjustment Factors</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -927,7 +933,7 @@ Table&nbsp;13.1: DataCore.vn Data Tables Used in This Chapter
 <p>Vietnamese companies issue stock dividends with remarkable frequency, many growth companies do so 2-3 times per year. Consider <strong>Vinhomes (VHM)</strong> or <strong>FPT Corporation</strong>: their share counts may double or triple over a 5-year period purely from stock dividends. If you compare raw ownership shares from 2019 to 2024 without adjustment, you will obtain nonsensical ownership ratios. <strong>Every time-series analysis of Vietnamese ownership data must use adjusted shares.</strong> This is the Vietnamese equivalent of the CRSP cfacshr adjustment factor problem in US data, but more severe because the events are more frequent and larger in magnitude.</p>
 </div>
 </div>
-<div id="price-processing" class="cell" data-execution_count="5">
+<div id="price-processing" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Process Stock Price Data</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -1036,7 +1042,7 @@ Table&nbsp;13.1: DataCore.vn Data Tables Used in This Chapter
 <section id="sec-ownership-data" class="level3" data-number="13.3.2">
 <h3 data-number="13.3.2" class="anchored" data-anchor-id="sec-ownership-data"><span class="header-section-number">13.3.2</span> Ownership Structure Data</h3>
 <p>Vietnamese ownership data from DataCore.vn captures the composition of shareholders as disclosed in annual reports, semi-annual reports, and event-driven disclosures. The key distinction from US 13F data is that Vietnamese disclosures provide a <strong>complete ownership decomposition</strong>, not just institutional long positions, but the full breakdown into state, institutional, foreign, and individual ownership.</p>
-<div id="ownership-processing" class="cell" data-execution_count="6">
+<div id="ownership-processing" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: Process Ownership Structure Data</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -1255,7 +1261,7 @@ Table&nbsp;13.2: Vietnam’s Ownership Taxonomy
 <li><strong>Individual visibility:</strong> We observe aggregate individual ownership directly, whereas in the US, individual ownership is merely the residual (100% − institutional ownership).</li>
 <li><strong>No short position ambiguity:</strong> Vietnam’s market has very limited short-selling infrastructure, so ownership data genuinely represents long positions.</li>
 </ol>
-<div id="ownership-decomposition" class="cell" data-execution_count="7">
+<div id="ownership-decomposition" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: Compute Ownership Decomposition</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -1420,7 +1426,7 @@ HHI_{i,t}^{non-state} = \sum_{j \notin state} \left(\frac{S_{i,j,t}}{\sum_{k \no
 <li>Foreign funds enter and exit the market</li>
 <li>Domestic securities firms consolidate or spin off asset management divisions</li>
 </ul>
-<div id="compute-all-metrics" class="cell" data-execution_count="8">
+<div id="compute-all-metrics" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Compute All IO Metrics</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -1567,7 +1573,7 @@ HHI_{i,t}^{non-state} = \sum_{j \notin state} \left(\frac{S_{i,j,t}}{\sum_{k \no
 </section>
 <section id="time-series-visualization" class="level3" data-number="13.5.4">
 <h3 data-number="13.5.4" class="anchored" data-anchor-id="time-series-visualization"><span class="header-section-number">13.5.4</span> Time Series Visualization</h3>
-<div id="fig-io-timeseries-vn" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9" data-fig-height="12">
+<div id="fig-io-timeseries-vn" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8" data-fig-height="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-io-timeseries-vn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_ownership_timeseries_vietnam(metrics: pd.DataFrame):</span>
@@ -1656,7 +1662,7 @@ Figure&nbsp;13.1
 </figcaption>
 </figure>
 </div>
-<div id="fig-io-by-exchange" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
+<div id="fig-io-by-exchange" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-io-by-exchange-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_io_by_exchange_size(metrics: pd.DataFrame):</span>
@@ -1705,7 +1711,7 @@ Figure&nbsp;13.2
 </figcaption>
 </figure>
 </div>
-<div id="tbl-io-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
+<div id="tbl-io-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-io-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;13.3: Summary Statistics of Ownership Structure in Vietnam by Size Quintile and Exchange (Pooled 2010-2024)
@@ -1783,7 +1789,7 @@ Table&nbsp;13.4: FOL Proximity Zones
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
-<col style="width: 50%">
+<col style="width: 48%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1823,7 +1829,7 @@ Table&nbsp;13.4: FOL Proximity Zones
 </div>
 </figure>
 </div>
-<div id="fol-analysis" class="cell" data-execution_count="12">
+<div id="fol-analysis" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 6: Foreign Ownership Limit Analysis</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -1986,7 +1992,7 @@ Table&nbsp;13.4: FOL Proximity Zones
 <span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a><span class="co"># fol_classified = fol_analyzer.classify_fol_zones()</span></span>
 <span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a><span class="co"># fol_premium = fol_analyzer.estimate_fol_premium()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="fig-fol-utilization" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
+<div id="fig-fol-utilization" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fol-utilization-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_fol_utilization(metrics: pd.DataFrame):</span>
@@ -2040,7 +2046,7 @@ Figure&nbsp;13.3
 <li><strong>Daily foreign ownership:</strong> HOSE/HNX publish aggregate daily foreign buy/sell data</li>
 </ul>
 <p>We derive trades from the <strong>change in ownership between consecutive disclosure dates</strong>, applying the same logic as the US <span class="citation" data-cites="ben2013hedge">Ben-David et al. (<a href="references.html#ref-ben2013hedge" role="doc-biblioref">2013</a>)</span> algorithm but adapted for Vietnam’s irregular disclosure intervals.</p>
-<div id="derive-trades-vn" class="cell" data-execution_count="14">
+<div id="derive-trades-vn" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 7: Derive Institutional Trades</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -2172,7 +2178,7 @@ Figure&nbsp;13.3
 <p>When computing trades as <span class="math inline">\(\Delta Shares = Shares_t - Shares_{t-1}\)</span>, the previous period’s shares <strong>must</strong> be adjusted for any corporate actions between <span class="math inline">\(t-1\)</span> and <span class="math inline">\(t\)</span>. If VNM issued a 20% stock dividend between the two disclosure dates, then 1,000 shares at <span class="math inline">\(t-1\)</span> should be compared to 1,200 adjusted shares, not 1,000 raw shares. Failing to make this adjustment would create a phantom “buy” of 200 shares that never actually occurred.</p>
 </div>
 </div>
-<div id="vectorized-trades-vn" class="cell" data-execution_count="15">
+<div id="vectorized-trades-vn" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> derive_trades_vectorized_vietnam(ownership: pd.DataFrame,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                      adj_factors: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -2261,7 +2267,7 @@ NetFlows_{j,t} = Assets_{j,t} - Assets_{j,t-1} \times (1 + R_{j,t-1 \to t}^{hold
 <p><span id="eq-turnover-vn"><span class="math display">\[
 Turnover_{j,t}^{Carhart} = \frac{\min(TotalBuys_{j,t}, TotalSales_{j,t})}{\overline{Assets}_{j,t}}
 \tag{13.10}\]</span></span></p>
-<div id="fund-analytics" class="cell" data-execution_count="16">
+<div id="fund-analytics" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 8: Fund-Level Portfolio Analytics</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -2381,7 +2387,7 @@ Turnover_{j,t}^{Carhart} = \frac{\min(TotalBuys_{j,t}, TotalSales_{j,t})}{\overl
 <section id="equitization-and-the-decline-of-state-ownership" class="level3" data-number="13.9.1">
 <h3 data-number="13.9.1" class="anchored" data-anchor-id="equitization-and-the-decline-of-state-ownership"><span class="header-section-number">13.9.1</span> Equitization and the Decline of State Ownership</h3>
 <p>Vietnam’s equitization (cổ phần hóa) program has been a defining feature of the market since the early 2000s. The program converts state-owned enterprises into joint-stock companies, typically with the state retaining a controlling or significant minority stake that is then gradually reduced through secondary offerings.</p>
-<div id="state-ownership-analysis" class="cell" data-execution_count="17">
+<div id="state-ownership-analysis" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 9: State Ownership Analysis</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
@@ -2445,7 +2451,7 @@ Turnover_{j,t}^{Carhart} = \frac{\min(TotalBuys_{j,t}, TotalSales_{j,t})}{\overl
 <span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a><span class="co"># state_analysis = analyze_state_ownership(io_metrics)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="fig-state-ownership" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18" data-fig-height="10">
+<div id="fig-state-ownership" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17" data-fig-height="10">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-state-ownership-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_state_ownership(state_analysis: Dict, metrics: pd.DataFrame):</span>
@@ -2497,7 +2503,7 @@ Figure&nbsp;13.4
 <section id="sec-network" class="level3" data-number="13.10.1">
 <h3 data-number="13.10.1" class="anchored" data-anchor-id="sec-network"><span class="header-section-number">13.10.1</span> Network Analysis of Co-Ownership</h3>
 <p>Institutional co-ownership networks capture how stocks are connected through shared investors. In Vietnam, these networks reveal the influence structure of major domestic conglomerates (e.g., Vingroup, Masan, FPT) and the overlap between foreign fund portfolios.</p>
-<div id="coownership-network" class="cell" data-execution_count="19">
+<div id="coownership-network" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_stock_coownership_network(ownership: pd.DataFrame,</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                                         period: <span class="bu">str</span>,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                                         min_overlap: <span class="bu">int</span> <span class="op">=</span> <span class="dv">3</span>) <span class="op">-&gt;</span> Dict:</span>
@@ -2600,7 +2606,7 @@ Figure&nbsp;13.4
 <section id="sec-ml-classification" class="level3" data-number="13.10.2">
 <h3 data-number="13.10.2" class="anchored" data-anchor-id="sec-ml-classification"><span class="header-section-number">13.10.2</span> ML-Enhanced Investor Classification</h3>
 <p>Vietnam’s investor classification challenge is distinct from the US. While the US has the Bushee typology based on portfolio turnover and concentration, Vietnam requires classification of both investor <strong>type</strong> (when not explicitly labeled) and investor <strong>behavior</strong> (active vs passive, short-term vs long-term).</p>
-<div id="ml-classification-vn" class="cell" data-execution_count="20">
+<div id="ml-classification-vn" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_investors_vietnam(ownership: pd.DataFrame,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                                prices_q: pd.DataFrame,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                                n_clusters: <span class="bu">int</span> <span class="op">=</span> <span class="dv">4</span>) <span class="op">-&gt;</span> pd.DataFrame:</span>
@@ -2703,7 +2709,7 @@ Figure&nbsp;13.4
 <section id="sec-event-study" class="level3" data-number="13.10.3">
 <h3 data-number="13.10.3" class="anchored" data-anchor-id="sec-event-study"><span class="header-section-number">13.10.3</span> Event Study: Ownership Disclosure Shocks</h3>
 <p>Vietnam’s threshold-based major shareholder disclosure creates natural events for studying the price impact of ownership changes.</p>
-<div id="event-study" class="cell" data-execution_count="21">
+<div id="event-study" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ownership_event_study(major_shareholders: pd.DataFrame,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                           prices: pd.DataFrame,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                           event_window: Tuple[<span class="bu">int</span>, <span class="bu">int</span>] <span class="op">=</span> (<span class="op">-</span><span class="dv">5</span>, <span class="dv">20</span>),</span>
@@ -2855,7 +2861,7 @@ Figure&nbsp;13.4
 <section id="application-1-foreign-ownership-and-stock-returns-in-vietnam" class="level3" data-number="13.11.1">
 <h3 data-number="13.11.1" class="anchored" data-anchor-id="application-1-foreign-ownership-and-stock-returns-in-vietnam"><span class="header-section-number">13.11.1</span> Application 1: Foreign Ownership and Stock Returns in Vietnam</h3>
 <p>Does foreign institutional ownership predict returns in Vietnam? <span class="citation" data-cites="huang2023factors">Huang, Liu, and Shu (<a href="references.html#ref-huang2023factors" role="doc-biblioref">2023</a>)</span> find evidence consistent with the information advantage hypothesis.</p>
-<div id="foreign-io-returns" class="cell" data-execution_count="22">
+<div id="foreign-io-returns" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_foreign_io_returns(metrics: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Test whether changes in foreign institutional ownership predict </span></span>
@@ -2921,7 +2927,7 @@ Figure&nbsp;13.4
 </section>
 <section id="application-2-state-divestiture-and-value-creation" class="level3" data-number="13.11.2">
 <h3 data-number="13.11.2" class="anchored" data-anchor-id="application-2-state-divestiture-and-value-creation"><span class="header-section-number">13.11.2</span> Application 2: State Divestiture and Value Creation</h3>
-<div id="equitization-value" class="cell" data-execution_count="23">
+<div id="equitization-value" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_equitization_value(metrics: pd.DataFrame, </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                                state_analysis: Dict) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -3006,7 +3012,7 @@ Figure&nbsp;13.4
 </section>
 <section id="application-3-institutional-herding-in-vietnam" class="level3" data-number="13.11.3">
 <h3 data-number="13.11.3" class="anchored" data-anchor-id="application-3-institutional-herding-in-vietnam"><span class="header-section-number">13.11.3</span> Application 3: Institutional Herding in Vietnam</h3>
-<div id="herding-vn" class="cell" data-execution_count="24">
+<div id="herding-vn" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_herding_vietnam(trades: pd.DataFrame,</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                             owner_types: Optional[List[<span class="bu">str</span>]] <span class="op">=</span> <span class="va">None</span>) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -3106,7 +3112,7 @@ Table&nbsp;13.5: Summary of All Ownership Measures for Vietnam
 <colgroup>
 <col style="width: 24%">
 <col style="width: 24%">
-<col style="width: 27%">
+<col style="width: 26%">
 <col style="width: 24%">
 </colgroup>
 <thead>
@@ -3856,7 +3862,7 @@ document.addEventListener("DOMContentLoaded", function () {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./13_fama_macbeth.html" class="pagination-link" aria-label="Fama-MacBeth Regressions">
+      <a href="./14_fama_macbeth.html" class="pagination-link" aria-label="Fama-MacBeth Regressions">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Fama-MacBeth Regressions</span></span>
       </a>          
   </div>
@@ -5067,7 +5073,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb23-1219"><a href="#cb23-1219" aria-hidden="true" tabindex="-1"></a>Stocks are classified by FOL proximity (@tbl-fol-zones).</span>
 <span id="cb23-1220"><a href="#cb23-1220" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-1221"><a href="#cb23-1221" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FOL Zone   <span class="pp">|</span> Utilization Range <span class="pp">|</span> Market Implication                            <span class="pp">|</span></span>
-<span id="cb23-1222"><a href="#cb23-1222" aria-hidden="true" tabindex="-1"></a><span class="pp">|:-----------------|:-----------------|:-----------------------------------|</span></span>
+<span id="cb23-1222"><a href="#cb23-1222" aria-hidden="true" tabindex="-1"></a><span class="pp">|:------------------|:------------------|:-----------------------------------|</span></span>
 <span id="cb23-1223"><a href="#cb23-1223" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Green**  <span class="pp">|</span> <span class="sc">\&lt;</span> 50%            <span class="pp">|</span> Ample foreign room; normal trading            <span class="pp">|</span></span>
 <span id="cb23-1224"><a href="#cb23-1224" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Yellow** <span class="pp">|</span> 50-80%            <span class="pp">|</span> Moderate room; some foreign interest pressure <span class="pp">|</span></span>
 <span id="cb23-1225"><a href="#cb23-1225" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Orange** <span class="pp">|</span> 80-95%            <span class="pp">|</span> Limited room; foreign premium emerging        <span class="pp">|</span></span>
@@ -6391,7 +6397,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb23-2569"><a href="#cb23-2569" aria-hidden="true" tabindex="-1"></a><span class="at">@tbl</span><span class="op">-</span>summary<span class="op">-</span><span class="bu">all</span> summarizes <span class="bu">all</span> institutional ownership measures developed <span class="kw">in</span> this chapter <span class="cf">for</span> the Vietnamese market.</span>
 <span id="cb23-2570"><a href="#cb23-2570" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-2571"><a href="#cb23-2571" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Measure <span class="op">|</span> Definition <span class="op">|</span> Key Adaptation <span class="cf">for</span> Vietnam <span class="op">|</span> Python Function <span class="op">|</span></span>
-<span id="cb23-2572"><a href="#cb23-2572" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>:<span class="op">-----------------|</span>:<span class="op">-----------------|</span>:<span class="op">-------------------|</span>:<span class="op">-----------------|</span></span>
+<span id="cb23-2572"><a href="#cb23-2572" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>:<span class="op">-----------------|</span>:<span class="op">-----------------|</span>:<span class="op">------------------|</span>:<span class="op">-----------------|</span></span>
 <span id="cb23-2573"><a href="#cb23-2573" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> IO Ratio <span class="op">|</span> Inst. shares <span class="op">/</span> TSO <span class="op">|</span> Decomposed into state, foreign, domestic <span class="op">|</span> `compute_ownership_decomposition()` <span class="op">|</span></span>
 <span id="cb23-2574"><a href="#cb23-2574" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> HHI Concentration <span class="op">|</span> $\<span class="bu">sum</span> w_j<span class="op">^</span><span class="dv">2</span>$ <span class="op">|</span> Separate HHI <span class="cf">for</span> total, non<span class="op">-</span>state, foreign <span class="op">|</span> `compute_io_metrics_vietnam()` <span class="op">|</span></span>
 <span id="cb23-2575"><a href="#cb23-2575" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> ΔBreadth <span class="op">|</span> Lehavy<span class="op">-</span>Sloan adjusted <span class="op">|</span> Applied to irregular disclosure intervals <span class="op">|</span> `compute_io_metrics_vietnam()` <span class="op">|</span></span>

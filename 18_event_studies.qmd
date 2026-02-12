@@ -211,7 +211,7 @@ $$
 The table below summarizes the assumptions of each test:
 
 | Test | Event-Induced Variance | Cross-Sectional Independence | Normality |
-|---------------|:----------------:|:----------------:|:----------------:|
+|------------------|:----------------:|:----------------:|:----------------:|
 | Cross-Sectional $t$ | Robust | Assumes | Assumes |
 | Patell Z | Assumes no change | Assumes | Assumes |
 | BMP | Robust | Assumes | Assumes |
