@@ -50,7 +50,7 @@
   </url>
   <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/13_momemtum.html</loc>
-    <lastmod>2026-02-12T21:15:47.180Z</lastmod>
+    <lastmod>2026-02-12T21:35:53.818Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/14_fama_macbeth.html</loc>
@@ -66,7 +66,7 @@
   </url>
   <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/19_divop.html</loc>
-    <lastmod>2026-02-12T02:02:20.640Z</lastmod>
+    <lastmod>2026-02-12T21:40:23.000Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/25_pe_ratio.html</loc>
@@ -81,6 +81,10 @@
     <lastmod>2026-02-12T21:29:56.677Z</lastmod>
   </url>
   <url>
+    <loc>https://github.com/mikenguyen13/tidy_finance_vn/32_return_gaps.html</loc>
+    <lastmod>2026-02-12T22:48:34.597Z</lastmod>
+  </url>
+  <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/99_conclusion.html</loc>
     <lastmod>2026-02-01T23:51:59.082Z</lastmod>
   </url>
@@ -90,6 +94,6 @@
   </url>
   <url>
     <loc>https://github.com/mikenguyen13/tidy_finance_vn/Applying-Tidy-Finance-with-Python-to-Vietnam.pdf</loc>
-    <lastmod>2026-02-12T21:31:50.020Z</lastmod>
+    <lastmod>2026-02-12T22:51:21.220Z</lastmod>
   </url>
 </urlset>

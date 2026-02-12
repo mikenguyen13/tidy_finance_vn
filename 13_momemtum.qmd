@@ -124,6 +124,8 @@ We also examine the cross-sectional distribution of stocks over time, which is i
 #| label: fig-stock-count
 #| fig-cap: "Number of stocks with available return data over time. The figure shows the monthly cross-section of stocks available for momentum portfolio construction. A minimum number of stocks is needed to form meaningful decile portfolios."
 #| fig-alt: "A line chart showing the number of stocks with available monthly returns over time, generally increasing from a small number in the early 2000s to several hundred in recent years."
+#| fig-width: 7
+
 stock_counts = (prices_monthly
     .groupby("date")["symbol"]
     .nunique()
@@ -410,6 +412,7 @@ We should verify that we have the expected number of active cohorts per month. O
 #| label: fig-cohort-count
 #| fig-cap: "Number of active cohorts per momentum portfolio over time. After an initial ramp-up period of K months, each portfolio should have exactly K active cohorts contributing to its monthly return."
 #| fig-alt: "A line chart showing the number of active cohorts per momentum portfolio over time, ramping up from 1 to K during the initial months and then remaining stable at K."
+#| fig-width: 7
 cohort_check = (ewret
     .groupby("date")["n_cohorts"]
     .mean()
@@ -520,6 +523,7 @@ for col in ["winners", "losers", "long_short"]:
 #| label: fig-cumret-winners-losers
 #| fig-cap: "Cumulative returns of momentum winner and loser portfolios. The winner portfolio (blue) contains stocks in the top decile of past 6-month returns, and the loser portfolio (red) contains stocks in the bottom decile. The spread between the two lines reflects the cumulative momentum premium."
 #| fig-alt: "A line chart showing cumulative returns of the winner and loser momentum portfolios over time. The winner portfolio generally accumulates higher returns than the loser portfolio, though both exhibit substantial variation."
+#| fig-width: 7
 
 cumret_plot_data = (ewret_wide
     [["date", "cumret_winners", "cumret_losers"]]
@@ -554,6 +558,7 @@ plot_cumret
 #| label: fig-cumret-long-short
 #| fig-cap: "Cumulative return of the momentum long-short strategy (Winners minus Losers). Upward-sloping periods indicate momentum profits; sharp drawdowns often coincide with market reversals or crisis episodes."
 #| fig-alt: "A line chart showing the cumulative return of the long-short momentum strategy over time, exhibiting periods of accumulation interspersed with sharp drawdowns."
+#| fig-width: 7
 
 plot_ls = (
     ggplot(ewret_wide, aes(x="date", y="cumret_long_short")) +
@@ -578,6 +583,7 @@ Beyond the mean, the full distribution of monthly long-short returns provides in
 #| label: fig-return-distribution
 #| fig-cap: "Distribution of monthly long-short momentum returns. The histogram shows the frequency distribution of monthly Winners-minus-Losers returns. The vertical dashed line indicates the mean monthly return."
 #| fig-alt: "A histogram of monthly long-short momentum returns, approximately centered near zero or slightly positive, with tails extending in both directions."
+#| fig-width: 7
 
 mean_ls = ewret_wide["long_short"].mean()
 
@@ -911,6 +917,7 @@ ls_grid
 #| label: fig-momentum-heatmap
 #| fig-cap: "Heatmap of average monthly long-short momentum returns (%) across formation periods (J) and holding periods (K). Darker shades indicate higher momentum profits. Asterisks denote statistical significance at the 5% level."
 #| fig-alt: "A heatmap with formation period J on the y-axis and holding period K on the x-axis, with cell colors indicating the magnitude of the momentum premium."
+#| fig-width: 7
 
 ls_heatmap_data = (results_df
     .query("portfolio == 'long_short'")
