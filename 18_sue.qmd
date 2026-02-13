@@ -28,11 +28,11 @@ Reported earnings often contain non-recurring items (e.g., asset sales, one-time
 
 In Vietnam, the standard Corporate Income Tax (CIT) rate is generally 20%. We adjust special items to reflect their impact on net income.
 
-$$Adjusted \ EPS = Reported \ EPS - \frac{Special \ Items \times (1 - CIT)}{Shares \ Outstanding}$$
+$$
+Adjusted \ EPS = Reported \ EPS - \frac{Special \ Items \times (1 - CIT)}{Shares \ Outstanding}
+$$
 
-The SUE calculation then follows the seasonal logic but uses the adjusted EPS figures:
-
-$$SUE_{2} = \frac{Adj \ EPS_{t} - Adj \ EPS_{t-4}}{P_{t}}$$
+The SUE calculation then follows the seasonal logic but uses the adjusted EPS figures: $$SUE_{2} = \frac{Adj \ EPS_{t} - Adj \ EPS_{t-4}}{P_{t}}$$
 
 ### Method 3: Analyst Consensus
 

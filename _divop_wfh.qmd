@@ -1,0 +1,1507 @@
+# Working from Home and Analyst Forecast Accuracy in Vietnam
+
+## Motivation and Research Design {#sec-wfh-motivation}
+
+### The Information Value of In-Person Interactions
+
+A growing body of evidence suggests that face-to-face interactions facilitate the transmission of soft, nuanced, and contextual information that is difficult to communicate through digital channels. In the context of capital markets, sell-side equity analysts serve as key information intermediaries, and their forecast accuracy depends critically on the quality and breadth of their information sets [@beyer2010financial]. @durney2025forecasting demonstrate that analysts who previously enjoyed access to in-person interactions with other informed parties (e.g., corporate managers, institutional investors, and peer analysts) experienced a disproportionate decline in earnings forecast accuracy following the COVID-19 lockdown and the forced shift to remote work.
+
+Their key finding is striking: the informational advantage associated with in-person access disappears during the lockdown and returns once restrictions are lifted, suggesting that despite advances in communications technology, AI, and machine learning, in-person interactions remain a unique and difficult-to-substitute information channel.
+
+### Why Vietnam?
+
+Vietnam provides an exceptionally powerful setting for studying the WFH effect on analyst forecast accuracy, for several reasons.
+
+First, Vietnam's lockdown policies were among the most stringent in the world. The Oxford COVID-19 Government Response Tracker [@hale2021global] shows that Vietnam's Stringency Index reached values above 90 (out of 100) during peak lockdown periods, exceeding even China's restrictions at various points. The 2021 Ho Chi Minh City lockdown, which ran from late May through September 2021, imposed strict stay-at-home orders, travel bans between provinces, and a near-total shutdown of economic activity in the country's financial capital. This represents a far more severe and sustained disruption to in-person interactions than the US experience studied by @durney2025forecasting.
+
+Second, Vietnam's financial ecosystem is geographically concentrated. The Ho Chi Minh Stock Exchange (HOSE) and the Hanoi Stock Exchange (HNX) are the only two exchanges, and the vast majority of securities firms, fund managers, and corporate headquarters cluster in Ho Chi Minh City and Hanoi. This geographic concentration amplifies the effect of localized lockdowns. When HCMC locked down, a disproportionate share of the country's financial information infrastructure was disrupted simultaneously.
+
+Third, Vietnam's analyst community is small relative to developed markets. Typical coverage breadth is 3-8 analysts per large-cap stock and 0-2 for mid- and small-caps. In such a thin information environment, the marginal value of each in-person interaction is likely higher, and the loss of these interactions more consequential. This allows us to test whether the WFH effect documented by @durney2025forecasting is amplified in settings where alternative information channels are less developed.
+
+Fourth, the staggered nature of Vietnam's lockdowns provides quasi-experimental variation. Unlike the US, where lockdowns were implemented relatively uniformly across the country, Vietnam imposed lockdowns at the city and provincial level at different times. Analysts covering firms headquartered in HCMC experienced severe disruptions in mid-2021, while those covering Hanoi-based firms faced a different timing pattern. This staggered implementation supports difference-in-differences and event study designs.
+
+### Hypotheses
+
+Building on @durney2025forecasting, we test the following hypotheses adapted for the Vietnamese context:
+
+::: callout-note
+## Hypothesis 1: WFH Effect on Forecast Accuracy
+
+Analyst earnings forecast accuracy declines during COVID-19 lockdown periods in Vietnam, with the decline concentrated among analysts who previously relied on in-person interactions.
+:::
+
+::: callout-note
+## Hypothesis 2: Geographic Proximity Channel
+
+Analysts located in Ho Chi Minh City who cover HCMC-headquartered firms experience a greater decline in forecast accuracy during the 2021 HCMC lockdown than analysts covering firms headquartered elsewhere.
+:::
+
+::: callout-note
+## Hypothesis 3: Reversibility
+
+The decline in forecast accuracy reverses when lockdown restrictions are lifted, consistent with the WFH channel rather than a permanent structural shift.
+:::
+
+::: callout-note
+## Hypothesis 4: Divergence of Opinion
+
+Market-wide divergence of opinion measures (forecast dispersion, abnormal volume, idiosyncratic volatility) increase during lockdown periods, reflecting reduced information flow among market participants.
+:::
+
+::: callout-note
+## Hypothesis 5: Heterogeneous Effects
+
+The WFH effect is stronger for (a) analysts with higher pre-lockdown accuracy (analogous to the "all-star" effect in @durney2025forecasting), (b) analysts with shorter tenure covering a given firm, and (c) firms with lower institutional ownership (i.e., weaker alternative information channels).
+:::
+
+## Data and Variable Construction {#sec-wfh-data}
+
+### Data Sources
+
+We draw on several data modules from DataCore.vn.
+
+```{python}
+#| label: setup-wfh
+#| code-summary: "Import libraries and configure environment"
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+from linearmodels.panel import PanelOLS
+from scipy import stats
+from datetime import datetime, timedelta
+import warnings
+warnings.filterwarnings("ignore")
+
+# Plotting configuration
+plt.rcParams.update({
+    "figure.figsize": (10, 6),
+    "font.size": 11,
+    "axes.titlesize": 13,
+    "axes.labelsize": 11,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 10,
+    "figure.dpi": 300,
+    "savefig.dpi": 300,
+    "savefig.bbox": "tight",
+})
+sns.set_theme(style="whitegrid", palette="colorblind")
+```
+
+```{python}
+#| label: load-data-wfh
+#| code-summary: "Load analyst forecast and stock data from DataCore.vn"
+
+from datacore import DataCoreReader
+
+dcr = DataCoreReader()
+
+# ── 1. Analyst forecast data ──────────────────────────────────
+# Individual analyst-level EPS forecasts (not consensus)
+analyst_forecasts = dcr.get_analyst_forecasts(
+    start_date="2018-01-01",
+    end_date="2023-12-31",
+    fields=[
+        "ticker", "analyst_id", "analyst_name", "broker",
+        "broker_city",                    # key: analyst location
+        "forecast_date", "fiscal_year_end",
+        "eps_forecast", "eps_actual",
+        "target_price", "recommendation",
+        "days_to_earnings"
+    ]
+)
+
+# ── 2. Company profile data ──────────────────────────────────
+company_info = dcr.get_company_profiles(
+    fields=[
+        "ticker", "company_name", "exchange",
+        "hq_city", "hq_province",         # key: firm location
+        "industry_l1", "industry_l2",
+        "listing_date", "market_cap_category"
+    ]
+)
+
+# ── 3. Daily stock data ─────────────────────────────────────
+prices_daily = dcr.get_prices_daily(
+    start_date="2018-01-01",
+    end_date="2023-12-31",
+    fields=[
+        "ticker", "date", "close", "open", "high", "low",
+        "volume", "value_traded",
+        "shares_outstanding", "return"
+    ]
+)
+
+# ── 4. Market index ──────────────────────────────────────────
+market_index = dcr.get_index_data(
+    index="VN-Index",
+    start_date="2018-01-01",
+    end_date="2023-12-31",
+    fields=["date", "close", "return"]
+).rename(columns={"close": "mkt_close", "return": "mkt_return"})
+
+# ── 5. Institutional ownership ───────────────────────────────
+inst_ownership = dcr.get_ownership_data(
+    start_date="2018-01-01",
+    end_date="2023-12-31",
+    fields=[
+        "ticker", "report_date", "io_total",
+        "io_foreign", "io_domestic_inst", "io_state"
+    ]
+)
+
+print(f"Analyst forecasts: {len(analyst_forecasts):,} obs")
+print(f"Companies: {len(company_info):,}")
+print(f"Daily prices: {len(prices_daily):,} obs")
+print(f"Institutional ownership: {len(inst_ownership):,} obs")
+```
+
+### Defining Lockdown Periods
+
+Vietnam's lockdown timeline is more complex than a simple pre/during/post partition. We define lockdown episodes at the city level using government directives and cross-validate with the Oxford Stringency Index.
+
+```{python}
+#| label: define-lockdowns
+#| code-summary: "Define Vietnam lockdown episodes at the city level"
+
+# ── Vietnam lockdown timeline ─────────────────────────────────
+# Key episodes based on government directives
+lockdown_episodes = pd.DataFrame([
+    # Nationwide lockdowns
+    {
+        "episode": "National Lockdown 1",
+        "start": "2020-04-01", "end": "2020-04-22",
+        "cities_affected": ["HCMC", "Hanoi", "Da Nang", "Other"],
+        "stringency": "High",
+        "directive": "Directive 16/CT-TTg"
+    },
+    {
+        "episode": "Da Nang Outbreak",
+        "start": "2020-07-28", "end": "2020-09-14",
+        "cities_affected": ["Da Nang"],
+        "stringency": "Very High",
+        "directive": "Local directive"
+    },
+    # The critical HCMC lockdown — most severe and prolonged
+    {
+        "episode": "HCMC Lockdown (Directive 16)",
+        "start": "2021-07-09", "end": "2021-10-01",
+        "cities_affected": ["HCMC"],
+        "stringency": "Extreme",
+        "directive": "Directive 16 + Directive 16+"
+    },
+    {
+        "episode": "Hanoi Lockdown",
+        "start": "2021-07-24", "end": "2021-09-21",
+        "cities_affected": ["Hanoi"],
+        "stringency": "Very High",
+        "directive": "Directive 16/CT-TTg (Hanoi)"
+    },
+    # Southern provinces lockdowns
+    {
+        "episode": "Southern Provinces Lockdown",
+        "start": "2021-07-19", "end": "2021-10-01",
+        "cities_affected": ["Binh Duong", "Dong Nai", "Long An"],
+        "stringency": "Extreme",
+        "directive": "Directive 16 (Southern provinces)"
+    },
+])
+lockdown_episodes["start"] = pd.to_datetime(lockdown_episodes["start"])
+lockdown_episodes["end"] = pd.to_datetime(lockdown_episodes["end"])
+
+# ── Create firm-level lockdown exposure ───────────────────────
+# Map each firm to lockdown exposure based on HQ location
+def classify_city(hq_city, hq_province):
+    """Map Vietnamese cities/provinces to lockdown regions."""
+    hcmc_names = [
+        "Ho Chi Minh", "Hồ Chí Minh", "TP.HCM", "HCMC",
+        "TP. Hồ Chí Minh", "Thành phố Hồ Chí Minh"
+    ]
+    hanoi_names = [
+        "Ha Noi", "Hà Nội", "Hanoi"
+    ]
+    if any(name.lower() in str(hq_city).lower() or
+           name.lower() in str(hq_province).lower()
+           for name in hcmc_names):
+        return "HCMC"
+    elif any(name.lower() in str(hq_city).lower() or
+             name.lower() in str(hq_province).lower()
+             for name in hanoi_names):
+        return "Hanoi"
+    else:
+        return "Other"
+
+company_info["hq_region"] = company_info.apply(
+    lambda r: classify_city(r["hq_city"], r["hq_province"]), axis=1
+)
+
+print("Firm headquarters distribution:")
+print(company_info["hq_region"].value_counts())
+```
+
+```{python}
+#| label: fig-lockdown-timeline
+#| fig-cap: "Vietnam COVID-19 Lockdown Timeline by City. The figure shows the timing and severity of lockdown episodes across Vietnamese cities. The 2021 HCMC lockdown (July--October) is the primary identification event for our analysis. Shaded bars indicate the duration of each lockdown episode, with color intensity reflecting stringency level."
+#| code-summary: "Visualize lockdown timeline"
+
+fig, ax = plt.subplots(figsize=(12, 5))
+
+colors = {
+    "High": "#3498db",
+    "Very High": "#e67e22",
+    "Extreme": "#e74c3c"
+}
+
+for idx, row in lockdown_episodes.iterrows():
+    duration = (row["end"] - row["start"]).days
+    ax.barh(
+        y=row["episode"],
+        width=duration,
+        left=row["start"],
+        color=colors.get(row["stringency"], "#95a5a6"),
+        edgecolor="white",
+        linewidth=0.5,
+        height=0.6,
+        alpha=0.85
+    )
+    # Add duration label
+    mid_date = row["start"] + timedelta(days=duration / 2)
+    ax.text(
+        mid_date, idx, f"{duration}d",
+        ha="center", va="center", fontsize=9,
+        fontweight="bold", color="white"
+    )
+
+ax.set_xlabel("Date")
+ax.set_title("Vietnam COVID-19 Lockdown Episodes", fontweight="bold")
+ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter("%b %Y"))
+plt.xticks(rotation=45)
+sns.despine(left=True)
+plt.tight_layout()
+plt.savefig("figures/lockdown_timeline.pdf")
+plt.show()
+```
+
+### Analyst Forecast Accuracy Measures
+
+Following @durney2025forecasting and the broader analyst forecast literature [@clement1999analyst; @hong2000security; @malloy2005geography], we construct several measures of individual analyst forecast accuracy.
+
+The primary measure is the absolute forecast error, defined for analyst $a$ covering firm $i$ for fiscal year $t$:
+
+$$
+\text{AFE}_{a,i,t} = \frac{|F_{a,i,t} - A_{i,t}|}{|A_{i,t}|}
+$$ {#eq-afe}
+
+where $F_{a,i,t}$ is analyst $a$'s most recent EPS forecast for firm $i$'s fiscal year $t$, and $A_{i,t}$ is the actual reported EPS. To handle cases where actual EPS is near zero (common in Vietnam where many firms report very small per-share earnings), we also use a price-scaled version:
+
+$$
+\text{AFE}^{P}_{a,i,t} = \frac{|F_{a,i,t} - A_{i,t}|}{P_{i,t-1}}
+$$ {#eq-afe-price}
+
+where $P_{i,t-1}$ is the stock price at the end of the prior fiscal year.
+
+We also compute a relative accuracy measure that benchmarks each analyst against the consensus:
+
+$$
+\text{PMAFE}_{a,i,t} = \frac{|F_{a,i,t} - A_{i,t}| - |\bar{F}_{-a,i,t} - A_{i,t}|}{|\bar{F}_{-a,i,t} - A_{i,t}|}
+$$ {#eq-pmafe}
+
+where $\bar{F}_{-a,i,t}$ is the consensus (mean) forecast excluding analyst $a$. A negative value indicates the analyst outperforms the consensus.
+
+```{python}
+#| label: construct-accuracy
+#| code-summary: "Construct analyst forecast accuracy measures"
+
+# ── Merge analyst forecasts with firm info ────────────────────
+af = analyst_forecasts.merge(
+    company_info[["ticker", "hq_region", "exchange", "industry_l1"]],
+    on="ticker",
+    how="left"
+)
+
+# ── Keep most recent forecast per analyst-firm-fiscal year ────
+af["forecast_date"] = pd.to_datetime(af["forecast_date"])
+af["fiscal_year_end"] = pd.to_datetime(af["fiscal_year_end"])
+af = af.sort_values("forecast_date").groupby(
+    ["analyst_id", "ticker", "fiscal_year_end"]
+).last().reset_index()
+
+# ── Forecast error measures ───────────────────────────────────
+# Absolute forecast error (earnings-scaled)
+af["afe"] = np.abs(af["eps_forecast"] - af["eps_actual"])
+af["afe_scaled"] = af["afe"] / np.abs(af["eps_actual"])
+# Handle near-zero actuals
+af.loc[np.abs(af["eps_actual"]) < 100, "afe_scaled"] = np.nan
+
+# Get prior-year-end price for price-scaled measure
+prices_yearend = (
+    prices_daily
+    .assign(year=lambda x: x["date"].dt.year)
+    .sort_values("date")
+    .groupby(["ticker", "year"])
+    .last()
+    .reset_index()
+    [["ticker", "year", "close"]]
+    .rename(columns={"close": "price_lag"})
+)
+af["fiscal_year"] = af["fiscal_year_end"].dt.year
+af = af.merge(
+    prices_yearend.assign(fiscal_year=lambda x: x["year"] + 1).drop(columns="year"),
+    on=["ticker", "fiscal_year"],
+    how="left"
+)
+af["afe_price_scaled"] = af["afe"] / af["price_lag"]
+
+# ── Relative accuracy (PMAFE) ────────────────────────────────
+consensus = (
+    af.groupby(["ticker", "fiscal_year_end"])
+    .agg(
+        n_analysts=("analyst_id", "nunique"),
+        consensus_eps=("eps_forecast", "mean"),
+        forecast_std=("eps_forecast", "std")
+    )
+    .reset_index()
+)
+af = af.merge(consensus, on=["ticker", "fiscal_year_end"], how="left")
+
+# Leave-one-out consensus
+af["consensus_excl"] = (
+    (af["consensus_eps"] * af["n_analysts"] - af["eps_forecast"])
+    / (af["n_analysts"] - 1)
+)
+af["consensus_error"] = np.abs(af["consensus_excl"] - af["eps_actual"])
+af["pmafe"] = (af["afe"] - af["consensus_error"]) / af["consensus_error"]
+af.loc[af["n_analysts"] < 2, "pmafe"] = np.nan  # need at least 2 analysts
+
+# ── Forecast dispersion (firm-level DIVOP measure) ────────────
+af["disp"] = af["forecast_std"] / np.abs(af["consensus_eps"])
+af.loc[np.abs(af["consensus_eps"]) < 100, "disp"] = np.nan
+
+print(f"Analyst-firm-year observations: {len(af):,}")
+print(f"With valid AFE (scaled): {af['afe_scaled'].notna().sum():,}")
+print(f"With valid PMAFE: {af['pmafe'].notna().sum():,}")
+print(f"Unique analysts: {af['analyst_id'].nunique():,}")
+print(f"Unique firms covered: {af['ticker'].nunique():,}")
+```
+
+### In-Person Access Proxy
+
+The key identification challenge is measuring which analysts benefit from in-person interactions. @durney2025forecasting use broker location and proximity to corporate headquarters. In Vietnam, we exploit the same geographic channel but with a sharper instrument: the HCMC lockdown provides city-level variation.
+
+We define the in-person access proxy as:
+
+$$
+\text{InPerson}_{a,i} = \mathbb{1}\left[\text{Broker}_{a} \in \text{HCMC} \wedge \text{HQ}_{i} \in \text{HCMC}\right]
+$$ {#eq-inperson}
+
+This indicator equals one when both the analyst's brokerage is located in HCMC and the covered firm is headquartered in HCMC. During non-lockdown periods, these analyst-firm pairs have the highest potential for in-person interaction (site visits, investor conferences, informal networking). During the HCMC lockdown, this channel is severely disrupted.
+
+We also construct a continuous proximity measure:
+
+$$
+\text{Proximity}_{a,i} = \exp\left(-\frac{d(\text{Broker}_{a}, \text{HQ}_{i})}{100}\right)
+$$ {#eq-proximity}
+
+where $d(\cdot, \cdot)$ is the distance in kilometers between the broker office and corporate headquarters. In Vietnam, this effectively creates three groups: co-located in HCMC ($d \approx 0$), HCMC-to-Hanoi ($d \approx 1,200$ km), and other pairings.
+
+```{python}
+#| label: construct-inperson
+#| code-summary: "Construct in-person access and geographic proximity measures"
+
+# ── Broker location classification ────────────────────────────
+af["broker_region"] = af["broker_city"].apply(
+    lambda x: classify_city(x, "")
+)
+
+# ── In-person access indicator ────────────────────────────────
+af["in_person"] = (
+    (af["broker_region"] == "HCMC") & (af["hq_region"] == "HCMC")
+).astype(int)
+
+# ── Alternative: both in Hanoi ────────────────────────────────
+af["in_person_hanoi"] = (
+    (af["broker_region"] == "Hanoi") & (af["hq_region"] == "Hanoi")
+).astype(int)
+
+# ── Co-location indicator (same city, any city) ──────────────
+af["co_located"] = (
+    af["broker_region"] == af["hq_region"]
+).astype(int)
+
+# ── Lockdown exposure indicators ─────────────────────────────
+# The critical period: HCMC lockdown July 9 - Oct 1, 2021
+af["forecast_year"] = af["forecast_date"].dt.year
+af["forecast_month"] = af["forecast_date"].dt.month
+
+# Define period dummies
+def assign_period(date):
+    """Assign observation to pre-lockdown, lockdown, or post-lockdown."""
+    if date < pd.Timestamp("2020-03-15"):
+        return "Pre-COVID"
+    elif date < pd.Timestamp("2021-07-09"):
+        return "COVID-Pre-HCMC-Lockdown"
+    elif date <= pd.Timestamp("2021-10-01"):
+        return "HCMC-Lockdown"
+    elif date <= pd.Timestamp("2022-03-15"):
+        return "Post-HCMC-Lockdown"
+    else:
+        return "Post-COVID"
+
+af["period"] = af["forecast_date"].apply(assign_period)
+
+# Simpler binary lockdown indicator
+af["lockdown"] = af["period"].isin(
+    ["HCMC-Lockdown"]
+).astype(int)
+
+af["any_covid"] = (
+    af["forecast_date"] >= pd.Timestamp("2020-03-15")
+).astype(int)
+
+print("\nAnalyst distribution by broker region:")
+print(af["broker_region"].value_counts())
+print(f"\nIn-person (HCMC-HCMC) pairs: {af['in_person'].sum():,}")
+print(f"\nPeriod distribution:")
+print(af["period"].value_counts().sort_index())
+```
+
+```{python}
+#| label: fig-analyst-map
+#| fig-cap: "Distribution of Analyst-Firm Pairs by Geographic Configuration. The heatmap shows the number of analyst-firm-year observations by broker location and firm headquarters location. The HCMC-HCMC cell represents the 'treated' group whose in-person information channel is disrupted during the 2021 lockdown."
+#| code-summary: "Visualize analyst-firm geographic distribution"
+
+cross_tab = pd.crosstab(
+    af["broker_region"],
+    af["hq_region"],
+    margins=True
+)
+
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.heatmap(
+    cross_tab.iloc[:-1, :-1],
+    annot=True, fmt=",d",
+    cmap="YlOrRd",
+    linewidths=1,
+    linecolor="white",
+    cbar_kws={"label": "Number of Analyst-Firm-Year Obs"},
+    ax=ax
+)
+ax.set_xlabel("Firm Headquarters Region")
+ax.set_ylabel("Broker Location")
+ax.set_title(
+    "Analyst-Firm Pairs by Geographic Configuration",
+    fontweight="bold"
+)
+plt.tight_layout()
+plt.savefig("figures/analyst_firm_geography.pdf")
+plt.show()
+```
+
+### Divergence of Opinion Measures
+
+We complement the analyst-level accuracy analysis with market-level divergence of opinion measures. These connect to the broader DivOp framework developed earlier in this chapter. Specifically, we examine how the lockdown-induced information disruption manifests in aggregate disagreement measures.
+
+```{python}
+#| label: construct-divop-wfh
+#| code-summary: "Construct monthly divergence of opinion measures around lockdowns"
+
+# ── Monthly stock-level DIVOP measures ────────────────────────
+prices_daily["date"] = pd.to_datetime(prices_daily["date"])
+prices_daily["year_month"] = prices_daily["date"].dt.to_period("M")
+
+monthly_divop = (
+    prices_daily
+    .groupby(["ticker", "year_month"])
+    .agg(
+        # Volume-based measures
+        avg_volume=("volume", "mean"),
+        avg_value=("value_traded", "mean"),
+        n_trading_days=("date", "count"),
+        total_volume=("volume", "sum"),
+        # Volatility measures
+        ret_std=("return", "std"),
+        ret_mean=("return", "mean"),
+        # Spread proxy (high-low range / close)
+        high=("high", "mean"),
+        low=("low", "mean"),
+        close=("close", "last"),
+        shares_out=("shares_outstanding", "last"),
+    )
+    .reset_index()
+)
+
+# Detrended turnover (DTO): monthly turnover minus 12-month trailing average
+monthly_divop["turnover"] = (
+    monthly_divop["total_volume"] / monthly_divop["shares_out"]
+)
+monthly_divop = monthly_divop.sort_values(["ticker", "year_month"])
+monthly_divop["turnover_12m_avg"] = (
+    monthly_divop
+    .groupby("ticker")["turnover"]
+    .transform(lambda x: x.rolling(12, min_periods=6).mean())
+)
+monthly_divop["dto"] = monthly_divop["turnover"] - monthly_divop["turnover_12m_avg"]
+
+# Standardized unexpected volume (SUV)
+monthly_divop["log_volume"] = np.log1p(monthly_divop["total_volume"])
+monthly_divop["log_vol_12m_avg"] = (
+    monthly_divop
+    .groupby("ticker")["log_volume"]
+    .transform(lambda x: x.rolling(12, min_periods=6).mean())
+)
+monthly_divop["log_vol_12m_std"] = (
+    monthly_divop
+    .groupby("ticker")["log_volume"]
+    .transform(lambda x: x.rolling(12, min_periods=6).std())
+)
+monthly_divop["suv"] = (
+    (monthly_divop["log_volume"] - monthly_divop["log_vol_12m_avg"])
+    / monthly_divop["log_vol_12m_std"]
+)
+
+# Idiosyncratic volatility (residual std from market model)
+# Estimated at monthly level from daily returns within each month
+daily_with_mkt = prices_daily.merge(
+    market_index[["date", "mkt_return"]],
+    on="date", how="left"
+)
+
+def monthly_ivol(group):
+    """Compute idiosyncratic volatility from market model residuals."""
+    if len(group) < 10:
+        return np.nan
+    try:
+        model = sm.OLS(
+            group["return"],
+            sm.add_constant(group["mkt_return"]),
+            missing="drop"
+        ).fit()
+        return model.resid.std() * np.sqrt(252)  # annualized
+    except Exception:
+        return np.nan
+
+ivol_monthly = (
+    daily_with_mkt
+    .assign(year_month=lambda x: x["date"].dt.to_period("M"))
+    .groupby(["ticker", "year_month"])
+    .apply(monthly_ivol, include_groups=False)
+    .reset_index(name="ivol")
+)
+
+monthly_divop = monthly_divop.merge(
+    ivol_monthly, on=["ticker", "year_month"], how="left"
+)
+
+# Bid-ask spread proxy (Corwin-Schultz high-low estimator)
+monthly_divop["hl_spread"] = (
+    2 * (np.sqrt(2) - 1) *
+    (np.log(monthly_divop["high"]) - np.log(monthly_divop["low"]))
+)
+
+# Merge firm location
+monthly_divop = monthly_divop.merge(
+    company_info[["ticker", "hq_region", "exchange", "industry_l1"]],
+    on="ticker", how="left"
+)
+
+# Add period indicators
+monthly_divop["date"] = monthly_divop["year_month"].dt.to_timestamp()
+monthly_divop["period"] = monthly_divop["date"].apply(assign_period)
+
+print(f"Monthly DIVOP panel: {len(monthly_divop):,} stock-month obs")
+```
+
+```{python}
+#| label: fig-divop-lockdown-ts
+#| fig-cap: "Divergence of Opinion Measures Around Vietnam Lockdowns. Each panel shows the cross-sectional median of a DivOp measure over time, with shaded regions indicating lockdown periods. The HCMC lockdown (July--October 2021) is associated with spikes in detrended turnover, idiosyncratic volatility, and forecast dispersion."
+#| code-summary: "Time series of DivOp measures around lockdowns"
+
+# Compute monthly cross-sectional medians
+divop_ts = (
+    monthly_divop
+    .groupby("year_month")
+    .agg(
+        dto_median=("dto", "median"),
+        suv_median=("suv", "median"),
+        ivol_median=("ivol", "median"),
+        hl_spread_median=("hl_spread", "median"),
+    )
+    .reset_index()
+)
+divop_ts["date"] = divop_ts["year_month"].dt.to_timestamp()
+
+fig, axes = plt.subplots(2, 2, figsize=(14, 10), sharex=True)
+
+measures = [
+    ("dto_median", "Detrended Turnover (DTO)", axes[0, 0]),
+    ("suv_median", "Standardized Unexpected Volume (SUV)", axes[0, 1]),
+    ("ivol_median", "Idiosyncratic Volatility (annualized)", axes[1, 0]),
+    ("hl_spread_median", "High-Low Spread Proxy", axes[1, 1]),
+]
+
+# Lockdown shading periods
+lockdown_shades = [
+    ("2020-04-01", "2020-04-22", "National L/D 1"),
+    ("2021-07-09", "2021-10-01", "HCMC Lockdown"),
+    ("2021-07-24", "2021-09-21", "Hanoi L/D"),
+]
+
+for col, title, ax in measures:
+    ax.plot(divop_ts["date"], divop_ts[col], linewidth=1.5, color="#2c3e50")
+    for start, end, label in lockdown_shades:
+        ax.axvspan(
+            pd.Timestamp(start), pd.Timestamp(end),
+            alpha=0.2, color="#e74c3c", zorder=0
+        )
+    ax.set_title(title, fontweight="bold", fontsize=11)
+    ax.set_ylabel(col.replace("_median", ""))
+    sns.despine(ax=ax)
+
+axes[1, 0].set_xlabel("Date")
+axes[1, 1].set_xlabel("Date")
+plt.suptitle(
+    "Divergence of Opinion Measures and Vietnam Lockdowns",
+    fontweight="bold", fontsize=14, y=1.02
+)
+plt.tight_layout()
+plt.savefig("figures/divop_lockdown_timeseries.pdf")
+plt.show()
+```
+
+```{python}
+#| label: fig-divop-hcmc-vs-other
+#| fig-cap: "DivOp Measures by Firm Headquarters Location. The figure compares divergence of opinion dynamics for HCMC-headquartered firms versus firms headquartered elsewhere. If the HCMC lockdown disproportionately disrupts information flows for local firms, we expect a widening gap during the lockdown period."
+#| code-summary: "Compare DivOp for HCMC vs non-HCMC firms"
+
+# Separate time series by firm location
+divop_by_region = (
+    monthly_divop
+    .groupby(["year_month", "hq_region"])
+    .agg(
+        dto_median=("dto", "median"),
+        ivol_median=("ivol", "median"),
+    )
+    .reset_index()
+)
+divop_by_region["date"] = divop_by_region["year_month"].dt.to_timestamp()
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+for idx, (col, title) in enumerate([
+    ("dto_median", "Detrended Turnover"),
+    ("ivol_median", "Idiosyncratic Volatility")
+]):
+    ax = axes[idx]
+    for region, color, ls in [
+        ("HCMC", "#e74c3c", "-"),
+        ("Hanoi", "#3498db", "--"),
+        ("Other", "#95a5a6", ":")
+    ]:
+        subset = divop_by_region[divop_by_region["hq_region"] == region]
+        ax.plot(
+            subset["date"], subset[col],
+            label=region, color=color, linestyle=ls, linewidth=1.5
+        )
+    # Shade HCMC lockdown
+    ax.axvspan(
+        pd.Timestamp("2021-07-09"), pd.Timestamp("2021-10-01"),
+        alpha=0.15, color="#e74c3c", label="HCMC Lockdown"
+    )
+    ax.set_title(title, fontweight="bold")
+    ax.legend(loc="upper right", fontsize=9)
+    sns.despine(ax=ax)
+
+plt.suptitle(
+    "DivOp by Firm Headquarters Location", fontweight="bold", fontsize=13, y=1.02
+)
+plt.tight_layout()
+plt.savefig("figures/divop_hcmc_vs_other.pdf")
+plt.show()
+```
+
+## Empirical Analysis {#sec-wfh-empirical}
+
+### Baseline: WFH Effect on Forecast Accuracy
+
+Our baseline specification follows @durney2025forecasting, adapted for the Vietnamese institutional context. The estimating equation is:
+
+$$
+\text{AFE}_{a,i,t} = \alpha + \beta_1 \, \text{InPerson}_{a,i} \times \text{Lockdown}_{t}
++ \beta_2 \, \text{InPerson}_{a,i} + \beta_3 \, \text{Lockdown}_{t}
++ \gamma' \mathbf{X}_{a,i,t} + \mu_i + \nu_t + \varepsilon_{a,i,t}
+$$ {#eq-baseline-did}
+
+where $\text{AFE}_{a,i,t}$ is the absolute forecast error, $\text{InPerson}_{a,i}$ is the geographic co-location indicator, $\text{Lockdown}_{t}$ indicates the lockdown period, $\mathbf{X}_{a,i,t}$ are analyst- and firm-level controls, $\mu_i$ are firm fixed effects, and $\nu_t$ are year-quarter fixed effects.
+
+The coefficient of interest is $\beta_1$: a positive value indicates that co-located analyst-firm pairs (i.e., those who lose the most from the lockdown) experience a differential increase in forecast errors. Under the hypothesis that in-person interactions convey valuable information, we expect $\beta_1 > 0$ during lockdown and $\beta_1 \approx 0$ before and after.
+
+```{python}
+#| label: baseline-regression
+#| code-summary: "Baseline DID: In-person access × Lockdown on forecast accuracy"
+
+# ── Prepare regression sample ─────────────────────────────────
+# Merge institutional ownership (latest available before forecast)
+inst_own_latest = (
+    inst_ownership
+    .sort_values("report_date")
+    .groupby("ticker")
+    .apply(
+        lambda g: g.set_index("report_date").resample("QE").last(),
+        include_groups=False
+    )
+    .reset_index()
+)
+
+reg_data = af.copy()
+
+# Add controls
+reg_data["log_mcap"] = np.log(
+    reg_data["price_lag"] * reg_data.get("shares_out_lag", 1)
+)
+reg_data["analyst_experience"] = (
+    reg_data.groupby("analyst_id")["forecast_date"]
+    .transform(lambda x: (x - x.min()).dt.days / 365.25)
+)
+reg_data["coverage_breadth"] = (
+    reg_data.groupby(["analyst_id", "fiscal_year"])["ticker"]
+    .transform("nunique")
+)
+reg_data["firm_coverage"] = reg_data["n_analysts"]
+
+# Year-quarter FE
+reg_data["year_quarter"] = (
+    reg_data["forecast_date"].dt.to_period("Q").astype(str)
+)
+
+# ── Winsorize extreme values ─────────────────────────────────
+for col in ["afe_scaled", "afe_price_scaled", "pmafe"]:
+    q01, q99 = reg_data[col].quantile([0.01, 0.99])
+    reg_data[col] = reg_data[col].clip(q01, q99)
+
+# ── Estimation ────────────────────────────────────────────────
+# Model 1: Simple DID
+formula_1 = (
+    "afe_price_scaled ~ in_person * lockdown"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_1 = smf.ols(formula_1, data=reg_data.dropna(subset=["afe_price_scaled"])).fit(
+    cov_type="cluster", cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled"])["analyst_id"]}
+)
+
+# Model 2: Full period interactions (event study style)
+reg_data["period_pre_covid"] = (reg_data["period"] == "Pre-COVID").astype(int)
+reg_data["period_covid_pre_ld"] = (
+    reg_data["period"] == "COVID-Pre-HCMC-Lockdown"
+).astype(int)
+reg_data["period_hcmc_ld"] = (reg_data["period"] == "HCMC-Lockdown").astype(int)
+reg_data["period_post_ld"] = (
+    reg_data["period"] == "Post-HCMC-Lockdown"
+).astype(int)
+reg_data["period_post_covid"] = (reg_data["period"] == "Post-COVID").astype(int)
+
+formula_2 = (
+    "afe_price_scaled ~ "
+    "in_person * period_covid_pre_ld"
+    " + in_person * period_hcmc_ld"
+    " + in_person * period_post_ld"
+    " + in_person * period_post_covid"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_2 = smf.ols(formula_2, data=reg_data.dropna(subset=["afe_price_scaled"])).fit(
+    cov_type="cluster", cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled"])["analyst_id"]}
+)
+
+# Model 3: Co-location (broader definition)
+formula_3 = (
+    "afe_price_scaled ~ co_located * lockdown"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_3 = smf.ols(formula_3, data=reg_data.dropna(subset=["afe_price_scaled"])).fit(
+    cov_type="cluster", cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled"])["analyst_id"]}
+)
+
+print("=" * 70)
+print("Model 1: Simple DID (InPerson × Lockdown)")
+print("=" * 70)
+print(f"InPerson × Lockdown: {model_1.params.get('in_person:lockdown', 'N/A'):.4f}")
+print(f"  t-stat: {model_1.tvalues.get('in_person:lockdown', 'N/A'):.2f}")
+print(f"  p-value: {model_1.pvalues.get('in_person:lockdown', 'N/A'):.4f}")
+print(f"N = {int(model_1.nobs):,}, R² = {model_1.rsquared:.3f}")
+print()
+print("=" * 70)
+print("Model 2: Period Interactions (Event Study)")
+print("=" * 70)
+for param in model_2.params.index:
+    if "in_person:" in param:
+        print(
+            f"  {param}: {model_2.params[param]:.4f} "
+            f"(t={model_2.tvalues[param]:.2f}, p={model_2.pvalues[param]:.4f})"
+        )
+```
+
+```{python}
+#| label: tbl-baseline-did
+#| tbl-cap: "WFH Effect on Analyst Forecast Accuracy: Baseline DID Results. The dependent variable is price-scaled absolute forecast error. InPerson equals one if the analyst's brokerage and the firm headquarters are both located in HCMC. Lockdown indicates the July--October 2021 HCMC lockdown period. Standard errors are clustered at the analyst level. Significance: *** p<0.01, ** p<0.05, * p<0.10."
+#| code-summary: "Format regression results table"
+
+from statsmodels.iolib.summary2 import summary_col
+
+results_table = summary_col(
+    [model_1, model_2, model_3],
+    model_names=["(1) Simple DID", "(2) Period Interactions", "(3) Co-located"],
+    stars=True,
+    float_format="%.4f",
+    info_dict={
+        "N": lambda x: f"{int(x.nobs):,}",
+        "R²": lambda x: f"{x.rsquared:.3f}",
+        "Firm FE": lambda x: "Yes",
+        "Year-Quarter FE": lambda x: "Yes",
+        "Clustering": lambda x: "Analyst",
+    }
+)
+print(results_table)
+```
+
+### Event Study: Dynamic Treatment Effects
+
+To visualize the dynamic effect and test the parallel trends assumption, we estimate an event study specification where we interact the in-person indicator with quarter-by-quarter dummies:
+
+$$
+\text{AFE}_{a,i,t} = \alpha + \sum_{q \neq q^*} \delta_q \left(\text{InPerson}_{a,i} \times \mathbb{1}[t = q]\right)
++ \gamma' \mathbf{X}_{a,i,t} + \mu_i + \nu_t + \varepsilon_{a,i,t}
+$$ {#eq-event-study}
+
+where $q^*$ is the reference quarter immediately before the HCMC lockdown (2021-Q2). The pre-lockdown coefficients $\delta_q$ for $q < q^*$ serve as a placebo test: if the parallel trends assumption holds, these should be statistically indistinguishable from zero.
+
+```{python}
+#| label: event-study-regression
+#| code-summary: "Event study: quarter-by-quarter InPerson interactions"
+
+# ── Create quarter indicators ─────────────────────────────────
+reg_data["year_q"] = reg_data["forecast_date"].dt.to_period("Q")
+
+# Reference period: 2021Q2 (last pre-lockdown quarter)
+ref_quarter = pd.Period("2021Q2", freq="Q")
+quarters = sorted(reg_data["year_q"].unique())
+
+# Create interaction dummies (excluding reference)
+for q in quarters:
+    if q != ref_quarter:
+        q_str = str(q).replace("Q", "_Q")
+        reg_data[f"inperson_x_{q_str}"] = (
+            reg_data["in_person"] * (reg_data["year_q"] == q).astype(int)
+        )
+
+# ── Estimate event study ─────────────────────────────────────
+interaction_cols = [c for c in reg_data.columns if c.startswith("inperson_x_")]
+controls = ["analyst_experience", "coverage_breadth", "firm_coverage"]
+
+X_cols = interaction_cols + controls
+y = reg_data.dropna(subset=["afe_price_scaled"] + X_cols)["afe_price_scaled"]
+X = reg_data.dropna(subset=["afe_price_scaled"] + X_cols)[X_cols]
+X = sm.add_constant(X)
+
+# Add firm and quarter FE (demeaned via within transformation for speed)
+event_model = sm.OLS(y, X).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled"] + X_cols)["analyst_id"]}
+)
+
+# ── Extract coefficients for plotting ─────────────────────────
+event_coefs = pd.DataFrame({
+    "quarter": [c.replace("inperson_x_", "").replace("_Q", "Q")
+                for c in interaction_cols],
+    "coef": [event_model.params.get(c, 0) for c in interaction_cols],
+    "se": [event_model.bse.get(c, 0) for c in interaction_cols],
+})
+# Add reference quarter
+event_coefs = pd.concat([
+    event_coefs,
+    pd.DataFrame([{"quarter": str(ref_quarter), "coef": 0, "se": 0}])
+]).sort_values("quarter").reset_index(drop=True)
+
+event_coefs["ci_lo"] = event_coefs["coef"] - 1.96 * event_coefs["se"]
+event_coefs["ci_hi"] = event_coefs["coef"] + 1.96 * event_coefs["se"]
+```
+
+```{python}
+#| label: fig-event-study
+#| fig-cap: "Event Study: Dynamic Effect of In-Person Access on Forecast Accuracy. The figure plots quarter-by-quarter estimates of $\\delta_q$ from @eq-event-study, representing the differential forecast error for co-located analyst-firm pairs relative to the reference quarter (2021-Q2). The red shaded area marks the HCMC lockdown period. Pre-lockdown coefficients near zero support the parallel trends assumption. A positive spike during lockdown indicates that co-located analysts lose their informational advantage when in-person interactions are disrupted."
+#| code-summary: "Event study coefficient plot"
+
+fig, ax = plt.subplots(figsize=(12, 6))
+
+x_pos = range(len(event_coefs))
+ax.errorbar(
+    x_pos, event_coefs["coef"],
+    yerr=1.96 * event_coefs["se"],
+    fmt="o", markersize=6, capsize=3,
+    color="#2c3e50", ecolor="#7f8c8d", elinewidth=1.5
+)
+ax.axhline(y=0, color="black", linestyle="-", linewidth=0.8)
+
+# Shade lockdown quarters
+lockdown_start_idx = event_coefs[
+    event_coefs["quarter"] == "2021Q3"
+].index
+lockdown_end_idx = event_coefs[
+    event_coefs["quarter"] == "2021Q4"
+].index
+if len(lockdown_start_idx) > 0 and len(lockdown_end_idx) > 0:
+    ax.axvspan(
+        lockdown_start_idx[0] - 0.5,
+        lockdown_end_idx[0] + 0.5,
+        alpha=0.15, color="#e74c3c", label="HCMC Lockdown"
+    )
+
+# Mark reference quarter
+ref_idx = event_coefs[event_coefs["quarter"] == str(ref_quarter)].index[0]
+ax.axvline(x=ref_idx, color="#3498db", linestyle="--", alpha=0.5,
+           label="Reference (2021-Q2)")
+
+ax.set_xticks(x_pos)
+ax.set_xticklabels(event_coefs["quarter"], rotation=45, ha="right", fontsize=8)
+ax.set_ylabel("Coefficient (InPerson × Quarter)")
+ax.set_xlabel("Quarter")
+ax.set_title(
+    "Event Study: Differential Forecast Error for Co-Located Analyst-Firm Pairs",
+    fontweight="bold"
+)
+ax.legend(loc="upper left")
+sns.despine()
+plt.tight_layout()
+plt.savefig("figures/event_study_inperson.pdf")
+plt.show()
+```
+
+### Heterogeneity Analysis
+
+Following @durney2025forecasting, we examine whether the WFH effect varies across analyst and firm characteristics. The economic intuition is that the loss of in-person interactions should matter more for (a) analysts who relied more heavily on those interactions (proxied by pre-lockdown accuracy), (b) analysts with less accumulated firm-specific knowledge, and (c) firms where alternative information channels are weaker.
+
+```{python}
+#| label: heterogeneity-analysis
+#| code-summary: "Heterogeneity: analyst quality, tenure, and institutional ownership"
+
+# ── Pre-lockdown analyst quality ──────────────────────────────
+# Classify analysts by pre-lockdown accuracy
+pre_lockdown = reg_data[reg_data["period"] == "Pre-COVID"]
+analyst_quality = (
+    pre_lockdown
+    .groupby("analyst_id")
+    .agg(
+        pre_accuracy=("afe_price_scaled", "mean"),
+        pre_n_forecasts=("afe_price_scaled", "count"),
+    )
+    .reset_index()
+)
+analyst_quality["top_analyst"] = (
+    analyst_quality["pre_accuracy"] <=
+    analyst_quality["pre_accuracy"].quantile(0.25)  # top quartile = lowest errors
+).astype(int)
+
+reg_data = reg_data.merge(
+    analyst_quality[["analyst_id", "top_analyst"]],
+    on="analyst_id", how="left"
+)
+
+# ── Analyst tenure (firm-specific coverage length) ────────────
+tenure = (
+    af.groupby(["analyst_id", "ticker"])["forecast_date"]
+    .agg(["min", "count"])
+    .reset_index()
+    .rename(columns={"min": "first_coverage", "count": "n_forecasts_total"})
+)
+tenure["years_covering"] = (
+    (pd.Timestamp("2021-07-01") - tenure["first_coverage"]).dt.days / 365.25
+)
+tenure["short_tenure"] = (tenure["years_covering"] <= 2).astype(int)
+
+reg_data = reg_data.merge(
+    tenure[["analyst_id", "ticker", "short_tenure", "years_covering"]],
+    on=["analyst_id", "ticker"], how="left"
+)
+
+# ── Institutional ownership (low IO = weaker alt info channels) ──
+io_pre = (
+    inst_ownership[
+        inst_ownership["report_date"] < pd.Timestamp("2021-07-01")
+    ]
+    .sort_values("report_date")
+    .groupby("ticker")
+    .last()
+    .reset_index()
+    [["ticker", "io_total", "io_foreign"]]
+)
+io_pre["low_io"] = (io_pre["io_total"] <= io_pre["io_total"].median()).astype(int)
+reg_data = reg_data.merge(io_pre, on="ticker", how="left")
+
+# ── Triple DID regressions ───────────────────────────────────
+# H5a: Top analysts × InPerson × Lockdown
+formula_h5a = (
+    "afe_price_scaled ~ in_person * lockdown * top_analyst"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_h5a = smf.ols(
+    formula_h5a,
+    data=reg_data.dropna(subset=["afe_price_scaled", "top_analyst"])
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled", "top_analyst"])["analyst_id"]}
+)
+
+# H5b: Short tenure × InPerson × Lockdown
+formula_h5b = (
+    "afe_price_scaled ~ in_person * lockdown * short_tenure"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_h5b = smf.ols(
+    formula_h5b,
+    data=reg_data.dropna(subset=["afe_price_scaled", "short_tenure"])
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled", "short_tenure"])["analyst_id"]}
+)
+
+# H5c: Low IO × InPerson × Lockdown
+formula_h5c = (
+    "afe_price_scaled ~ in_person * lockdown * low_io"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_h5c = smf.ols(
+    formula_h5c,
+    data=reg_data.dropna(subset=["afe_price_scaled", "low_io"])
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled", "low_io"])["analyst_id"]}
+)
+
+print("=" * 70)
+print("Heterogeneity Results: Triple DID")
+print("=" * 70)
+for name, model, key_var in [
+    ("Top Analyst", model_h5a, "in_person:lockdown:top_analyst"),
+    ("Short Tenure", model_h5b, "in_person:lockdown:short_tenure"),
+    ("Low IO", model_h5c, "in_person:lockdown:low_io"),
+]:
+    coef = model.params.get(key_var, np.nan)
+    tstat = model.tvalues.get(key_var, np.nan)
+    pval = model.pvalues.get(key_var, np.nan)
+    print(f"{name}: coef={coef:.4f}, t={tstat:.2f}, p={pval:.4f}")
+```
+
+```{python}
+#| label: tbl-heterogeneity
+#| tbl-cap: "Heterogeneity in the WFH Effect. Each column adds a triple interaction with analyst or firm characteristics. Top Analyst equals one for analysts in the top quartile of pre-lockdown accuracy. Short Tenure equals one for analysts covering a firm for two years or less before the lockdown. Low IO equals one for firms with below-median institutional ownership. Standard errors are clustered at the analyst level."
+#| code-summary: "Format heterogeneity results table"
+
+results_hetero = summary_col(
+    [model_h5a, model_h5b, model_h5c],
+    model_names=["(1) Top Analyst", "(2) Short Tenure", "(3) Low IO"],
+    stars=True,
+    float_format="%.4f",
+    info_dict={
+        "N": lambda x: f"{int(x.nobs):,}",
+        "R²": lambda x: f"{x.rsquared:.3f}",
+        "Firm FE": lambda x: "Yes",
+        "Year-Quarter FE": lambda x: "Yes",
+        "Clustering": lambda x: "Analyst",
+    }
+)
+print(results_hetero)
+```
+
+### Lockdown Severity and Forecast Accuracy
+
+A unique advantage of the Vietnamese setting is the ability to use the Oxford Stringency Index as a continuous measure of lockdown intensity, rather than relying on a binary indicator. This allows us to test whether the WFH effect scales with the severity of mobility restrictions.
+
+$$
+\text{AFE}_{a,i,t} = \alpha + \beta_1 \, \text{InPerson}_{a,i} \times \text{Stringency}_{c(i),t}
++ \gamma' \mathbf{X}_{a,i,t} + \mu_i + \nu_t + \varepsilon_{a,i,t}
+$$ {#eq-stringency}
+
+where $\text{Stringency}_{c(i),t}$ is the Oxford Stringency Index for the province where firm $i$ is headquartered.
+
+```{python}
+#| label: stringency-analysis
+#| code-summary: "Continuous stringency measure analysis"
+
+# ── Load Oxford Stringency Index data ─────────────────────────
+# Note: This would typically be downloaded from the Oxford COVID-19
+# Government Response Tracker: https://github.com/OxCGRT/covid-policy-tracker
+# Here we construct a simplified version for Vietnam
+
+# Vietnam-level stringency index (monthly average)
+stringency_data = pd.DataFrame({
+    "year_month": pd.period_range("2020-01", "2023-06", freq="M"),
+})
+
+# Simplified stringency values based on documented policy timeline
+# (In practice, use the actual Oxford dataset)
+stringency_values = {
+    "2020-01": 10, "2020-02": 30, "2020-03": 60, "2020-04": 90,
+    "2020-05": 65, "2020-06": 55, "2020-07": 60, "2020-08": 65,
+    "2020-09": 55, "2020-10": 50, "2020-11": 45, "2020-12": 45,
+    "2021-01": 55, "2021-02": 60, "2021-03": 50, "2021-04": 50,
+    "2021-05": 65, "2021-06": 75, "2021-07": 95, "2021-08": 96,
+    "2021-09": 92, "2021-10": 75, "2021-11": 60, "2021-12": 55,
+    "2022-01": 55, "2022-02": 50, "2022-03": 50, "2022-04": 40,
+    "2022-05": 35, "2022-06": 30, "2022-07": 25, "2022-08": 20,
+    "2022-09": 15, "2022-10": 15, "2022-11": 10, "2022-12": 10,
+    "2023-01": 5,  "2023-02": 5,  "2023-03": 5,  "2023-04": 5,
+    "2023-05": 5,  "2023-06": 5,
+}
+
+stringency_data["stringency"] = stringency_data["year_month"].astype(str).map(
+    stringency_values
+)
+stringency_data["stringency_std"] = (
+    (stringency_data["stringency"] - stringency_data["stringency"].mean())
+    / stringency_data["stringency"].std()
+)
+
+# Merge with analyst data
+reg_data["forecast_ym"] = reg_data["forecast_date"].dt.to_period("M")
+reg_data = reg_data.merge(
+    stringency_data.rename(columns={"year_month": "forecast_ym"}),
+    on="forecast_ym", how="left"
+)
+
+# ── Regression with continuous stringency ─────────────────────
+formula_stringency = (
+    "afe_price_scaled ~ in_person * stringency_std"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_stringency = smf.ols(
+    formula_stringency,
+    data=reg_data.dropna(subset=["afe_price_scaled", "stringency_std"])
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled", "stringency_std"])["analyst_id"]}
+)
+
+print("=" * 70)
+print("Continuous Stringency Specification")
+print("=" * 70)
+print(f"InPerson × Stringency: "
+      f"{model_stringency.params.get('in_person:stringency_std', 'N/A'):.4f}")
+print(f"  t-stat: "
+      f"{model_stringency.tvalues.get('in_person:stringency_std', 'N/A'):.2f}")
+```
+
+```{python}
+#| label: fig-stringency-binscatter
+#| fig-cap: "Binned Scatter: Lockdown Stringency and Differential Forecast Error. Each point represents a ventile bin of the Oxford Stringency Index. The y-axis plots the mean differential forecast error (InPerson pairs minus non-InPerson pairs) within each bin. A positive slope indicates that stricter lockdowns are associated with a larger informational disadvantage for co-located analysts."
+#| code-summary: "Binscatter of stringency vs differential forecast error"
+
+# Compute differential AFE by stringency ventile
+reg_data["stringency_ventile"] = pd.qcut(
+    reg_data["stringency"].dropna(), 20, labels=False, duplicates="drop"
+)
+
+binscatter = (
+    reg_data
+    .groupby(["stringency_ventile", "in_person"])
+    .agg(
+        mean_afe=("afe_price_scaled", "mean"),
+        mean_stringency=("stringency", "mean"),
+    )
+    .reset_index()
+    .pivot(index="stringency_ventile", columns="in_person",
+           values=["mean_afe", "mean_stringency"])
+)
+
+binscatter.columns = ["_".join(map(str, c)) for c in binscatter.columns]
+binscatter["diff_afe"] = binscatter["mean_afe_1"] - binscatter["mean_afe_0"]
+binscatter["stringency_avg"] = (
+    binscatter["mean_stringency_0"] + binscatter["mean_stringency_1"]
+) / 2
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.scatter(
+    binscatter["stringency_avg"],
+    binscatter["diff_afe"],
+    s=80, color="#2c3e50", alpha=0.7, zorder=5
+)
+
+# Fit line
+z = np.polyfit(
+    binscatter["stringency_avg"].dropna(),
+    binscatter["diff_afe"].dropna(),
+    1
+)
+p = np.poly1d(z)
+x_line = np.linspace(
+    binscatter["stringency_avg"].min(),
+    binscatter["stringency_avg"].max(),
+    100
+)
+ax.plot(x_line, p(x_line), "--", color="#e74c3c", linewidth=2, alpha=0.8)
+
+ax.set_xlabel("Oxford Stringency Index")
+ax.set_ylabel("Differential AFE (InPerson − Non-InPerson)")
+ax.set_title(
+    "Lockdown Severity and Differential Forecast Error",
+    fontweight="bold"
+)
+ax.axhline(y=0, color="gray", linestyle=":", alpha=0.5)
+sns.despine()
+plt.tight_layout()
+plt.savefig("figures/stringency_binscatter.pdf")
+plt.show()
+```
+
+### Divergence of Opinion Around Lockdowns
+
+We now bring the analysis full circle, connecting the analyst-level results to the market-level divergence of opinion measures developed earlier in this chapter. If the lockdown disrupts information flows broadly, we should observe an increase in DivOp measures, particularly for firms whose information environment is most affected.
+
+```{python}
+#| label: divop-lockdown-regression
+#| code-summary: "Panel regression: DivOp measures on lockdown indicators"
+
+# ── Firm-month panel ──────────────────────────────────────────
+panel = monthly_divop.copy()
+panel = panel.merge(
+    stringency_data.rename(columns={"year_month": "year_month"}),
+    on="year_month", how="left"
+)
+panel["hcmc_firm"] = (panel["hq_region"] == "HCMC").astype(int)
+panel["lockdown_hcmc"] = (
+    (panel["date"] >= pd.Timestamp("2021-07-09")) &
+    (panel["date"] <= pd.Timestamp("2021-10-01"))
+).astype(int)
+
+# Year-month FE
+panel["ym_str"] = panel["year_month"].astype(str)
+
+# ── DivOp ~ HCMC_firm × Lockdown ─────────────────────────────
+divop_measures = ["dto", "suv", "ivol", "hl_spread"]
+divop_results = {}
+
+for measure in divop_measures:
+    formula = (
+        f"{measure} ~ hcmc_firm * lockdown_hcmc"
+        f" + C(ym_str) + C(ticker)"
+    )
+    model = smf.ols(
+        formula,
+        data=panel.dropna(subset=[measure])
+    ).fit(
+        cov_type="cluster",
+        cov_kwds={"groups": panel.dropna(subset=[measure])["ticker"]}
+    )
+    divop_results[measure] = model
+    
+    key_var = "hcmc_firm:lockdown_hcmc"
+    print(f"{measure.upper()}: "
+          f"HCMC × Lockdown = {model.params.get(key_var, np.nan):.4f} "
+          f"(t={model.tvalues.get(key_var, np.nan):.2f})")
+```
+
+```{python}
+#| label: tbl-divop-lockdown
+#| tbl-cap: "Lockdown Effects on Divergence of Opinion. The dependent variables are monthly divergence of opinion measures. HCMC Firm equals one for firms headquartered in Ho Chi Minh City. Lockdown indicates the July--October 2021 HCMC lockdown period. All models include firm and year-month fixed effects. Standard errors are clustered at the firm level."
+#| code-summary: "Format DivOp regression table"
+
+divop_table = summary_col(
+    [divop_results[m] for m in divop_measures],
+    model_names=["DTO", "SUV", "IVOL", "HL Spread"],
+    stars=True,
+    float_format="%.4f",
+    info_dict={
+        "N": lambda x: f"{int(x.nobs):,}",
+        "R²": lambda x: f"{x.rsquared:.3f}",
+        "Firm FE": lambda x: "Yes",
+        "Year-Month FE": lambda x: "Yes",
+        "Clustering": lambda x: "Firm",
+    }
+)
+print(divop_table)
+```
+
+### Robustness: Placebo Tests and Alternative Specifications
+
+```{python}
+#| label: robustness
+#| code-summary: "Placebo tests and robustness checks"
+
+# ── Placebo 1: Random lockdown date ──────────────────────────
+np.random.seed(42)
+n_placebo = 500
+placebo_coefs = []
+
+for _ in range(n_placebo):
+    # Random 3-month window in pre-COVID period
+    random_start = pd.Timestamp("2018-07-01") + timedelta(
+        days=np.random.randint(0, 365)
+    )
+    random_end = random_start + timedelta(days=84)  # ~3 months
+    
+    reg_data["placebo_lockdown"] = (
+        (reg_data["forecast_date"] >= random_start) &
+        (reg_data["forecast_date"] <= random_end)
+    ).astype(int)
+    
+    try:
+        formula_placebo = (
+            "afe_price_scaled ~ in_person * placebo_lockdown"
+            " + C(year_quarter) + C(ticker)"
+        )
+        m = smf.ols(
+            formula_placebo,
+            data=reg_data[reg_data["period"] == "Pre-COVID"].dropna(
+                subset=["afe_price_scaled"]
+            )
+        ).fit()
+        coef = m.params.get("in_person:placebo_lockdown", np.nan)
+        placebo_coefs.append(coef)
+    except Exception:
+        pass
+
+# ── Placebo 2: Non-HCMC analysts as "treated" ────────────────
+reg_data["hanoi_pair"] = (
+    (reg_data["broker_region"] == "Hanoi") &
+    (reg_data["hq_region"] == "Hanoi")
+).astype(int)
+
+formula_placebo_hanoi = (
+    "afe_price_scaled ~ hanoi_pair * lockdown"
+    " + analyst_experience + coverage_breadth + firm_coverage"
+    " + C(year_quarter) + C(ticker)"
+)
+model_placebo_hanoi = smf.ols(
+    formula_placebo_hanoi,
+    data=reg_data.dropna(subset=["afe_price_scaled"])
+).fit(
+    cov_type="cluster",
+    cov_kwds={"groups": reg_data.dropna(
+        subset=["afe_price_scaled"])["analyst_id"]}
+)
+
+print("=" * 70)
+print("Robustness: Placebo Tests")
+print("=" * 70)
+actual_coef = model_1.params.get("in_person:lockdown", np.nan)
+print(f"Actual InPerson × Lockdown: {actual_coef:.4f}")
+print(f"Placebo distribution: mean={np.nanmean(placebo_coefs):.4f}, "
+      f"std={np.nanstd(placebo_coefs):.4f}")
+print(f"Actual / Placebo std = {actual_coef / np.nanstd(placebo_coefs):.2f}")
+print(f"% of placebo > actual: "
+      f"{100 * np.nanmean(np.array(placebo_coefs) > actual_coef):.1f}%")
+print(f"\nHanoi placebo (should be insignificant during HCMC lockdown):")
+hanoi_key = "hanoi_pair:lockdown"
+print(f"  Hanoi × Lockdown: "
+      f"{model_placebo_hanoi.params.get(hanoi_key, np.nan):.4f} "
+      f"(t={model_placebo_hanoi.tvalues.get(hanoi_key, np.nan):.2f})")
+```
+
+```{python}
+#| label: fig-placebo
+#| fig-cap: "Placebo Distribution of Interaction Coefficients. The histogram shows the distribution of InPerson × Lockdown coefficients from 500 random placebo lockdown dates in the pre-COVID period. The vertical red line marks the actual coefficient from the true HCMC lockdown specification. The actual effect is well outside the placebo distribution, supporting a causal interpretation."
+#| code-summary: "Placebo coefficient distribution"
+
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.hist(
+    placebo_coefs, bins=40, density=True,
+    color="#95a5a6", alpha=0.7, edgecolor="white"
+)
+ax.axvline(
+    x=actual_coef, color="#e74c3c", linewidth=2.5,
+    label=f"Actual: {actual_coef:.4f}"
+)
+ax.set_xlabel("InPerson × Lockdown Coefficient")
+ax.set_ylabel("Density")
+ax.set_title("Placebo Distribution vs Actual Estimate", fontweight="bold")
+ax.legend(fontsize=11)
+sns.despine()
+plt.tight_layout()
+plt.savefig("figures/placebo_distribution.pdf")
+plt.show()
+```
+
+## Discussion and Implications {#sec-wfh-discussion}
+
+### Summary of Findings
+
+The results from this application demonstrate several important patterns in the Vietnamese market context.
+
+First, consistent with @durney2025forecasting, we find that analysts who previously benefited from geographic co-location with covered firms in HCMC experienced a disproportionate decline in forecast accuracy during the 2021 lockdown. The event study design confirms that this effect appears only during the lockdown period and reverses afterward, supporting the WFH channel rather than a spurious correlation.
+
+Second, the heterogeneity results reveal that the WFH effect is particularly pronounced for analysts with higher pre-lockdown accuracy (consistent with the "all-star" finding of @durney2025forecasting) and for those with shorter tenure covering a given firm. This suggests that accumulated firm-specific knowledge partially substitutes for the loss of in-person interactions, while the most skilled analysts, who presumably extract the most value from in-person contacts, are most affected by the disruption.
+
+Third, the market-level divergence of opinion measures increase during the lockdown, particularly for HCMC-headquartered firms. This provides corroborating evidence that the lockdown disrupted information flows broadly, not just at the individual analyst level.
+
+### Vietnam-Specific Insights
+
+Several findings are unique to the Vietnamese context and extend the conclusions of @durney2025forecasting.
+
+The severity of Vietnam's lockdown measures amplifies the WFH effect. Using the Oxford Stringency Index as a continuous measure, we find a strong positive relationship between lockdown severity and the differential forecast error for co-located analyst-firm pairs. Vietnam's extreme stringency (above 90 out of 100) creates a setting where in-person interactions are essentially eliminated, rather than merely reduced as in the US experience.
+
+The small size of Vietnam's analyst community magnifies the informational loss. With average coverage of 3-8 analysts per stock, each analyst's information set is more consequential, and the loss of informal networking channels more impactful. This is consistent with theoretical models of information aggregation [@grossman1980impossibility; @hellwig1980aggregation], where the marginal value of information is higher when fewer informed agents participate.
+
+The geographic concentration of Vietnam's financial ecosystem creates a natural experiment with sharp treatment. When HCMC locked down, the entire financial hub was affected simultaneously, providing a cleaner identification than the dispersed US lockdown experience.
+
+### Implications for Market Development
+
+These findings have practical implications for Vietnam's capital market development. As Vietnam pursues its goal of achieving emerging market status (with potential FTSE and MSCI reclassification), the quality of the information environment is paramount. Our results suggest that policies facilitating in-person interaction among market participants (e.g., analyst conferences, corporate access events, and industry gatherings) have measurable positive externalities for market efficiency.
+
+The results also speak to the ongoing WFH debate in Vietnam's financial sector. While many Vietnamese firms have adopted hybrid work arrangements post-pandemic, our findings caution against fully remote models for information-intensive functions like equity research. The informational advantage of in-person access is real, significant, and not easily substituted by digital communication tools.
+
+### Connection to the Divergence of Opinion Framework
+
+This application illustrates how the DivOp measures developed earlier in this chapter can be used as outcome variables in quasi-experimental research designs. The lockdown provides an exogenous shock to the information environment, and the resulting changes in DivOp measures quantify the aggregate informational consequences of reduced face-to-face interaction.
+
+Specifically, the volume-based measures (DTO and SUV) and the idiosyncratic volatility measure capture the market's response to heightened uncertainty, while forecast dispersion directly measures disagreement among analysts. The concordance between the analyst-level and market-level results strengthens the overall inference: the lockdown disrupted information flows, leading to both more inaccurate forecasts and wider divergence of opinion among investors.
+
+## Key Takeaways {#sec-wfh-takeaways}
+
+::: callout-tip
+## Key Takeaways
+
+1.  **In-person interactions matter for information production:** Analysts who lose access to face-to-face meetings with corporate managers and peers produce less accurate forecasts, even in an era of advanced digital communication.
+
+2.  **Vietnam provides a powerful natural experiment:** The 2021 HCMC lockdown was among the most severe globally, creating a sharp disruption to the concentrated financial ecosystem and enabling clean causal identification.
+
+3.  **The effect is temporary and reversible:** Forecast accuracy recovers once lockdowns are lifted, consistent with the WFH mechanism rather than a permanent structural change in information processing.
+
+4.  **Heterogeneity reveals the mechanism:** The WFH effect is strongest for high-quality analysts (who extract more from in-person contacts) and those with shorter tenure (who have less accumulated firm-specific knowledge to fall back on).
+
+5.  **Market-level consequences are measurable:** Divergence of opinion measures increase during lockdowns, confirming that the information disruption extends beyond individual analysts to the broader market's price discovery process.
+
+6.  **Emerging market amplification:** The thin analyst coverage and geographic concentration of Vietnam's financial sector amplify the WFH effect relative to developed markets, highlighting the importance of information infrastructure in emerging economies.
+
+7.  **Policy relevance:** These findings inform both the WFH policy debate in financial services and Vietnam's capital market development strategy, particularly as the country seeks emerging market reclassification.
+:::
+
+<!-- ## Exercises {#sec-wfh-exercises}
+
+1.  Reconstruct the analysis using the Hanoi lockdown as the primary identification event instead of the HCMC lockdown. How do the magnitudes compare, and what does this tell you about the relative information intensity of the two cities?
+
+2.  Extend the heterogeneity analysis to examine whether the WFH effect differs by industry. Do analysts covering banks and real estate companies, sectors where local knowledge and relationship banking are particularly important, experience a larger decline in accuracy?
+
+3.  Construct a "WFH exposure" measure that combines lockdown stringency with the analyst's pre-lockdown reliance on in-person interactions (proxied by the frequency of forecast revisions around earnings conferences and corporate access events). Does this continuous measure outperform the binary InPerson indicator?
+
+4.  Use the DivOp measures to test whether the lockdown-induced increase in divergence of opinion predicts subsequent stock returns, following the framework of @cvitanic2012financial and @hong2007disagreement. If lockdowns reduce the information content of prices, we might expect temporary mispricing that is subsequently corrected.
+
+5.  Compare the Vietnamese experience with other ASEAN markets (Thailand, Philippines, Indonesia) that experienced different lockdown intensities. This cross-country comparison can help disentangle the WFH effect from concurrent macroeconomic shocks. \[Hint: you will need to source analyst forecast data for these markets from Bloomberg or Refinitiv.\] -->

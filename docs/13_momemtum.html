@@ -677,7 +677,7 @@ r_{p,t} = \frac{1}{K} \sum_{k=0}^{K-1} r_{p,t}^{(t-k)}
 <section id="setting-up-the-environment" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="setting-up-the-environment"><span class="header-section-number">12.2</span> Setting Up the Environment</h2>
 <p>We begin by loading the necessary Python packages. The core packages include <code>pandas</code> for data manipulation, <code>numpy</code> for numerical operations, and <code>sqlite3</code> for database connectivity. We also import <code>plotnine</code> for creating publication-quality figures and <code>scipy</code> for statistical tests.</p>
-<div id="715fba10" class="cell" data-execution_count="1">
+<div id="7880604d" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
@@ -689,7 +689,7 @@ r_{p,t} = \frac{1}{K} \sum_{k=0}^{K-1} r_{p,t}^{(t-k)}
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We connect to our SQLite database, which stores the cleaned datasets prepared in <a href="accessing-and-managing-financial-data.qmd">Accessing and Managing Financial Data</a> and <a href="datacore-data.qmd">DataCore Data</a>.</p>
-<div id="d5c0947c" class="cell" data-execution_count="2">
+<div id="291bd892" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -700,7 +700,7 @@ r_{p,t} = \frac{1}{K} \sum_{k=0}^{K-1} r_{p,t}^{(t-k)}
 <section id="loading-monthly-stock-returns" class="level3" data-number="12.3.1">
 <h3 data-number="12.3.1" class="anchored" data-anchor-id="loading-monthly-stock-returns"><span class="header-section-number">12.3.1</span> Loading Monthly Stock Returns</h3>
 <p>We load the monthly stock price data from our database. The <code>prices_monthly</code> table contains adjusted returns, market capitalizations, and other variables for all stocks listed on HOSE and HNX.</p>
-<div id="7f3baf14" class="cell" data-execution_count="3">
+<div id="bf8675c9" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># can add "exchange" variable</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"""</span></span>
@@ -801,7 +801,7 @@ Table&nbsp;12.1: Summary statistics for monthly stock return data. The table rep
 </div>
 </div>
 <p>We also examine the cross-sectional distribution of stocks over time, which is important for understanding whether we have sufficient breadth for decile portfolio construction.</p>
-<div id="cell-fig-stock-count" class="cell" data-fig-width="7" data-execution_count="5">
+<div id="cell-fig-stock-count" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stock_counts <span class="op">=</span> (prices_monthly</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .nunique()</span>
@@ -837,7 +837,7 @@ Figure&nbsp;12.1: Number of stocks with available return data over time. The fig
 <section id="loading-factor-data" class="level3" data-number="12.3.3">
 <h3 data-number="12.3.3" class="anchored" data-anchor-id="loading-factor-data"><span class="header-section-number">12.3.3</span> Loading Factor Data</h3>
 <p>We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in <a href="fama-french-factors.qmd">Fama-French Factors</a>.</p>
-<div id="d985ff52" class="cell" data-execution_count="6">
+<div id="d66b9932" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT date, mkt_excess, smb, hml, risk_free FROM factors_ff3_monthly"</span>,</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -861,7 +861,7 @@ Date range: 2011-07-31 to 2023-12-31</code></pre>
 <li><strong>Return availability</strong>: We require non-missing returns for the entire formation period.</li>
 <li><strong>Market capitalization</strong>: We require positive lagged market capitalization for portfolio weighting.</li>
 </ol>
-<div id="59d1c6cd" class="cell" data-execution_count="7">
+<div id="98fdae50" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for stocks with positive market cap and non-missing returns</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>prices_clean <span class="op">=</span> (prices_monthly</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span>[<span class="st">"ret"</span>, <span class="st">"mktcap"</span>])</span>
@@ -885,7 +885,7 @@ Stocks after filtering: 1,457</code></pre>
 <h3 data-number="12.4.1" class="anchored" data-anchor-id="computing-formation-period-returns"><span class="header-section-number">12.4.1</span> Computing Formation Period Returns</h3>
 <p>The first step in constructing momentum portfolios is to compute cumulative returns over the formation period. For a formation period of <span class="math inline">\(J\)</span> months, we compute the cumulative return for each stock <span class="math inline">\(i\)</span> at the end of month <span class="math inline">\(t\)</span> as specified in <a href="#eq-cumret" class="quarto-xref">Equation&nbsp;<span>12.1</span></a>.</p>
 <p>We implement this using a rolling product of gross returns. A key detail is that we require non-missing returns for all <span class="math inline">\(J\)</span> months in the formation window. If any monthly return is missing, the cumulative return is set to missing, and the stock is excluded from portfolio formation in that month.</p>
-<div id="665376fe" class="cell" data-execution_count="8">
+<div id="ad4b1e60" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_formation_returns(data, J):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute J-month cumulative returns for momentum portfolio formation.</span></span>
@@ -921,7 +921,7 @@ Stocks after filtering: 1,457</code></pre>
 <span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Let us apply this function for our baseline case with <span class="math inline">\(J = 6\)</span> months:</p>
-<div id="1c1c8e85" class="cell" data-execution_count="9">
+<div id="376076bc" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>J <span class="op">=</span> <span class="dv">6</span>  <span class="co"># Formation period: 6 months</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>prices_with_cumret <span class="op">=</span> compute_formation_returns(prices_clean, J)</span>
@@ -950,7 +950,7 @@ Name: cum_return, dtype: float64</code></pre>
 <section id="assigning-momentum-decile-portfolios" class="level3" data-number="12.4.2">
 <h3 data-number="12.4.2" class="anchored" data-anchor-id="assigning-momentum-decile-portfolios"><span class="header-section-number">12.4.2</span> Assigning Momentum Decile Portfolios</h3>
 <p>Each month, we sort all stocks with valid cumulative returns into decile portfolios based on their past <span class="math inline">\(J\)</span>-month performance. Portfolio 1 contains the bottom decile (losers) and portfolio 10 contains the top decile (winners).</p>
-<div id="ea94cdf9" class="cell" data-execution_count="10">
+<div id="fee75eff" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assign_momentum_portfolios(data, n_portfolios<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Assign stocks to momentum portfolios based on formation-period returns.</span></span>
@@ -1026,7 +1026,7 @@ Name: cum_return, dtype: float64</code></pre>
 <span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="de2930a5" class="cell" data-execution_count="11">
+<div id="b5c54992" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>portfolios <span class="op">=</span> assign_momentum_portfolios(prices_with_cumret)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Stocks assigned to portfolios: </span><span class="sc">{</span><span class="bu">len</span>(portfolios)<span class="sc">:,}</span><span class="ss">"</span>)</span>
@@ -1054,7 +1054,7 @@ momr
 <section id="defining-holding-period-dates" class="level3" data-number="12.4.3">
 <h3 data-number="12.4.3" class="anchored" data-anchor-id="defining-holding-period-dates"><span class="header-section-number">12.4.3</span> Defining Holding Period Dates</h3>
 <p>After forming portfolios at the end of month <span class="math inline">\(t\)</span>, we hold them from the beginning of month <span class="math inline">\(t+1\)</span> through the end of month <span class="math inline">\(t+K\)</span>. This one-month gap between the formation period and the start of the holding period is standard in the literature and avoids the well-documented short-term reversal effect at the one-month horizon <span class="citation" data-cites="jegadeesh1990evidence">(<a href="references.html#ref-jegadeesh1990evidence" role="doc-biblioref">Jegadeesh 1990</a>)</span>.</p>
-<div id="d11d6260" class="cell" data-execution_count="12">
+<div id="eef8c0ea" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> <span class="dv">6</span>  <span class="co"># Holding period: 6 months</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>portfolios_with_dates <span class="op">=</span> portfolios.copy()</span>
@@ -1091,7 +1091,7 @@ momr
 <section id="computing-portfolio-holding-period-returns" class="level3" data-number="12.4.4">
 <h3 data-number="12.4.4" class="anchored" data-anchor-id="computing-portfolio-holding-period-returns"><span class="header-section-number">12.4.4</span> Computing Portfolio Holding Period Returns</h3>
 <p>We now compute the returns of each portfolio during its holding period. For each stock-formation date combination, we merge in the actual returns realized during the holding window. This produces a panel of stock returns indexed by formation date, holding date, and momentum portfolio rank.</p>
-<div id="60cf813b" class="cell" data-execution_count="13">
+<div id="1fa116e3" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge: for each portfolio assignment, get all returns during holding period</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>portfolio_returns <span class="op">=</span> portfolios_with_dates.merge(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    prices_clean[[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"ret"</span>]].rename(</span>
@@ -1115,7 +1115,7 @@ momr
 <section id="computing-equally-weighted-portfolio-returns" class="level3" data-number="12.4.5">
 <h3 data-number="12.4.5" class="anchored" data-anchor-id="computing-equally-weighted-portfolio-returns"><span class="header-section-number">12.4.5</span> Computing Equally Weighted Portfolio Returns</h3>
 <p>The <span class="citation" data-cites="jegadeesh1993returns">Jegadeesh and Titman (<a href="references.html#ref-jegadeesh1993returns" role="doc-biblioref">1993</a>)</span> methodology uses equally weighted portfolios. For each holding month, each momentum decile has <span class="math inline">\(K\)</span> active cohorts (one formed in each of the past <span class="math inline">\(K\)</span> months). We first compute the equally weighted return within each cohort, then average across cohorts to get the final monthly portfolio return.</p>
-<div id="873e5e06" class="cell" data-execution_count="14">
+<div id="b4a0b937" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Average return within each cohort (form_date × momr × hdate)</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>cohort_returns <span class="op">=</span> (portfolio_returns</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"hdate"</span>, <span class="st">"momr"</span>, <span class="st">"form_date"</span>])</span>
@@ -1143,7 +1143,7 @@ Date range: 2010-08-31 to 2023-12-31</code></pre>
 </div>
 </div>
 <p>We should verify that we have the expected number of active cohorts per month. Once the strategy has been running for at least <span class="math inline">\(K\)</span> months, each momentum decile should have exactly <span class="math inline">\(K\)</span> active cohorts.</p>
-<div id="cell-fig-cohort-count" class="cell" data-fig-width="7" data-execution_count="15">
+<div id="cell-fig-cohort-count" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cohort_check <span class="op">=</span> (ewret</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"n_cohorts"</span>]</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    .mean()</span>
@@ -1330,7 +1330,7 @@ Table&nbsp;12.2: Average monthly returns of momentum decile portfolios for the J
 <section id="the-long-short-momentum-portfolio" class="level3" data-number="12.5.2">
 <h3 data-number="12.5.2" class="anchored" data-anchor-id="the-long-short-momentum-portfolio"><span class="header-section-number">12.5.2</span> The Long-Short Momentum Portfolio</h3>
 <p>The key test of the momentum effect is whether the spread between winners and losers—the long-short momentum portfolio—generates statistically significant positive returns. We construct this spread portfolio by going long the top decile (portfolio 10) and short the bottom decile (portfolio 1).</p>
-<div id="ea59a0d5" class="cell" data-execution_count="17">
+<div id="5253c66c" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot to wide format</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>ewret_wide <span class="op">=</span> ewret.pivot(</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"momr"</span>, values<span class="op">=</span><span class="st">"ewret"</span></span>
@@ -1421,14 +1421,14 @@ Table&nbsp;12.3: Performance of the momentum long-short strategy (J=6, K=6). Win
 <section id="cumulative-returns" class="level3" data-number="12.5.3">
 <h3 data-number="12.5.3" class="anchored" data-anchor-id="cumulative-returns"><span class="header-section-number">12.5.3</span> Cumulative Returns</h3>
 <p>The time-series evolution of cumulative returns provides visual evidence of the momentum strategy’s performance. <a href="#fig-cumret-winners-losers" class="quarto-xref">Figure&nbsp;<span>12.3</span></a> shows the cumulative returns of the winner and loser portfolios, while <a href="#fig-cumret-long-short" class="quarto-xref">Figure&nbsp;<span>12.4</span></a> shows the cumulative return of the long-short momentum strategy.</p>
-<div id="aa7b8931" class="cell" data-execution_count="19">
+<div id="696f9c91" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute cumulative returns</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ewret_wide <span class="op">=</span> ewret_wide.sort_values(<span class="st">"date"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> [<span class="st">"winners"</span>, <span class="st">"losers"</span>, <span class="st">"long_short"</span>]:</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    ewret_wide[<span class="ss">f"cumret_</span><span class="sc">{</span>col<span class="sc">}</span><span class="ss">"</span>] <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> ewret_wide[col]).cumprod() <span class="op">-</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="cell-fig-cumret-winners-losers" class="cell" data-fig-width="7" data-execution_count="20">
+<div id="cell-fig-cumret-winners-losers" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cumret_plot_data <span class="op">=</span> (ewret_wide</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"date"</span>, <span class="st">"cumret_winners"</span>, <span class="st">"cumret_losers"</span>]]</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    .melt(id_vars<span class="op">=</span><span class="st">"date"</span>, var_name<span class="op">=</span><span class="st">"portfolio"</span>, value_name<span class="op">=</span><span class="st">"cumret"</span>)</span>
@@ -1469,7 +1469,7 @@ Figure&nbsp;12.3: Cumulative returns of momentum winner and loser portfolios. Th
 </div>
 </div>
 </div>
-<div id="cell-fig-cumret-long-short" class="cell" data-fig-width="7" data-execution_count="21">
+<div id="cell-fig-cumret-long-short" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>plot_ls <span class="op">=</span> (</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    ggplot(ewret_wide, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"cumret_long_short"</span>)) <span class="op">+</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    geom_line(size<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">"#2ca02c"</span>) <span class="op">+</span></span>
@@ -1500,7 +1500,7 @@ Figure&nbsp;12.4: Cumulative return of the momentum long-short strategy (Winners
 <section id="monthly-return-distribution" class="level3" data-number="12.5.4">
 <h3 data-number="12.5.4" class="anchored" data-anchor-id="monthly-return-distribution"><span class="header-section-number">12.5.4</span> Monthly Return Distribution</h3>
 <p>Beyond the mean, the full distribution of monthly long-short returns provides insight into the risk profile of the momentum strategy. <a href="#fig-return-distribution" class="quarto-xref">Figure&nbsp;<span>12.5</span></a> shows the histogram of monthly returns.</p>
-<div id="cell-fig-return-distribution" class="cell" data-fig-width="7" data-execution_count="22">
+<div id="cell-fig-return-distribution" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mean_ls <span class="op">=</span> ewret_wide[<span class="st">"long_short"</span>].mean()</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>plot_dist <span class="op">=</span> (</span>
@@ -1538,7 +1538,7 @@ Figure&nbsp;12.5: Distribution of monthly long-short momentum returns. The histo
 <h3 data-number="12.6.1" class="anchored" data-anchor-id="the-j-k-grid"><span class="header-section-number">12.6.1</span> The J × K Grid</h3>
 <p><span class="citation" data-cites="jegadeesh1993returns">Jegadeesh and Titman (<a href="references.html#ref-jegadeesh1993returns" role="doc-biblioref">1993</a>)</span> evaluate momentum strategies across a comprehensive grid of formation periods <span class="math inline">\(J \in \{3, 6, 9, 12\}\)</span> and holding periods <span class="math inline">\(K \in \{3, 6, 9, 12\}\)</span>. This produces 16 different strategy specifications, allowing us to assess the robustness of the momentum effect across different horizons.</p>
 <p>We now implement a function that computes the full momentum strategy for any given <span class="math inline">\((J, K)\)</span> pair, wrapping the steps developed above into a single reusable pipeline.</p>
-<div id="2056d8b8" class="cell" data-execution_count="23">
+<div id="0620ad9e" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1691,7 +1691,7 @@ Figure&nbsp;12.5: Distribution of monthly long-short momentum returns. The histo
 </section>
 <section id="parallel-calculation" class="level4" data-number="12.6.2.2">
 <h4 data-number="12.6.2.2" class="anchored" data-anchor-id="parallel-calculation"><span class="header-section-number">12.6.2.2</span> Parallel Calculation</h4>
-<div id="d640588b" class="cell" data-execution_count="25">
+<div id="42d77ac5" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_single_strategy(data, J, K):</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute statistics for a single (J, K) strategy.</span></span>
@@ -1725,7 +1725,7 @@ Figure&nbsp;12.5: Distribution of monthly long-short momentum returns. The histo
 <span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error in J=</span><span class="sc">{</span>J<span class="sc">}</span><span class="ss">, K=</span><span class="sc">{</span>K<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> []</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="44aee41a" class="cell" data-execution_count="26">
+<div id="341add49" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>J_values <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">12</span>]</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>K_values <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">12</span>]</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1752,19 +1752,19 @@ Figure&nbsp;12.5: Distribution of monthly long-short momentum returns. The histo
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>[Parallel(n_jobs=4)]: Using backend LokyBackend with 4 concurrent workers.
-[Parallel(n_jobs=4)]: Done   5 tasks      | elapsed:    8.7s
-[Parallel(n_jobs=4)]: Done  11 out of  16 | elapsed:   14.3s remaining:    6.5s
-[Parallel(n_jobs=4)]: Done  13 out of  16 | elapsed:   19.1s remaining:    4.4s</code></pre>
+[Parallel(n_jobs=4)]: Done   5 tasks      | elapsed:    8.4s
+[Parallel(n_jobs=4)]: Done  11 out of  16 | elapsed:   14.4s remaining:    6.5s
+[Parallel(n_jobs=4)]: Done  13 out of  16 | elapsed:   18.7s remaining:    4.3s</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-Completed in 19.79 seconds</code></pre>
+Completed in 19.68 seconds</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>[Parallel(n_jobs=4)]: Done  16 out of  16 | elapsed:   19.7s finished</code></pre>
+<pre><code>[Parallel(n_jobs=4)]: Done  16 out of  16 | elapsed:   19.6s finished</code></pre>
 </div>
 </div>
-<div id="3acafd56" class="cell" data-execution_count="27">
+<div id="eb00e43b" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Results Summary by Formation Period:"</span>)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results_df.groupby(<span class="st">"J"</span>).agg({</span>
@@ -1996,7 +1996,7 @@ Table&nbsp;12.6: Average monthly returns (%) of the momentum long-short portfoli
 <section id="visualizing-the-momentum-premium-across-specifications" class="level3" data-number="12.6.6">
 <h3 data-number="12.6.6" class="anchored" data-anchor-id="visualizing-the-momentum-premium-across-specifications"><span class="header-section-number">12.6.6</span> Visualizing the Momentum Premium Across Specifications</h3>
 <p><a href="#fig-momentum-heatmap" class="quarto-xref">Figure&nbsp;<span>12.6</span></a> provides a visual summary of the long-short momentum premium across all <span class="math inline">\((J, K)\)</span> combinations.</p>
-<div id="cell-fig-momentum-heatmap" class="cell" data-fig-width="7" data-execution_count="31">
+<div id="cell-fig-momentum-heatmap" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ls_heatmap_data <span class="op">=</span> (results_df</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"portfolio == 'long_short'"</span>)</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
@@ -2050,7 +2050,7 @@ Figure&nbsp;12.6: Heatmap of average monthly long-short momentum returns (%) acr
 <p><span id="eq-capm-alpha"><span class="math display">\[
 r_{\text{WML},t} = \alpha + \beta \cdot r_{\text{MKT},t} + \epsilon_t
 \tag{12.3}\]</span></span></p>
-<div id="83dd3952" class="cell" data-execution_count="32">
+<div id="c65b5795" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge momentum returns with factor data (baseline J=6, K=6)</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>ewret_factors <span class="op">=</span> (ewret_wide</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"date"</span>, <span class="st">"winners"</span>, <span class="st">"losers"</span>, <span class="st">"long_short"</span>]]</span>
@@ -2166,7 +2166,7 @@ Table&nbsp;12.7: Fama-French three-factor regression for the momentum long-short
 </figure>
 </div>
 </div>
-<div id="eb652237" class="cell" data-execution_count="34">
+<div id="a107a28f" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">R-squared: </span><span class="sc">{</span>ff3_model<span class="sc">.</span>rsquared<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Adjusted R-squared: </span><span class="sc">{</span>ff3_model<span class="sc">.</span>rsquared_adj<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Alpha (annualized): </span><span class="sc">{</span>ff3_model<span class="sc">.</span>params[<span class="st">'const'</span>] <span class="op">*</span> <span class="dv">12</span> <span class="op">*</span> <span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2197,7 +2197,7 @@ Alpha (annualized): -28.02%</code></pre>
 <p><span id="eq-market-state"><span class="math display">\[
 \text{Market State}_t = \begin{cases} \text{UP} &amp; \text{if } \prod_{s=t-12}^{t-1}(1 + r_{m,s}) - 1 &gt; 0 \\ \text{DOWN} &amp; \text{otherwise} \end{cases}
 \tag{12.5}\]</span></span></p>
-<div id="f2298f3a" class="cell" data-execution_count="35">
+<div id="4bebaaa2" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute 12-month lagged market return</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>market_returns <span class="op">=</span> factors_ff3_monthly[[<span class="st">"date"</span>, <span class="st">"mkt_excess"</span>]].copy()</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>market_returns <span class="op">=</span> market_returns.sort_values(<span class="st">"date"</span>)</span>
@@ -2464,7 +2464,7 @@ Table&nbsp;12.9: Ten worst months for the momentum long-short strategy. The tabl
 <section id="maximum-drawdown-analysis" class="level3" data-number="12.9.2">
 <h3 data-number="12.9.2" class="anchored" data-anchor-id="maximum-drawdown-analysis"><span class="header-section-number">12.9.2</span> Maximum Drawdown Analysis</h3>
 <p>The maximum drawdown provides a measure of the worst peak-to-trough decline experienced by the strategy. This metric is particularly relevant for practitioners evaluating the risk of momentum strategies.</p>
-<div id="8015ed0d" class="cell" data-execution_count="39">
+<div id="c5524a10" class="cell" data-execution_count="39">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute running maximum and drawdown</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>ewret_wide[<span class="st">"cum_wealth"</span>] <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> ewret_wide[<span class="st">"long_short"</span>]).cumprod()</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>ewret_wide[<span class="st">"running_max"</span>] <span class="op">=</span> ewret_wide[<span class="st">"cum_wealth"</span>].cummax()</span>
@@ -2514,7 +2514,7 @@ Figure&nbsp;12.8: Drawdown of the momentum long-short strategy over time. The ch
 <section id="value-weighted-momentum-portfolios" class="level2" data-number="12.10">
 <h2 data-number="12.10" class="anchored" data-anchor-id="value-weighted-momentum-portfolios"><span class="header-section-number">12.10</span> Value-Weighted Momentum Portfolios</h2>
 <p>The baseline <span class="citation" data-cites="jegadeesh1993returns">Jegadeesh and Titman (<a href="references.html#ref-jegadeesh1993returns" role="doc-biblioref">1993</a>)</span> implementation uses equally weighted portfolios. However, equally weighted returns can be dominated by small, illiquid stocks that may be difficult to trade in practice. Value-weighted portfolios, where each stock’s contribution is proportional to its market capitalization, provide a more investable benchmark and are more representative of the returns that large investors could actually achieve.</p>
-<div id="f578f988" class="cell" data-execution_count="41">
+<div id="a9c64731" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> momentum_strategy_vw(data, J, K, n_portfolios<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Value-weighted momentum strategy implementation.</span></span>
@@ -2630,7 +2630,7 @@ Figure&nbsp;12.8: Drawdown of the momentum long-short strategy over time. The ch
 <span id="cb57-113"><a href="#cb57-113" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb57-114"><a href="#cb57-114" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> monthly_ret, wide</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="f92ccea2" class="cell" data-execution_count="42">
+<div id="ec57640f" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run value-weighted J=6, K=6 strategy</span></span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>_, vw_results <span class="op">=</span> momentum_strategy_vw(prices_clean, J<span class="op">=</span><span class="dv">6</span>, K<span class="op">=</span><span class="dv">6</span>)</span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2813,7 +2813,7 @@ Figure&nbsp;12.9: Cumulative returns of equally weighted (EW) versus value-weigh
 <p>While momentum strategies are typically evaluated at the monthly frequency following <span class="citation" data-cites="jegadeesh1993returns">Jegadeesh and Titman (<a href="references.html#ref-jegadeesh1993returns" role="doc-biblioref">1993</a>)</span>, analyzing daily return patterns provides additional insights into the dynamics of momentum profits. Daily data allows us to examine how momentum profits accrue within the holding period, measure intra-month volatility of the strategy, and compute more precise risk measures.</p>
 <section id="loading-daily-data" class="level3" data-number="12.11.1">
 <h3 data-number="12.11.1" class="anchored" data-anchor-id="loading-daily-data"><span class="header-section-number">12.11.1</span> Loading Daily Data</h3>
-<div id="78c63864" class="cell" data-execution_count="45">
+<div id="1cf7803e" class="cell" data-execution_count="45">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span>(<span class="st">"SELECT symbol, date, ret, ret_excess, mktcap_lag "</span></span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"FROM prices_daily"</span>),</span>
@@ -2835,7 +2835,7 @@ Date range: 2010-01-05 to 2023-12-29</code></pre>
 <section id="daily-returns-of-monthly-momentum-portfolios" class="level3" data-number="12.11.2">
 <h3 data-number="12.11.2" class="anchored" data-anchor-id="daily-returns-of-monthly-momentum-portfolios"><span class="header-section-number">12.11.2</span> Daily Returns of Monthly Momentum Portfolios</h3>
 <p>Rather than forming momentum portfolios at the daily frequency (which would require daily rebalancing and is impractical), we use the monthly portfolio assignments and track their daily returns. This gives us the daily return series of the monthly momentum strategy.</p>
-<div id="35dcf8ef" class="cell" data-execution_count="46">
+<div id="a0c537a2" class="cell" data-execution_count="46">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # # Use the monthly portfolio assignments from the J=6 baseline</span></span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>monthly_assignments <span class="op">=</span> portfolios_with_dates[</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"symbol"</span>, <span class="st">"form_date"</span>, <span class="st">"momr"</span>, <span class="st">"hdate1"</span>, <span class="st">"hdate2"</span>]</span>
@@ -2861,7 +2861,7 @@ Date range: 2010-01-05 to 2023-12-29</code></pre>
 <pre><code>Daily portfolio return observations: 19,112,536</code></pre>
 </div>
 </div>
-<div id="2f9c3818" class="cell" data-execution_count="47">
+<div id="ec344ab3" class="cell" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute daily equally weighted portfolio returns</span></span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Stage 1: Average within each cohort</span></span>
 <span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>daily_cohort_ret <span class="op">=</span> (daily_mom_returns</span>
@@ -3087,7 +3087,7 @@ Figure&nbsp;12.11: Monthly realized volatility of the momentum long-short strate
 <section id="saving-results-to-the-database" class="level2" data-number="12.12">
 <h2 data-number="12.12" class="anchored" data-anchor-id="saving-results-to-the-database"><span class="header-section-number">12.12</span> Saving Results to the Database</h2>
 <p>We save the momentum portfolio returns to our database for use in subsequent chapters, including factor model construction and portfolio optimization.</p>
-<div id="a9354678" class="cell" data-execution_count="51">
+<div id="44a3d42a" class="cell" data-execution_count="51">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save monthly equally weighted momentum portfolio returns</span></span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>ewret_to_save <span class="op">=</span> ewret[[<span class="st">"date"</span>, <span class="st">"momr"</span>, <span class="st">"ewret"</span>]].copy()</span>
 <span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>ewret_to_save.to_sql(</span>
@@ -3920,7 +3920,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-134"><a href="#cb73-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-stock-count</span></span>
 <span id="cb73-135"><a href="#cb73-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Number of stocks with available return data over time. The figure shows the monthly cross-section of stocks available for momentum portfolio construction. A minimum number of stocks is needed to form meaningful decile portfolios."</span></span>
 <span id="cb73-136"><a href="#cb73-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A line chart showing the number of stocks with available monthly returns over time, generally increasing from a small number in the early 2000s to several hundred in recent years."</span></span>
-<span id="cb73-137"><a href="#cb73-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-137"><a href="#cb73-137" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-138"><a href="#cb73-138" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-139"><a href="#cb73-139" aria-hidden="true" tabindex="-1"></a>stock_counts <span class="op">=</span> (prices_monthly</span>
 <span id="cb73-140"><a href="#cb73-140" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"symbol"</span>]</span>
@@ -4208,7 +4208,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-442"><a href="#cb73-442" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cohort-count</span></span>
 <span id="cb73-443"><a href="#cb73-443" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Number of active cohorts per momentum portfolio over time. After an initial ramp-up period of K months, each portfolio should have exactly K active cohorts contributing to its monthly return."</span></span>
 <span id="cb73-444"><a href="#cb73-444" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A line chart showing the number of active cohorts per momentum portfolio over time, ramping up from 1 to K during the initial months and then remaining stable at K."</span></span>
-<span id="cb73-445"><a href="#cb73-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-445"><a href="#cb73-445" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-446"><a href="#cb73-446" aria-hidden="true" tabindex="-1"></a>cohort_check <span class="op">=</span> (ewret</span>
 <span id="cb73-447"><a href="#cb73-447" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)[<span class="st">"n_cohorts"</span>]</span>
 <span id="cb73-448"><a href="#cb73-448" aria-hidden="true" tabindex="-1"></a>    .mean()</span>
@@ -4319,7 +4319,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-563"><a href="#cb73-563" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cumret-winners-losers</span></span>
 <span id="cb73-564"><a href="#cb73-564" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Cumulative returns of momentum winner and loser portfolios. The winner portfolio (blue) contains stocks in the top decile of past 6-month returns, and the loser portfolio (red) contains stocks in the bottom decile. The spread between the two lines reflects the cumulative momentum premium."</span></span>
 <span id="cb73-565"><a href="#cb73-565" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A line chart showing cumulative returns of the winner and loser momentum portfolios over time. The winner portfolio generally accumulates higher returns than the loser portfolio, though both exhibit substantial variation."</span></span>
-<span id="cb73-566"><a href="#cb73-566" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-566"><a href="#cb73-566" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-567"><a href="#cb73-567" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-568"><a href="#cb73-568" aria-hidden="true" tabindex="-1"></a>cumret_plot_data <span class="op">=</span> (ewret_wide</span>
 <span id="cb73-569"><a href="#cb73-569" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"date"</span>, <span class="st">"cumret_winners"</span>, <span class="st">"cumret_losers"</span>]]</span>
@@ -4354,7 +4354,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-600"><a href="#cb73-600" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-cumret-long-short</span></span>
 <span id="cb73-601"><a href="#cb73-601" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Cumulative return of the momentum long-short strategy (Winners minus Losers). Upward-sloping periods indicate momentum profits; sharp drawdowns often coincide with market reversals or crisis episodes."</span></span>
 <span id="cb73-602"><a href="#cb73-602" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A line chart showing the cumulative return of the long-short momentum strategy over time, exhibiting periods of accumulation interspersed with sharp drawdowns."</span></span>
-<span id="cb73-603"><a href="#cb73-603" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-603"><a href="#cb73-603" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-604"><a href="#cb73-604" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-605"><a href="#cb73-605" aria-hidden="true" tabindex="-1"></a>plot_ls <span class="op">=</span> (</span>
 <span id="cb73-606"><a href="#cb73-606" aria-hidden="true" tabindex="-1"></a>    ggplot(ewret_wide, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"cumret_long_short"</span>)) <span class="op">+</span></span>
@@ -4379,7 +4379,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-627"><a href="#cb73-627" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-return-distribution</span></span>
 <span id="cb73-628"><a href="#cb73-628" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Distribution of monthly long-short momentum returns. The histogram shows the frequency distribution of monthly Winners-minus-Losers returns. The vertical dashed line indicates the mean monthly return."</span></span>
 <span id="cb73-629"><a href="#cb73-629" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A histogram of monthly long-short momentum returns, approximately centered near zero or slightly positive, with tails extending in both directions."</span></span>
-<span id="cb73-630"><a href="#cb73-630" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-630"><a href="#cb73-630" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-631"><a href="#cb73-631" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-632"><a href="#cb73-632" aria-hidden="true" tabindex="-1"></a>mean_ls <span class="op">=</span> ewret_wide[<span class="st">"long_short"</span>].mean()</span>
 <span id="cb73-633"><a href="#cb73-633" aria-hidden="true" tabindex="-1"></a></span>
@@ -4713,7 +4713,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-979"><a href="#cb73-979" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-momentum-heatmap</span></span>
 <span id="cb73-980"><a href="#cb73-980" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Heatmap of average monthly long-short momentum returns (%) across formation periods (J) and holding periods (K). Darker shades indicate higher momentum profits. Asterisks denote statistical significance at the 5% level."</span></span>
 <span id="cb73-981"><a href="#cb73-981" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-alt: "A heatmap with formation period J on the y-axis and holding period K on the x-axis, with cell colors indicating the magnitude of the momentum premium."</span></span>
-<span id="cb73-982"><a href="#cb73-982" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 7</span></span>
+<span id="cb73-982"><a href="#cb73-982" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-983"><a href="#cb73-983" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-984"><a href="#cb73-984" aria-hidden="true" tabindex="-1"></a>ls_heatmap_data <span class="op">=</span> (results_df</span>
 <span id="cb73-985"><a href="#cb73-985" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"portfolio == 'long_short'"</span>)</span>
