@@ -1,15 +1,4 @@
----
-title: Constructing and Analyzing Equity Return Series
-format:
-  html:
-    toc: true
-    number-sections: true
-jupyter: python3
-execute:
-  echo: true
-  warning: false
-  message: false
----
+# Constructing and Analyzing Equity Return Series
 
 This chapter develops a practical framework for transforming raw equity price records into return series suitable for empirical financial analysis. The focus is on methodological clarity and reproducibility, with particular attention to data issues that are prevalent in emerging equity markets such as Vietnam. 
 
@@ -24,8 +13,6 @@ We begin by loading the core numerical and data manipulation libraries. These pr
 import pandas as pd
 import numpy as np
 ```
-
-
 
 For this project, we retrieve our historical price data using the DataCore API. If you wish to replicate this analysis or use the dataset for your own work, you will need to access the data through their platform.
 

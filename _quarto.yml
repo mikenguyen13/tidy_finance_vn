@@ -10,6 +10,9 @@ book:
   title: "Applying Tidy Finance with Python to Vietnam"
   author: "Mike"
   date: "2/1/2026"
+  favicon: favicon.ico
+  twitter-card: true
+  open-graph: true
   site-url: "https://github.com/mikenguyen13/tidy_finance_vn"
   repo-url: "https://github.com/mikenguyen13/tidy_finance_vn"
 
@@ -111,46 +114,7 @@ book:
         # - _governance.qmd
         # - 53_replication_and_research_design.qmd
         - 17_event_studies.qmd
-    - 99_conclusion.qmd
-
-
-
-
-    # # - intro.qmd
-    # # - summary.qmd
-    # - 00_institutional_background.qmd
-    # - 01_working_with_stock_returns.qmd
-    # - 02_modern_portfolio_theory.qmd
-    # - 03_capm.qmd
-    # - 04_financial_statement_analysis.qmd
-    # - 05_discounted_cash_flow.qmd
-    # - 06_accessing_and_managing_financial_data.qmd
-    # - 07_datacore_data.qmd
-    # - 08_beta_estimation.qmd
-    # - 09_univariate_portfolio_sort.qmd
-    # # - 10_size_sorts.qmd
-    # # - 11_value_bivariate.qmd
-    # - 12_fama_french.qmd
-    # - 13_momemtum.qmd
-    # - 14_fama_macbeth.qmd
-    # # can't have this until u collect more data for 06_accessing_and_managing_financial_data
-    # # - 14_factor_selection_ml.qmd
-    
-    # - 16_compound_return.qmd
-    # - 17_event_studies.qmd
-    # - 18_sue.qmd
-
-    # - 19_divop.qmd
-
-    # - 25_pe_ratio.qmd
-    # - 26_valuation.qmd
-
-    # - 30_institutional_ownership.qmd
-    # - 31_institutional_trade_flow.qmd
-    # - 32_return_gaps.qmd
-    # # - 40_exchange_rate.qmd
-    # - 99_conclusion.qmd
-
+    - 99_conclusion.qmdc
     - references.qmd
   # appendices:
   #   - privacy.qmd
@@ -177,11 +141,11 @@ format:
     citations-hover: true
 
     # Social sharing preview cards
-    open-graph: true
-    twitter-card: true
+    # open-graph: true
+    # twitter-card: true
 
     # Put your favicon in the repo root (or adjust the path)
-    favicon: "favicon.ico"
+    # favicon: "favicon.ico"
     
     include-after-body:
       # - includes/cookie-consent.html
