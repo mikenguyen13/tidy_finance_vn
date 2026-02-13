@@ -565,12 +565,6 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Return Gap: Measuring Unobserved Actions of Fund Managers</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./17_event_studies.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Event Studies in Finance</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -584,12 +578,18 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./99_conclusion.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
+  <a href="./17_event_studies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Event Studies in Finance</span></span></a>
   </div>
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./99_conclusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Conclusion</span></span></a>
+  </div>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">
@@ -602,7 +602,7 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="-1">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -766,7 +766,7 @@ r_{p,t} = \frac{1}{K} \sum_{k=0}^{K-1} r_{p,t}^{(t-k)}
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> comma_format, percent_format</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We connect to our SQLite database, which stores the cleaned datasets prepared in <a href="accessing-and-managing-financial-data.qmd">Accessing and Managing Financial Data</a> and <a href="datacore-data.qmd">DataCore Data</a>.</p>
+<p>We connect to our SQLite database, which stores the cleaned datasets prepared previous chapters.</p>
 <div id="291bd892" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span></span>
@@ -914,7 +914,7 @@ Figure&nbsp;11.1: Number of stocks with available return data over time. The fig
 </section>
 <section id="loading-factor-data" class="level3" data-number="11.3.3">
 <h3 data-number="11.3.3" class="anchored" data-anchor-id="loading-factor-data"><span class="header-section-number">11.3.3</span> Loading Factor Data</h3>
-<p>We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in <a href="fama-french-factors.qmd">Fama-French Factors</a>.</p>
+<p>We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in previous chapters.</p>
 <div id="d66b9932" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT date, mkt_excess, smb, hml, risk_free FROM factors_ff3_monthly"</span>,</span>
@@ -3945,7 +3945,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-73"><a href="#cb73-73" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
 <span id="cb73-74"><a href="#cb73-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb73-75"><a href="#cb73-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb73-76"><a href="#cb73-76" aria-hidden="true" tabindex="-1"></a>We connect to our SQLite database, which stores the cleaned datasets prepared in <span class="co">[</span><span class="ot">Accessing and Managing Financial Data</span><span class="co">](accessing-and-managing-financial-data.qmd)</span> and <span class="co">[</span><span class="ot">DataCore Data</span><span class="co">](datacore-data.qmd)</span>.</span>
+<span id="cb73-76"><a href="#cb73-76" aria-hidden="true" tabindex="-1"></a>We connect to our SQLite database, which stores the cleaned datasets prepared previous chapters.</span>
 <span id="cb73-77"><a href="#cb73-77" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-80"><a href="#cb73-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb73-81"><a href="#cb73-81" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(</span>
@@ -4022,7 +4022,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb73-158"><a href="#cb73-158" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-159"><a href="#cb73-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Loading Factor Data</span></span>
 <span id="cb73-160"><a href="#cb73-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb73-161"><a href="#cb73-161" aria-hidden="true" tabindex="-1"></a>We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in <span class="co">[</span><span class="ot">Fama-French Factors</span><span class="co">](fama-french-factors.qmd)</span>.</span>
+<span id="cb73-161"><a href="#cb73-161" aria-hidden="true" tabindex="-1"></a>We also load the Fama-French factor returns for risk-adjusted performance evaluation. These factors were constructed in previous chapters.</span>
 <span id="cb73-162"><a href="#cb73-162" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-165"><a href="#cb73-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
 <span id="cb73-166"><a href="#cb73-166" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly <span class="op">=</span> pd.read_sql_query(</span>

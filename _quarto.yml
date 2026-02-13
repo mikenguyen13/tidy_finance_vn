@@ -83,11 +83,12 @@ book:
     - part: "Firm Fundamentals, Valuation, and Corporate Signals"
       chapters:
         - 04_financial_statement_analysis.qmd
+        - 05_discounted_cash_flow.qmd
         # - 20_earnings_quality_and_accruals.qmd
         # - 21_cash_flow_vs_earnings.qmd
         - 25_pe_ratio.qmd
         - 26_valuation.qmd
-        - 05_discounted_cash_flow.qmd
+        
         # - 22_disclosure_quality_and_timing.qmd
         - 18_sue.qmd
         - 19_divop.qmd
@@ -103,16 +104,14 @@ book:
         # - 34_price_limits_and_volatility.qmd
         # - 35_market_integration_and_segmentation.qmd
         # - 40_exchange_rate.qmd
-        - 17_event_studies.qmd
-
+        
     - part: "Advanced Data, Research Design, and Frontiers"
       chapters:
         # - 50_textual.qmd
-        # - 51_textual_signal_construction.qmd
-        # - 52_machine_learning_in_asset_pricing.qmd
         # - _governance.qmd
         # - 53_replication_and_research_design.qmd
-        - 99_conclusion.qmd
+        - 17_event_studies.qmd
+    - 99_conclusion.qmd
 
 
 
@@ -168,6 +167,8 @@ format:
       dark: darkly
     css: styles.css
     code-tools: true
+
+    toc-expand: false
 
     # Site search box in navbar
     search: true
