@@ -74,6 +74,7 @@ book:
     - 19_divop.qmd
 
     - 25_pe_ratio.qmd
+    - 26_valuation.qmd
 
     - 30_institutional_ownership.qmd
     - 31_institutional_trade_flow.qmd
