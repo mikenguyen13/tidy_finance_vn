@@ -112,7 +112,7 @@ book:
         
     - part: "Advanced Data, Research Design, and Frontiers"
       chapters:
-        # - 60_textual.qmd
+        - 60_textual.qmd
         # - 61_image.qmd
         # - 62_multimodel.qmd
         # - _replication_and_research_design.qmd

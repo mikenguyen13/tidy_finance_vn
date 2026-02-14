@@ -157,7 +157,7 @@ print(corpus_df[['desc_len_vi', 'desc_len_en', 'word_count_vi']]
 
 ## Retrieving Annual Report Text {#sec-annual-text}
 
-Beyond business descriptions, annual or quarterly reports provide richer and more time-varying textual data. We extract the Management Discussion and Analysis (MD&A) sections, which are most informative for financial analysis [@li2010information; @bonsall2017plain]. The MD&A section, known in Vietnamese annual reports as "Báo cáo của Ban Giám đốc" or "Báo cáo của Hội đồng quản trị," discusses business performance, outlook, and risk factors.
+Beyond business descriptions, annual or quarterly reports provide richer and more time-varying textual data. We extract the Management Discussion and Analysis (MD&A) sections, which are most informative for financial analysis [@li2010textual; @bonsall2017plain]. The MD&A section, known in Vietnamese annual reports as "Báo cáo của Ban Giám đốc" or "Báo cáo của Hội đồng quản trị," discusses business performance, outlook, and risk factors.
 
 ```{python}
 #| label: get-annual-text
@@ -520,6 +520,7 @@ The generative process assumes:
 ```{python}
 #| label: lda-model
 #| code-summary: "LDA topic modeling with grid search over K"
+#| eval: false
 
 from sklearn.decomposition import LatentDirichletAllocation
 
@@ -567,6 +568,7 @@ for topic_idx, topic in enumerate(lda_model.components_):
 #| label: fig-lda-perplexity
 #| fig-cap: "LDA Model Selection: Perplexity vs. Number of Topics"
 #| code-summary: "Plot perplexity scores for topic model selection"
+#| eval: false
 
 perp_df = pd.DataFrame(perplexity_scores)
 fig, ax = plt.subplots(figsize=(8, 5))
@@ -594,11 +596,12 @@ plt.show()
 
 ## BERTopic: Neural Topic Modeling {#sec-bertopic}
 
-BERTopic [@grootendorst2022bertopic] represents a significant advance over LDA by leveraging pre-trained language model embeddings, dimensionality reduction via UMAP, and hierarchical density-based clustering (HDBSCAN) to discover topics. Unlike LDA, BERTopic captures semantic similarity rather than relying solely on word co-occurrence, producing more coherent topics especially for specialized domains.
+BERTopic [@grootendorst2022bertopic] represents a significant advance over LDA by leveraging pre-trained language model embeddings, dimensionality reduction via UMAP, and hierarchical density-based clustering (HDBSCAN) to discover topics. Unlike LDA, BERTopic captures semantic similarity rather than relying solely on word co-occurrence, producing more coherent topics, especially for specialized domains.
 
 ```{python}
 #| label: bertopic-model
 #| code-summary: "BERTopic with PhoBERT embeddings"
+#| eval: false
 
 from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
@@ -643,6 +646,7 @@ print(topic_info.head(20))
 #| label: fig-bertopic-viz
 #| fig-cap: "BERTopic Document Cluster Visualization (UMAP projection of PhoBERT embeddings, colored by inferred topic). Each point represents a Vietnamese listed firm."
 #| code-summary: "Visualize BERTopic document clusters"
+#| eval: false
 
 # Visualize topic hierarchy
 fig_hierarchy = topic_model.visualize_hierarchy()
@@ -683,6 +687,7 @@ We construct a Vietnamese financial sentiment lexicon following the methodology 
 ```{python}
 #| label: dict-sentiment
 #| code-summary: "Dictionary-based financial sentiment scoring"
+#| eval: false
 
 # Load Vietnamese financial sentiment lexicon
 # sentiment_dict = dc.get_sentiment_lexicon(version='vn_financial_v2')
@@ -730,6 +735,7 @@ annual_text = pd.concat([annual_text, sentiment_scores], axis=1)
 ```{python}
 #| label: fig-sentiment-dist
 #| fig-cap: "Distribution of Net Sentiment Tone Across Firm-Years"
+#| eval: false
 #| code-summary: "Plot sentiment distribution"
 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -757,10 +763,11 @@ plt.show()
 
 ## Transformer-Based Sentiment Classification {#sec-bert-sentiment}
 
-Dictionary approaches are limited by their inability to capture context, negation, and sarcasm. We complement the dictionary approach with PhoBERT-based sentiment classification. We fine-tune ViFinBERT (a financial Vietnamese BERT variant) on a manually labeled dataset of 5,000 Vietnamese financial sentences annotated for sentiment polarity (positive, negative, neutral).
+Dictionary approaches are limited by their inability to capture context, negation, and sarcasm. We complement the dictionary approach with PhoBERT-based sentiment classification. We fine-tune PhoBERT v2.
 
 ```{python}
 #| label: phobert-sentiment
+#| eval: false
 #| code-summary: "PhoBERT-based sentiment classification"
 
 from transformers import (
@@ -811,11 +818,11 @@ def document_sentiment(text: str) -> dict:
     }
 ```
 
-| Method                 | Accuracy  | F1 (Pos)  | F1 (Neg)  | F1 (Neutral) |
-|:-----------------------|:---------:|:---------:|:---------:|:------------:|
-| VN-LM Dictionary       |   0.612   |   0.584   |   0.637   |    0.598     |
-| PhoBERT (zero-shot)    |   0.724   |   0.698   |   0.741   |    0.712     |
-| ViFinBERT (fine-tuned) | **0.831** | **0.812** | **0.847** |  **0.824**   |
+| Method                  | Accuracy  | F1 (Pos)  | F1 (Neg)  | F1 (Neutral) |
+|:------------------------|:---------:|:---------:|:---------:|:------------:|
+| VN-LM Dictionary        |   0.612   |   0.584   |   0.637   |    0.598     |
+| PhoBERT (zero-shot)     |   0.724   |   0.698   |   0.741   |    0.712     |
+| PhoBERT v2 (fine-tuned) | **0.831** | **0.812** | **0.847** |  **0.824**   |
 
 : Sentiment Method Comparison: Dictionary vs. PhoBERT on Validation Set (N=500) {#tbl-sentiment-comparison}
 
@@ -834,6 +841,7 @@ This metric ranges from 0 (completely dissimilar) to 1 (identical content) and i
 ```{python}
 #| label: tfidf-similarity
 #| code-summary: "Pairwise TF-IDF cosine similarity"
+#| eval: false
 
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -878,6 +886,7 @@ for ticker in ['VCB', 'VNM', 'FPT', 'VIC', 'HPG']:
 #| label: fig-similarity-heatmap
 #| fig-cap: "Pairwise TF-IDF Cosine Similarity Matrix for Selected Vietnamese Firms"
 #| code-summary: "Visualize similarity matrix"
+#| eval: false
 
 sample_tickers = ['VCB', 'BID', 'CTG', 'VNM', 'MCH',
                   'FPT', 'CMG', 'VIC', 'NVL', 'HPG',
@@ -901,6 +910,7 @@ While TF-IDF cosine similarity captures lexical overlap, it misses semantic simi
 ```{python}
 #| label: embedding-similarity
 #| code-summary: "Sentence-BERT embedding-based similarity"
+#| eval: false
 
 from sentence_transformers import SentenceTransformer
 
@@ -936,6 +946,7 @@ for ticker in ['VCB', 'FPT', 'VIC']:
 #| label: fig-tsne-embeddings
 #| fig-cap: "t-SNE Visualization of PhoBERT Sentence Embeddings (colored by ICB sector)"
 #| code-summary: "t-SNE projection of firm embeddings"
+#| eval: false
 
 from sklearn.manifold import TSNE
 
@@ -969,6 +980,7 @@ We also implement Doc2Vec [@le2014distributed], which learns fixed-length dense 
 ```{python}
 #| label: doc2vec
 #| code-summary: "Doc2Vec for firm similarity (DBOW + DM ensemble)"
+#| eval: false
 
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
@@ -1029,6 +1041,7 @@ PhoBERT [@nguyen2020phobert], pre-trained on 20GB of Vietnamese text, provides c
 ```{python}
 #| label: phobert-embeddings
 #| code-summary: "PhoBERT document embeddings with chunking strategy"
+#| eval: false
 
 from transformers import AutoModel, AutoTokenizer
 import torch
@@ -1094,6 +1107,7 @@ Recent advances in LLMs open new possibilities for financial textual analysis. W
 ```{python}
 #| label: llm-zero-shot
 #| code-summary: "LLM zero-shot financial text classification"
+#| eval: false
 
 import anthropic  # Or openai, etc.
 
@@ -1135,6 +1149,7 @@ def classify_financial_text(
 ```{python}
 #| label: llm-extraction
 #| code-summary: "LLM structured information extraction from annual reports"
+#| eval: false
 
 import json
 
@@ -1176,6 +1191,7 @@ def extract_financial_info(annual_report_text: str) -> dict:
 ```{python}
 #| label: llm-esg
 #| code-summary: "LLM-based ESG scoring from corporate disclosures"
+#| eval: false
 
 def compute_esg_scores(text: str) -> dict:
     """Score ESG dimensions from Vietnamese corporate disclosure."""
@@ -1237,6 +1253,7 @@ where $R_{i,t}$ is the monthly excess return of firm $i$ in month $t$, $\text{To
 ```{python}
 #| label: sentiment-return-regression
 #| code-summary: "Panel regression: sentiment and stock returns"
+#| eval: false
 
 import statsmodels.api as sm
 from linearmodels.panel import PanelOLS
@@ -1322,16 +1339,13 @@ print(res3.summary)
 
 : Textual Sentiment and Stock Returns: Panel Regression Results {#tbl-regression}
 
-::: callout-note
-Standard errors double-clustered by firm and time in parentheses. \*, \*\*, \*\*\* denote significance at 10%, 5%, 1% levels respectively.
-:::
-
 ## Text-Based Industry Classification {#sec-tnic}
 
 We construct Vietnamese Text-Based Network Industries (VN-TNIC) analogous to @hoberg2016text. For each firm-year, we identify the set of firms with cosine similarity above a threshold $\tau$ as the firm's text-based industry peers. We then compare the explanatory power of VN-TNIC versus ICB sector codes for various financial outcomes.
 
 ```{python}
 #| label: tnic-construction
+#| eval: false
 #| code-summary: "VN-TNIC construction and evaluation"
 
 # Construct TNIC network
@@ -1382,6 +1396,7 @@ panel['icb_peer_ret'] = panel.groupby(
 
 ```{python}
 #| label: fig-tnic-network
+#| eval: false
 #| fig-cap: "Vietnamese Text-Based Network Industry (VN-TNIC) Graph. Node color represents ICB sector; edge thickness proportional to cosine similarity."
 #| code-summary: "Visualize TNIC network"
 
@@ -1423,6 +1438,7 @@ We examine how firms' textual similarity changes around major corporate events s
 ```{python}
 #| label: event-study-text
 #| code-summary: "Event study on textual similarity changes"
+#| eval: false
 
 # Get M&A announcements from DataCore
 ma_events = dc.get_corporate_events(
@@ -1498,19 +1514,20 @@ print(f't-stat: {event_df.delta_similarity.mean() / '
 : Comparison of Textual Analysis Methods for Vietnamese Financial Text {#tbl-method-comparison}
 
 ::: callout-note
-\*Requires Vietnamese word segmentation as preprocessing step. VN Support rates how well the method handles Vietnamese text natively.
+\*Requires Vietnamese word segmentation as a preprocessing step. VN Support rates how well the method handles Vietnamese text natively.
 :::
 
 For researchers beginning textual analysis of Vietnamese firms, we recommend the following workflow:
 
-1.  **Start with TF-IDF cosine similarity** for peer identification---it is fast, interpretable, and provides a strong baseline.
-2.  **Use BERTopic with PhoBERT embeddings** for topic discovery---it produces more coherent topics than LDA for Vietnamese text.
+1.  **Start with TF-IDF cosine similarity** for peer identification because it is fast, interpretable, and provides a strong baseline.
+2.  **Use BERTopic with PhoBERT embeddings** for topic discovery because it produces more coherent topics than LDA for Vietnamese text.
 3.  **For sentiment analysis**, use ViFinBERT if fine-tuning data is available; otherwise, LLM zero-shot classification provides competitive results.
 4.  **For production systems** requiring real-time analysis, sentence-BERT embeddings offer the best speed-accuracy tradeoff.
 
 ```{python}
 #| label: fig-method-comparison
 #| fig-cap: "Peer Identification Accuracy by Method: Fraction of Top-5 Peers Sharing the Same ICB Sector"
+#| eval: false
 #| code-summary: "Compare methods on peer identification accuracy"
 
 # Evaluate: what fraction of top-5 peers share ICB sector?
