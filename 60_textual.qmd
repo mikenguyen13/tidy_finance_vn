@@ -17,30 +17,30 @@ We build on the seminal contributions of @loughran2011liability in domain-specif
 
 ## Why Textual Analysis for Vietnamese Finance? {#sec-why-vietnam}
 
-The Vietnamese financial market has several characteristics that make textual analysis particularly valuable. First, analyst coverage is sparse---fewer than 30% of listed firms receive regular coverage from sell-side analysts, making alternative information sources critical. Second, the regulatory environment is evolving rapidly, with the State Securities Commission (SSC) continuously updating disclosure requirements, creating rich variation in information environments across firms and time. Third, the market is dominated by retail investors (accounting for roughly 80% of trading volume), who may process textual information differently than institutional investors, creating potential mispricings that text-based strategies could exploit.
+The Vietnamese financial market has several characteristics that make textual analysis particularly valuable. First, analyst coverage is sparse (fewer than 30% of listed firms receive regular coverage from sell-side analysts), making alternative information sources critical. Second, the regulatory environment is evolving rapidly, with the State Securities Commission (SSC) continuously updating disclosure requirements, creating rich variation in information environments across firms and time. Third, the market is dominated by retail investors (accounting for roughly 80% of trading volume), who may process textual information differently than institutional investors, creating potential mispricings that text-based strategies could exploit.
 
-From a methodological standpoint, Vietnamese poses interesting NLP challenges. Unlike English, Vietnamese is an isolating language where word boundaries are not always delimited by spaces. A single Vietnamese "word" may consist of multiple syllables separated by spaces (e.g., "công ty" for "company," "thị trường" for "market"). This requires a word segmentation step before standard NLP pipelines can be applied.[^1]
+From a methodological standpoint, Vietnamese poses interesting NLP challenges. Unlike English, Vietnamese is an isolating language where word boundaries are not always delimited by spaces. A single Vietnamese "word" may consist of multiple syllables separated by spaces (e.g., "công ty" for "company," "thị trường" for "market"). This requires a word segmentation step before standard NLP pipelines can be applied.[^60_textual-1]
 
-[^1]: Vietnamese text requires specialized tokenization due to compound words (e.g., "công ty" = company, "thị trường" = market).
+[^60_textual-1]: Vietnamese text requires specialized tokenization due to compound words (e.g., "công ty" = company, "thị trường" = market).
 
 # Literature Review {#sec-literature}
 
 ## Textual Analysis in Finance {#sec-lit-finance}
 
-The application of textual analysis to financial data has a rich history. @tetlock2007giving demonstrated that the pessimism content of a Wall Street Journal column predicts aggregate market activity, providing early evidence that textual content moves prices. @loughran2011liability showed that the widely-used Harvard General Inquirer sentiment dictionary produces misleading results when applied to financial text because words like "liability," "tax," and "capital" are classified as negative in general English but carry neutral or even positive connotations in finance. Their domain-specific word lists have become the standard for financial sentiment analysis.[^2]
+The application of textual analysis to financial data has a rich history. @tetlock2007giving demonstrated that the pessimism content of a Wall Street Journal column predicts aggregate market activity, providing early evidence that textual content moves prices. @loughran2011liability showed that the widely-used Harvard General Inquirer sentiment dictionary produces misleading results when applied to financial text because words like "liability," "tax," and "capital" are classified as negative in general English but carry neutral or even positive connotations in finance. Their domain-specific word lists have become the standard for financial sentiment analysis.[^60_textual-2]
 
-[^2]: @loughran2011liability show that general-purpose dictionaries misclassify up to 73% of negative words in financial text.
+[^60_textual-2]: @loughran2011liability show that general-purpose dictionaries misclassify up to 73% of negative words in financial text.
 
-@hoberg2010product and @hoberg2016text pioneered the use of product descriptions from 10-K filings to construct text-based industry classifications (TNIC), demonstrating that these dynamic, firm-specific industry definitions outperform static SIC and NAICS codes in explaining firm behavior including profitability, stock returns, and M&A activity. Subsequent work by @hoberg2018text extended this to measure competitive threats and product market fluidity.
+@hoberg2010product and @hoberg2016text pioneered the use of product descriptions from 10-K filings to construct text-based industry classifications (TNIC), demonstrating that these dynamic, firm-specific industry definitions outperform static SIC and NAICS codes in explaining firm behavior, including profitability, stock returns, and M&A activity. Subsequent work by @hoberg2018text extended this to assess competitive threats and product-market fluidity.
 
 More recent work has leveraged advances in deep learning. @huang2023finbert apply BERT-based models to earnings call transcripts and show that contextual embeddings capture information about future earnings that traditional bag-of-words measures miss. @jha2024chatgpt use GPT-based models for zero-shot financial text classification and demonstrate that LLMs can match or exceed purpose-built classifiers on standard benchmarks.
 
 ## NLP for Vietnamese Language {#sec-lit-vnlp}
 
-Vietnamese NLP has advanced significantly with the development of VnCoreNLP [@vu2018vncorenlp], a Java-based toolkit providing word segmentation, POS tagging, named entity recognition, and dependency parsing. The underthesea library offers a Python-native alternative. Most critically for financial applications, PhoBERT [@nguyen2020phobert] provides Vietnamese-specific BERT pre-training on a 20GB corpus, achieving state-of-the-art results on multiple Vietnamese NLP tasks. ViFinBERT [@phan2023vifinbert] further specializes PhoBERT for Vietnamese financial text.
+Vietnamese NLP has advanced significantly with the development of VnCoreNLP [@vu2018vncorenlp], a Java-based toolkit providing word segmentation, POS tagging, named entity recognition, and dependency parsing. The underthesea library offers a Python-native alternative. Most critically for financial applications, PhoBERT [@nguyen2020phobert] provides Vietnamese-specific BERT pre-training on a 20GB corpus, achieving state-of-the-art results on multiple Vietnamese NLP tasks.
 
 | Study | Method | Key Finding | Relevance to Vietnam |
-|:-----------------|:-----------------|:-----------------|:-------------------|
+|:-----------------|:-----------------|:-----------------|:------------------|
 | @tetlock2007giving | Dictionary-based sentiment from WSJ column | Media pessimism predicts market activity and returns | Baseline for Vietnamese financial news sentiment |
 | @loughran2011liability | Domain-specific financial dictionaries | General dictionaries misclassify 73% of negative financial words | Need for Vietnamese financial sentiment lexicon |
 | @hoberg2016text | Cosine similarity on 10-K product descriptions | Text-based industries outperform SIC/NAICS | Peer identification for Vietnamese firms using business descriptions |
@@ -54,7 +54,7 @@ Vietnamese NLP has advanced significantly with the development of VnCoreNLP [@vu
 
 ## Constructing the Universe {#sec-universe}
 
-We construct the universe of Vietnamese listed firms using DataCore.vn's comprehensive database. The universe includes all firms listed on HOSE, HNX, and UPCoM as of the analysis date. DataCore.vn provides OHLCV price data, financial statements, ownership data, corporate events, and crucially for this chapter, business descriptions and annual report text in Vietnamese.
+We construct the universe of Vietnamese listed firms. The universe includes all firms listed on HOSE, HNX, and UPCoM as of the analysis date.
 
 ```{python}
 #| label: setup
@@ -81,6 +81,7 @@ sns.set_style("whitegrid")
 
 ```{python}
 #| label: build-universe
+#| eval: false
 #| code-summary: "Connect to DataCore.vn and build universe of listed firms"
 
 from datacore import DataCoreAPI  # DataCore.vn Python client
@@ -115,17 +116,14 @@ print(f'UPCoM: {len(universe[universe.exchange=="UPCOM"])}')
 
 : Universe of Vietnamese Listed Firms by Exchange (as of December 2024) {#tbl-universe}
 
-::: callout-note
-Market capitalization figures are illustrative. Actual values should be retrieved from DataCore.vn at the time of analysis.
-:::
-
 ## Retrieving Business Descriptions {#sec-bus-desc}
 
-DataCore.vn stores business descriptions for all listed firms in both Vietnamese and English (where available). We retrieve both versions for our analysis. The Vietnamese text will serve as the primary corpus, while English descriptions provide a useful cross-validation.
+Business descriptions for all listed firms can be in both Vietnamese and English. We retrieve both versions for our analysis. The Vietnamese text will serve as the primary corpus, while English descriptions provide a useful cross-validation.
 
 ```{python}
 #| label: get-bus-desc
-#| code-summary: "Retrieve business descriptions from DataCore.vn"
+#| eval: false
+#| code-summary: "Retrieve business descriptions."
 
 # Get business descriptions (Vietnamese and English)
 bus_desc = dc.get_business_descriptions(
@@ -159,10 +157,11 @@ print(corpus_df[['desc_len_vi', 'desc_len_en', 'word_count_vi']]
 
 ## Retrieving Annual Report Text {#sec-annual-text}
 
-Beyond business descriptions, annual reports provide richer and more time-varying textual data. DataCore.vn archives parsed annual report text for all listed firms. We extract the Management Discussion and Analysis (MD&A) sections, which are most informative for financial analysis [@li2010information; @bonsall2017plain]. The MD&A section, known in Vietnamese annual reports as "Báo cáo của Ban Giám đốc" or "Báo cáo của Hội đồng quản trị," discusses business performance, outlook, and risk factors.
+Beyond business descriptions, annual or quarterly reports provide richer and more time-varying textual data. We extract the Management Discussion and Analysis (MD&A) sections, which are most informative for financial analysis [@li2010information; @bonsall2017plain]. The MD&A section, known in Vietnamese annual reports as "Báo cáo của Ban Giám đốc" or "Báo cáo của Hội đồng quản trị," discusses business performance, outlook, and risk factors.
 
 ```{python}
 #| label: get-annual-text
+#| eval: false
 #| code-summary: "Retrieve annual report MD&A sections"
 
 # Get annual report MD&A sections (2015-2024)
@@ -194,7 +193,7 @@ annual_text['text_change_pct'] = (
 The most critical preprocessing step for Vietnamese text is word segmentation (phân đoạn từ). Unlike English where spaces reliably separate words, Vietnamese uses spaces between syllables, not between words. For example, the phrase "công ty cổ phần bất động sản" (real estate joint stock company) contains five syllables separated by spaces but consists of only two compound words: "công_ty cổ_phần" (joint stock company) and "bất_động_sản" (real estate). Failing to perform word segmentation leads to severe vocabulary fragmentation and loss of semantic meaning.
 
 | Stage | Text | Interpretation |
-|:------------------|:------------------|:----------------------------------|
+|:------------------|:------------------|:---------------------------------|
 | Raw | `công ty cổ phần thương mại dịch vụ` | 7 syllables, ambiguous boundaries |
 | Segmented | `công_ty cổ_phần thương_mại dịch_vụ` | 4 words: company \| joint-stock \| commerce \| services |
 
@@ -202,6 +201,7 @@ The most critical preprocessing step for Vietnamese text is word segmentation (p
 
 ```{python}
 #| label: word-segmentation
+#| eval: false
 #| code-summary: "Vietnamese word segmentation using underthesea"
 
 from underthesea import word_tokenize
@@ -232,10 +232,11 @@ print('Segmented:', sample.bus_desc_segmented[:200])
 
 ## Full Text Cleaning Pipeline {#sec-cleaning}
 
-After word segmentation, we apply a comprehensive cleaning pipeline. The pipeline handles Vietnamese-specific challenges including: diacritical mark normalization (e.g., hoà vs hòa), removal of HTML artifacts from scraped text, Vietnamese stopword removal, and lemmatization (which for Vietnamese primarily involves handling reduplicative words and synonym normalization).
+After word segmentation, we apply a cleaning pipeline. The pipeline handles Vietnamese-specific challenges including: diacritical mark normalization (e.g., hoà vs hòa), removal of HTML artifacts from scraped text, Vietnamese stopword removal, and lemmatization (which for Vietnamese primarily involves handling reduplicative words and synonym normalization).
 
 ```{python}
 #| label: cleaning-pipeline
+#| eval: false
 #| code-summary: "Full Vietnamese text cleaning pipeline"
 
 # Vietnamese stopwords (domain-adapted)
@@ -323,6 +324,7 @@ For firms that also provide English business descriptions, we apply a standard E
 
 ```{python}
 #| label: english-cleaning
+#| eval: false
 #| code-summary: "English text cleaning pipeline"
 
 import spacy
@@ -367,6 +369,7 @@ where $\text{tf}(w, d)$ is the term frequency of word $w$ in document $d$.
 ```{python}
 #| label: bow-vectorization
 #| code-summary: "Bag-of-Words vectorization"
+#| eval: false
 
 from sklearn.feature_extraction.text import (
     CountVectorizer, TfidfVectorizer
@@ -403,6 +406,7 @@ print(word_freq.head(20).to_string(index=False))
 #| label: fig-word-freq
 #| fig-cap: "Top 20 Most Frequent Terms in Vietnamese Business Descriptions"
 #| code-summary: "Plot word frequency distribution"
+#| eval: false
 
 fig, ax = plt.subplots(figsize=(12, 6))
 top20 = word_freq.head(20)
@@ -430,7 +434,7 @@ plt.show()
 
 ## TF-IDF Weighting {#sec-tfidf}
 
-Term Frequency--Inverse Document Frequency (TF-IDF) addresses a key limitation of raw term counts by downweighting terms that appear in many documents (and thus carry less discriminative information). The TF-IDF weight of term $w$ in document $d$ within corpus $D$ is:
+Term Frequency-Inverse Document Frequency (TF-IDF) addresses a key limitation of raw term counts by downweighting terms that appear in many documents (and thus carry less discriminative information). The TF-IDF weight of term $w$ in document $d$ within corpus $D$ is:
 
 $$
 \text{tfidf}(w, d, D) = \text{tf}(w, d) \times \log\left(\frac{|D|}{\text{df}(w, D)}\right)
@@ -440,6 +444,7 @@ where $|D|$ is the total number of documents and $\text{df}(w, D)$ is the number
 
 ```{python}
 #| label: tfidf-vectorization
+#| eval: false
 #| code-summary: "TF-IDF vectorization with per-industry analysis"
 
 tfidf_vectorizer = TfidfVectorizer(
@@ -469,6 +474,7 @@ for industry in ['Ngân hàng', 'Bất động sản',
 ```{python}
 #| label: fig-tfidf-heatmap
 #| fig-cap: "TF-IDF Heatmap: Top Terms by ICB Sector"
+#| eval: false
 #| code-summary: "Visualize industry-distinctive terms"
 
 # Build industry x term TF-IDF matrix for top sectors
@@ -503,7 +509,7 @@ plt.show()
 
 ## Latent Dirichlet Allocation (LDA) {#sec-lda}
 
-Latent Dirichlet Allocation [@blei2003latent] is a generative probabilistic model that discovers latent topics in a corpus. Each document is modeled as a mixture of topics, and each topic is a distribution over words. LDA has been widely applied in finance to identify thematic content in 10-K filings [@dyer2017evolution], earnings calls [@huang2018analyst], and news articles [@bybee2023business].
+Latent Dirichlet Allocation [@blei2003latent] is a generative probabilistic model that discovers latent topics in a corpus. Each document is modeled as a mixture of topics, and each topic is a distribution over words. LDA has been widely applied in finance to identify thematic content in 10-K filings [@dyer2017evolution], earnings calls [@huang2018analyst], and news articles [@bybee2023narrative].
 
 The generative process assumes:
 
@@ -888,9 +894,9 @@ plt.show()
 
 ## Embedding-Based Similarity {#sec-embedding-similarity}
 
-While TF-IDF cosine similarity captures lexical overlap, it misses semantic similarity. Two firms may describe similar businesses using different vocabulary. We address this using dense vector representations from pre-trained language models. Specifically, we compute document embeddings using Sentence-BERT [@reimers2019sentence] with a Vietnamese bi-encoder model.[^3]
+While TF-IDF cosine similarity captures lexical overlap, it misses semantic similarity. Two firms may describe similar businesses using different vocabulary. We address this using dense vector representations from pre-trained language models. Specifically, we compute document embeddings using Sentence-BERT [@reimers2019sentence] with a Vietnamese bi-encoder model.[^60_textual-3]
 
-[^3]: @reimers2019sentence demonstrate that sentence-BERT embeddings reduce computation for similarity tasks from 65 hours to 5 seconds on 10,000 sentence pairs.
+[^60_textual-3]: @reimers2019sentence demonstrate that sentence-BERT embeddings reduce computation for similarity tasks from 65 hours to 5 seconds on 10,000 sentence pairs.
 
 ```{python}
 #| label: embedding-similarity

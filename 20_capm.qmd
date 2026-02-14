@@ -13,7 +13,7 @@ execute:
 
 ## From Efficient Portfolios to Equilibrium Prices
 
-The previous chapter on [Modern Portfolio Theory](02_modern_portfolio_theory.qmd) (MPT) showed how an investor can construct portfolios that optimally trade off risk and expected return. But MPT leaves a crucial question unanswered: What determines the *expected returns* themselves? Why do some assets command higher risk premiums than others?
+The previous chapter on Modern Portfolio Theory (MPT) showed how an investor can construct portfolios that optimally trade off risk and expected return. But MPT leaves a crucial question unanswered: What determines the *expected returns* themselves? Why do some assets command higher risk premiums than others?
 
 The Capital Asset Pricing Model (CAPM) answers this question. Developed simultaneously by @Sharpe1964, @Lintner1965, and @Mossin1966, the CAPM extends MPT to explain how assets should be priced in equilibrium when *all* investors follow mean-variance optimization principles. The CAPM's central insight is both elegant and counterintuitive: **not all risk is rewarded**. Only the component of risk that cannot be diversified away (i.e., systematic risk) commands a risk premium in equilibrium.
 
@@ -543,7 +543,7 @@ import sqlite3
 tidy_finance = sqlite3.connect(database="data/tidy_finance_python.sqlite")
 
 factors = pd.read_sql_query(
-    sql="SELECT * FROM factors_ff5_monthly",
+    sql="SELECT date, smb, hml, rmw, cma, mkt_excess FROM factors_ff5_monthly",
     con=tidy_finance,
     parse_dates={"date"}
 )

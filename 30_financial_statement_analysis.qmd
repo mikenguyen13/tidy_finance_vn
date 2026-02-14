@@ -472,7 +472,8 @@ combined_statements = (balance_sheet_statements
         (income_statements
             .get([
                 "symbol", "year", "interest_coverage", "is_revenue",
-                "is_cogs", "selling_general_and_administrative_expenses",
+                "is_cogs", 
+                # "selling_general_and_administrative_expenses",
                 "is_interest_expense", "is_gross_profit", "is_eat"
             ])
         ),
@@ -750,7 +751,7 @@ combined_statements_ff = (combined_statements
         book_to_market=lambda x: x["total_equity"] / x["mktcap"],
         operating_profitability=lambda x: (
             (x["is_revenue"] - x["is_cogs"] -
-             x["selling_general_and_administrative_expenses"] -
+            #  x["selling_general_and_administrative_expenses"] -
              x["is_interest_expense"]) / x["total_equity"]
         ),
         investment=lambda x: x["total_asset"] / x["total_assets_lag"] - 1

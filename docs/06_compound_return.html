@@ -751,7 +751,7 @@ R_t(k) = \exp\!\left(\sum_{j=0}^{k-1} r_{t-j}\right) - 1.
 <h3 data-number="7.1.3" class="anchored" data-anchor-id="when-do-they-diverge"><span class="header-section-number">7.1.3</span> When Do They Diverge?</h3>
 <p>For small returns, the approximation <span class="math inline">\(r_t \approx R_t\)</span> holds to first order (via the Taylor expansion <span class="math inline">\(\ln(1+x) \approx x\)</span> for <span class="math inline">\(|x| \ll 1\)</span>). However, for large returns, which is common in emerging markets, small-cap stocks, or crisis periods, the two can diverge substantially. Consider a stock that doubles in price (<span class="math inline">\(R_t = 1.0\)</span>): the log return is <span class="math inline">\(r_t = \ln(2) \approx 0.693\)</span>, a 31% discrepancy. Conversely, for a stock that loses half its value (<span class="math inline">\(R_t = -0.5\)</span>): the log return is <span class="math inline">\(r_t = \ln(0.5) \approx -0.693\)</span>, which is 39% larger in magnitude.</p>
 <p>This divergence is especially relevant in Vietnam, where daily price limits of <span class="math inline">\(\pm 7\%\)</span> on HOSE, <span class="math inline">\(\pm 10\%\)</span> on HNX, and <span class="math inline">\(\pm 15\%\)</span> on UPCoM can produce sequences of limit-up or limit-down days. Over a week of consecutive limit-up days on HOSE, the simple return is <span class="math inline">\((1.07)^5 - 1 = 40.3\%\)</span> while the log return is <span class="math inline">\(5 \times \ln(1.07) = 33.8\%\)</span>, which is a meaningful gap.</p>
-<p><a href="#tbl-return-comparison" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-return-comparison</span></a> illustrates this divergence across a range of return magnitudes.</p>
+<p><a href="#tbl-return-comparison" class="quarto-xref">Table&nbsp;<span>7.1</span></a> illustrates this divergence across a range of return magnitudes.</p>
 <div class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>simple_returns <span class="op">=</span> [<span class="op">-</span><span class="fl">0.50</span>, <span class="op">-</span><span class="fl">0.30</span>, <span class="op">-</span><span class="fl">0.15</span>, <span class="op">-</span><span class="fl">0.10</span>, <span class="op">-</span><span class="fl">0.07</span>, <span class="op">-</span><span class="fl">0.05</span>, <span class="op">-</span><span class="fl">0.01</span>,</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="fl">0.00</span>, <span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.07</span>, <span class="fl">0.10</span>, <span class="fl">0.15</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">1.00</span>]</span>
@@ -997,7 +997,7 @@ Number of stocks: 1,457
 Total observations: 165,499</code></pre>
 </div>
 </div>
-<p><a href="#tbl-sample-overview" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-sample-overview</span></a> provides summary statistics for the raw monthly returns, broken down by exchange. Differences across exchanges reflect the size and liquidity gradient: HOSE lists the largest and most liquid firms, HNX covers mid-cap companies, and UPCoM hosts smaller and more thinly traded securities.</p>
+<p><a href="#tbl-sample-overview" class="quarto-xref">Table&nbsp;<span>7.2</span></a> provides summary statistics for the raw monthly returns, broken down by exchange. Differences across exchanges reflect the size and liquidity gradient: HOSE lists the largest and most liquid firms, HNX covers mid-cap companies, and UPCoM hosts smaller and more thinly traded securities.</p>
 <div id="tbl-sample-overview" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sample-overview-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1017,7 +1017,7 @@ Table&nbsp;7.2: Summary statistics of monthly stock returns by exchange. HOSE fi
 </section>
 <section id="method-1-cumulative-product-via-groupby" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="method-1-cumulative-product-via-groupby"><span class="header-section-number">7.4</span> Method 1: Cumulative Product via GroupBy</h2>
-<p>The most direct approach to compound returns uses the multiplicative property in <a href="#eq-compound-simple" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-compound-simple</span></a>. For each security, we compute the cumulative product of gross returns <span class="math inline">\((1 + R_t)\)</span> over the desired window.</p>
+<p>The most direct approach to compound returns uses the multiplicative property in <a href="#eq-compound-simple" class="quarto-xref">Equation&nbsp;<span>7.2</span></a>. For each security, we compute the cumulative product of gross returns <span class="math inline">\((1 + R_t)\)</span> over the desired window.</p>
 <div id="9405ae63" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cumret_cumprod(df, ret_col<span class="op">=</span><span class="st">"ret_total"</span>,</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                           group_col<span class="op">=</span><span class="st">"symbol"</span>):</span>
@@ -1065,7 +1065,7 @@ Table&nbsp;7.2: Summary statistics of monthly stock returns by exchange. HOSE fi
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    stock_cumret[<span class="st">"symbol"</span>].isin(long_history_stocks)</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#fig-wealth-index" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-wealth-index</span></a> plots the wealth indices (value of 1 VND invested) for these five securities over the full sample period.</p>
+<p><a href="#fig-wealth-index" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> plots the wealth indices (value of 1 VND invested) for these five securities over the full sample period.</p>
 <div id="cell-fig-wealth-index" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_wealth <span class="op">=</span> (</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    ggplot(sample_wealth, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"wealth_index"</span>,</span>
@@ -1081,7 +1081,7 @@ Table&nbsp;7.2: Summary statistics of monthly stock returns by exchange. HOSE fi
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>plot_wealth.draw()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<div id="fig-wealth-index" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="htbp" alt="Line chart showing the growth of 1 VND invested in five different Vietnamese stocks over time.">
+<div id="fig-wealth-index" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Line chart showing the growth of 1 VND invested in five different Vietnamese stocks over time." data-fig-pos="htbp">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-wealth-index-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06_compound_return_files/figure-html/fig-wealth-index-output-1.png" data-fig-pos="htbp" alt="Line chart showing the growth of 1 VND invested in five different Vietnamese stocks over time." width="960" height="480" class="figure-img">
@@ -1129,7 +1129,7 @@ Warning
 </section>
 <section id="method-2-log-sum-exp-approach" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="method-2-log-sum-exp-approach"><span class="header-section-number">7.5</span> Method 2: Log-Sum-Exp Approach</h2>
-<p>The log-sum-exp method exploits the additive property of log returns (<a href="#eq-compound-log" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-compound-log</span></a>). This approach is particularly useful when computing compound returns over fixed windows (e.g., annual returns from monthly data) because summation is both computationally efficient and numerically stable.</p>
+<p>The log-sum-exp method exploits the additive property of log returns (<a href="#eq-compound-log" class="quarto-xref">Equation&nbsp;<span>7.4</span></a>). This approach is particularly useful when computing compound returns over fixed windows (e.g., annual returns from monthly data) because summation is both computationally efficient and numerically stable.</p>
 <div id="979286f1" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_cumret_logsum(df, ret_col<span class="op">=</span><span class="st">"ret_total"</span>,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                          group_col<span class="op">=</span><span class="st">"symbol"</span>,</span>
@@ -1223,7 +1223,7 @@ Warning
 <span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#tbl-annual-returns" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-annual-returns</span></a> shows annual compound returns for a subset of securities.</p>
+<p><a href="#tbl-annual-returns" class="quarto-xref">Table&nbsp;<span>7.3</span></a> shows annual compound returns for a subset of securities.</p>
 <div class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>annual_returns <span class="op">=</span> compound_return_by_period(</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    prices_monthly[</span>
@@ -1737,7 +1737,7 @@ Table&nbsp;7.4: Effect of different missing value treatments on cumulative retur
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span></span>
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#fig-rolling-returns" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-rolling-returns</span></a> displays the distribution of 12-month rolling compound returns over time.</p>
+<p><a href="#fig-rolling-returns" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> displays the distribution of 12-month rolling compound returns over time.</p>
 <div id="cell-fig-rolling-returns" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rolling_stats <span class="op">=</span> (</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    stock_rolling</span>
@@ -1762,7 +1762,7 @@ Table&nbsp;7.4: Effect of different missing value treatments on cumulative retur
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>plot_rolling.draw()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
-<div id="fig-rolling-returns" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="htbp" alt="Time series chart showing the distribution of 12-month rolling stock returns in Vietnam.">
+<div id="fig-rolling-returns" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Time series chart showing the distribution of 12-month rolling stock returns in Vietnam." data-fig-pos="htbp">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06_compound_return_files/figure-html/fig-rolling-returns-output-1.png" data-fig-pos="htbp" alt="Time series chart showing the distribution of 12-month rolling stock returns in Vietnam." width="960" height="480" class="figure-img">
@@ -1872,7 +1872,7 @@ Table&nbsp;7.5: Verification of rolling compound return calculation. The ‘Dire
 </section>
 <section id="delisting-returns-and-survivorship-bias" class="level2" data-number="7.8">
 <h2 data-number="7.8" class="anchored" data-anchor-id="delisting-returns-and-survivorship-bias"><span class="header-section-number">7.8</span> Delisting Returns and Survivorship Bias</h2>
-<p>A critical practical concern when computing compound returns is the treatment of securities that are removed from an exchange. Delisting occurs for various reasons: mergers and acquisitions, bankruptcy, failure to meet listing requirements, voluntary withdrawal, or transfer to another exchange. If delisting returns are not incorporated, the resulting compound returns suffer from survivorship bias: they overstate performance because the worst outcomes (bankruptcies, forced delistings) are excluded <span class="citation" data-cites="shumway1997delisting">(<a href="#ref-shumway1997delisting" role="doc-biblioref">Shumway 1997</a>)</span>.</p>
+<p>A critical practical concern when computing compound returns is the treatment of securities that are removed from an exchange. Delisting occurs for various reasons: mergers and acquisitions, bankruptcy, failure to meet listing requirements, voluntary withdrawal, or transfer to another exchange. If delisting returns are not incorporated, the resulting compound returns suffer from survivorship bias: they overstate performance because the worst outcomes (bankruptcies, forced delistings) are excluded <span class="citation" data-cites="shumway1997delisting">(<a href="references.html#ref-shumway1997delisting" role="doc-biblioref">Shumway 1997</a>)</span>.</p>
 <section id="the-vietnamese-context" class="level3" data-number="7.8.1">
 <h3 data-number="7.8.1" class="anchored" data-anchor-id="the-vietnamese-context"><span class="header-section-number">7.8.1</span> The Vietnamese Context</h3>
 <p>In Vietnam, securities can be removed from their exchange listing for several reasons as specified by the SSC and exchange regulations:</p>
@@ -1881,7 +1881,7 @@ Table&nbsp;7.5: Verification of rolling compound return calculation. The ‘Dire
 <li><strong>Voluntary delisting</strong>: when a firm’s shareholders vote to withdraw from the exchange.</li>
 <li><strong>Transfer</strong>: when a firm moves from UPCoM to HOSE/HNX (upgrade) or from HOSE/HNX to UPCoM (downgrade). These transfers are not true delistings in the economic sense but require careful handling in return calculations.</li>
 </ul>
-<p>Unlike more developed markets where detailed delisting return data is systematically compiled, Vietnamese market data may not always provide an explicit delisting return. When a stock is delisted for cause (e.g., bankruptcy), the last traded price may significantly overstate the security’s recovery value. Researchers should be aware of this limitation and consider imputing delisting returns based on the delisting reason, following the methodology of <span class="citation" data-cites="shumway1997delisting">Shumway (<a href="#ref-shumway1997delisting" role="doc-biblioref">1997</a>)</span>.</p>
+<p>Unlike more developed markets where detailed delisting return data is systematically compiled, Vietnamese market data may not always provide an explicit delisting return. When a stock is delisted for cause (e.g., bankruptcy), the last traded price may significantly overstate the security’s recovery value. Researchers should be aware of this limitation and consider imputing delisting returns based on the delisting reason, following the methodology of <span class="citation" data-cites="shumway1997delisting">Shumway (<a href="references.html#ref-shumway1997delisting" role="doc-biblioref">1997</a>)</span>.</p>
 </section>
 <section id="incorporating-delisting-returns" class="level3" data-number="7.8.2">
 <h3 data-number="7.8.2" class="anchored" data-anchor-id="incorporating-delisting-returns"><span class="header-section-number">7.8.2</span> Incorporating Delisting Returns</h3>
@@ -1927,7 +1927,7 @@ R_t^{\text{adj}} = (1 + R_t)(1 + R_t^{\text{delist}}) - 1,
 </section>
 <section id="impact-of-delisting-adjustment" class="level3" data-number="7.8.3">
 <h3 data-number="7.8.3" class="anchored" data-anchor-id="impact-of-delisting-adjustment"><span class="header-section-number">7.8.3</span> Impact of Delisting Adjustment</h3>
-<p>The magnitude of the delisting bias depends on the frequency and severity of delisting events. <span class="citation" data-cites="shumway1997delisting">Shumway (<a href="#ref-shumway1997delisting" role="doc-biblioref">1997</a>)</span> showed that, in developed markets, ignoring delisting returns introduces an upward bias of approximately 1% per year in equal-weighted portfolio returns. The bias is larger for small-cap stocks and value stocks, which are more prone to financial distress. In Vietnam, where smaller firms on HNX and UPCoM face tighter liquidity constraints and higher default risk, the bias may be even more pronounced. In emerging market delistings, mandatory delistings often involve firms with severe financial distress where residual equity value is near zero, implying delisting returns close to <span class="math inline">\(-100\%\)</span> in the worst cases.</p>
+<p>The magnitude of the delisting bias depends on the frequency and severity of delisting events. <span class="citation" data-cites="shumway1997delisting">Shumway (<a href="references.html#ref-shumway1997delisting" role="doc-biblioref">1997</a>)</span> showed that, in developed markets, ignoring delisting returns introduces an upward bias of approximately 1% per year in equal-weighted portfolio returns. The bias is larger for small-cap stocks and value stocks, which are more prone to financial distress. In Vietnam, where smaller firms on HNX and UPCoM face tighter liquidity constraints and higher default risk, the bias may be even more pronounced. In emerging market delistings, mandatory delistings often involve firms with severe financial distress where residual equity value is near zero, implying delisting returns close to <span class="math inline">\(-100\%\)</span> in the worst cases.</p>
 </section>
 </section>
 <section id="rolling-volatility-estimation" class="level2" data-number="7.9">
@@ -1935,7 +1935,7 @@ R_t^{\text{adj}} = (1 + R_t)(1 + R_t^{\text{delist}}) - 1,
 <p>Stock return volatility is a key input for risk management, option pricing, and many empirical asset pricing models. A common approach is to estimate rolling standard deviations of returns over a trailing window.</p>
 <section id="month-rolling-volatility" class="level3" data-number="7.9.1">
 <h3 data-number="7.9.1" class="anchored" data-anchor-id="month-rolling-volatility"><span class="header-section-number">7.9.1</span> 24-Month Rolling Volatility</h3>
-<p>Following <span class="citation" data-cites="ben2012hedge">Ben-David, Franzoni, and Moussawi (<a href="#ref-ben2012hedge" role="doc-biblioref">2012</a>)</span>, we compute the total stock return volatility as the rolling standard deviation of monthly returns over a 24-month window:</p>
+<p>Following <span class="citation" data-cites="ben2012hedge">Ben-David, Franzoni, and Moussawi (<a href="references.html#ref-ben2012hedge" role="doc-biblioref">2012</a>)</span>, we compute the total stock return volatility as the rolling standard deviation of monthly returns over a 24-month window:</p>
 <p><span id="eq-rolling-vol"><span class="math display">\[
 \hat{\sigma}_{i,t}^{24} = \sqrt{\frac{1}{23}\sum_{j=0}^{23}(R_{i,t-j} - \bar{R}_{i,t}^{24})^2},
 \tag{7.13}\]</span></span></p>
@@ -1974,7 +1974,7 @@ R_t^{\text{adj}} = (1 + R_t)(1 + R_t^{\text{delist}}) - 1,
 <div id="14b9540c" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>stock_vol <span class="op">=</span> rolling_volatility(stock_rolling)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#fig-vol-distribution" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-vol-distribution</span></a> shows the cross-sectional distribution of annualized 24-month volatility over time.</p>
+<p><a href="#fig-vol-distribution" class="quarto-xref">Figure&nbsp;<span>7.3</span></a> shows the cross-sectional distribution of annualized 24-month volatility over time.</p>
 <div id="cell-fig-vol-distribution" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>vol_stats <span class="op">=</span> (</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    stock_vol</span>
@@ -1998,7 +1998,7 @@ R_t^{\text{adj}} = (1 + R_t)(1 + R_t^{\text{delist}}) - 1,
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>plot_vol.draw()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="23">
-<div id="fig-vol-distribution" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="htbp" alt="Time series of the cross-sectional distribution of stock return volatility in Vietnam.">
+<div id="fig-vol-distribution" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Time series of the cross-sectional distribution of stock return volatility in Vietnam." data-fig-pos="htbp">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-vol-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06_compound_return_files/figure-html/fig-vol-distribution-output-1.png" data-fig-pos="htbp" alt="Time series of the cross-sectional distribution of stock return volatility in Vietnam." width="960" height="480" class="figure-img">
@@ -2013,7 +2013,7 @@ Figure&nbsp;7.3: Cross-sectional distribution of annualized 24-month rolling sto
 </section>
 <section id="volatility-and-compound-returns-the-variance-drain" class="level3" data-number="7.9.2">
 <h3 data-number="7.9.2" class="anchored" data-anchor-id="volatility-and-compound-returns-the-variance-drain"><span class="header-section-number">7.9.2</span> Volatility and Compound Returns: The Variance Drain</h3>
-<p>As noted in <a href="#eq-arithmetic-geometric" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-arithmetic-geometric</span></a>, the geometric mean return falls below the arithmetic mean by approximately <span class="math inline">\(\sigma^2/2\)</span>. This “variance drain” or “volatility drag” means that two portfolios with the same arithmetic mean return but different volatilities will have different compound returns: the lower-volatility portfolio will compound to greater terminal wealth.</p>
+<p>As noted in <a href="#eq-arithmetic-geometric" class="quarto-xref">Equation&nbsp;<span>7.7</span></a>, the geometric mean return falls below the arithmetic mean by approximately <span class="math inline">\(\sigma^2/2\)</span>. This “variance drain” or “volatility drag” means that two portfolios with the same arithmetic mean return but different volatilities will have different compound returns: the lower-volatility portfolio will compound to greater terminal wealth.</p>
 <p>This effect is quantitatively important in Vietnam. A stock with an arithmetic mean monthly return of 1.5% and a monthly standard deviation of 10% suffers a volatility drag of approximately <span class="math inline">\(0.10^2/2 = 0.5\%\)</span> per month, or roughly 6% per year. This is consistent with the observation that Vietnamese investors face substantial erosion of compound wealth from the high idiosyncratic volatility of individual stocks. We can verify this empirically by sorting stocks into volatility quintiles and comparing compound returns:</p>
 <div class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>annual_data <span class="op">=</span> compound_return_by_period(</span>
@@ -2242,7 +2242,7 @@ Table&nbsp;7.6: Arithmetic mean, geometric mean, and volatility by volatility qu
 <p><span id="eq-car"><span class="math display">\[
 \text{CAR}_{i,t}(k) = \sum_{j=1}^{k}(R_{i,t+j} - R_{b,t+j}).
 \tag{7.15}\]</span></span></p>
-<p>The BHAR better captures the actual investor experience because it reflects the compounding of returns, whereas the CAR implicitly assumes daily rebalancing to maintain equal dollar positions in the stock and benchmark <span class="citation" data-cites="barber1997detecting">(<a href="#ref-barber1997detecting" role="doc-biblioref">Barber and Lyon 1997</a>)</span>. The distinction is particularly important in Vietnam, where individual stock returns can be highly volatile and the compounding effect is therefore magnified. <span class="citation" data-cites="lyon1999improved">Lyon, Barber, and Tsai (<a href="#ref-lyon1999improved" role="doc-biblioref">1999</a>)</span> provide further analysis of the statistical properties of BHARs and recommend bootstrapped critical values for inference.</p>
+<p>The BHAR better captures the actual investor experience because it reflects the compounding of returns, whereas the CAR implicitly assumes daily rebalancing to maintain equal dollar positions in the stock and benchmark <span class="citation" data-cites="barber1997detecting">(<a href="references.html#ref-barber1997detecting" role="doc-biblioref">Barber and Lyon 1997</a>)</span>. The distinction is particularly important in Vietnam, where individual stock returns can be highly volatile and the compounding effect is therefore magnified. <span class="citation" data-cites="lyon1999improved">Lyon, Barber, and Tsai (<a href="references.html#ref-lyon1999improved" role="doc-biblioref">1999</a>)</span> provide further analysis of the statistical properties of BHARs and recommend bootstrapped critical values for inference.</p>
 <div id="3ac1fc31" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_bhar(stock_returns, benchmark_returns):</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute buy-and-hold abnormal return.</span></span>
@@ -2270,7 +2270,7 @@ Table&nbsp;7.6: Arithmetic mean, geometric mean, and volatility by volatility qu
 </section>
 <section id="book-value-of-equity" class="level2" data-number="7.11">
 <h2 data-number="7.11" class="anchored" data-anchor-id="book-value-of-equity"><span class="header-section-number">7.11</span> Book Value of Equity</h2>
-<p>Many empirical applications that use compound returns also require firm-level accounting variables. A commonly used variable is the book value of equity, computed following <span class="citation" data-cites="daniel1997evidence">Daniel and Titman (<a href="#ref-daniel1997evidence" role="doc-biblioref">1997</a>)</span>:</p>
+<p>Many empirical applications that use compound returns also require firm-level accounting variables. A commonly used variable is the book value of equity, computed following <span class="citation" data-cites="daniel1997evidence">Daniel and Titman (<a href="references.html#ref-daniel1997evidence" role="doc-biblioref">1997</a>)</span>:</p>
 <p><span id="eq-book-equity"><span class="math display">\[
 \text{BE} = \text{SE} + \text{DT} + \text{ITC} - \text{PS},
 \tag{7.16}\]</span></span></p>
@@ -2310,7 +2310,7 @@ Table&nbsp;7.6: Arithmetic mean, geometric mean, and volatility by volatility qu
 </section>
 <section id="maximum-drawdown" class="level2" data-number="7.12">
 <h2 data-number="7.12" class="anchored" data-anchor-id="maximum-drawdown"><span class="header-section-number">7.12</span> Maximum Drawdown</h2>
-<p>The maximum drawdown is a key risk metric that complements volatility. While volatility measures the dispersion of returns symmetrically, the maximum drawdown captures the worst cumulative loss an investor could experience: a measure that aligns more closely with how investors psychologically experience risk <span class="citation" data-cites="kahneman2013prospect">(<a href="#ref-kahneman2013prospect" role="doc-biblioref">Kahneman and Tversky 2013</a>)</span>.</p>
+<p>The maximum drawdown is a key risk metric that complements volatility. While volatility measures the dispersion of returns symmetrically, the maximum drawdown captures the worst cumulative loss an investor could experience: a measure that aligns more closely with how investors psychologically experience risk <span class="citation" data-cites="kahneman2013prospect">(<a href="references.html#ref-kahneman2013prospect" role="doc-biblioref">Kahneman and Tversky 2013</a>)</span>.</p>
 <div id="23db4a1f" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_max_drawdown(df, ret_col<span class="op">=</span><span class="st">"ret_total"</span>,</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                          group_col<span class="op">=</span><span class="st">"symbol"</span>):</span>
@@ -2345,7 +2345,7 @@ Table&nbsp;7.6: Arithmetic mean, geometric mean, and volatility by volatility qu
 <span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a>    df.drop(columns<span class="op">=</span>[<span class="st">"gross_ret"</span>], inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#fig-drawdown" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-drawdown</span></a> illustrates the drawdown profile for a selected stock.</p>
+<p><a href="22_momentum.html#fig-drawdown" class="quarto-xref">Figure&nbsp;<span>13.8</span></a> illustrates the drawdown profile for a selected stock.</p>
 <div id="cell-fig-drawdown" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dd_data <span class="op">=</span> compute_max_drawdown(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    prices_monthly[</span>
@@ -2366,7 +2366,7 @@ Table&nbsp;7.6: Arithmetic mean, geometric mean, and volatility by volatility qu
 <span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>plot_dd.draw()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="29">
-<div id="fig-drawdown" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="htbp" alt="Time series chart of drawdowns for a single Vietnamese stock.">
+<div id="fig-drawdown" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Time series chart of drawdowns for a single Vietnamese stock." data-fig-pos="htbp">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-drawdown-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06_compound_return_files/figure-html/fig-drawdown-output-1.png" data-fig-pos="htbp" alt="Time series chart of drawdowns for a single Vietnamese stock." width="960" height="384" class="figure-img">
@@ -2459,7 +2459,7 @@ Figure&nbsp;7.4: Drawdown profile for a selected Vietnamese stock showing the pe
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the full dataset</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>compound_dataset <span class="op">=</span> build_compound_return_dataset(prices_monthly)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><a href="#tbl-summary-stats" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-summary-stats</span></a> provides summary statistics for the key variables in our compound return dataset.</p>
+<p><a href="#tbl-summary-stats" class="quarto-xref">Table&nbsp;<span>7.7</span></a> provides summary statistics for the key variables in our compound return dataset.</p>
 <div class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>summary_cols <span class="op">=</span> [<span class="st">"ret_total"</span>, <span class="st">"ret_3"</span>, <span class="st">"ret_6"</span>, <span class="st">"ret_12"</span>,</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                <span class="st">"exret_3"</span>, <span class="st">"exret_12"</span>, <span class="st">"vol_24"</span>, <span class="st">"drawdown"</span>]</span>
@@ -2644,7 +2644,7 @@ Table&nbsp;7.7: Summary statistics for compound return variables across all Viet
 <span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>plot_horizons.draw()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="33">
-<div id="fig-horizon-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-pos="htbp" alt="Overlaid density plots of compound returns at 3, 6, and 12 month horizons for Vietnamese stocks.">
+<div id="fig-horizon-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Overlaid density plots of compound returns at 3, 6, and 12 month horizons for Vietnamese stocks." data-fig-pos="htbp">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-horizon-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06_compound_return_files/figure-html/fig-horizon-comparison-output-1.png" data-fig-pos="htbp" alt="Overlaid density plots of compound returns at 3, 6, and 12 month horizons for Vietnamese stocks." width="960" height="480" class="figure-img">
@@ -2668,11 +2668,11 @@ Figure&nbsp;7.5: Cross-sectional distribution of compound returns at different h
 <li><strong>UPCoM</strong>: <span class="math inline">\(\pm 15\%\)</span></li>
 </ul>
 <p>These limits truncate the daily return distribution and can create sequences of limit-hit days when large information events occur. For compound return computation, this means that the adjustment to new information may be spread over multiple days rather than occurring instantaneously. When computing monthly compound returns from daily data, this is handled correctly because the compound return accumulates the full adjustment regardless of how many days it takes.</p>
-<p>However, price limits can introduce bias in short-horizon return computations. If a large positive event occurs and the stock hits the limit-up ceiling for several consecutive days, the 1-day or 1-week compound return will understate the true information content of the event <span class="citation" data-cites="kim2013reconsidering">(<a href="#ref-kim2013reconsidering" role="doc-biblioref">Kim, Liu, and Yang 2013</a>)</span>. For event study applications, researchers should verify that the event window is long enough to accommodate the price-limit-induced delay in price adjustment.</p>
+<p>However, price limits can introduce bias in short-horizon return computations. If a large positive event occurs and the stock hits the limit-up ceiling for several consecutive days, the 1-day or 1-week compound return will understate the true information content of the event <span class="citation" data-cites="kim2013reconsidering">(<a href="references.html#ref-kim2013reconsidering" role="doc-biblioref">Kim, Liu, and Yang 2013</a>)</span>. For event study applications, researchers should verify that the event window is long enough to accommodate the price-limit-induced delay in price adjustment.</p>
 </section>
 <section id="foreign-ownership-limits" class="level3" data-number="7.15.2">
 <h3 data-number="7.15.2" class="anchored" data-anchor-id="foreign-ownership-limits"><span class="header-section-number">7.15.2</span> Foreign Ownership Limits</h3>
-<p>Vietnam imposes foreign ownership limits (FOL) on listed companies, typically capped at 49% for most industries and lower (30% or less) for certain restricted sectors such as banking and telecommunications. When a stock reaches its FOL, foreign investors can only purchase shares from other foreign sellers, creating a parallel premium market for foreign-board shares. This does not directly affect the computation of compound returns (which use official traded prices), but researchers studying cross-border portfolio returns should be aware that the effective price paid by foreign investors may differ from the board price <span class="citation" data-cites="vo2017foreign">(<a href="#ref-vo2017foreign" role="doc-biblioref">Vo 2017</a>)</span>.</p>
+<p>Vietnam imposes foreign ownership limits (FOL) on listed companies, typically capped at 49% for most industries and lower (30% or less) for certain restricted sectors such as banking and telecommunications. When a stock reaches its FOL, foreign investors can only purchase shares from other foreign sellers, creating a parallel premium market for foreign-board shares. This does not directly affect the computation of compound returns (which use official traded prices), but researchers studying cross-border portfolio returns should be aware that the effective price paid by foreign investors may differ from the board price <span class="citation" data-cites="vo2017foreign">(<a href="references.html#ref-vo2017foreign" role="doc-biblioref">Vo 2017</a>)</span>.</p>
 </section>
 <section id="the-vn-index-and-market-benchmarks" class="level3" data-number="7.15.3">
 <h3 data-number="7.15.3" class="anchored" data-anchor-id="the-vn-index-and-market-benchmarks"><span class="header-section-number">7.15.3</span> The VN-Index and Market Benchmarks</h3>
@@ -2687,7 +2687,7 @@ Figure&nbsp;7.5: Cross-sectional distribution of compound returns at different h
 </section>
 <section id="performance-considerations" class="level2" data-number="7.16">
 <h2 data-number="7.16" class="anchored" data-anchor-id="performance-considerations"><span class="header-section-number">7.16</span> Performance Considerations</h2>
-<p>When working with large datasets, computational efficiency matters. <a href="#tbl-performance-benchmark" class="quarto-xref">Table&nbsp;<span class="quarto-unresolved-ref">tbl-performance-benchmark</span></a> compares the execution time of our four compounding methods on a standardized dataset.</p>
+<p>When working with large datasets, computational efficiency matters. <a href="#tbl-performance-benchmark" class="quarto-xref">Table&nbsp;<span>7.8</span></a> compares the execution time of our four compounding methods on a standardized dataset.</p>
 <div class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2815,7 +2815,7 @@ Table&nbsp;7.8: Execution time comparison for different compounding methods on a
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-barber1997detecting" class="csl-entry" role="listitem">
 Barber, Brad M, and John D Lyon. 1997. <span>“Detecting Long-Run Abnormal Stock Returns: The Empirical Power and Specification of Test Statistics.”</span> <em>Journal of Financial Economics</em> 43 (3): 341–72.
 </div>
