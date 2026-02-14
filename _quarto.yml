@@ -54,67 +54,70 @@ book:
     - part: "Vietnam Financial Markets, Institutions, and Data"
       chapters:
         - 00_institutional_background.qmd
-        # - 02_market_microstructure_vietnam.qmd
-        # - 03_risk_free_rate_construction.qmd
-        - 06_accessing_and_managing_financial_data.qmd
-        - 07_datacore_data.qmd
-        - 01_working_with_stock_returns.qmd
-        - 16_compound_return.qmd
+        - 01_accessing_and_managing_financial_data.qmd
+        - 02_datacore_data.qmd
+        - 03_market_microstructure.qmd
+        - 04_risk_free_rate_construction.qmd
+        - 05_working_with_stock_returns.qmd
+        - 06_compound_return.qmd
 
     - part: "Portfolio Construction, Risk, and Empirical Mechanics"
       chapters:
-        - 02_modern_portfolio_theory.qmd
-        - 09_univariate_portfolio_sort.qmd
-        # - 10_size_sorts.qmd
-        # - 11_value_bivariate.qmd
-        # - 12_portfolio_weighting_and_rebalancing.qmd # Equal vs value-weighted, turnover, transaction costs
-        # - 13_missing_data_and_survivorship.qmd # Vietnam-specific listing bias and delistings
-        # - 14_liquidity_and_turnover_measures.qmd # Amihud, zero-return days, practical relevance
-        - 08_beta_estimation.qmd
+        - 10_modern_portfolio_theory.qmd
+        - 11_univariate_portfolio_sort.qmd
+        # - 12_size_sorts.qmd
+        # - 13_value_bivariate.qmd
+        # - 14_portfolio_weighting_and_rebalancing.qmd # Equal vs value-weighted, turnover, transaction costs
+        # - 15_missing_data_and_survivorship.qmd # Vietnam-specific listing bias and delistings
+        # - 16_liquidity_and_turnover_measures.qmd # Amihud, zero-return days, practical relevance
+        - 17_beta_estimation.qmd
 
     - part: "Asset Pricing Models and Cross-Sectional Tests"
       chapters:
-        - 03_capm.qmd
-        - 12_fama_french.qmd
-        - 13_momentum.qmd
-        # - 15_factor_construction_principles.qmd # 
-        - 14_fama_macbeth.qmd
-        # - 16_factor_zoo_and_multiple_testing.qmd
-        # - 17_time_series_vs_cross_section.qmd
-        # - _14_factor_selection_ml.qmd
+        - 20_capm.qmd
+        - 21_fama_french.qmd
+        - 22_momentum.qmd
+        # - _factor_construction_principles.qmd # 
+        - 24_fama_macbeth.qmd
+        # - _factor_zoo_and_multiple_testing.qmd
+        # - _time_series_vs_cross_section.qmd
+        # - _factor_selection_ml.qmd
 
     - part: "Firm Fundamentals, Valuation, and Corporate Signals"
       chapters:
-        - 04_financial_statement_analysis.qmd
-        - 05_discounted_cash_flow.qmd
-        # - 20_earnings_quality_and_accruals.qmd
-        # - 21_cash_flow_vs_earnings.qmd
-        - 25_pe_ratio.qmd
-        - 26_valuation.qmd
+        - 30_financial_statement_analysis.qmd
+        - 31_discounted_cash_flow.qmd
+        # - 32_earnings_quality_and_accruals.qmd
+        # - 33_cash_flow_vs_earnings.qmd
+        - 34_pe_ratio.qmd
+        - 35_valuation.qmd
         
-        # - 22_disclosure_quality_and_timing.qmd
-        - 18_sue.qmd
-        - 19_divop.qmd
-        # - _sue_pead.qmd
+        # - 36_disclosure_quality_and_timing.qmd
+        - 37_sue.qmd
+        # - 38_sue_pead.qmd
+        - 39_divop.qmd
+        
         # - _divop_wfh.qmd
 
     - part: "Ownership, Market Frictions, and International Exposure"
       chapters:
-        - 30_institutional_ownership.qmd
-        # - 33_foreign_ownership_limits.qmd
-        - 31_institutional_trade_flow.qmd
-        - 32_return_gaps.qmd
-        # - 34_price_limits_and_volatility.qmd
-        # - 35_market_integration_and_segmentation.qmd
-        # - 40_exchange_rate.qmd
+        - 50_institutional_ownership.qmd
+        # - _foreign_ownership_limits.qmd
+        - 52_institutional_trade_flow.qmd
+        # - 53_governance.qmd
+        - 54_return_gaps.qmd
+        # - _price_limits_and_volatility.qmd
+        # - _market_integration_and_segmentation.qmd
+        # - _exchange_rate.qmd
         
     - part: "Advanced Data, Research Design, and Frontiers"
       chapters:
-        # - 50_textual.qmd
-        # - _governance.qmd
-        # - 53_replication_and_research_design.qmd
-        - 17_event_studies.qmd
-    - 99_conclusion.qmdc
+        # - 60_textual.qmd
+        # - 61_image.qmd
+        # - 62_multimodel.qmd
+        # - _replication_and_research_design.qmd
+        - 65_event_studies.qmd
+    - 99_conclusion.qmd
     - references.qmd
   # appendices:
   #   - privacy.qmd
