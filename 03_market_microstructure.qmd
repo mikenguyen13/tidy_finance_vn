@@ -80,54 +80,6 @@ Each exchange operates a structured trading day with distinct sessions. Understa
 
 : Trading Session Structure on HOSE {#tbl-trading-sessions}
 
-```{python}
-#| label: tbl-trading-sessions
-#| include: false
-#| tbl-cap: "Trading Session Structure on HOSE"
-import pandas as pd
-
-sessions = pd.DataFrame({
-    "Session": [
-        "Pre-opening",
-        "Opening auction (ATO)",
-        "Continuous trading (Morning)",
-        "Lunch break",
-        "Continuous trading (Afternoon)",
-        "Closing auction (ATC)",
-        "Post-closing"
-    ],
-    "Time": [
-        "08:30–09:00",
-        "09:00–09:15",
-        "09:15–11:30",
-        "11:30–13:00",
-        "13:00–14:30",
-        "14:30–14:45",
-        "14:45–15:00"
-    ],
-    "Mechanism": [
-        "Order entry only, no matching",
-        "Batch auction, single price",
-        "Continuous limit order matching",
-        "No trading",
-        "Continuous limit order matching",
-        "Batch auction, single price",
-        "Put-through (negotiated) trades"
-    ],
-    "Price Discovery Role": [
-        "Reveals pre-open demand/supply",
-        "Sets opening price from accumulated orders",
-        "Primary price discovery",
-        "—",
-        "Primary price discovery",
-        "Sets closing price (benchmark)",
-        "Block and negotiated transactions"
-    ]
-})
-
-sessions.style.hide(axis="index")
-```
-
 The closing auction (ATC) deserves particular attention. The ATC price is the official closing price used for index calculation, NAV computation, and margin requirements. Because it is determined by a single-bid auction, it can be manipulated by strategically timed orders, a phenomenon documented in numerous emerging markets [@comerton2009anonymity; @hillion2004manipulation]. Researchers using daily closing prices should be aware that ATC prices may not reflect the continuous-session equilibrium, particularly for less liquid stocks where a single large order can move the closing price.
 
 ### Order Types and Matching Rules
@@ -148,7 +100,7 @@ Orders are matched on a strict price-time priority basis during continuous sessi
 
 ### Tick Size Structure
 
-Tick sizes on HOSE are tiered by price level, which creates discontinuities in the bid-ask spread as a percentage of price.
+Tick sizes on HOSE are tiered by price level, which creates discontinuities in the bid-ask spread as a percentage of price (@tbl-tick-sizes).
 
 | Price Range (VND) | Tick Size (VND) | Minimum Spread as % of Midpoint |
 |---|---|---|
@@ -158,26 +110,6 @@ Tick sizes on HOSE are tiered by price level, which creates discontinuities in t
 
 : Tick Size Schedule on HOSE {#tbl-tick-sizes}
 
-```{python}
-#| label: tbl-tick-sizes
-#| tbl-cap: "Tick Size Schedule on HOSE"
-tick_sizes = pd.DataFrame({
-    "Price Range (VND)": [
-        "< 10,000",
-        "10,000–49,900",
-        "≥ 50,000"
-    ],
-    "Tick Size (VND)": [10, 50, 100],
-    "Minimum Spread as % of Midpoint": [
-        "0.10% at 10,000",
-        "0.10% at 50,000",
-        "0.20% at 50,000"
-    ]
-})
-
-tick_sizes.style.hide(axis="index")
-```
-
 The jump from a 50 VND tick to a 100 VND tick at the 50,000 VND boundary means that the minimum percentage spread doubles discontinuously. This creates a "tick size cliff" that can affect the cross-sectional distribution of bid-ask spreads and, consequently, the measurement of illiquidity [@vo2023minimum]. @bessembinder2003trade document similar effects in other markets with tiered tick structures.
 
 ### Investor Composition
@@ -186,7 +118,6 @@ The Vietnamese equity market is predominantly driven by retail investors. While 
 
 ```{python}
 #| label: fig-investor-composition
-#| include: false
 #| fig-cap: "Approximate Investor Composition by Trading Value on HOSE"
 import matplotlib.pyplot as plt
 import numpy as np
