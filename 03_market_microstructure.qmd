@@ -66,7 +66,19 @@ The heterogeneous price limit bands across exchanges create a natural experiment
 
 ### Trading Sessions
 
-Each exchange operates a structured trading day with distinct sessions. Understanding session structure is essential because price formation mechanisms differ across sessions, and certain sessions are disproportionately important for benchmark pricing.
+Each exchange operates a structured trading day with distinct sessions. Understanding session structure is essential because price formation mechanisms differ across sessions, and certain sessions are disproportionately important for benchmark pricing (@tbl-trading-sessions).
+
+| Session | Time | Mechanism | Price Discovery Role |
+|---|---|---|---|
+| Pre-opening | 08:30–09:00 | Order entry only, no matching | Reveals pre-open demand/supply |
+| Opening auction (ATO) | 09:00–09:15 | Batch auction, single price | Sets opening price from accumulated orders |
+| Continuous trading (Morning) | 09:15–11:30 | Continuous limit order matching | Primary price discovery |
+| Lunch break | 11:30–13:00 | No trading | — |
+| Continuous trading (Afternoon) | 13:00–14:30 | Continuous limit order matching | Primary price discovery |
+| Closing auction (ATC) | 14:30–14:45 | Batch auction, single price | Sets closing price (benchmark) |
+| Post-closing | 14:45–15:00 | Put-through (negotiated) trades | Block and negotiated transactions |
+
+: Trading Session Structure on HOSE {#tbl-trading-sessions}
 
 ```{python}
 #| label: tbl-trading-sessions
@@ -137,6 +149,14 @@ Orders are matched on a strict price-time priority basis during continuous sessi
 ### Tick Size Structure
 
 Tick sizes on HOSE are tiered by price level, which creates discontinuities in the bid-ask spread as a percentage of price.
+
+| Price Range (VND) | Tick Size (VND) | Minimum Spread as % of Midpoint |
+|---|---|---|
+| < 10,000 | 10 | 0.10% at 10,000 |
+| 10,000–49,900 | 50 | 0.10% at 50,000 |
+| ≥ 50,000 | 100 | 0.20% at 50,000 |
+
+: Tick Size Schedule on HOSE {#tbl-tick-sizes}
 
 ```{python}
 #| label: tbl-tick-sizes
