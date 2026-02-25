@@ -118,6 +118,7 @@ The Vietnamese equity market is predominantly driven by retail investors. While 
 
 ```{python}
 #| label: fig-investor-composition
+#| include: false
 #| fig-cap: "Approximate Investor Composition by Trading Value on HOSE"
 import matplotlib.pyplot as plt
 import numpy as np
