@@ -99,37 +99,19 @@ Vietnam's financial infrastructure provides several candidate instruments, none 
 
 The Vietnamese government issues bonds across a range of maturities through the State Treasury and the Vietnam Bond Market (VBM). Key characteristics:
 
-```{python}
-#| label: tbl-govt-bond-characteristics
-#| include: false
-#| tbl-cap: "Vietnamese Government Bond Characteristics"
-import pandas as pd
+| Feature | Description |
+|---|---|
+| Issuer | State Treasury of Vietnam |
+| Primary market | Auction through HNX |
+| Available maturities | 1, 2, 3, 5, 7, 10, 15, 20, 30 years |
+| Shortest benchmark | 1-year (sometimes shorter tenors via T-bills) |
+| Coupon structure | Fixed, semi-annual |
+| Issuance frequency | Regular weekly/bi-weekly auctions |
+| Secondary market liquidity | Concentrated in 3-5 year segment; short end is thin |
+| Data availability | Available through DataCore.vn |
 
-bond_chars = pd.DataFrame({
-    "Feature": [
-        "Issuer",
-        "Primary market",
-        "Available maturities",
-        "Shortest benchmark",
-        "Coupon structure",
-        "Issuance frequency",
-        "Secondary market liquidity",
-        "Data availability"
-    ],
-    "Description": [
-        "State Treasury of Vietnam",
-        "Auction through HNX",
-        "1, 2, 3, 5, 7, 10, 15, 20, 30 years",
-        "1-year (sometimes shorter tenors via T-bills)",
-        "Fixed, semi-annual",
-        "Regular weekly/bi-weekly auctions",
-        "Concentrated in 3-5 year segment; short end is thin",
-        "Available through DataCore.vn"
-    ]
-})
+: Vietnamese Government Bond Characteristics {#tbl-govt-bond-characteristics}
 
-bond_chars.style.hide(axis="index")
-```
 
 The primary limitation of government bond yields as a risk-free proxy is the scarcity of short-maturity securities. One-year bonds are the shortest regularly issued benchmark, and their yield includes a term premium that is absent from a true risk-free rate. Treasury bills (maturity \< 1 year) are issued irregularly and in small volumes, making them unsuitable as a continuous series.
 
@@ -168,57 +150,16 @@ Commercial banks offer term deposits at rates subject to SBV caps. Short-term (1
 
 ### Summary Comparison
 
-```{python}
-#| label: tbl-proxy-comparison
-#| include: false
-#| tbl-cap: "Comparison of Risk-Free Rate Proxies for Vietnam"
-comparison = pd.DataFrame({
-    "Proxy": [
-        "1-Year Government Bond",
-        "Treasury Bills (< 1Y)",
-        "Interbank Overnight Rate",
-        "SBV Refinancing Rate",
-        "1-Month Bank Deposit Rate"
-    ],
-    "Default Risk": [
-        "Minimal (sovereign)",
-        "Minimal (sovereign)",
-        "Low (interbank)",
-        "None (administered)",
-        "Low-moderate (bank)"
-    ],
-    "Maturity Match": [
-        "Poor (1Y vs 1M)",
-        "Good (when available)",
-        "Very short (overnight)",
-        "N/A (not traded)",
-        "Good (1M)"
-    ],
-    "Continuity": [
-        "Good",
-        "Poor (irregular issuance)",
-        "Excellent",
-        "Excellent",
-        "Good"
-    ],
-    "Liquidity": [
-        "Moderate",
-        "Low",
-        "High (interbank)",
-        "N/A",
-        "N/A"
-    ],
-    "Recommended Use": [
-        "Annual/quarterly analysis",
-        "When available, preferred",
-        "Daily/monthly analysis",
-        "Long-run comparisons only",
-        "Practitioner DCF"
-    ]
-})
+| Proxy | Default Risk | Maturity Match | Continuity | Liquidity | Recommended Use |
+|---|---|---|---|---|---|
+| 1-Year Government Bond | Minimal (sovereign) | Poor (1Y vs 1M) | Good | Moderate | Annual/quarterly analysis |
+| Treasury Bills (< 1Y) | Minimal (sovereign) | Good (when available) | Poor (irregular issuance) | Low | When available, preferred |
+| Interbank Overnight Rate | Low (interbank) | Very short (overnight) | Excellent | High (interbank) | Daily/monthly analysis |
+| SBV Refinancing Rate | None (administered) | N/A (not traded) | Excellent | N/A | Long-run comparisons only |
+| 1-Month Bank Deposit Rate | Low-moderate (bank) | Good (1M) | Good | N/A | Practitioner DCF |
 
-comparison.style.hide(axis="index")
-```
+: Comparison of Risk-Free Rate Proxies in Vietnam {#tbl-proxy-comparison}
+
 
 ## Constructing the Risk-Free Rate Series
 
@@ -957,95 +898,47 @@ In periods of high inflation, the real risk-free rate can be substantially negat
 
 ## International Comparison
 
-It is instructive to compare Vietnam's risk-free rate environment with that of other emerging and developed markets to contextualize the magnitudes involved.
+It is instructive to compare Vietnam's risk-free rate environment with that of other emerging and developed markets to contextualize the magnitudes involved (@tbl-international-comparison).
+
+| Country | Typical Proxy | Short-Term Maturity Available | Typical Level (%, 2020-2024) |
+|---|---|---|---|
+| Vietnam | Interbank overnight / 1Y govt bond | Limited (<1Y sparse) | 2.5-6.0 |
+| Thailand | 1-day bilateral repurchase rate | Yes (1-day repo) | 0.5-2.5 |
+| Indonesia | Bank Indonesia 7-day reverse repo rate | Yes (7-day, 1M) | 3.5-6.0 |
+| Philippines | 91-day T-bill | Yes (91-day T-bill) | 1.5-6.0 |
+| India | 91-day T-bill | Yes (91-day T-bill) | 3.5-7.0 |
+| South Korea | 91-day CD rate | Yes (91-day CD) | 1.0-3.5 |
+| Japan | Uncollateralized overnight call rate | Yes (overnight) | -0.1-0.1 |
+
+: Risk-Free Rate Proxies: International Comparison {#tbl-international-comparison}
+
 
 ```{python}
-#| label: tbl-international-comparison
-#| include: false
-#| tbl-cap: "Risk-Free Rate Proxies: International Comparison"
-
-intl_comparison = pd.DataFrame({
-    "Country": [
-        "Vietnam",
-        "Thailand",
-        "Indonesia",
-        "Philippines",
-        "India",
-        "South Korea",
-        "Japan"
-    ],
-    "Typical Proxy": [
-        "Interbank overnight / 1Y govt bond",
-        "1-day bilateral repurchase rate",
-        "Bank Indonesia 7-day reverse repo rate",
-        "91-day T-bill",
-        "91-day T-bill",
-        "91-day CD rate",
-        "Uncollateralized overnight call rate"
-    ],
-    "Short-Term Maturity Available": [
-        "Limited (<1Y sparse)",
-        "Yes (1-day repo)",
-        "Yes (7-day, 1M)",
-        "Yes (91-day T-bill)",
-        "Yes (91-day T-bill)",
-        "Yes (91-day CD)",
-        "Yes (overnight)"
-    ],
-    "Typical Level (%, 2020-2024)": [
-        "2.5-6.0",
-        "0.5-2.5",
-        "3.5-6.0",
-        "1.5-6.0",
-        "3.5-7.0",
-        "1.0-3.5",
-        "-0.1-0.1"
-    ]
-})
-
-intl_comparison.style.hide(axis="index")
+# get the risk-free rate of Asian markets
 ```
+
 
 Vietnam's risk-free rate environment is characterized by relatively high nominal rates (reflecting inflation and growth dynamics), limited availability of very-short-maturity sovereign instruments, and greater reliance on interbank rates as the operational proxy. This is broadly similar to other ASEAN frontier markets but contrasts sharply with developed Asian markets, where deep government securities markets provide clean short-term benchmarks.
 
 ## Best Practices Checklist
 
-Based on the analysis in this chapter, we summarize the recommended practices for risk-free rate construction in Vietnamese financial research:
+Based on the analysis in this chapter, we summarize the recommended practices for risk-free rate construction in Vietnamese financial research (@tbl-best-practices).
 
-```{python}
-#| label: tbl-best-practices
-#| include: false
-#| tbl-cap: "Best Practices for Risk-Free Rate Construction"
+| Practice | Rationale |
+|---|---|
+| Use the shortest available maturity | Minimizes term premium contamination |
+| Match frequency to return data | Avoids compounding mismatches between rf and stock returns |
+| Use the same compounding convention | Arithmetic returns require arithmetic rf conversion |
+| Document the proxy and source explicitly | Enables replication; different proxies give different results |
+| Report sensitivity to alternative proxies | Demonstrates robustness of conclusions |
+| Avoid forward-looking policy rates | Policy rates are not investable returns |
+| Handle gaps with documented interpolation | Forward-fill, then average within month; document procedure |
+| Use Nelson-Siegel for maturity matching | Enables extraction of any-maturity rate from sparse data |
+| Consider real rates for long-horizon analysis | Nominal rates overstate real compensation in high-inflation periods |
+| Maintain a single consistent series per study | Mixing proxies across periods introduces structural breaks |
 
-practices = pd.DataFrame({
-    "Practice": [
-        "Use the shortest available maturity",
-        "Match frequency to return data",
-        "Use the same compounding convention",
-        "Document the proxy and source explicitly",
-        "Report sensitivity to alternative proxies",
-        "Avoid forward-looking policy rates",
-        "Handle gaps with documented interpolation",
-        "Use Nelson-Siegel for maturity matching",
-        "Consider real rates for long-horizon analysis",
-        "Maintain a single consistent series per study"
-    ],
-    "Rationale": [
-        "Minimizes term premium contamination",
-        "Avoids compounding mismatches between rf and stock returns",
-        "Arithmetic returns require arithmetic rf conversion",
-        "Enables replication; different proxies give different results",
-        "Demonstrates robustness of conclusions",
-        "Policy rates are not investable returns",
-        "Forward-fill, then average within month; document procedure",
-        "Enables extraction of any-maturity rate from sparse data",
-        "Nominal rates overstate real compensation in high-inflation periods",
-        "Mixing proxies across periods introduces structural breaks"
-    ]
-})
+: Best Practices for Risk-Free Rate Construction {#tbl-best-practices}
 
-practices.style.hide(axis="index")
-```
 
 ## Saving the Risk-Free Rate for Downstream Use
 
