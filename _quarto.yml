@@ -13,7 +13,7 @@ book:
   favicon: favicon.ico
   twitter-card: true
   open-graph: true
-  site-url: "https://github.com/mikenguyen13/tidy_finance_vn"
+  site-url: "https://mikenguyen13.github.io/tidy_finance_vn/"
   repo-url: "https://github.com/mikenguyen13/tidy_finance_vn"
 
   repo-branch: "main"
