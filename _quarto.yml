@@ -8,6 +8,7 @@ execute:
 
 book:
   title: "Applying Tidy Finance with Python to Vietnam"
+  description: "An open-source, code-first guide to empirical finance on Vietnamese market data with Python: portfolio sorts, factor models, asset pricing tests, valuation, and machine learning."
   author: "Mike"
   date: "2/1/2026"
   favicon: favicon.ico
@@ -174,6 +175,9 @@ format:
     # Put your favicon in the repo root (or adjust the path)
     # favicon: "favicon.ico"
     
+    include-in-header:
+      - includes/seo-head.html
+
     include-after-body:
       # - includes/cookie-consent.html
       - includes/year.js
