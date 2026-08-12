@@ -555,6 +555,260 @@ print(f"\nLog Kyle lambda distribution:")
 print(kyle_monthly['log_kyle'].describe().round(3))
 ```
 
+## Realized Illiquidity: A High-Frequency Refinement of Amihud {#sec-liquidity-realized}
+
+### Motivation
+
+Of the seven proxies constructed above, the @amihud2002illiquidity ratio in @eq-amihud is the one this book leans on hardest: it is the sorting variable in the portfolio sorts and Fama-MacBeth regressions below, the input to the commonality regressions, and the basis of the tradeable liquidity factor constructed at the end of this chapter. It is also the measure that @fong2017best recommend specifically for emerging markets. It is therefore worth asking how accurately it actually measures what it claims to measure.
+
+The answer is: far less accurately than its ubiquity suggests, and for a reason that has nothing to do with the volume denominator. The numerator $|R_{i,d}|$ is a *single draw* used to summarize the entire day's price movement. As a statistic, it is nearly unbiased for the day's volatility but extraordinarily noisy — we quantify this below at roughly a 76% relative standard deviation *per day*. Every unit of that noise propagates into portfolio sorts as classical errors-in-variables attenuation, flattening measured liquidity premia toward zero.
+
+@lacava2026realized address exactly this. They define *realized illiquidity* as the ratio of realized volatility to trading volume and introduce the **realized Amihud**, which replaces the single absolute daily return with a high-frequency estimate of the same quantity. They show it robustly captures cumulative intraday price sensitivity to trading in the presence of stochastic volatility, microstructure noise, and information jumps; document heterogeneous clustering and leverage effects in the resulting series; and find that it predicts short-term returns. This section develops the estimator in the book's notation, derives why the accuracy gain is as large as it is, and sets out what it costs to implement on HOSE.
+
+### Setup and Notation
+
+Let $p_{i,t}$ denote the efficient log price of stock $i$ at time $t$, evolving over trading day $d$ as an Itô semimartingale:
+
+$$
+dp_{i,t} = \mu_{i,t}\,dt + \sigma_{i,t}\,dW_{i,t} + dJ_{i,t}
+$$ {#eq-semimartingale}
+
+where $\sigma_{i,t}$ is a càdlàg stochastic volatility process, $W_{i,t}$ a standard Brownian motion, and $J_{i,t}$ a finite-activity jump process capturing discrete information arrivals. The object that summarizes the day's price variation is the **integrated variance**
+
+$$
+\text{IV}_{i,d} = \int_{d-1}^{d} \sigma_{i,s}^2\,ds
+$$ {#eq-integrated-variance}
+
+Partition the continuous trading day into $M$ intervals and write the intraday log returns as $r_{i,d,j}$, $j = 1,\dots,M$, so that the daily return satisfies $R_{i,d} = \sum_{j=1}^{M} r_{i,d,j}$. As before, $\text{DVOL}_{i,d}$ is VND trading volume on day $d$ and $D_{i,m}$ the number of positive-volume days in month $m$.
+
+The **realized variance** and **bipower variation** are
+
+$$
+\text{RV}_{i,d} = \sum_{j=1}^{M} r_{i,d,j}^2,
+\qquad
+\text{BV}_{i,d} = \frac{\pi}{2}\sum_{j=2}^{M} \left| r_{i,d,j} \right|\left| r_{i,d,j-1} \right|
+$$ {#eq-rv-bv}
+
+Both are consistent for $\text{IV}_{i,d}$ as $M \to \infty$ in the absence of jumps [@barndorff2002econometric; @andersen2003modeling]; $\text{BV}_{i,d}$ remains consistent *with* jumps present, which is what makes it useful below [@barndorff2004power].
+
+### Assumptions
+
+**(A1) Semimartingale efficient price.** The efficient log price follows @eq-semimartingale with $\int_{d-1}^{d}\sigma_{i,s}^4\,ds < \infty$.
+
+*Reading.* Prices are driven by a diffusion with possibly random, possibly persistent volatility plus occasional jumps. This is weak and generally uncontroversial. It would be violated by a price process with infinite-activity jumps of high enough intensity, or by a market so thin that no continuous-time approximation is meaningful — the latter is a live concern for small-cap HOSE names.
+
+**(A2) Negligible microstructure noise at the sampling frequency.** Observed prices satisfy $\tilde{p}_{i,t} = p_{i,t} + u_{i,t}$, and the sampling interval is coarse enough that $2M\,\mathbb{V}[u_{i,t}]$ is small relative to $\text{IV}_{i,d}$.
+
+*Reading.* Bid-ask bounce, tick discreteness, and stale quotes all inject noise into observed prices. Because $\text{RV}$ sums *squared* returns, this noise accumulates with $M$ rather than averaging out — sampling too finely makes the estimator worse, not better. On HOSE the coarse tick grid relative to price levels makes this bind sooner than in US data. This is the assumption most likely to fail in practice, and we show what happens when it does.
+
+**(A3) No jumps, for the plain realized Amihud.** $J_{i,t} \equiv 0$ over day $d$.
+
+*Reading.* An earnings surprise or a limit-hit move is a large price change that is *not* the price impact of trading volume, but $\text{RV}$ counts it as though it were. Given how routinely Vietnamese stocks hit the $\pm7\%$ HOSE band (see the price-limit discussion in the market microstructure chapter), (A3) is not innocuous here. Relaxing it is exactly why we carry $\text{BV}_{i,d}$ alongside.
+
+**(A4) Contemporaneous volume.** $\text{DVOL}_{i,d}$ is measured over the same window as the intraday returns.
+
+*Reading.* If returns are computed over the continuous sessions but volume includes post-close put-through blocks, numerator and denominator refer to different trading. On HOSE the 14:45–15:00 negotiated window makes this a real bookkeeping issue rather than a technicality.
+
+### The Estimator
+
+The realized Amihud replaces $|R_{i,d}|$ with a scaled high-frequency estimate of the same day's price variation:
+
+$$
+\text{RILLIQ}_{i,m} = \frac{1}{D_{i,m}}\sum_{d=1}^{D_{i,m}} \sqrt{\frac{2}{\pi}}\,\frac{\sqrt{\text{RV}_{i,d}}}{\text{DVOL}_{i,d}}
+$$ {#eq-realized-amihud}
+
+and its jump-robust counterpart replaces $\text{RV}_{i,d}$ with $\text{BV}_{i,d}$:
+
+$$
+\text{RILLIQ}^{\text{BV}}_{i,m} = \frac{1}{D_{i,m}}\sum_{d=1}^{D_{i,m}} \sqrt{\frac{2}{\pi}}\,\frac{\sqrt{\text{BV}_{i,d}}}{\text{DVOL}_{i,d}}
+$$ {#eq-realized-amihud-bv}
+
+The constant $\sqrt{2/\pi} \approx 0.7979$ is not cosmetic: it puts @eq-realized-amihud on exactly the same scale as @eq-amihud, so the two are numerically comparable and the realized version is a drop-in replacement everywhere the book currently uses $\text{ILLIQ}$.
+
+### Derivation
+
+**Step 1: what $|R_{i,d}|$ actually estimates.** Condition on the volatility path and suppress the drift and jumps, so $R_{i,d} \mid \text{IV}_{i,d} \sim N(0, \text{IV}_{i,d})$. For a half-normal variate,
+
+$$
+\mathbb{E}\!\left[|R_{i,d}| \,\middle|\, \text{IV}_{i,d}\right] = \sqrt{\tfrac{2}{\pi}}\sqrt{\text{IV}_{i,d}},
+\qquad
+\mathbb{V}\!\left[|R_{i,d}| \,\middle|\, \text{IV}_{i,d}\right] = \left(1 - \tfrac{2}{\pi}\right)\text{IV}_{i,d}
+$$ {#eq-halfnormal}
+
+So $|R_{i,d}|$ is unbiased for $\sqrt{2/\pi}\sqrt{\text{IV}_{i,d}}$ — Amihud's numerator is targeting the right thing. Its *relative* standard deviation, however, is
+
+$$
+\frac{\text{sd}\!\left(|R_{i,d}|\right)}{\mathbb{E}\!\left[|R_{i,d}|\right]}
+= \sqrt{\frac{1 - 2/\pi}{2/\pi}}
+= \sqrt{\frac{\pi}{2} - 1} \approx 0.7555
+$$ {#eq-abs-relsd}
+
+A single day's Amihud numerator carries roughly **76% relative measurement error**. This is a property of the half-normal distribution, not of any particular market — it is irreducible given one observation per day.
+
+**Step 2: what $\sqrt{\text{RV}_{i,d}}$ estimates.** Under (A1)–(A3), the realized variance obeys the central limit theorem of @barndorff2002econometric,
+
+$$
+\sqrt{M}\left(\text{RV}_{i,d} - \text{IV}_{i,d}\right) \;\xrightarrow{d}\; N\!\left(0,\; 2\,\text{IQ}_{i,d}\right),
+\qquad \text{IQ}_{i,d} = \int_{d-1}^{d}\sigma_{i,s}^4\,ds
+$$ {#eq-rv-clt}
+
+Applying the delta method to $g(x) = \sqrt{x}$, with $g'(\text{IV}) = 1/(2\sqrt{\text{IV}})$,
+
+$$
+\sqrt{M}\left(\sqrt{\text{RV}_{i,d}} - \sqrt{\text{IV}_{i,d}}\right) \;\xrightarrow{d}\; N\!\left(0,\; \frac{\text{IQ}_{i,d}}{2\,\text{IV}_{i,d}}\right)
+$$ {#eq-sqrt-rv-clt}
+
+Specializing to locally constant volatility over the day ($\text{IV} = \sigma^2$, $\text{IQ} = \sigma^4$) gives the relative standard deviation
+
+$$
+\frac{\text{sd}\!\left(\sqrt{\text{RV}_{i,d}}\right)}{\mathbb{E}\!\left[\sqrt{\text{RV}_{i,d}}\right]} \approx \frac{1}{\sqrt{2M}}
+$$ {#eq-rv-relsd}
+
+**Step 3: the comparison.** Dividing @eq-abs-relsd by @eq-rv-relsd, the realized numerator is more accurate by a factor of $\sqrt{2M\left(\pi/2 - 1\right)}$. HOSE's continuous sessions run 09:15–11:30 and 13:00–14:30, i.e. **225 minutes**, so five-minute sampling gives $M = 45$:
+
+| Sampling | $M$ | Relative SD of numerator | Improvement vs. $\lvert R_d\rvert$ |
+|:---|---:|---:|---:|
+| Daily close-to-close ($\lvert R_d \rvert$) | 1 | 0.7555 | — |
+| 15-minute | 15 | 0.1826 | 4.1$\times$ |
+| 5-minute | 45 | 0.1054 | 7.2$\times$ |
+| 1-minute | 225 | 0.0471 | 16.0$\times$ |
+
+: Analytical measurement error of the Amihud numerator by sampling frequency, from @eq-abs-relsd and @eq-rv-relsd. The 1-minute row is *not* a recommendation — see assumption (A2) and the simulation below. {#tbl-realized-precision}
+
+At five-minute sampling the noise *variance* in the numerator falls by a factor of roughly 51.
+
+**Step 4: why this matters for the book's results.** Write the monthly sorting variable as truth plus error, $\widehat{x}_{i,m} = x_{i,m} + \eta_{i,m}$. In the univariate liquidity sorts and the Fama-MacBeth regressions that follow later in this chapter, classical errors-in-variables attenuates the estimated slope by the reliability ratio
+
+$$
+\text{plim}\;\frac{\widehat{\gamma}}{\gamma} = \frac{\mathbb{V}[x]}{\mathbb{V}[x] + \mathbb{V}[\eta]}
+$$ {#eq-attenuation}
+
+Reducing $\mathbb{V}[\eta]$ by ~51$\times$ moves the reliability ratio toward one, which *raises* the measured liquidity premium and its $t$-statistic. The practical implication is uncomfortable and worth stating plainly: a liquidity premium estimated with the daily Amihud ratio is a **lower bound**. A weak or insignificant premium in Vietnamese data may reflect a noisy sorting variable rather than an absent premium.
+
+### Intuition
+
+Amihud's ratio asks "how far did the price move per VND traded?" and answers it with the single number the day happened to hand us — the open-to-close move. But a day in which the price wandered up 4%, back down 5%, and closed 1% lower is a day of substantial price sensitivity to trading, and $|R_d| = 1\%$ records almost none of it. Realized volatility measures the *path* rather than the endpoints, so it captures the cumulative intraday price sensitivity that Amihud is trying to proxy for. Averaging $M$ squared intraday returns instead of taking one absolute daily return is, statistically, the difference between one observation and $M$ of them.
+
+The catch is that the path is only observable through the microstructure. Push $M$ high enough and you stop measuring the efficient price path and start measuring the bid-ask bounce. The whole art of the estimator is choosing $M$ large enough to gain precision and small enough to keep (A2) intact.
+
+### Simulation Design {#sec-liquidity-realized-sim}
+
+The following experiment benchmarks @eq-realized-amihud against @eq-amihud on a common DGP, and then breaks (A2) and (A3) in turn to expose the failure modes. The target estimand is the scaled true daily illiquidity $\sqrt{2/\pi}\sqrt{\text{IV}_{i,d}}/\text{DVOL}_{i,d}$, so bias and RMSE are measured against a known quantity.
+
+```{python}
+#| label: realized-amihud-simulation
+#| eval: false
+#| code-summary: "Monte Carlo: realized vs. classic Amihud under noise and jumps"
+rng = np.random.default_rng(20260812)
+
+M_HOSE = 45  # 225 continuous minutes on HOSE / 5-minute sampling
+
+
+def simulate_days(n_days, M, noise_sd=0.0, jump_prob=0.0, jump_sd=0.0):
+    """
+    Simulate intraday paths with stochastic volatility, optional iid
+    microstructure noise in observed log prices, and optional information
+    jumps. Returns the ingredients of both illiquidity estimators.
+    """
+    # Integrated variance: gamma-distributed, mean daily vol about 2.5%
+    IV = rng.gamma(shape=4.0, scale=(0.025 ** 2) / 4.0, size=n_days)
+
+    # Efficient intraday returns
+    eff = rng.normal(0.0, 1.0, size=(n_days, M)) * np.sqrt(IV / M)[:, None]
+
+    # Information jumps (violates A3)
+    if jump_prob > 0:
+        hit = rng.binomial(1, jump_prob / M, size=(n_days, M))
+        eff = eff + hit * rng.normal(0.0, jump_sd, size=(n_days, M))
+
+    # Efficient log-price path, then contaminate with noise (violates A2)
+    P = np.cumsum(eff, axis=1)
+    P_obs = P + rng.normal(0.0, noise_sd, size=(n_days, M)) if noise_sd > 0 else P
+
+    # Observed intraday returns and the daily open-to-close return
+    r = np.diff(P_obs, axis=1, prepend=0.0)
+    R_d = P_obs[:, -1]
+
+    RV = np.sum(r ** 2, axis=1)
+    BV = (np.pi / 2) * np.sum(np.abs(r[:, 1:]) * np.abs(r[:, :-1]), axis=1)
+
+    # VND turnover, lognormal around 5 billion VND
+    DVOL = np.exp(rng.normal(np.log(5e9), 1.0, size=n_days))
+
+    return dict(IV=IV, R_d=R_d, RV=RV, BV=BV, DVOL=DVOL)
+
+
+def score(sim, label):
+    """Bias, RMSE (both relative to mean truth) and rank correlation."""
+    k = np.sqrt(2.0 / np.pi)
+    truth = k * np.sqrt(sim['IV']) / sim['DVOL']
+
+    estimators = {
+        'Amihud |R|/DVOL': np.abs(sim['R_d']) / sim['DVOL'],
+        'Realized Amihud': k * np.sqrt(sim['RV']) / sim['DVOL'],
+        'Bipower Amihud': k * np.sqrt(np.maximum(sim['BV'], 0)) / sim['DVOL'],
+    }
+
+    rows = []
+    for name, est in estimators.items():
+        rows.append({
+            'estimator': name,
+            'rel_bias': (est - truth).mean() / truth.mean(),
+            'rel_rmse': np.sqrt(((est - truth) ** 2).mean()) / truth.mean(),
+            'rank_corr': stats.spearmanr(est, truth).statistic,
+        })
+
+    out = pd.DataFrame(rows).set_index('estimator')
+    print(f"\n--- {label}")
+    print(out.round(4))
+    return out
+
+
+# Baseline: assumptions hold
+score(simulate_days(30_000, M_HOSE), "Baseline (A1-A4 hold), M=45")
+
+# Failure case A: microstructure noise, and what oversampling does to it
+score(simulate_days(30_000, M_HOSE, noise_sd=0.0015),
+      "Noise sd=0.15%, 5-minute sampling (M=45)")
+score(simulate_days(30_000, 225, noise_sd=0.0015),
+      "Noise sd=0.15%, 1-minute sampling (M=225) -- oversampled")
+
+# Failure case B: information jumps
+score(simulate_days(30_000, M_HOSE, jump_prob=0.2, jump_sd=0.03),
+      "Information jumps (~1 per 5 days, 3% size)")
+```
+
+Three results should emerge, and each has a direct counterpart in the analytics above. First, under (A1)–(A4) the realized Amihud should cut relative RMSE by roughly the factor in @tbl-realized-precision and lift the rank correlation with true illiquidity from around 0.7 to above 0.99 — that rank correlation is what governs whether portfolio sorts put stocks in the right bucket. Second, breaking (A2) should bias the realized Amihud *upward*, and sampling at one minute instead of five should make the bias several times worse rather than better, which is the non-obvious lesson: with noise present, more data sampled more finely is actively harmful. Third, under jumps the plain realized Amihud should inherit a clear upward bias while the bipower version in @eq-realized-amihud-bv stays close to unbiased.
+
+::: callout-warning
+## This chunk has not been executed
+
+Like every code chunk in this chapter, the simulation above is marked `eval: false` and its output is not reproduced here. The analytical figures in @tbl-realized-precision are closed-form results from @eq-abs-relsd and @eq-rv-relsd and do not depend on running it. Run the chunk to generate the Monte Carlo table.
+:::
+
+### Replication on Vietnamese Data
+
+@lacava2026realized use US high-frequency data, so a direct replication is not possible with the daily panel assembled earlier in this chapter. The honest position for this book is that the realized Amihud is currently **out of reach for most of the HOSE cross-section**, for a reason worth being explicit about: the estimator's precision is driven by $M$, the number of *non-trivial* intraday returns. A stock that trades a handful of times per session does not have 45 informative five-minute returns — it has a five-minute grid mostly filled with stale prices and mechanical zeros, which biases $\text{RV}$ *downward* and makes the stock look spuriously liquid. This is the same thin-trading problem that motivates the zero-return measure in @eq-zero-return, and it bites the realized Amihud harder than it bites the daily version.
+
+The practical consequence is that this estimator is a refinement for the liquid end of the market — roughly the VN30 constituents and the larger mid-caps — and not a replacement for @eq-amihud across the full panel. Constructing it for Vietnam requires intraday tick data from HOSE, which is not part of the daily pipeline used elsewhere in this chapter.
+
+### Practical Guidance
+
+1.  **Sample at five minutes, not finer.** For HOSE's 225 continuous minutes this gives $M = 45$ and a 7.2$\times$ precision gain. The temptation to go to one minute should be resisted: @tbl-realized-precision shows the *theoretical* gain, but (A2) fails long before you collect it.
+2.  **Screen on trading frequency before computing it.** Require a minimum number of intervals containing an actual trade — not merely a price — and fall back to @eq-amihud below that threshold. Report which stocks fall back.
+3.  **Handle the lunch break and the auctions explicitly.** The 11:30–13:00 gap is not a return interval, and the ATO and ATC prices come from batch auctions rather than continuous matching. Compute $\text{RV}$ within each continuous session and sum, rather than differencing across the break or across the auctions.
+4.  **Exclude put-through trades from the denominator**, per (A4), so that the 14:45–15:00 negotiated block window does not inflate $\text{DVOL}$ against a numerator measured over continuous trading only.
+5.  **Prefer the bipower version on limit-hit days.** Vietnam's daily price bands make large discrete moves common, and @eq-realized-amihud-bv is the version that survives them.
+6.  **Software.** There is no single package; $\text{RV}$ and $\text{BV}$ are a few lines of `pandas` as above. For noise-robust alternatives when finer sampling is genuinely required, the two-scales estimator of @zhang2005tale is the standard reference implementation.
+
+### Pitfalls
+
+-   **Oversampling.** The single most common error. More observations look like more information, but @eq-rv-clt assumes the efficient price is what is being sampled. Past a few minutes on HOSE it is not.
+-   **Treating zero intraday returns as information.** On a five-minute grid, a stale price produces a zero return that $\text{RV}$ reads as zero volatility. Left unscreened, this makes the least liquid stocks look the most liquid — the sign of the error is the opposite of what one would guess.
+-   **Mixing the scale.** Dropping the $\sqrt{2/\pi}$ constant makes @eq-realized-amihud roughly 25% larger than @eq-amihud, which silently breaks any comparison to previously published Amihud levels or to the sorts elsewhere in this chapter.
+-   **Assuming the gain transfers to the premium one-for-one.** @eq-attenuation says a cleaner sorting variable raises the *measured* premium toward the true one. It does not create a premium that is not there, and it does not fix the survivorship and delisting issues that govern which firm-months enter the panel in the first place.
+-   **Forgetting that the denominator is unchanged.** All of the above improves the numerator only. Volume remains subject to the reporting conventions and put-through complications discussed in the microstructure chapter.
+
 ## Assembling the Liquidity Panel {#sec-liquidity-panel}
 
 We merge all seven measures into a single firm-month panel for comparative analysis.
