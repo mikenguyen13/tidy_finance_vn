@@ -1,6 +1,9 @@
 project:
   type: book
   output-dir: docs
+  post-render:
+    # Adds canonical + hreflang alternates Quarto does not emit. See the script.
+    - post-render-seo.R
 
 execute:
   cache: true     # This enables caching for all chapters
