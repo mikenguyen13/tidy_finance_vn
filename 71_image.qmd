@@ -905,7 +905,7 @@ def layoutlm_extract(document_pages, model_name="layoutlmv3"):
 
 ## Chart and Figure Digitization
 
-### Motivation: Unlocking Visual Financial Data
+### Motivation: Why Images Carry Financial Information
 
 Financial charts (e.g., price time series, bar charts of earnings, scatter plots of risk-return tradeoffs) embed information that analysts process visually. For systematic strategies, this information must be converted to numerical form. Three use cases motivate chart digitization:
 

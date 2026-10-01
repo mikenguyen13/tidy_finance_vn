@@ -787,6 +787,186 @@ def compute_amihud_monthly(df):
 
 4.  **Call auction effects.** Opening and closing sessions on HOSE use periodic call auctions, which can produce bid-ask quotes that differ substantially from continuous-trading spreads.
 
+## Realized Illiquidity: A Lower-Noise ILLIQ {#sec-divop-realized-illiq}
+
+The ILLIQ proxy in @eq-amihud summarizes a full day of price movement with one absolute return. @lacava2026realized replace that numerator with a high-frequency estimate of the same day's price variation, yielding the **realized Amihud**
+
+$$
+\text{RILLIQ}_{i,t} = \sqrt{\frac{2}{\pi}}\,\frac{\sqrt{\text{RV}_{i,t}}}{\text{DolVol}_{i,t}},
+\qquad
+\text{RV}_{i,t} = \sum_{j=1}^{M} r_{i,t,j}^2
+$$ {#eq-divop-realized-illiq}
+
+with $r_{i,t,j}$ the intraday returns over $M$ sampling intervals and $\sqrt{2/\pi}$ chosen so that @eq-divop-realized-illiq sits on the same scale as @eq-amihud. At HOSE's 45 five-minute intervals the numerator's relative measurement error falls from roughly 76% to roughly 11%. The estimator's derivation and assumptions are in @sec-liquidity-realized; its HOSE implementation is in @sec-micro-realized-illiq.
+
+The obvious benefit is the one common to any DIVOP proxy used on the right-hand side: a cleaner regressor attenuates less, so the Fama-MacBeth slopes in @sec-applications are estimated closer to their true values. That argument is general and is made in @sec-liquidity-realized.
+
+The reason this chapter needs its own treatment is a different and more specific problem, and it affects results this chapter actually reports.
+
+### Shared Sampling Noise Contaminates the Correlation Matrix
+
+Look at what the proxies in this chapter are built from. ILLIQ takes $|r_{i,t}|$ from the daily return series. TOTVOL takes the standard deviation of *that same series*. IVOL takes the standard deviation of its residual. When end-of-day quotes are missing, BASPREAD falls back to the daily high-low range, drawn from the same daily price records.
+
+These are not independent measurements. A month in which a firm's daily returns happen to realize large draws will produce a high measured ILLIQ *and* a high measured TOTVOL *and* a high measured IVOL — not because the firm's true opinion divergence was high, but because the same finite sample of daily returns feeds all three. The sampling error is common across proxies, so it does not average out when they are correlated with one another or combined.
+
+This matters directly for two things the chapter does. @sec-correlation reports Spearman correlations among the DIVOP proxies and interprets the pattern as evidence about which dimensions of divergence the proxies capture. @sec-empirical builds a composite index by extracting the first principal component. Both are computed on the correlation structure of measured proxies, and both therefore absorb whatever correlation the shared daily returns manufacture.
+
+The simulation below isolates the effect. True volatility and true trading volume are drawn **independently** across firms, so any excess correlation is attributable to construction rather than economics. The critical control is a `TOTVOL (disjoint)` column, which computes volatility from a *different* month's returns for the same firm: it measures the same underlying volatility but shares no sampling noise with ILLIQ, so the gap between it and the ordinary same-window correlation is precisely the mechanical component.
+
+```{python}
+#| label: divop-realized-illiq-noise
+#| code-summary: "Shared sampling noise between ILLIQ and the volatility proxies"
+rng_ri = np.random.default_rng(2026)
+N_SIM, D_MONTH, M_HF = 8000, 21, 45
+K_HF = np.sqrt(2 / np.pi)
+
+
+def simulate_month(vol_dispersion):
+    """
+    One cross-section of firm-months. True volatility and true dollar volume
+    are INDEPENDENT by construction, so any measured association between
+    illiquidity and volatility beyond sqrt(sigma)/DolVol is an artefact.
+
+    `vol_dispersion` is the cross-sectional sd of log dollar volume: wide for
+    the full market, narrow within a size decile.
+    """
+    sigma = np.exp(rng_ri.normal(np.log(0.022), 0.35, N_SIM))
+    dvol = np.exp(rng_ri.normal(np.log(5.0), vol_dispersion, N_SIM))
+    beta = rng_ri.normal(1.0, 0.3, N_SIM)
+    mkt = rng_ri.normal(0, 0.012, (1, D_MONTH))
+
+    R = beta[:, None] * mkt + rng_ri.normal(0, 1, (N_SIM, D_MONTH)) * sigma[:, None]
+    RV = (sigma[:, None] ** 2) * rng_ri.chisquare(M_HF, (N_SIM, D_MONTH)) / M_HF
+
+    # Same firm, same true sigma, DIFFERENT month: no shared sampling noise.
+    R_alt = beta[:, None] * mkt + rng_ri.normal(0, 1, (N_SIM, D_MONTH)) * sigma[:, None]
+
+    return dict(
+        sigma=sigma,
+        illiq_true=K_HF * sigma / dvol,
+        illiq_classic=np.abs(R).mean(1) / dvol,
+        illiq_realized=K_HF * np.sqrt(RV).mean(1) / dvol,
+        totvol=R.std(1, ddof=1),
+        totvol_disjoint=R_alt.std(1, ddof=1),
+        ivol=(R - beta[:, None] * mkt).std(1, ddof=1),
+    )
+
+
+def rho(a, b):
+    return scipy_stats.spearmanr(a, b).statistic
+
+
+rows_ri = []
+for label, disp in [("full cross-section", 0.90), ("within size decile", 0.30),
+                    ("volume near-constant", 0.10)]:
+    s = simulate_month(disp)
+    rows_ri.append({
+        "volume dispersion": label,
+        "TRUE illiq vs TRUE vol": round(rho(s["illiq_true"], s["sigma"]), 3),
+        "classic vs TOTVOL": round(rho(s["illiq_classic"], s["totvol"]), 3),
+        "classic vs TOTVOL (disjoint)": round(rho(s["illiq_classic"], s["totvol_disjoint"]), 3),
+        "realized vs TOTVOL": round(rho(s["illiq_realized"], s["totvol"]), 3),
+        "fidelity: classic": round(rho(s["illiq_classic"], s["illiq_true"]), 3),
+        "fidelity: realized": round(rho(s["illiq_realized"], s["illiq_true"]), 3),
+    })
+
+print("Spearman correlations; true volatility and true volume are INDEPENDENT")
+print(pd.DataFrame(rows_ri).set_index("volume dispersion").T.to_string())
+
+
+def normal_scores(x):
+    """Rank-based normal scores, matching the chapter's rank-correlation approach."""
+    return scipy_stats.norm.ppf(scipy_stats.rankdata(x) / (len(x) + 1))
+
+
+s = simulate_month(0.30)
+print("\nPCA composite of (ILLIQ, TOTVOL, IVOL), within size decile:")
+for name, ill in [("classic ILLIQ", s["illiq_classic"]),
+                  ("realized ILLIQ", s["illiq_realized"]),
+                  ("TRUE illiquidity", s["illiq_true"])]:
+    X = np.column_stack([normal_scores(c) for c in (ill, s["totvol"], s["ivol"])])
+    C = np.corrcoef(X, rowvar=False)
+    ev = np.linalg.eigvalsh(C)[::-1]
+    print(f"  {name:<17} PC1 share={ev[0] / ev.sum():.3f}   "
+          f"corr(ILLIQ,TOTVOL)={C[0, 1]:.3f}   corr(ILLIQ,IVOL)={C[0, 2]:.3f}")
+```
+
+Four findings, each with a direct bearing on how the results in @sec-correlation and @sec-empirical should be read.
+
+**The mechanical inflation is large, and largest exactly where this chapter works.** Within a size decile, the measured correlation between classic ILLIQ and TOTVOL is 0.690 when both are computed from the same month's returns, but only 0.514 when TOTVOL comes from a disjoint window. Roughly a quarter of the apparent association is manufactured by shared sampling noise. In the near-constant-volume case the gap widens further, from 0.726 to 0.932. Since DIVOP research routinely conditions on size — and size is the dominant driver of dollar-volume dispersion — the relevant regime is the narrow-dispersion one, not the full cross-section.
+
+**The realized measure removes essentially all of it.** Its fidelity to true illiquidity is 0.999 against 0.895 for the classic measure within a size decile, and its correlation with TOTVOL (0.609) reflects the genuine relation attenuated only by TOTVOL's own sampling error, not by any shared component.
+
+**The classic proxy loses its edge precisely where the numerator has to do the work.** Fidelity to true illiquidity falls from 0.977 in the full cross-section to 0.862 when volume is nearly constant, while the realized measure holds above 0.998 throughout. The interpretation is the one anticipated in @sec-liquidity-amihud-original: across the whole market the classic ratio ranks stocks well because the *denominator* varies enormously and is measured without error. Strip that variation out by conditioning on size, and what remains is the noisy numerator.
+
+**The PCA composite inherits the contamination, though modestly.** Using the classic proxy, the ILLIQ-TOTVOL correlation entering the PCA is 0.713 against a true 0.629, and the first component's variance share is 0.841 against a true 0.829. Substituting the realized measure reproduces the true correlation matrix and the true PC1 share almost exactly (0.628 and 0.829). The composite index is thus mildly overstated as a summary of common variation — it is partly summarizing shared measurement error rather than a common divergence-of-opinion factor. The distortion is small here because only one of the three inputs was replaced; a composite built entirely from same-window daily statistics would fare worse.
+
+### What This Means for the Chapter's Results
+
+The practical readings are narrow and worth stating precisely, since the effects above are real but not enormous.
+
+1.  **The reported correlations among return-based proxies are upper bounds.** Wherever @sec-correlation shows ILLIQ correlating with TOTVOL, IVOL, or a high-low BASPREAD, part of that correlation is construction rather than economics. Correlations with proxies built from *different* data — DTO and SUV from turnover, DISP from analyst forecasts — are not affected by this channel and can be read at face value.
+2.  **A cheap robustness check requires no intraday data at all.** Recomputing the correlation matrix with the volatility proxies estimated over an adjacent, non-overlapping window breaks the shared-noise channel directly. Any correlation that survives is not an artefact of common sampling error. This is the `disjoint` column of the simulation, implemented on real data, and it costs one extra `shift`.
+3.  **Do not over-interpret the PC1 variance share.** It is biased upward by shared noise, so the claim that a single factor explains most of the common variation in DIVOP proxies is somewhat weaker than the raw eigenvalues suggest.
+4.  **Conditioning on size raises the stakes.** Any specification that works within size groups strips out the volume variation that carries most of the classic ILLIQ's cross-sectional signal, leaving a proxy whose fidelity to true illiquidity falls toward 0.86. This is where substituting @eq-divop-realized-illiq buys the most.
+
+### Construction
+
+The realized proxy is a drop-in replacement for `amihud_daily` in `compute_spread_and_illiq()`. It requires the session-aware intraday inputs described in @sec-micro-realized-illiq.
+
+```{python}
+#| label: realized-illiq-divop
+#| eval: false
+#| code-summary: "Construct realized ILLIQ as a DIVOP proxy"
+def compute_realized_illiq(realized_daily, config, min_active=20):
+    """
+    Monthly realized Amihud from a symbol-day intraday panel with columns
+    [ticker, date, rv, bv, n_active, dvol_continuous].
+
+    `min_active` screens out days whose five-minute grid is mostly stale
+    prices; below roughly 20 active intervals of 45 the estimator's precision
+    advantage largely disappears (see the microstructure chapter).
+    """
+    k = np.sqrt(2 / np.pi)
+    df = realized_daily.copy()
+
+    n_before = len(df)
+    df = df[(df["n_active"] >= min_active) & (df["dvol_continuous"] > 0)]
+    print(f"Thin-trading screen: kept {len(df):,} of {n_before:,} symbol-days "
+          f"({100 * len(df) / max(n_before, 1):.1f}%)")
+
+    dvol_bn = df["dvol_continuous"] / 1e9
+    df["rilliq_daily"] = k * np.sqrt(df["rv"]) / dvol_bn
+    df["rilliq_bv_daily"] = k * np.sqrt(df["bv"].clip(lower=0)) / dvol_bn
+
+    df["ym"] = df["date"].dt.to_period("M")
+    agg = (df.groupby(["ticker", "ym"])
+             .agg(rilliq_mean=("rilliq_daily", "mean"),
+                  rilliq_bv_mean=("rilliq_bv_daily", "mean"),
+                  n_days=("rilliq_daily", "size"))
+             .reset_index())
+    agg = agg[agg["n_days"] >= config.get("min_days_per_month", 15)].copy()
+    agg["log_rilliq"] = np.log(agg["rilliq_mean"] + 1e-10)
+    return agg
+
+
+def totvol_disjoint(monthly_vol):
+    """
+    Robustness control requiring no intraday data: pair each month's ILLIQ
+    with the PREVIOUS month's volatility, so the two share no daily returns.
+    """
+    out = monthly_vol.sort_values(["ticker", "ym"]).copy()
+    out["totvol_lag"] = out.groupby("ticker")["totvol"].shift(1)
+    return out
+```
+
+### Vietnam-Specific Considerations
+
+1.  **Coverage is the binding constraint.** Intraday data is realistically available for the liquid end of HOSE — roughly the VN30 and larger mid-caps. Because the screen removes firms non-randomly on exactly the dimension under study, a DIVOP analysis restricted to the surviving sample is conditioned on liquidity. Report the retained fraction.
+2.  **Use the bipower variant.** Vietnam's daily price bands make large discrete moves routine, and an information jump inflates realized variance while leaving bipower variation nearly unbiased (@sec-liquidity-realized). For a chapter about divergence of opinion this matters more than usual, since the days with the most disagreement are the days most likely to hit the band.
+3.  **The disjoint-window check should be run regardless.** It requires no data this chapter does not already have, it directly addresses the contamination documented above, and it applies to the whole sample rather than only the liquid subset.
+4.  **The denominator is unchanged.** @eq-divop-realized-illiq improves the numerator only; the put-through and reporting complications affecting DolVol, discussed in the microstructure chapter, apply equally to both versions.
+
 # Analyst Forecast Dispersion {#sec-analyst}
 
 ## Theoretical Motivation

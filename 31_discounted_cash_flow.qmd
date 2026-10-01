@@ -282,6 +282,8 @@ forecast_assumptions = pd.DataFrame({
 forecast_assumptions
 ```
 
+A note on the tax assumption: analysts often default to the statutory corporate income tax rate (20% in Vietnam), but realized cash tax rates deviate from statutory rates persistently and systematically. @gaertner2026reexamination document that over ten-year horizons, US firms in the largest size decile pay cash effective tax rates roughly 10 percentage points below those in the smallest decile, largely because smaller firms are more likely to experience losses that cannot be fully offset against taxable profits. This mechanism is amplified in Vietnam, where tax losses can be carried forward for at most five consecutive years and carryback is not allowed, so small or young firms with intermittent losses tend to pay more cash tax over the long run than the statutory rate suggests. Our ratio-based approach, which anchors the tax assumption to the firm's own historical cash taxes rather than the statutory rate, is more robust to this issue.
+
 ### Forecasting Revenue Growth
 
 Revenue growth is often the most important and most uncertain assumption in DCF analysis. We demonstrate two approaches: using historical averages and linking growth to macroeconomic forecasts.

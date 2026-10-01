@@ -1429,6 +1429,8 @@ In the US, institutional trades are inferred from quarterly 13F holding snapshot
 
 We derive trades from the **change in ownership between consecutive disclosure dates**, applying the same logic as the US @ben2013hedge algorithm but adapted for Vietnam's irregular disclosure intervals.
 
+A caveat applies to any trade-inference exercise built on disclosed holdings: the disclosures themselves may be strategic. Even under the US's mandatory quarterly 13F regime, @cao2026hedge document that hedge funds sometimes misreport their original filings and quietly correct them later through restatements (which are as common as confidential filings and affect roughly three times as many stocks), with return patterns suggesting that the misreporting hides trading intentions while positions are being built. Vietnamese ownership disclosures (event-driven, less standardized, and less intensively policed than 13F filings) warrant at least as much skepticism: treat snapshots as reports that may be strategically timed or incomplete rather than ground truth, and cross-validate them against independent sources such as daily foreign flow data and annual shareholder registers wherever possible.
+
 ```{python}
 #| label: derive-trades-vn
 #| code-summary: "Derive Institutional Trades from Vietnamese Ownership Disclosures"

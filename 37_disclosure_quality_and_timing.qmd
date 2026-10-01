@@ -965,6 +965,228 @@ plt.tight_layout()
 plt.show()
 ```
 
+#### Measurement Error in the Liquidity Outcome {#sec-dq-realized-illiq}
+
+@eq-amihud uses a single absolute daily return to summarize an entire day of price movement. As developed at length in the liquidity chapter (@sec-liquidity-realized), that numerator carries roughly 76% relative measurement error per day, and @lacava2026realized show it can be replaced by a high-frequency estimate of the same quantity — the **realized Amihud**,
+
+$$
+\text{RAmihud}_{i,t} = \frac{1}{D_{i,t}}\sum_{d=1}^{D_{i,t}}
+\sqrt{\frac{2}{\pi}}\,\frac{\sqrt{\text{RV}_{i,d}}}{\text{Volume}_{i,d}},
+\qquad
+\text{RV}_{i,d} = \sum_{j=1}^{M} r_{i,d,j}^2
+$$ {#eq-dq-realized-amihud}
+
+where $r_{i,d,j}$ are intraday returns and the constant $\sqrt{2/\pi}$ keeps @eq-dq-realized-amihud on the same scale as @eq-amihud. At HOSE's $M = 45$ five-minute intervals the numerator's relative error falls from about 76% to about 11%.
+
+It would be easy to conclude that this specification therefore understates the disclosure-quality effect. **It does not, and the reason is worth being precise about, because the econometrics here differ fundamentally from the portfolio-sorting application in the liquidity chapter.** There, illiquidity is a right-hand-side sorting variable, and measurement error attenuates the estimated premium toward zero. Here, illiquidity is the *dependent* variable. Writing the measured outcome as truth plus noise, $\widehat{y}_i = y_i + \nu_i$, the regression $\widehat{y}_i = \alpha + \beta\,\text{DQ}_i + (\varepsilon_i + \nu_i)$ has an unchanged slope in expectation provided $\nu_i$ is uncorrelated with $\text{DQ}_i$. Classical measurement error in an outcome costs *precision*, not consistency [@hausman2001mismeasured]. The realized measure therefore buys statistical power in this chapter, not bias correction.
+
+Two questions follow. How much power, and is the "uncorrelated with $\text{DQ}$" proviso actually satisfied here?
+
+#### Where It Barely Matters: The Annual Specification
+
+The regression above averages daily ratios over a full fiscal year. Averaging is what defeats measurement error: over $D$ days the relative error of the Amihud numerator falls to $0.7555/\sqrt{D}$, which for a liquid firm with 250 trading days is under 5% — already small enough that halving it again changes little.
+
+There is, however, one channel through which the annual specification can be biased, and it is specific to the log transform the chapter applies. Because $\log$ is concave, $\mathbb{E}[\log \widehat{y}] < \log \mathbb{E}[\widehat{y}]$, and the size of that Jensen gap is approximately $-\tfrac{1}{2}\,\text{relvar}/D$. It therefore *varies across firms with $D_{i,t}$*. Firms that trade on few days carry a larger downward distortion in $\log(\text{Amihud})$ than firms that trade every day. Since thinly traded firms are also disproportionately the poor disclosers, $\nu_i$ is correlated with $\text{DQ}_i$ after all, and the slope is no longer clean. The magnitude is $-0.285/D$ for the classic measure against $-0.0056/D$ for the realized one — a fiftyfold difference.
+
+The following chunk quantifies both effects. It simulates a known disclosure-quality effect of $\beta = -0.10$ on log illiquidity, first with trading days identical across firms and then with trading days rising in disclosure quality.
+
+```{python}
+#| label: dq-annual-measurement-error
+#| code-summary: "Does numerator noise bias the annual disclosure-liquidity slope?"
+import numpy as np
+import pandas as pd
+from scipy.stats import norm
+
+rng_dq = np.random.default_rng(4242)
+M_HF, BETA_DQ, N_FIRMS, REPS_A, SD_E = 45, -0.10, 400, 300, 0.50
+
+
+def measure_factor(kind, n, D, rng):
+    """
+    Multiplicative measurement-error factor in the Amihud numerator,
+    averaged over each firm's D trading days. Mean one by construction;
+    only the variance differs between the two measures.
+    """
+    Dm = D.max()
+    mask = np.arange(Dm)[None, :] < D[:, None]
+    if kind == "classic":
+        z = np.abs(rng.normal(0, 1, (n, Dm))) / np.sqrt(2 / np.pi)   # half-normal
+    else:
+        z = np.sqrt(rng.chisquare(M_HF, (n, Dm)) / M_HF)             # sqrt(RV)
+    return np.where(mask, z, 0).sum(1) / D
+
+
+def annual_rep(link_days, rng):
+    """One draw of the annual cross-sectional regression."""
+    DQ = rng.normal(0, 1, N_FIRMS)
+    log_true = 1.0 + BETA_DQ * DQ + rng.normal(0, SD_E, N_FIRMS)
+
+    # Better disclosers trade on more days: 20 to 250 per year.
+    D = (np.clip(np.round(20 + 230 * norm.cdf(DQ)), 20, 250).astype(int)
+         if link_days else np.full(N_FIRMS, 250))
+
+    X = np.column_stack([np.ones(N_FIRMS), DQ])
+    XtXinv = np.linalg.inv(X.T @ X)
+
+    out = {}
+    for kind in ["classic", "realized", "truth"]:
+        f = (np.ones(N_FIRMS) if kind == "truth"
+             else measure_factor(kind, N_FIRMS, D, rng))
+        y = log_true + np.log(f)
+        b = XtXinv @ X.T @ y
+        r = y - X @ b
+        se = np.sqrt((r @ r / (N_FIRMS - 2)) * XtXinv[1, 1])
+        out[kind] = (b[1], se, b[1] / se)
+    return out
+
+
+for link_days in [False, True]:
+    acc = {k: [] for k in ["classic", "realized", "truth"]}
+    for _ in range(REPS_A):
+        for k, v in annual_rep(link_days, rng_dq).items():
+            acc[k].append(v)
+
+    rows = []
+    for k, v in acc.items():
+        a = np.array(v)
+        rows.append({
+            "measure": k,
+            "mean beta": round(a[:, 0].mean(), 4),
+            "attenuation %": round(100 * (1 - a[:, 0].mean() / BETA_DQ), 1),
+            "mean |t|": round(np.abs(a[:, 2]).mean(), 2),
+            "power@5%": round((np.abs(a[:, 2]) > 1.96).mean(), 3),
+        })
+    print(f"\nTrading days linked to disclosure quality: {link_days}")
+    print(pd.DataFrame(rows).to_string(index=False))
+```
+
+The results are reassuring for the specification already estimated in this chapter. When trading days are unrelated to disclosure quality, all three measures recover $\beta$ essentially exactly — confirming that outcome-side measurement error does not bias the slope. When trading days *are* linked to disclosure quality, the classic measure attenuates by roughly 3%, while the realized measure and the infeasible truth are indistinguishable. A 3% attenuation is not what will decide whether the disclosure-liquidity relation is detected, and it is comfortably inside any plausible confidence interval.
+
+**The honest conclusion for the annual regression is that the realized Amihud is not worth the intraday data it requires.** Knowing where a refinement does not matter is as useful as knowing where it does; the annual averaging in @eq-amihud has already done most of the work that high-frequency sampling would do.
+
+#### Where It Matters a Great Deal: Short Event Windows
+
+The picture reverses completely for the event-study designs elsewhere in this chapter. Testing whether liquidity improves after a filing means comparing illiquidity over a window of a few days on either side of the event, and a short window is exactly where averaging cannot rescue a noisy numerator. Over a five-day window the relative error of the classic numerator is $0.7555/\sqrt{5} \approx 34\%$; the realized numerator's is under 5%.
+
+Because the noise enters the pre-post difference twice, its effect on power is severe. The simulation below computes the power to detect a genuine post-filing change in log illiquidity, allowing for real cross-firm heterogeneity in the response so that the realized measure does not trivially achieve unit power.
+
+```{python}
+#| label: dq-event-window-power
+#| code-summary: "Power to detect a post-filing liquidity change, by window length"
+rng_ev = np.random.default_rng(77)
+REPS_B = 1500
+RELVAR = {"classic": np.pi / 2 - 1, "realized": 1 / (2 * M_HF)}
+
+
+def win_noise(kind, n, D):
+    """Log measurement error in a D-day window average of the numerator."""
+    z = (np.abs(rng_ev.normal(0, 1, (n, D))) / np.sqrt(2 / np.pi) if kind == "classic"
+         else np.sqrt(rng_ev.chisquare(M_HF, (n, D)) / M_HF))
+    return np.log(z.mean(1))
+
+
+def ev_power(kind, n, D, delta, sd_delta):
+    """Rejection rate of a paired pre/post test of a true change `delta`."""
+    rejections = 0
+    for _ in range(REPS_B):
+        d = ((delta + rng_ev.normal(0, sd_delta, n))
+             + win_noise(kind, n, D) - win_noise(kind, n, D))
+        rejections += abs(d.mean() / (d.std(ddof=1) / np.sqrt(n))) > 1.96
+    return rejections / REPS_B
+
+
+SD_RESP = 0.10          # genuine cross-firm variation in the liquidity response
+rows_ev = []
+for D in [5, 10, 21]:
+    for delta in [-0.02, -0.03, -0.05]:
+        row = {"window (days)": D, "true change": delta}
+        for kind in ["classic", "realized"]:
+            row[f"power {kind}"] = round(ev_power(kind, 200, D, delta, SD_RESP), 3)
+            # Closed-form firms needed for 80% power at the 5% level.
+            var_d = SD_RESP ** 2 + 2 * RELVAR[kind] / D
+            row[f"firms for 80% ({kind})"] = int(np.ceil(7.849 * var_d / delta ** 2))
+        rows_ev.append(row)
+
+ev = pd.DataFrame(rows_ev)
+ev["sample-size ratio"] = (ev["firms for 80% (classic)"]
+                           / ev["firms for 80% (realized)"]).round(1)
+print("200 firms, 5% two-sided test, cross-firm response sd = 0.10")
+print(ev.to_string(index=False))
+```
+
+The gap is large enough to change what is feasible. With 200 firms and a ten-day window, the power to detect a 3% improvement in liquidity is about 0.24 using the classic measure and about 0.97 using the realized one. Expressed as required sample size, detecting that effect at 80% power needs roughly 1,080 firms with the daily measure and roughly 110 with the realized measure. Since the entire Vietnamese listed universe is on the order of 1,600 firms across three venues — and a study of annual-report filings restricted to firms with continuous data will be a fraction of that — the classic measure makes this test infeasible for most subsamples while the realized measure makes it routine.
+
+Three further observations follow from the table.
+
+**The advantage grows as the window shrinks.** The sample-size ratio is about 5.8 at 21 days, 10 at ten days, and 16.5 at five days. Since the tightest event windows are precisely the ones where the identification is cleanest — least contaminated by confounding news — the noisy measure imposes a direct trade-off between statistical power and identification quality. The realized measure relaxes it.
+
+**A null result from a short-window liquidity test is close to uninformative.** At 200 firms and a five-day window, the classic measure rejects a true 2% effect only about 9% of the time — barely above the 5% size of the test. Reporting "no significant change in liquidity around filings" under that design says essentially nothing about whether a change occurred. Any such null in this literature should be read alongside its power.
+
+**The ceiling is set by real heterogeneity, not by measurement.** The realized measure's required sample sizes flatten out around 35 to 285 firms because the genuine cross-firm variation in the liquidity response (`SD_RESP = 0.10`) eventually dominates. Beyond a certain point, better measurement stops helping and only more firms will do.
+
+#### Implementation
+
+The realized measure is a drop-in replacement for the numerator wherever this chapter computes illiquidity. The chunk below shows the substitution for the annual panel; the realized inputs come from the session-aware HOSE construction described in @sec-micro-realized-illiq, which requires intraday data outside the standard pipeline.
+
+```{python}
+#| label: realized-amihud-dq
+#| eval: false
+#| code-summary: "Realized Amihud as the liquidity outcome"
+# `realized_daily` holds one row per symbol-day from the intraday pipeline:
+#   [ticker, date, rv, bv, n_active, dvol_continuous]
+K = np.sqrt(2 / np.pi)
+
+rd = realized_daily.copy()
+rd = rd[(rd["n_active"] >= 20) & (rd["dvol_continuous"] > 0)]     # thin-trading screen
+rd["ramihud_daily"] = K * np.sqrt(rd["rv"]) / rd["dvol_continuous"]
+rd["ramihud_bv_daily"] = K * np.sqrt(rd["bv"].clip(lower=0)) / rd["dvol_continuous"]
+
+realized_annual = (
+    rd.assign(fiscal_year=rd["date"].dt.year)
+      .groupby(["ticker", "fiscal_year"])
+      .agg(ramihud=("ramihud_daily", "mean"),
+           ramihud_bv=("ramihud_bv_daily", "mean"),
+           n_days=("ramihud_daily", "size"))
+      .reset_index()
+)
+realized_annual["log_ramihud"] = np.log(realized_annual["ramihud"] + 1e-10)
+
+# Compare against the daily-frequency measure on the overlapping sample.
+compare = amihud_annual.merge(realized_annual, on=["ticker", "fiscal_year"],
+                              how="inner")
+print(f"Overlapping firm-years: {len(compare):,}")
+print("Rank correlation between the two measures: "
+      f"{compare[['log_amihud', 'log_ramihud']].corr(method='spearman').iloc[0, 1]:.3f}")
+
+# Re-estimate the disclosure-quality regression with the realized outcome.
+liq_panel_r = (
+    realized_annual
+    .merge(quality_panel[["ticker", "fiscal_year", "dq_index"]],
+           on=["ticker", "fiscal_year"], how="inner")
+    .merge(financials[["ticker", "fiscal_year", "market_cap"]],
+           on=["ticker", "fiscal_year"], how="left")
+    .assign(log_size=lambda d: np.log(d["market_cap"]))
+    .set_index(["ticker", "fiscal_year"])
+)
+
+liq_model_r = PanelOLS(
+    dependent=liq_panel_r["log_ramihud"],
+    exog=sm.add_constant(liq_panel_r[["dq_index", "log_size"]]),
+    entity_effects=True, time_effects=True, check_rank=False,
+).fit(cov_type="clustered", cluster_entity=True)
+
+print("Realized Amihud ~ Disclosure Quality:")
+print(liq_model_r.summary)
+```
+
+#### Practical Guidance
+
+1.  **Do not re-run the annual regressions on intraday data.** The gain is a few percent of attenuation at most, and the sample would shrink to the liquid firms for which intraday data is usable — a selection cost far exceeding the measurement benefit.
+2.  **Do use the realized measure for the event-window tests** in @sec-dis-qual-consequences, where it is the difference between a feasible and an infeasible design.
+3.  **Report the trading-day count $D_{i,t}$** alongside any log-transformed illiquidity measure. It is the variable that governs the Jensen distortion, it is correlated with disclosure quality, and it is almost never reported.
+4.  **Prefer the bipower variant around filings.** An earnings surprise is exactly the information jump that inflates realized variance, and the filing date is when it arrives. @sec-liquidity-realized shows bipower variation remains nearly unbiased under jumps.
+5.  **Where intraday data is unavailable, widen the window rather than accept a null.** Going from five to 21 days recovers a substantial part of the power lost to numerator noise, at the cost of admitting more confounding events — a trade-off that should be made explicitly and reported, not by default.
+
 ### Event Study: Market Reaction to Filing Lag
 
 We examine whether the market reacts differently to early vs. late filers by computing cumulative abnormal returns (CARs) around the filing date:

@@ -214,6 +214,205 @@ print(f"\nLog Amihud distribution:")
 print(amihud_monthly['amihud'].describe().round(3))
 ```
 
+#### The Original 2002 Definition {#sec-liquidity-amihud-original}
+
+@eq-amihud is the *modern* form of the measure, not the one @amihud2002illiquidity actually estimated. The original is annual rather than monthly:
+
+$$
+\text{ILLIQ}_{i,y} = \frac{1}{D_{i,y}}\sum_{d=1}^{D_{i,y}} \frac{|R_{i,y,d}|}{\text{VOLD}_{i,y,d}}
+$$ {#eq-amihud-original}
+
+where $\text{VOLD}_{i,y,d}$ is dollar volume on day $d$ of year $y$ and $D_{i,y}$ is the number of days in year $y$ with both return and volume data. The differences from @eq-amihud are not cosmetic, and each one is a modelling decision that later authors quietly changed:
+
+1.  **Annual, not monthly.** Amihud's object of interest is *expected* illiquidity, which he models as slow-moving. He regresses monthly returns in year $y$ on $\text{ILLIQ}$ measured over year $y-1$, so the measure is a persistent firm characteristic rather than a monthly state variable. The monthly convention now dominant in the literature trades persistence for responsiveness, and inherits substantially more measurement noise per observation: averaging roughly 21 daily ratios instead of 250 inflates the sampling error of the average by about $\sqrt{250/21} \approx 3.5$ times.
+
+2.  **NYSE only.** Amihud deliberately excluded NASDAQ, because dealer-market interdealer trades double-count volume and would contaminate the denominator. The Vietnamese analogue is not a dealer market but the put-through (negotiated block) segment and, on UPCoM, extremely episodic trading; both distort $\text{DVOL}$ in ways the original design was constructed to avoid.
+
+3.  **Screens.** He required more than 200 days of data in the year, an end-of-year price above \$5, and available shares outstanding, and he trimmed the highest and lowest 1% of the annual $\text{ILLIQ}$ cross-section as outliers. The price screen removes stocks where tick discreteness dominates the numerator, a screen with real bite in Vietnam, where a large share of the listed universe trades below 10,000 VND on a 10 VND tick.
+
+4.  **The scaling factor.** Amihud multiplies by $10^6$, which is a *unit convention tied to dollars*, not a property of the estimator. We return to this below, because it is the single most common source of non-comparable Amihud numbers in the literature.
+
+5.  **Mean adjustment.** This is the most frequently dropped ingredient of the original paper and the one that matters most for Vietnam. Because dollar volume grows secularly with inflation, market growth, and rising turnover, raw $\text{ILLIQ}$ carries a mechanical downward trend that has nothing to do with liquidity improving. Amihud therefore also works with the *mean-adjusted* measure
+
+    $$
+    \text{ILLIQMA}_{i,y} = \frac{\text{ILLIQ}_{i,y}}{\text{AILLIQ}_{y}},
+    \qquad
+    \text{AILLIQ}_{y} = \frac{1}{N_y}\sum_{i=1}^{N_y}\text{ILLIQ}_{i,y}
+    $$ {#eq-amihud-ma}
+
+    which is unit-free and detrended by construction. In a market where VND trading value grew by an order of magnitude over the sample period, using raw $\text{ILLIQ}$ in any pooled or time-series specification without period fixed effects will find a "liquidity improvement" that is an artefact of the denominator.
+
+His two headline results are worth separating, because they are often conflated. In the cross-section, expected illiquidity is positively priced: stocks with higher prior-year $\text{ILLIQMA}$ earn higher subsequent returns. In the time series, *unexpected* illiquidity — the innovation from an AR(1) fitted to $\text{AILLIQ}_y$ — is associated with *negative* contemporaneous returns, because a liquidity shock is capitalized immediately as a price drop even as it raises expected future returns. A test that mixes the two will find the sign confusing.
+
+#### Precursor and Theory: Why a Return-to-Volume Ratio
+
+The measure did not appear from nowhere. @amihud1986asset had already shown, theoretically and empirically, that expected returns increase in the quoted bid-ask spread, because investors must be compensated for the cost of a round trip. The problem with that result is data: quoted spreads require a quote history, which for most markets and most of history does not exist. The 2002 measure is best read as an answer to the question "what can be computed from daily returns and volume alone that behaves like a transaction cost?" — the same question that motivates the Roll, Corwin–Schultz, and Lesmond estimators developed elsewhere in this chapter. @amihud2005liquidity survey the resulting literature.
+
+The theoretical warrant comes from @kyle1985continuous. In Kyle's model the price impact of a signed order flow $Q$ is $\Delta p = \lambda Q$, so $\lambda = |\Delta p| / |Q|$ is exactly a return-to-volume ratio. @eq-amihud is that ratio computed with *unsigned* order flow, which is all daily data provides. @brennan1996market show directly that price-impact estimates constructed from intraday signed order flow carry a return premium, and @goyenko2009liquidity and @goyenko2009stock later establish that the Amihud ratio is a good low-frequency proxy for those high-frequency price-impact benchmarks. @fong2017best extend the horse race to global data and find it performs well outside the United States, which is why it is the workhorse in emerging-market research and why this chapter leans on it.
+
+#### The Variant Lineage
+
+@tbl-amihud-variants collects the transformations in common use. All of them are monotone in raw $\text{ILLIQ}$ within a period, which has an important consequence developed below.
+
+| Variant | Definition | Origin / typical use |
+|:---|:---|:---|
+| Raw | Mean of $\lvert R_d\rvert / \text{DVOL}_d$ | The estimator itself; almost never used directly |
+| Amihud-scaled | $\text{ILLIQ}\times 10^6$ | @amihud2002illiquidity, dollar volume in dollars |
+| Mean-adjusted | $\text{ILLIQ}_{i}/\overline{\text{ILLIQ}}$ | @amihud2002illiquidity; unit-free, detrended (@eq-amihud-ma) |
+| Log | $\log(\text{ILLIQ})$ or $\log(1+\text{ILLIQ})$ | Variance stabilization; the convention used in the code above |
+| Square root | $\sqrt{\text{ILLIQ}}$ | @hasbrouck2009trading; closer in units to an effective cost |
+| Normalized cost | $\min(a + b\,\text{ILLIQ}\,P^M_{t-1},\,\bar{c})$ | @acharya2005asset; maps to a percentage cost, capped |
+| Within-period rank | Percentile of $\text{ILLIQ}$ in period $t$ | @karolyi2012understanding, @amihud2015illiquidity; cross-market comparability |
+
+: Transformations of the Amihud illiquidity ratio in common use. All are strictly increasing in raw $\text{ILLIQ}$ within a given period. {#tbl-amihud-variants}
+
+Two of these deserve elaboration. The @acharya2005asset normalization exists because their model requires illiquidity denominated as a *percentage transaction cost*, so that it can be subtracted from returns. Their calibration $\min(0.25 + 0.30\,\text{ILLIQ}\,P^M_{t-1},\,30)$ scales by the growth of the market portfolio, which absorbs the same volume trend that $\text{ILLIQMA}$ absorbs, and caps the result at 30% to keep the extreme tail from dominating. The constants are fitted to US dollar-volume data in a specific era and **cannot be transposed to VND**. The code below shows the formula failing in both directions depending only on the volume unit: with volume in VND every stock is assigned the intercept cost of 0.25% with zero cross-sectional dispersion, and with volume in billions of VND every stock is pinned at the 30% cap, again with zero dispersion. Only one intermediate unit happens to produce variation, and there is nothing economic about that choice. The within-period rank transform used in the international liquidity literature [@karolyi2012understanding; @amihud2015illiquidity] exists for exactly this reason. It is the only transformation in the table that is invariant to the currency, the volume unit, and the era.
+
+A further refinement worth knowing about is @amihud2021illiquidity, who revisit the original results with a tradeable illiquid-minus-liquid factor and a conditional specification. Their construction is the closest published relative of the liquidity factor built at the end of this chapter.
+
+#### Scaling Is Not Innocuous
+
+The following chunk is self-contained and executes. It builds a synthetic daily panel with *known, constant* true illiquidity and then shows what the variant choice does to the numbers.
+
+```{python}
+#| label: amihud-variants
+#| code-summary: "All Amihud variants, and what scaling does to them"
+def amihud_variants(daily, ret="ret", dvol="dvol", scale=1e6, min_days=15):
+    """
+    Compute the Amihud (2002) ratio and its common transformations from a
+    daily panel with columns [ticker, date, ret, dvol].
+
+    `dvol` is currency volume in whatever unit the caller supplies; `scale`
+    is Amihud's units convention, which is *not* unit-free (see below).
+    """
+    df = daily.loc[daily[dvol] > 0].copy()
+    df["period"] = df["date"].dt.to_period("M")
+    df["illiq_d"] = df[ret].abs() / df[dvol]
+
+    p = (df.groupby(["ticker", "period"])
+           .agg(illiq=("illiq_d", "mean"), n_days=("illiq_d", "size"))
+           .reset_index())
+    p = p.loc[p["n_days"] >= min_days].copy()
+
+    p["illiq_scaled"] = p["illiq"] * scale                    # Amihud's x10^6
+    p["illiq_ma"] = p["illiq"] / p.groupby("period")["illiq"].transform("mean")
+    p["log_illiq"] = np.log(p["illiq_scaled"])                # variance stabilizing
+    p["sqrt_illiq"] = np.sqrt(p["illiq_scaled"])              # Hasbrouck (2009)
+    p["illiq_rank"] = p.groupby("period")["illiq"].rank(pct=True)
+    return p
+
+
+# A synthetic panel: 40 stocks, two years, TRUE illiquidity constant over time,
+# but market-wide VND volume growing at 35% per year.
+rng_v = np.random.default_rng(11)
+dates_v = pd.bdate_range("2023-01-02", "2024-12-31")
+tickers_v = [f"S{i:02d}" for i in range(40)]
+level_v = rng_v.lognormal(np.log(3e9), 1.1, size=len(tickers_v))  # VND/day
+years_v = (dates_v - dates_v[0]).days / 365.25
+
+demo = pd.concat([
+    pd.DataFrame({
+        "ticker": t,
+        "date": dates_v,
+        "ret": rng_v.normal(0, 0.022, len(dates_v)),
+        "dvol": L * np.exp(rng_v.normal(0, 0.6, len(dates_v))) * np.exp(0.35 * years_v),
+    })
+    for t, L in zip(tickers_v, level_v)
+], ignore_index=True)
+
+# (1) The x10^6 convention is a currency convention, not a normalization.
+print("Median ILLIQ x 10^6, identical economics, three volume units:")
+for unit, divisor in [("VND", 1.0), ("million VND", 1e6), ("USD @ 25,400", 25_400.0)]:
+    med = amihud_variants(demo.assign(dvol=demo["dvol"] / divisor))["illiq_scaled"].median()
+    print(f"  DVOL in {unit:<14s} {med:>12.6g}")
+
+# (2) Mean adjustment removes the volume trend; raw scaling does not.
+v = amihud_variants(demo)
+ts = v.groupby("period")[["illiq_scaled", "illiq_ma"]].median()
+first, last = ts.iloc[0], ts.iloc[-1]
+print("\nTrue illiquidity is constant; volume grows 35%/yr. Median over the panel:")
+for col, name in [("illiq_scaled", "ILLIQ x 10^6"), ("illiq_ma", "ILLIQMA     ")]:
+    print(f"  {name}: {first[col]:>10.4g} -> {last[col]:>10.4g} "
+          f"({100 * (last[col] / first[col] - 1):+.1f}%)")
+
+# (3) Every variant is monotone within a period, so ranks are identical.
+cols_v = ["illiq_scaled", "illiq_ma", "log_illiq", "sqrt_illiq", "illiq_rank"]
+within = (v.groupby("period")[["illiq"] + cols_v]
+            .corr(method="spearman").xs("illiq", level=1)[cols_v].mean())
+print("\nMean within-period Spearman rank correlation with raw ILLIQ:")
+print(within.round(4).to_string())
+
+# (4) But the distributions they induce are very different.
+print("\nPooled distribution shape:")
+print(v[["illiq_scaled", "log_illiq", "sqrt_illiq"]]
+      .agg(["skew", "kurt"]).round(3).to_string())
+
+# (5) Acharya-Pedersen constants are calibrated to US dollar volume, so the
+#     same formula degenerates in opposite directions depending on the unit.
+print("\nAcharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:")
+for unit, divisor in [("VND", 1.0), ("million VND", 1e6), ("billion VND", 1e9)]:
+    s = amihud_variants(demo.assign(dvol=demo["dvol"] / divisor))["illiq_scaled"]
+    ap = np.minimum(0.25 + 0.30 * s, 30.0)
+    print(f"  DVOL in {unit:<12s} mean={ap.mean():8.4f}  sd={ap.std():8.4f}  "
+          f"at cap={100 * (ap >= 30.0).mean():5.1f}%")
+```
+
+Five lessons follow, and they are the reason this subsection exists.
+
+**The $\times 10^6$ factor carries no information.** The same economic illiquidity reports as roughly $5\times10^{-6}$, $5$, or $0.13$ depending only on whether volume is booked in VND, million VND, or USD. Published "Amihud illiquidity of 0.8" figures are therefore uncomparable across papers unless the volume unit is stated, and it usually is not. State the unit; better, report a transformation that does not depend on it.
+
+**Raw levels move with the denominator's trend.** In the simulation, true illiquidity is constant by construction, yet the median raw measure falls by roughly 45% over two years purely because volume grew. $\text{ILLIQMA}$ moves by a few percent, which is sampling noise. Vietnam's trading value grew far faster than 35% per year in several stretches of the post-2015 period, so this is a first-order concern for any statement of the form "liquidity in Vietnam improved over the sample."
+
+**For within-period sorts, the variant choice does not matter at all.** Every transformation in @tbl-amihud-variants is strictly increasing within a period, so the mean within-period rank correlation is exactly 1.0 and the portfolio sorts later in this chapter would be numerically identical under any of them. This is worth knowing because it bounds how much of the literature's variant-shopping can possibly matter: it can matter only through specifications that use *levels* — pooled Fama-MacBeth without period fixed effects, time-series regressions, and anything comparing magnitudes across periods or markets.
+
+**The transformation matters for distributional reasons instead.** Pooled skewness falls from roughly 3.0 to 0.1 and excess kurtosis from roughly 11.8 to $-0.4$ under the log transform. Since Fama-MacBeth slopes are OLS coefficients and OLS is not robust to a right tail this heavy, the log transform is doing real work in the cross-sectional regressions: not fixing the ranks, but stopping a handful of firm-months from determining the slope.
+
+**Borrowed calibrations do not survive the trip.** The @acharya2005asset cost mapping is the clearest case. Under VND volume it assigns every firm-month the intercept, 0.25%, with a cross-sectional standard deviation of exactly zero; under billions of VND it pins all of them at the 30% cap, again with zero dispersion. In neither case does it fail loudly — it returns a plausible-looking percentage cost that happens to carry no information whatsoever about which stock is illiquid. Any published constant of the form $a + b\,\text{ILLIQ}$ inherits the units of the data it was fitted to, and must be re-estimated rather than copied.
+
+To apply the same function to the chapter's actual panel:
+
+```{python}
+#| label: amihud-variants-real
+#| eval: false
+#| code-summary: "Apply the variant constructor to the Vietnamese daily panel"
+# `daily` carries turnover_value in VND; express it in billions so that the
+# resulting ratio reads as "return per billion VND traded".
+amihud_all = amihud_variants(
+    daily.rename(columns={"turnover_value": "dvol"}).assign(
+        dvol=lambda d: d["dvol"] / 1e9
+    ),
+    scale=100.0,          # report as PERCENT price move per billion VND
+    min_days=10,
+)
+print(amihud_all[["illiq_scaled", "illiq_ma", "log_illiq"]].describe().round(4))
+```
+
+Setting `scale=100.0` with volume in billions VND gives the measure a reading that survives translation: *the percentage price move associated with one billion VND of trading*. This is the convention we recommend for Vietnamese work, and it should always be stated alongside the number.
+
+#### What Is Actually Being Priced: The Lou--Shu Critique
+
+There is a deeper objection to @eq-amihud than any question of scaling, and it bears directly on the high-frequency refinement developed in @sec-liquidity-realized.
+
+@lou2017price decompose the Amihud ratio into the part attributable to the denominator and the part attributable to genuine return-per-unit-volume price impact. Their finding is uncomfortable for the standard interpretation: the return premium associated with $\text{ILLIQ}$ is driven by the *trading volume* component rather than by the price-impact component. Put bluntly, sorting on $\text{ILLIQ}$ is close to sorting on inverse dollar volume, and the premium it earns may reflect whatever inverse dollar volume proxies for — investor recognition, neglect, retail attention — rather than compensation for price impact.
+
+This has two implications for the book.
+
+The first is a warning. Where later sections of this chapter report a liquidity premium from $\text{ILLIQ}$ sorts, the correct interpretation is "a premium associated with the Amihud characteristic," not "compensation for price impact." Distinguishing the two requires the decomposition, and it requires controlling for dollar volume directly.
+
+The second is a genuinely open question that the realized estimator is positioned to answer. The price-impact content of $\text{ILLIQ}$ lives in the numerator, and @sec-liquidity-realized shows that the daily numerator $|R_d|$ carries roughly 76% relative measurement error while the denominator $\text{DVOL}_d$ is observed essentially without error. A horse race between a numerator measured with 76% noise and a denominator measured with none is not a fair test of which component matters: classical errors-in-variables attenuates the numerator's estimated contribution toward zero regardless of its true economic role. Whether the Lou–Shu result survives a numerator measured with the roughly sevenfold greater precision of @lacava2026realized is, as far as we are aware, untested. We flag it as a research opportunity rather than a result, and we note that Vietnam is a poor place to attempt it, for the intraday-data reasons set out in @sec-liquidity-realized.
+
+#### Which Variant This Book Uses
+
+For concreteness, the conventions adopted in the remainder of this chapter and the rest of the book:
+
+1.  **Monthly frequency**, for consistency with the monthly return panel, accepting the roughly 3.5-fold increase in sampling error relative to Amihud's annual construction.
+2.  **Volume in billions VND**, positive-volume days only, minimum ten valid days per firm-month.
+3.  **Log transform** for regression work, following the code accompanying @eq-amihud above, because the pooled distribution is far too skewed for OLS in levels.
+4.  **Within-month ranks or quintiles** for portfolio sorts, which as shown above are invariant to every other choice on this list.
+5.  **Mean adjustment** whenever levels are compared across time, which in practice means any specification without month fixed effects.
+
+The measure is also reported without transformation in the summary statistics, so that readers can convert to any other convention.
+
 ### Zero-Return Days (Lesmond Measure)
 
 @lesmond1999new propose using the proportion of zero-return days as a measure of transaction costs. The intuition is that if the true value change on a given day is smaller than the round-trip transaction cost, a rational marginal investor will not trade, and the observed return will be zero. Thus, the zero-return proportion is an increasing function of effective transaction costs.
@@ -697,7 +896,6 @@ The following experiment benchmarks @eq-realized-amihud against @eq-amihud on a 
 
 ```{python}
 #| label: realized-amihud-simulation
-#| eval: false
 #| code-summary: "Monte Carlo: realized vs. classic Amihud under noise and jumps"
 rng = np.random.default_rng(20260812)
 
@@ -778,28 +976,30 @@ score(simulate_days(30_000, M_HOSE, jump_prob=0.2, jump_sd=0.03),
       "Information jumps (~1 per 5 days, 3% size)")
 ```
 
-Three results should emerge, and each has a direct counterpart in the analytics above. First, under (A1)–(A4) the realized Amihud should cut relative RMSE by roughly the factor in @tbl-realized-precision and lift the rank correlation with true illiquidity from around 0.7 to above 0.99 — that rank correlation is what governs whether portfolio sorts put stocks in the right bucket. Second, breaking (A2) should bias the realized Amihud *upward*, and sampling at one minute instead of five should make the bias several times worse rather than better, which is the non-obvious lesson: with noise present, more data sampled more finely is actively harmful. Third, under jumps the plain realized Amihud should inherit a clear upward bias while the bipower version in @eq-realized-amihud-bv stays close to unbiased.
+Three results emerge, and each has a direct counterpart in the analytics above.
 
-::: callout-warning
-## This chunk has not been executed
+First, under (A1)–(A4) both estimators are essentially unbiased — the daily Amihud numerator is, as @eq-halfnormal says, unbiased for the right target — but their precision is not remotely comparable. Relative RMSE falls from about 1.28 to about 0.18, a ratio of roughly 7.2, which is exactly the improvement factor @tbl-realized-precision predicts analytically for $M = 45$. The rank correlation with true illiquidity rises from about 0.70 to about 0.99. That rank correlation is the number that matters most for this book, because it governs whether a portfolio sort puts a stock in the right quintile: at 0.70, a substantial fraction of stocks are misclassified by the sorting variable alone.
 
-Like every code chunk in this chapter, the simulation above is marked `eval: false` and its output is not reproduced here. The analytical figures in @tbl-realized-precision are closed-form results from @eq-abs-relsd and @eq-rv-relsd and do not depend on running it. Run the chunk to generate the Monte Carlo table.
-:::
+Second, breaking (A2) biases the realized Amihud *upward*, and sampling at one minute instead of five makes the bias roughly four times worse rather than better — about +16% at $M = 45$ against about +66% at $M = 225$. This is the non-obvious lesson of the whole section: with noise present, more data sampled more finely is actively harmful. Note also that the plain daily Amihud is essentially immune to this particular problem, since a single open-to-close return contains only one dose of noise. Robustness to microstructure noise is the one dimension on which the classic measure wins.
+
+Third, under jumps the plain realized Amihud inherits a clear upward bias (about +9%) while the bipower version in @eq-realized-amihud-bv stays close to unbiased (about +1%) and also delivers the lowest RMSE of the three. Given how routinely Vietnamese stocks hit their price bands, this is the configuration to prefer locally.
 
 ### Replication on Vietnamese Data
 
-@lacava2026realized use US high-frequency data, so a direct replication is not possible with the daily panel assembled earlier in this chapter. The honest position for this book is that the realized Amihud is currently **out of reach for most of the HOSE cross-section**, for a reason worth being explicit about: the estimator's precision is driven by $M$, the number of *non-trivial* intraday returns. A stock that trades a handful of times per session does not have 45 informative five-minute returns — it has a five-minute grid mostly filled with stale prices and mechanical zeros, which biases $\text{RV}$ *downward* and makes the stock look spuriously liquid. This is the same thin-trading problem that motivates the zero-return measure in @eq-zero-return, and it bites the realized Amihud harder than it bites the daily version.
+@lacava2026realized use US high-frequency data, so a direct replication is not possible with the daily panel assembled earlier in this chapter. The honest position for this book is that the realized Amihud is currently **out of reach for most of the HOSE cross-section**, for a reason worth being explicit about: the estimator's precision is driven by $M$, the number of *non-trivial* intraday returns. A stock that trades a handful of times per session does not have 45 informative five-minute returns — it has a five-minute grid mostly filled with forward-filled stale prices, whose mechanical zero returns contribute nothing to $\text{RV}$. The market microstructure chapter simulates this directly (@sec-micro-realized-illiq) and reaches a sharper conclusion than one might guess. The precision gain is governed by the number of intervals in which the price actually changed rather than the number of grid points, so it decays from the theoretical 7.2$\times$ to under 2$\times$ for a stock trading five times a day. The accompanying downward bias in $\text{RV}$ is real but second-order by comparison, because coarsening the sampling of a martingale does not bias realized variance in expectation; what staleness removes is the movement before the first trade and after the last. This is the same thin-trading problem that motivates the zero-return measure in @eq-zero-return, and it bites the realized Amihud harder than it bites the daily version.
 
 The practical consequence is that this estimator is a refinement for the liquid end of the market — roughly the VN30 constituents and the larger mid-caps — and not a replacement for @eq-amihud across the full panel. Constructing it for Vietnam requires intraday tick data from HOSE, which is not part of the daily pipeline used elsewhere in this chapter.
 
 ### Practical Guidance
 
-1.  **Sample at five minutes, not finer.** For HOSE's 225 continuous minutes this gives $M = 45$ and a 7.2$\times$ precision gain. The temptation to go to one minute should be resisted: @tbl-realized-precision shows the *theoretical* gain, but (A2) fails long before you collect it.
+1.  **Sample at five minutes, not finer.** For HOSE's 225 continuous minutes this gives $M = 45$ and a 7.2$\times$ precision gain. The temptation to go to one minute should be resisted: @tbl-realized-precision shows the *theoretical* gain, but (A2) fails long before you collect it. Five minutes is not an arbitrary convention — it is the frequency at which the bias-variance trade-off between sampling error and noise accumulation is conventionally struck [@andersen2003modeling], the optimal-sampling calculations of @aitsahalia2005often and @bandi2008microstructure land in the same neighbourhood for liquid US equities, and @liu2015does find across a wide range of asset classes that very few realized measures reliably beat five-minute $\text{RV}$. Since HOSE is thinner and its tick grid coarser than the markets those studies examine, the optimal interval there is if anything *longer* than five minutes, never shorter.
 2.  **Screen on trading frequency before computing it.** Require a minimum number of intervals containing an actual trade — not merely a price — and fall back to @eq-amihud below that threshold. Report which stocks fall back.
 3.  **Handle the lunch break and the auctions explicitly.** The 11:30–13:00 gap is not a return interval, and the ATO and ATC prices come from batch auctions rather than continuous matching. Compute $\text{RV}$ within each continuous session and sum, rather than differencing across the break or across the auctions.
 4.  **Exclude put-through trades from the denominator**, per (A4), so that the 14:45–15:00 negotiated block window does not inflate $\text{DVOL}$ against a numerator measured over continuous trading only.
 5.  **Prefer the bipower version on limit-hit days.** Vietnam's daily price bands make large discrete moves common, and @eq-realized-amihud-bv is the version that survives them.
-6.  **Software.** There is no single package; $\text{RV}$ and $\text{BV}$ are a few lines of `pandas` as above. For noise-robust alternatives when finer sampling is genuinely required, the two-scales estimator of @zhang2005tale is the standard reference implementation.
+6.  **Escalate to a noise-robust estimator only if you must sample finely.** The estimators in @eq-rv-bv are the right default at five minutes. If the application genuinely requires a finer grid, the literature offers three families, in rough order of implementation cost: the two-scales estimator of @zhang2005tale, which subsamples at two frequencies and extrapolates the noise away; the pre-averaging approach of @jacod2009microstructure, which averages returns within blocks before squaring; and the realized kernels of @barndorff2008designing, which weight autocovariances of intraday returns. @hansen2006realized is the standard diagnostic reference for detecting how much noise is present in the first place, and their signature plot — $\text{RV}$ against sampling frequency — should be produced for the Vietnamese cross-section before any of this is attempted.
+7.  **Consider nearest-neighbour truncation as a bipower alternative.** @andersen2012jump propose the MinRV and MedRV estimators, which are jump-robust like $\text{BV}$ but better behaved when jumps arrive in adjacent intervals — a realistic scenario on a limit-hit day, when the band is approached over several consecutive intervals rather than in one move.
+8.  **Software.** There is no single package that does this end to end; $\text{RV}$ and $\text{BV}$ are a few lines of `pandas`, as in the simulation above. The `realized` routines in the `arch` ecosystem cover the noise-robust estimators for readers who prefer not to implement them.
 
 ### Pitfalls
 

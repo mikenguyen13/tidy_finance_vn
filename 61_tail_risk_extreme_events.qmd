@@ -1553,6 +1553,173 @@ episode_summary["avg_coexceedance"] = episode_summary["avg_coexceedance"].round(
 episode_summary.head(10)
 ```
 
+### Anatomy of a Run: Who Exits First and What It Costs {#sec-tail-anatomy-run}
+
+The diagnostics above identify *when* the system is under stress from prices alone. They say nothing about *who* moves first, how fast the exit propagates, and who is left holding the losses. Those questions are usually unanswerable because bank deposit records are confidential. @liu2026anatomy answer them for one of the largest runs of the past decade by exploiting a setting where every transaction is public: the collapse of the Terra ecosystem in May 2022, which erased roughly $50 billion of value in three days. Terra's algorithmic stablecoin, UST, was convertible one-for-one into $1 of the network's native token, LUNA, so in economic terms UST was perpetual convertible debt backed by LUNA. Demand for UST came almost entirely from Anchor, a lending protocol that paid depositors a fixed 19.5% yield when comparable stablecoin rates elsewhere were 2 to 3%. The authors reconstruct the full transaction history of 3.7 million addresses across the Terra blockchain, Ethereum bridges, and centralized exchanges, and their account of the episode reads like a field guide to bank runs.
+
+Four findings are worth carrying into any study of Vietnamese financial stability.
+
+1.  **Fragility was built before the trigger, and it was visible.** Anchor's yield was never covered by borrowing income; a yield reserve topped up by the sponsor covered the gap, and the reserve was draining from December 2021. UST supply rose from 2.5 billion to 18.5 billion in six months, most of it parked in Anchor, while the market value of LUNA that backed it was falling. Depositor entry rates dropped and exit rates rose from April 2022, weeks before the crash. This is the sunspot-plus-fundamentals structure of the global-games literature: weak fundamentals turn an innocuous public signal into a coordination device. The signals that ended up coordinating the run were a scheduled rebalancing of a liquidity pool and the moment LUNA's market capitalization fell to the level of UST outstanding, a threshold that meant nothing to a fully rational investor but that many participants treated as proof the backing was gone.
+
+2.  **The run was not manipulation but a cascade started by a few large depositors.** Two wallets withdrew 400 million UST from Anchor on 7 May 2022 and sold on the deepest venues. Other large wallets followed within hours because they could watch the withdrawals on-chain. Anchor deposits fell from 14 billion to under 2 billion UST by 13 May, and the swap mechanism that was supposed to defend the peg instead drove LUNA supply from under 1 billion to 5.89 trillion as investors converted UST to LUNA and sold, the death spiral the design implied.
+
+3.  **Transparency did not level the playing field.** Addresses with more than 10 million UST withdrew almost everything within two days and lost 26% on average. Addresses below 1,000 UST kept adding deposits until 10 May, trying to buy the dip, and lost 76%. Controlling for size, addresses that had used cross-chain bridges or traded on several exchanges lost significantly less, so sophistication mattered independently of wealth. Everyone could see the same ledger; only some could act on it in time.
+
+4.  **A lender of last resort works only while the liability is small.** UST had de-pegged once before, in May 2021, and recovered because the sponsor and an allied trading firm absorbed the selling when UST outstanding was a few hundred million. In May 2022 the same actors spent about $2.5 billion defending the peg against 18 billion of claims and failed. The intervention that restores confidence at one scale is a rounding error at the next.
+
+The Vietnamese reading is direct. The deposit run on Saigon Commercial Bank (SCB) in October 2022, which forced the State Bank of Vietnam to place the bank under special control within days of the Vạn Thịnh Phát arrests, and the wave of redemptions from corporate bond funds in the same quarter after the Tân Hoàng Minh and Vạn Thịnh Phát bond cases, share the Terra anatomy: a liability that grew faster than its backing, a yield that only made sense if the sponsor kept paying, a public event that coordinated withdrawals, and a retail base that moved last. Vietnam also has one of the highest rates of retail crypto participation in the world, so a share of Vietnamese households held UST directly and sat on the wrong side of the loss table above. Two research designs follow. First, the crisis-episode table in this section can be extended from prices to *flows*: daily foreign-investor net sales by ticker, fund NAV redemptions, and, for the 2022 bond episode, the timing of retail versus institutional bondholder exits, to test whether the large-first, small-last ordering holds in Vietnamese data. Second, the co-exceedance measures above are early-warning signals for prices; @liu2026anatomy suggest complementing them with *stock* measures of fragility, the ratio of short-term claims to liquid backing at each intermediary, because that ratio is what determined whether the same intervention succeeded in 2021 and failed in 2022.
+
+### Self-Fulfilling Fire Sales {#sec-tail-fire-sales}
+
+The Terra episode was a run on a liability: depositors withdrew because they expected others to withdraw. @khorrami2026dynamic show that the asset side of a balance sheet can fail in the same self-fulfilling way, and that this fragility survives the remedy usually thought to remove it, namely complete markets for hedging fundamental risk.
+
+Their starting point is the financial-accelerator model of @brunnermeier2014macroeconomic, in the tradition of @kiyotaki1997credit. Productive "experts" earn $a_e$ per unit of capital and less productive "households" earn $a_h < a_e$, so capital is worth more in experts' hands, the same logic by which @shleifer1992liquidation explain why assets sold to outsiders fetch less. Experts cannot issue equity, so they finance capital with their own net worth and short-term debt. In the conventional version, a bad fundamental shock erodes expert net worth, experts sell capital to households, the price of capital falls because the buyers value it less, and the falling price erodes expert net worth further. The standard view is that this accelerator needs unhedged fundamental risk: if experts could insure their balance sheets against the shock, there would be nothing to amplify.
+
+Khorrami and Mendo let agents hedge every fundamental shock frictionlessly. Fundamental shocks then never cause fire sales, and there is an efficient equilibrium in which experts hold all capital and its price evolves deterministically. But some risk is always left unhedged: shocks that are novel, or that hit balance sheets no market lets investors short. Call such a shock a *sunspot*. If agents expect experts to sell capital when it arrives, the expectation fulfils itself:
+
+1.  experts sell, so capital moves to less productive owners and its price falls;
+2.  the sunspot is not hedgeable, so the price decline falls disproportionately on experts, whose share of aggregate wealth shrinks;
+3.  undercapitalized experts sell more, which justifies the initial expectation.
+
+Two equations make the loop concrete. Let $\eta$ be the experts' share of aggregate wealth, $\psi$ their share of the capital stock, and $\bar{\rho}(\eta) = \eta\rho_e + (1-\eta)\rho_h$ the wealth-weighted discount rate. Goods-market clearing ties the price of capital to who holds it,
+
+$$
+q\,\bar{\rho}(\eta) = \psi\, a_e + (1-\psi)\, a_h,
+$$ {#eq-tail-price-output}
+
+so the price is high only when experts hold the capital. In the region where they do not hold all of it ($\psi < 1$), the equilibrium price function satisfies
+
+$$
+q'(\eta) = \frac{(a_e - a_h)\, q}{q\,\bar{\rho}(\eta) - \eta\, a_e - (1-\eta)\, a_h},
+\qquad
+\sigma_q^2 = \frac{\eta(1-\eta)}{\psi - \eta}\cdot\frac{a_e - a_h}{q},
+$$ {#eq-tail-fire-sale-ode}
+
+where $\sigma_q$ is the volatility of the capital price driven *entirely* by the sunspot. The second expression is the condition that experts' extra productivity, $(a_e - a_h)/q$, exactly compensates them for bearing more of the unhedgeable price risk than households do. Once experts are rich enough that $\psi$ reaches one, the economy behaves like the safe equilibrium and sunspot volatility is zero.
+
+The paper establishes three results that matter beyond the model.
+
+**The size of a fire sale is a belief.** The differential equation in @eq-tail-fire-sale-ode needs a boundary condition: the share of capital experts are believed to keep when their wealth approaches zero, $\psi_0$. Every $\psi_0 \in [0, 1)$ supports an equilibrium, from the full fire sale ($\psi_0 = 0$, experts dump everything when broke) to the safe equilibrium ($\psi_0 \to 1$). Greater optimism about how much capital experts will retain in the tail produces smaller fire sales, lower volatility, and higher prices, which justifies the optimism.
+
+**Self-fulfilling and fundamental fire sales are observationally equivalent.** If fundamental risk is unhedgeable with volatility $\sigma$, the conventional accelerator equilibrium converges, as $\sigma \to 0$, to the full fire-sale sunspot equilibrium. This formalizes the "volatility paradox" of @brunnermeier2014macroeconomic: endogenous volatility does not vanish as exogenous risk does. The consequence for empirical work is uncomfortable. Data generated by an economy that amplifies fundamental shocks look the same as data generated by one that coordinates on non-fundamental ones.
+
+**The worst equilibrium is selected.** If agents perceive the sunspot as having a vanishingly small fundamental effect, and experts face a leverage constraint that is then relaxed, only the full fire-sale equilibrium survives. With jump rather than Brownian shocks, the selected equilibrium features large, discrete fire sales and markedly worse misallocation.
+
+Two further implications distinguish this from a bank run. The fire sale needs no maturity mismatch and no illiquid asset: even fundamentally safe assets can be fire-sold if coordinated selling can depress their price. And because debt is always repaid, deposit insurance has no role. The remedy the authors point to is a credible promise to buy assets in the disaster state, which would raise $\psi_0$ and remove the worst equilibria, though whether such promises create ex ante moral hazard is left open.
+
+The equilibrium is easy to compute. The code below solves @eq-tail-fire-sale-ode for three disaster beliefs, using the parameters of the paper's numerical example, and compares the result with the safe equilibrium in which $q = a_e/\bar{\rho}(\eta)$.
+
+```{python}
+#| label: fire-sale-equilibrium
+#| code-summary: "Solve the self-fulfilling fire-sale equilibrium"
+from scipy.integrate import solve_ivp
+
+RHO_E, RHO_H = 0.06, 0.04   # discount rates: experts, households
+A_E, A_H = 0.11, 0.03       # productivity: experts, households
+
+
+def rho_bar(eta):
+    return eta * RHO_E + (1 - eta) * RHO_H
+
+
+def capital_share(q, eta):
+    # Price-output relation solved for experts' capital share psi
+    return (q * rho_bar(eta) - A_H) / (A_E - A_H)
+
+
+def solve_fire_sale(psi0, eta_max=0.6, n_grid=600):
+    """Sunspot equilibrium with disaster belief psi0 = psi(0+)."""
+    def rhs(eta, y):
+        q = y[0]
+        return [(A_E - A_H) * q
+                / (q * rho_bar(eta) - eta * A_E - (1 - eta) * A_H)]
+
+    if psi0 > 0:
+        eta_0 = 1e-9
+        q_0 = (psi0 * A_E + (1 - psi0) * A_H) / rho_bar(eta_0)
+    else:
+        # psi0 = 0 is a singular boundary: near it, psi - eta ~ sqrt(2 c eta)
+        eta_0 = 1e-8
+        c = A_H / (A_E - A_H)
+        q_0 = ((eta_0 + np.sqrt(2 * c * eta_0)) * (A_E - A_H) + A_H) \
+            / rho_bar(eta_0)
+
+    def full_allocation(eta, y):        # stop where experts hold everything
+        return capital_share(y[0], eta) - 1
+    full_allocation.terminal = True
+    full_allocation.direction = 1
+
+    sol = solve_ivp(rhs, (eta_0, eta_max), [q_0], events=full_allocation,
+                    dense_output=True, rtol=1e-10, atol=1e-12, method="LSODA")
+    eta_star = sol.t_events[0][0] if sol.t_events[0].size else eta_max
+
+    eta = np.linspace(eta_0, eta_max, n_grid)
+    fire_sale_region = eta < eta_star
+    q = np.where(fire_sale_region,
+                 sol.sol(np.minimum(eta, eta_star))[0],
+                 A_E / rho_bar(eta))
+    psi = np.minimum(capital_share(q, eta), 1.0)
+    sigma_q = np.zeros_like(eta)
+    region = fire_sale_region & (psi > eta)
+    sigma_q[region] = np.sqrt(eta[region] * (1 - eta[region]) * (A_E - A_H)
+                              / ((psi[region] - eta[region]) * q[region]))
+    return pd.DataFrame({"eta": eta, "q": q, "sigma_q": sigma_q}), eta_star
+
+
+frames = []
+for psi0 in [0.0, 0.25, 0.5]:
+    frame, eta_star = solve_fire_sale(psi0)
+    frames.append(frame.assign(equilibrium=f"Disaster belief ψ₀ = {psi0:g}"))
+    print(f"psi0 = {psi0:g}: fire-sale region eta < {eta_star:.3f}, "
+          f"peak sunspot volatility {frame['sigma_q'].max():.1%}")
+
+eta_grid = frames[0]["eta"]
+frames.append(pd.DataFrame({"eta": eta_grid, "q": A_E / rho_bar(eta_grid),
+                            "sigma_q": 0.0,
+                            "equilibrium": "Safe (fundamental) equilibrium"}))
+fire_sales = pd.concat(frames, ignore_index=True)
+```
+
+```{python}
+#| label: fig-fire-sale-equilibrium
+#| fig-cap: "Self-fulfilling fire sales: the price of capital and its sunspot-driven volatility as functions of experts' wealth share, for three disaster beliefs and the safe equilibrium. Parameters follow the numerical example in Khorrami and Mendo."
+#| fig-alt: "Two panels plotted against experts' wealth share. The capital price rises toward the safe-equilibrium curve and joins it at a threshold that is lower when the disaster belief is higher; sunspot volatility rises steeply from zero, stays high below that threshold, and drops to zero above it."
+plot_df = fire_sales.melt(
+    id_vars=["eta", "equilibrium"], value_vars=["q", "sigma_q"],
+    var_name="series", value_name="value"
+)
+plot_df["series"] = plot_df["series"].map({
+    "q": "Price of capital q",
+    "sigma_q": "Sunspot volatility σ_q"
+})
+
+(
+    p9.ggplot(plot_df, p9.aes(x="eta", y="value", color="equilibrium",
+                              linetype="equilibrium"))
+    + p9.geom_line(size=0.9)
+    + p9.facet_wrap("~series", scales="free_y", ncol=2)
+    + p9.scale_color_manual(values=["#2E5090", "#5B8BD0", "#9DB7E3",
+                                    "#C0392B"])
+    + p9.scale_linetype_manual(values=["solid", "solid", "solid", "dashed"])
+    + p9.labs(x="Experts' wealth share η", y="", color="", linetype="")
+    + p9.theme_minimal()
+    + p9.theme(figure_size=(10, 4.5), legend_position="bottom")
+)
+```
+
+Three features of @fig-fire-sale-equilibrium carry the economics. Below a threshold in experts' wealth share, about one-third under the full fire-sale belief, households hold some of the capital, its price lies below the safe-equilibrium price, and it is volatile even though no fundamental risk is borne by anyone. Volatility is zero when experts are rich enough to absorb the sunspot, jumps up as soon as their wealth share falls below the threshold, and falls back toward zero only when experts are so poor that little capital remains to be sold. And a more optimistic disaster belief shrinks the fire-sale region and lowers volatility throughout, which is the channel through which a credible asset-purchase backstop would work.
+
+The Vietnamese reading starts from the hedging assumption, which is far from local reality. Vietnam has no single-stock futures or options, short selling is effectively unavailable (@tbl-exchange-comparison), and VN30 index futures and covered warrants are the main instruments for transferring equity risk. Most shocks to the balance sheets of leveraged Vietnamese investors are unhedgeable, so the conventional accelerator applies directly. The model's sharper message is that building out hedging markets would not remove fire-sale fragility. It would move it to the shocks for which no market exists yet, such as the 2022 corporate bond crisis, which hit a market with no instrument for hedging issuer or sector credit risk.
+
+The roles in the model have recognizable counterparts. The "experts" are leveraged holders who value the asset most: margin-financed investors and founders who pledge their own shares as collateral. The "households" are unlevered retail buyers who absorb forced sales at lower valuations. Forced liquidations by securities companies when collateral values fall are the mechanism by which the expert capital share falls with expert wealth. Price limits change the form the fire sale takes. A coordinated sale that drives a stock to its floor, where it locks with an unfilled queue of sell orders, is a discrete jump rather than a smooth decline, which makes the paper's jump-shock variant the relevant one and links this section to the limit-hit dynamics in @sec-price-limit-magnet.
+
+Four research designs follow.
+
+1.  **Measure the state variable.** The model's state is the wealth share of leveraged holders. Aggregate margin-loan balances, reported in securities companies' quarterly financial statements, scaled by market capitalization are a natural proxy, at the market level and, where broker-level data allow, by stock.
+2.  **Test the nonlinearity.** The model predicts that price volatility is zero above a threshold in that state variable, jumps when the threshold is crossed, and declines again only at very low expert wealth. A linear regression of realized volatility on margin debt cannot detect this; a nonparametric or threshold specification can.
+3.  **Do not read amplification as fundamental.** Observational equivalence means a large price response to modest news is not, by itself, evidence of a large fundamental shock or of the strength of a fundamental accelerator. Designs that compare episodes with similar fundamental news and different leverage states are more informative than estimates of a single amplification coefficient.
+4.  **Evaluate backstops by their effect on tail beliefs.** The 2023 measures that allowed corporate bond payment extensions and the State Bank's support operations can be read as attempts to raise $\psi_0$. In the model, a credible backstop lowers volatility and raises prices *before* it is ever used. Event studies around policy announcements, focusing on stocks with high margin or pledged-share exposure, can test whether markets treated the promises as credible.
+
 <!-- ## Exercises
 
 1.  **Crash Risk Determinants.** Estimate a panel regression of NCSKEW on lagged firm characteristics: size, book-to-market, leverage, return volatility, trading volume, state ownership dummy, and lagged NCSKEW. Include industry and year fixed effects. Cluster standard errors by firm. Which characteristics predict future crash risk? Does state ownership amplify or attenuate crash risk?

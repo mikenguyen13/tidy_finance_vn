@@ -1242,6 +1242,233 @@ print("Model Scorecard:")
 print(scorecard_df.round(3).to_string())
 ```
 
+## Stepwise Factor-Model Selection {#sec-ts-cs-stepwise}
+
+The Barillas-Shanken framework compares two models at a time. But the factor zoo (@sec-factor-zoo-scale) offers dozens of candidate factors, and the practical question is not "is model A better than model B?" but "which subset of all available factors constitutes the best model?" @feng2026selecting answer this with a **stepwise selection** procedure that builds a factor model sequentially, adding and removing factors on the basis of asset-pricing tests, and that tests the resulting model against both the test assets and the factors it left out. Applied to US data, their procedure rejects the workhorse models (CAPM, the Fama-French three- and five-factor models) and selects an eight-factor model that survives the pricing tests and performs robustly out of sample. This section develops the method from first principles and provides a complete, runnable implementation.
+
+The intellectual lineage is worth naming. @feng2020taming ("Taming the Factor Zoo") use double-selection LASSO to test whether a *new* factor earns a risk premium after controlling for a high-dimensional set of existing ones. @feng2026selecting instead select the *model* itself, and their stopping rule leans on the observation—formalized by @barillas2018comparing—that comparing factor models reduces to comparing the maximum squared Sharpe ratios their factors attain.
+
+### The Squared-Sharpe-Ratio Spanning Duality {#sec-ts-cs-stepwise-duality}
+
+The engine of the method is a duality between mean-variance efficiency and the spanning regressions of the previous section. For a set of factors $F$ with mean vector $\boldsymbol{\mu}_F$ and covariance $\boldsymbol{\Sigma}_F$, the **maximum squared Sharpe ratio** attainable from those factors is
+
+$$
+\text{Sh}^2(F) = \boldsymbol{\mu}_F' \boldsymbol{\Sigma}_F^{-1} \boldsymbol{\mu}_F .
+$$ {#eq-max-sharpe-sq}
+
+@barillas2018comparing show that the increment in the maximum squared Sharpe ratio from adding a candidate factor $g$ to a model $F$ has a simple closed form in terms of the spanning regression $g_t = \alpha_g + \boldsymbol{\beta}' F_t + \varepsilon_t$:
+
+$$
+\text{Sh}^2(F \cup \{g\}) - \text{Sh}^2(F) = \frac{\alpha_g^2}{\sigma^2(\varepsilon_g)} .
+$$ {#eq-sharpe-increment}
+
+This equation is the whole method in miniature. The left-hand side is what we want to maximize (a model that spans more of the efficient frontier prices more assets). The right-hand side says that maximizing it is equivalent to finding the candidate factor with the largest ratio of squared spanning alpha to residual variance—and that a factor adds *nothing* to the frontier precisely when its spanning alpha is zero. Testing $\alpha_g = 0$ (a single-equation version of the GRS test of @sec-ts-cs-ts-tests) is therefore both the **selection criterion** (add the factor with the most significant, largest-increment alpha) and the **stopping rule** (stop when no unselected candidate has a non-zero alpha, i.e., when the model spans all of them).
+
+This is exactly the logic of the Barillas-Shanken comparison in @sec-ts-cs-model-comparison, promoted from a pairwise test into a search over all candidate factors.
+
+### Implementing the Stepwise Algorithm {#sec-ts-cs-stepwise-algo}
+
+We first define three self-contained helpers: the maximum squared Sharpe ratio of @eq-max-sharpe-sq, the spanning-alpha test that drives selection (returning the sample increment $\hat\alpha^2 / \widehat{\sigma}^2(\varepsilon)$ of @eq-sharpe-increment), and the GRS test used to judge the final model.
+
+```{python}
+#| label: stepwise-helpers
+#| code-summary: "Squared Sharpe ratio, spanning-alpha test, and GRS test"
+def squared_sharpe(R):
+    """Maximum squared Sharpe ratio of a set of excess-return columns."""
+    mu = R.mean(axis=0).values
+    Sigma = np.cov(R.values, rowvar=False, ddof=1)
+    if R.shape[1] == 1:
+        return float(mu[0] ** 2 / Sigma)
+    return float(mu @ np.linalg.inv(Sigma) @ mu)
+
+
+def spanning_alpha(g, F, maxlags=6):
+    """Regress candidate factor g on model factors F; HAC alpha test.
+    The sample SR^2 increment from adding g equals alpha^2 / var(residual)."""
+    common = g.dropna().index.intersection(F.dropna().index)
+    res = sm.OLS(g.loc[common], sm.add_constant(F.loc[common])).fit(
+        cov_type='HAC', cov_kwds={'maxlags': maxlags})
+    alpha = res.params['const']
+    return {'alpha': alpha, 't': res.tvalues['const'], 'p': res.pvalues['const'],
+            'sr2_increment': alpha ** 2 / res.resid.var(ddof=1)}
+
+
+def grs_test(excess_assets, factor_df, factor_cols):
+    """Gibbons-Ross-Shanken (1989) test that all alphas are jointly zero."""
+    common = excess_assets.dropna().index.intersection(factor_df.dropna().index)
+    Y = excess_assets.loc[common].values
+    F = factor_df.loc[common, factor_cols].values
+    T, N = Y.shape
+    K = F.shape[1]
+    Fc = np.column_stack([np.ones(T), F])
+    B = np.linalg.inv(Fc.T @ Fc) @ Fc.T @ Y
+    alpha, resid = B[0, :], Y - Fc @ B
+    Sig_e = resid.T @ resid / (T - K - 1)
+    fbar, Sig_f = F.mean(0), np.cov(F, rowvar=False, ddof=1)
+    sh2_a = alpha @ np.linalg.inv(Sig_e) @ alpha
+    sh2_f = (fbar @ np.linalg.inv(np.atleast_2d(Sig_f)) @ fbar
+             if K > 1 else fbar[0] ** 2 / Sig_f)
+    grs = ((T - N - K) / N) * (1 / (1 + sh2_f)) * sh2_a
+    return {'GRS': grs, 'p_value': 1 - stats.f.cdf(grs, N, T - N - K),
+            'mean_abs_alpha': np.abs(alpha).mean()}
+```
+
+The selection routine implements the forward and backward passes. The **forward** pass ranks every unselected candidate by its squared-Sharpe increment and adds the leader if its spanning alpha is significant; the **backward** pass removes any previously selected factor that has become redundant now that other factors are present (its alpha on the remaining model is no longer significant). The loop halts when no candidate is unspanned, at which point the selected factors span the joint efficient frontier of themselves and all rejected candidates.
+
+```{python}
+#| label: stepwise-select
+#| code-summary: "Forward/backward stepwise model selection"
+def stepwise_select(factors, candidate_cols, baseline_cols, test_assets=None,
+                    add_threshold=0.05, verbose=True):
+    """Forward/backward stepwise asset-pricing-model selection (Feng et al. 2026).
+
+    Forward: add the unselected candidate with the largest SR^2 increment
+             (equivalently, the most significant spanning alpha) while some
+             candidate remains unspanned by the current model.
+    Backward: drop any selected non-baseline factor that has become redundant.
+    """
+    selected = list(baseline_cols)
+    remaining = [c for c in candidate_cols if c not in selected]
+    history = [{'action': 'baseline', 'model': list(selected),
+                'sharpe_ann': np.sqrt(squared_sharpe(factors[selected]) * 12)}]
+    while remaining:
+        scored = sorted(
+            ((g, spanning_alpha(factors[g], factors[selected])) for g in remaining),
+            key=lambda kv: kv[1]['sr2_increment'], reverse=True)
+        g, s = scored[0]
+        if s['p'] > add_threshold:
+            break                      # no unspanned candidate -> frontier spanned
+        selected.append(g); remaining.remove(g)
+        sr2 = squared_sharpe(factors[selected])
+        history.append({'action': f'+{g}', 'model': list(selected),
+                        'sharpe_ann': np.sqrt(sr2 * 12), 't_alpha': s['t']})
+        if verbose:
+            print(f"  + {g:>4}  t(alpha)={s['t']:5.2f}  SR2_incr={s['sr2_increment']:.4f}"
+                  f"  -> model SR2={sr2:.3f}  Sharpe(ann)={np.sqrt(sr2*12):.2f}")
+        for f in [x for x in selected if x not in baseline_cols and x != g]:
+            s2 = spanning_alpha(factors[f], factors[[x for x in selected if x != f]])
+            if s2['p'] > add_threshold:
+                selected.remove(f); remaining.append(f)
+                if verbose:
+                    print(f"  - {f:>4}  dropped (now spanned, alpha p={s2['p']:.3f})")
+    diag = {'selected': selected, 'history': history,
+            'sharpe_ann': np.sqrt(squared_sharpe(factors[selected]) * 12)}
+    if test_assets is not None:
+        diag['grs'] = grs_test(test_assets, factors, selected)
+    diag['unselected'] = {g: spanning_alpha(factors[g], factors[selected])
+                          for g in candidate_cols if g not in selected}
+    return diag
+```
+
+A note on the stopping rule. With a handful of candidates, a per-factor significance threshold on the spanning alpha is adequate. When the candidate set is large, the individual tests suffer the multiple-comparison problem of @sec-factor-zoo-multiple-testing, and @feng2026selecting instead stop on the **high-dimensional alpha test** of @pesaran2024testing, which is designed to test the joint nullity of alphas when the number of test assets is large relative to the sample. In the implementation above, tightening `add_threshold` (for example to a Bonferroni level $0.05 / \#\text{candidates}$) is a simple and conservative substitute.
+
+### Replication: Recovering a Known Model {#sec-ts-cs-stepwise-sim}
+
+Before trusting the procedure on real data, we verify it on simulated data where the correct answer is known by construction. We generate a true four-factor world—a market factor plus three near-orthogonal priced factors with realistic anomaly Sharpe ratios—and contaminate the candidate set with two **redundant** factors (linear combinations of the true factors plus noise, so they carry positive average returns but zero alpha once their parents are included) and one **decoy** with no risk premium at all. Twenty test portfolios are priced by the true four factors with zero alpha.
+
+```{python}
+#| label: stepwise-simulate
+#| code-summary: "Simulate a known four-factor world with redundant and decoy candidates"
+rng = np.random.default_rng(2026)
+T = 480
+idx = pd.date_range('1986-01-31', periods=T, freq='ME')
+mkt = rng.normal(0.006, 0.043, T)
+f2 = rng.normal(0.0050, 0.020, T)   # value-like
+f3 = rng.normal(0.0045, 0.018, T)   # profitability-like
+f4 = rng.normal(0.0050, 0.021, T)   # momentum-like
+r1 = 0.8 * f2 + rng.normal(0, 0.012, T)              # redundant shadow of f2
+r2 = 0.5 * f3 + 0.5 * f4 + rng.normal(0, 0.012, T)   # redundant combo of f3, f4
+d1 = rng.normal(0.0002, 0.025, T)                    # zero-Sharpe decoy
+sim_factors = pd.DataFrame(
+    {'mkt': mkt, 'f2': f2, 'f3': f3, 'f4': f4,
+     'r1': r1, 'r2': r2, 'd1': d1}, index=idx)
+
+N = 20
+loadings = rng.uniform(-0.6, 1.4, size=(N, 4))
+sim_test = pd.DataFrame(
+    np.column_stack([mkt, f2, f3, f4]) @ loadings.T + rng.normal(0, 0.015, (T, N)),
+    index=idx, columns=[f'P{i:02d}' for i in range(N)])
+
+candidates = ['f2', 'f3', 'f4', 'r1', 'r2', 'd1']
+
+print("GRS on the 20 test assets (workhorse baselines):")
+for name, cols in [('CAPM', ['mkt']),
+                   ('true 4-factor', ['mkt', 'f2', 'f3', 'f4']),
+                   ('all-7 kitchen sink', ['mkt'] + candidates)]:
+    g = grs_test(sim_test, sim_factors, cols)
+    verdict = 'REJECTED' if g['p_value'] < 0.05 else 'not rejected'
+    print(f"  {name:<20} GRS={g['GRS']:.2f}  p={g['p_value']:.3f}  ->  {verdict}")
+```
+
+The CAPM is decisively rejected on these test assets, while the true four-factor model (and the redundant "kitchen sink" that nests it) is not—exactly the pattern @feng2026selecting document for the workhorse models on real US data. Now we let the algorithm discover the model on its own, starting from the CAPM:
+
+```{python}
+#| label: stepwise-run
+#| code-summary: "Run stepwise selection and test the result"
+diag = stepwise_select(sim_factors, candidates, ['mkt'], sim_test)
+
+print(f"\nSelected model : {diag['selected']}")
+print(f"Final Sharpe   : {diag['sharpe_ann']:.2f} (annualized)")
+print(f"GRS on assets  : {diag['grs']['GRS']:.2f}  p={diag['grs']['p_value']:.3f}")
+print("Unselected candidates' spanning alphas (should be insignificant):")
+for k, v in diag['unselected'].items():
+    print(f"   {k:>3}: alpha_ann={v['alpha']*12:+.4f}  t={v['t']:+.2f}  p={v['p']:.3f}")
+```
+
+The procedure recovers exactly the true model `['mkt', 'f2', 'f3', 'f4']`: it adds the three priced factors in order of their squared-Sharpe increment (each with a large, significant spanning $t$-statistic) and then halts, because every remaining candidate is now spanned. The two redundant factors and the decoy are left out, and their post-selection spanning alphas are small and insignificant—the model prices them, which is the property @feng2026selecting require of a valid model. The final GRS test on the test assets is comfortably non-rejected.
+
+The economic content of the selection is the expansion of the efficient frontier, which we plot as the annualized Sharpe ratio of the selected model at each step.
+
+```{python}
+#| label: fig-stepwise-frontier
+#| fig-cap: "Efficient-frontier expansion under stepwise selection. Each point is the maximum annualized Sharpe ratio attainable from the model after that step; labels mark the factor added. The curve flattens as the added factors span progressively less of the residual frontier, and selection halts when no candidate improves it significantly."
+#| code-summary: "Plot the frontier expansion across stepwise iterations"
+hist = pd.DataFrame(diag['history'])
+fig, ax = plt.subplots(figsize=(9, 5))
+ax.plot(range(len(hist)), hist['sharpe_ann'], 'o-', lw=2, color='#2C5282')
+for i, row in hist.iterrows():
+    ax.annotate(row['action'], (i, row['sharpe_ann']),
+                textcoords='offset points', xytext=(0, 10), ha='center')
+ax.set_xlabel('Stepwise iteration')
+ax.set_ylabel('Annualized Sharpe ratio of selected model')
+ax.set_title('Efficient-frontier expansion as factors are added')
+plt.tight_layout()
+plt.show()
+```
+
+### Application to Vietnamese Factor Models {#sec-ts-cs-stepwise-vietnam}
+
+The procedure transfers directly to Vietnamese data: replace `sim_factors` with the locally constructed factor panel of @sec-factor-zoo-zoo (market, size, value, profitability, investment, momentum, and any additional anomaly long-short returns that survive the multiple-testing screen of @sec-factor-zoo-corrections) and `sim_test` with a set of Vietnamese test portfolios (the size-BM and size-momentum sorts of @sec-ts-cs-data). The baseline is the market factor; the candidate set is every anomaly factor with adequate coverage.
+
+```{python}
+#| label: stepwise-vietnam
+#| eval: false
+#| code-summary: "Stepwise selection on Vietnamese factors (real data)"
+# `factors` and the test-portfolio frames come from the DataCore pipeline
+# built earlier in this chapter (see the data-load chunk).
+vn_candidates = ['smb', 'hml', 'rmw', 'cma', 'wml']  # extend with local anomalies
+
+vn_result = stepwise_select(
+    factors=factors,
+    candidate_cols=vn_candidates,
+    baseline_cols=['mkt_excess'],
+    test_assets=excess_25_bm,        # 25 size-BM Vietnamese portfolios
+    add_threshold=0.05 / len(vn_candidates)  # Bonferroni-style, see caveat below
+)
+print("Vietnamese stepwise model:", vn_result['selected'])
+print(f"GRS p-value: {vn_result['grs']['p_value']:.3f}")
+```
+
+Three caveats specific to the Vietnamese setting deserve emphasis, and each is a direct consequence of the market's institutional features developed elsewhere in this book:
+
+1.  **Short samples reduce power.** Reliable Vietnamese factor data begins around 2008 (@sec-ts-cs-data), giving fewer than 200 monthly observations. The spanning alpha $t$-statistics and the GRS test both lose power as $T$ falls, so the procedure will tend to select **smaller** models than it would on the long US samples of @feng2026selecting. A factor omitted on Vietnamese data is weakly priced *given the available sample*, not necessarily unpriced. Reporting the squared-Sharpe increment alongside the $p$-value (both are returned by the helpers above) keeps the economic magnitude visible even when statistical significance is marginal.
+
+2.  **Correlated factors destabilize the path.** Vietnamese value, quality, and profitability signals are empirically more collinear than in the US because they load on the same handful of large, state-linked firms. High collinearity inflates the residual variance in @eq-sharpe-increment and makes the order of addition sensitive to the sample, so the selected model should be validated by re-running on bootstrap resamples (@sec-factor-zoo-bootstrap) and by checking out-of-sample stability (@sec-factor-zoo-oos), not read off a single in-sample path.
+
+3.  **Test-asset choice matters more in thin markets.** With relatively few liquid stocks, finely partitioned test portfolios (for example 25 double sorts) contain noisy, thinly traded portfolios that can dominate the GRS statistic. Coarser sorts ($2\times3$ or decile portfolios) and the price-limit-aware return construction of the microstructure chapter give more trustworthy stopping decisions.
+
+Used with these caveats, the stepwise approach turns the sprawling Vietnamese factor zoo into a disciplined, testable model: rather than defaulting to an imported Fama-French specification, the researcher lets the local data select the factors that actually span the Vietnamese efficient frontier, and obtains an explicit pricing test of the result.
+
 ## Conditional vs. Unconditional Tests {#sec-ts-cs-conditional}
 
 ### Time-Varying Betas

@@ -35,6 +35,8 @@ The application of textual analysis to financial data has a rich history. @tetlo
 
 More recent work has leveraged advances in deep learning. @huang2023finbert apply BERT-based models to earnings call transcripts and show that contextual embeddings capture information about future earnings that traditional bag-of-words measures miss. @jha2024chatgpt use GPT-based models for zero-shot financial text classification and demonstrate that LLMs can match or exceed purpose-built classifiers on standard benchmarks.
 
+Text can also measure the *uncertainty* investors face, not only its tone. @wei2026narrative extract a narrative-based ambiguity measure from economic news articles, distinct from survey- and return-based ambiguity proxies, and show that it predicts aggregate stock market returns both in and out of sample. Investors are on average ambiguity averse, but ambiguity tolerance emerges when the probability of loss is high, and aligning industry-specific narrative ambiguity (chiefly from consumption-, energy-, and technology-related news) yields a stronger market predictor. The predictability extends to international markets and other asset classes, which makes the approach a natural candidate for Vietnamese financial news.
+
 ## NLP for Vietnamese Language {#sec-textual-lit-vnlp}
 
 Vietnamese NLP has advanced significantly with the development of VnCoreNLP [@vu2018vncorenlp], a Java-based toolkit providing word segmentation, POS tagging, named entity recognition, and dependency parsing. The underthesea library offers a Python-native alternative. Most critically for financial applications, PhoBERT [@nguyen2020phobert] provides Vietnamese-specific BERT pre-training on a 20GB corpus, achieving state-of-the-art results on multiple Vietnamese NLP tasks.
@@ -47,6 +49,8 @@ Vietnamese NLP has advanced significantly with the development of VnCoreNLP [@vu
 | @nguyen2020phobert | PhoBERT: Vietnamese BERT pre-training | SOTA on Vietnamese NLP benchmarks | Foundation model for Vietnamese financial NLP |
 | @huang2023finbert | BERT embeddings on earnings calls | Contextual embeddings predict future earnings beyond BoW | Apply to Vietnamese earnings call transcripts |
 | @jha2024chatgpt | GPT-based zero-shot financial classification | LLMs match fine-tuned classifiers | Zero-shot Vietnamese financial text classification via multilingual LLMs |
+| @wei2026narrative | Narrative ambiguity extracted from economic news | News-based ambiguity predicts market returns beyond survey- and return-based measures; aversion turns to tolerance at high loss probability | Aggregate ambiguity index from Vietnamese financial news for VN-Index return predictability |
+| @crowley2024executive | ML classification + content similarity of S&P 1500 executives' tweets | Investors react to executives' financial tweets through both new-information and credibility channels | Executive Facebook/Zalo posts of Vietnamese listed firms (@sec-textual-exec-social) |
 
 : Key Literature on Textual Analysis in Finance {#tbl-literature}
 
@@ -1499,6 +1503,430 @@ print(f't-stat: {event_df.delta_similarity.mean() / '
       f'np.sqrt(len(event_df))):.3f}')
 ```
 
+## Executive Social Media and Stock Prices {#sec-textual-exec-social}
+
+The applications so far analyzed text produced *by firms*: annual reports, business descriptions, and official announcements. A rapidly growing literature studies text produced *by the people who run firms*. @crowley2024executive provide the benchmark study. Examining the Twitter (now X) activity of S&P 1500 CEOs and CFOs from 2011 to 2018, they document three facts that motivate everything in this section. First, executives tweet financial information strategically: financially relevant posts cluster around major corporate events rather than being scattered randomly through time. Second, investors react to executives' financial tweets *over and above* the same information flowing through official firm accounts, and reactions to financially relevant content are larger when it appears on the executive's personal account than when similar content appears on the corporate account, which the authors attribute to a person-to-person trust mechanism. Third, and most useful for research design, @crowley2024executive build a machine-learning measure of the *content similarity* between each executive tweet and the firm's own tweets, which lets them separate two channels of market reaction: a **new-information channel**, identified from market reactions to executive financial tweets that arrive in the absence of any corresponding firm disclosure, and a **credibility channel**, identified from the stronger reactions to executive tweets whose content confirms what the firm account has already posted. Both channels are active in their data. In companion work, @crowley2024discretionary show that the firm side of the conversation is itself strategic: firms exercise discretion over which corporate news they push to social media.
+
+These findings extend a broader literature on social media in capital markets, which the reader should keep in mind when interpreting any Vietnamese implementation. @blankespoor2014role show that simply disseminating earnings press releases through Twitter improves liquidity for low-visibility firms, so social media matters even when it carries no new content. @jung2018firms document that firms are significantly less likely to disseminate bad earnings news than good news on social media, a warning that the observed post stream is a selected sample. @bartov2018can find that the aggregate opinion in firm-related tweets predicts earnings surprises and announcement returns, and @chen2014wisdom show the same for crowd opinions on investment platforms, so executive posts compete with, and should be benchmarked against, a noisy crowd signal.
+
+Adopting this research program in Vietnam requires translating both the institutional setting and the measurement apparatus. The platform mix differs fundamentally: Vietnamese executives communicate on Facebook and, increasingly, Zalo; X penetration is marginal. Executive communication episodes are prominent in Vietnamese markets, from technology CEOs announcing product plans on personal Facebook pages to brokerage and real estate executives commenting on market conditions to followers numbering in the hundreds of thousands. The audience composition amplifies the stakes: retail investors account for roughly 80% of trading volume (@sec-textual-why-vietnam), and retail traders are precisely the investors most likely to follow executives on social platforms. The regulatory backdrop is also distinctive: the State Securities Commission and public security authorities have repeatedly sanctioned individuals for spreading false market-moving information on social platforms, and market manipulation cases in recent years have involved coordinated social media activity, so a monitoring system of the kind we build below has compliance as well as alpha applications.
+
+The design mapping from @crowley2024executive to a Vietnamese implementation is summarized in @tbl-exec-design.
+
+| Design element | @crowley2024executive (US) | Vietnamese adaptation |
+|:------------------|:--------------------------|:--------------------------|
+| Sample | S&P 1500 CEOs/CFOs, 2011-2018 | Executives and chairpersons of HOSE/HNX listed firms |
+| Platform | Twitter/X | Facebook pages, Zalo OA; X where available |
+| Account identification | Handle matching + manual verification | Registry built from annual reports, governance disclosures, verified pages |
+| Financial content classifier | Supervised ML on labeled tweets | Vietnamese financial lexicon + PhoBERT fine-tuning (@sec-textual-phobert) or LLM zero-shot (@sec-textual-llm) |
+| Content similarity construct | ML similarity between executive and firm tweets | Cosine similarity in shared TF-IDF or embedding space (@sec-textual-similarity) |
+| Market reaction | Announcement-window returns and volume | Market-adjusted CARs; full inference via the event study framework of the event studies chapter |
+| Key friction | Reg FD constrains selective disclosure | No Reg FD analog; disclosure circulars and manipulation statutes instead |
+
+: Mapping the executive tweets research design to Vietnam {#tbl-exec-design}
+
+### Production Data Architecture {#sec-textual-exec-data}
+
+Production begins with a registry of executive accounts and a collector that archives posts at ingestion time. Archiving matters: posts are routinely edited or deleted after the market reacts, so the version you analyze must be the version investors saw. The collection code below is the production skeleton; it requires platform API credentials and respect for each platform's terms of service, and it should collect only public, business-related posts.
+
+```{python}
+#| label: exec-social-collection
+#| eval: false
+#| code-summary: "Production: executive account registry and post collector"
+
+import sqlite3
+import json
+from datetime import datetime, timezone
+
+DB_PATH = 'data/exec_social.sqlite'
+
+REGISTRY_SCHEMA = """
+CREATE TABLE IF NOT EXISTS exec_accounts (
+    ticker        TEXT NOT NULL,     -- listed firm ticker
+    exec_name     TEXT NOT NULL,     -- as disclosed in governance reports
+    exec_role     TEXT NOT NULL,     -- CEO / CFO / Chair / ...
+    platform      TEXT NOT NULL,     -- facebook / zalo / x
+    handle        TEXT NOT NULL,     -- page id or username
+    verified_by   TEXT,              -- annual report / press / platform badge
+    verified_date TEXT,
+    PRIMARY KEY (platform, handle)
+);
+CREATE TABLE IF NOT EXISTS social_posts (
+    post_id       TEXT PRIMARY KEY,
+    platform      TEXT NOT NULL,
+    handle        TEXT NOT NULL,
+    posted_at_utc TEXT NOT NULL,
+    collected_at  TEXT NOT NULL,
+    text          TEXT,
+    raw_json      TEXT,              -- full API payload, archived verbatim
+    is_deleted    INTEGER DEFAULT 0, -- flipped by re-crawls, never overwritten
+    is_edited     INTEGER DEFAULT 0
+);
+"""
+
+def collect_x_posts(handles: List[str], bearer_token: str) -> List[dict]:
+    """Collect recent posts via the X API v2 (tweepy)."""
+    import tweepy
+    client = tweepy.Client(bearer_token=bearer_token)
+    out = []
+    for handle in handles:
+        user = client.get_user(username=handle)
+        tweets = client.get_users_tweets(
+            user.data.id, max_results=100,
+            tweet_fields=['created_at', 'public_metrics', 'edit_history_tweet_ids']
+        )
+        for tw in tweets.data or []:
+            out.append({
+                'post_id': f'x_{tw.id}', 'platform': 'x', 'handle': handle,
+                'posted_at_utc': tw.created_at.isoformat(),
+                'text': tw.text, 'raw_json': json.dumps(tw.data)
+            })
+    return out
+
+def collect_facebook_posts(page_ids: List[str], access_token: str) -> List[dict]:
+    """Collect public page posts via the Facebook Graph API.
+
+    Personal profiles are not accessible; most Vietnamese executives with a
+    public presence operate a public *page*, which is what the registry should
+    record. Zalo Official Accounts expose a similar API for OA posts.
+    """
+    import requests
+    out = []
+    for pid in page_ids:
+        r = requests.get(
+            f'https://graph.facebook.com/v19.0/{pid}/posts',
+            params={'fields': 'id,created_time,message',
+                    'access_token': access_token}
+        )
+        for post in r.json().get('data', []):
+            out.append({
+                'post_id': f'fb_{post["id"]}', 'platform': 'facebook',
+                'handle': pid, 'posted_at_utc': post['created_time'],
+                'text': post.get('message', ''), 'raw_json': json.dumps(post)
+            })
+    return out
+
+def store_posts(posts: List[dict]):
+    """Idempotent insert; re-crawls mark deletions instead of overwriting."""
+    con = sqlite3.connect(DB_PATH)
+    con.executescript(REGISTRY_SCHEMA)
+    now = datetime.now(timezone.utc).isoformat()
+    con.executemany(
+        """INSERT OR IGNORE INTO social_posts
+           (post_id, platform, handle, posted_at_utc, collected_at, text, raw_json)
+           VALUES (:post_id, :platform, :handle, :posted_at_utc, :collected_at,
+                   :text, :raw_json)""",
+        [{**p, 'collected_at': now} for p in posts]
+    )
+    con.commit(); con.close()
+```
+
+Two timing conventions matter for Vietnamese data. First, timestamps arrive in UTC and must be mapped to Indochina Time (UTC+7). Second, posts must be mapped to *trading* event days: a post published after the 14:45 ATC session close, or on a weekend or holiday, belongs to the next trading day, exactly as announcement timestamps are handled in the event studies chapter.
+
+### Replication Sandbox: Simulated Executive Posts {#sec-textual-exec-sim}
+
+The remainder of this section is a fully runnable replication of the @crowley2024executive design on simulated Vietnamese data, so that every step (classification, similarity, market reaction) can be executed and inspected before any API credential exists. We simulate 20 synthetic tickers over 500 trading days: each firm posts official announcements around quarterly earnings dates, and each executive posts a mixture of non-financial content, *confirmatory* financial content that paraphrases the firm's own announcement, and *novel* financial content (guidance-like statements ahead of any firm disclosure). Mirroring the paper's findings, we embed a price reaction to executive financial posts, largest for novel content. All text is pre-segmented Vietnamese (underscored compounds), matching the conventions of @sec-textual-segmentation. The tickers and executives are synthetic by design; attributing simulated statements to real firms or people would be inappropriate.
+
+```{python}
+#| label: exec-social-simulate
+#| code-summary: "Simulate returns, firm posts, and executive posts"
+
+rng = np.random.default_rng(42)
+
+TICKERS = [f'T{i:02d}' for i in range(20)]
+DATES = pd.bdate_range('2023-01-02', periods=500)
+
+# --- Market and stock returns -------------------------------------------
+mkt_ret = rng.normal(0.0004, 0.010, len(DATES))
+betas = {t: rng.uniform(0.8, 1.2) for t in TICKERS}
+returns = pd.DataFrame({
+    t: betas[t] * mkt_ret + rng.normal(0, 0.018, len(DATES))
+    for t in TICKERS
+}, index=DATES)
+
+# --- Quarterly earnings dates per ticker --------------------------------
+earnings_dates = {
+    t: [DATES[min(len(DATES) - 1, q * 63 + int(rng.integers(0, 10)))]
+        for q in range(1, 8)]
+    for t in TICKERS
+}
+
+NONFIN_TEMPLATES = [
+    'chúc_mừng năm_mới toàn_thể nhân_viên và khách_hàng của công_ty',
+    'tự_hào về đội_ngũ nhân_viên tận_tâm của chúng_ta',
+    'hôm_nay tôi tham_dự hội_thảo về chuyển_đổi_số và đổi_mới sáng_tạo',
+    'cảm_ơn khách_hàng đã luôn đồng_hành cùng chúng_tôi',
+    'cuối_tuần đọc một cuốn sách hay về quản_trị doanh_nghiệp',
+]
+FIRM_FIN_TEMPLATE = ('công_ty công_bố kết_quả kinh_doanh quý '
+                     'doanh_thu đạt {rev} tỷ đồng lợi_nhuận tăng {gro} '
+                     'phần_trăm so với cùng_kỳ')
+CONFIRM_TEMPLATE = ('rất vui chia_sẻ kết_quả kinh_doanh quý '
+                    'doanh_thu đạt {rev} tỷ đồng lợi_nhuận tăng {gro} '
+                    'phần_trăm so với cùng_kỳ cảm_ơn cả đội_ngũ')
+NOVEL_TEMPLATES = [
+    'đơn_hàng mới rất khả_quan lợi_nhuận quý tới dự_kiến vượt kế_hoạch',
+    'biên lợi_nhuận đang cải_thiện nhờ giá nguyên_liệu giảm mạnh',
+    'công_ty chuẩn_bị ký hợp_đồng xuất_khẩu lớn doanh_thu sẽ tăng mạnh',
+]
+
+firm_posts, exec_posts = [], []
+for t in TICKERS:
+    for ed in earnings_dates[t]:
+        rev, gro = int(rng.integers(200, 900)), int(rng.integers(5, 40))
+        firm_posts.append({'ticker': t, 'date': ed, 'account': 'firm',
+                           'text': FIRM_FIN_TEMPLATE.format(rev=rev, gro=gro)})
+        # Confirmatory executive post one day after the firm announcement
+        if rng.random() < 0.6:
+            d = DATES[min(len(DATES) - 1, DATES.get_loc(ed) + 1)]
+            exec_posts.append({'ticker': t, 'date': d, 'account': 'executive',
+                               'category': 'financial_confirmatory',
+                               'text': CONFIRM_TEMPLATE.format(rev=rev, gro=gro)})
+        # Novel executive post about a week before the firm announcement
+        if rng.random() < 0.4:
+            d = DATES[max(0, DATES.get_loc(ed) - int(rng.integers(4, 8)))]
+            exec_posts.append({'ticker': t, 'date': d, 'account': 'executive',
+                               'category': 'financial_novel',
+                               'text': NOVEL_TEMPLATES[int(rng.integers(0, 3))]})
+    # Non-financial posts scattered through time
+    for _ in range(int(rng.integers(15, 25))):
+        d = DATES[int(rng.integers(0, len(DATES)))]
+        exec_posts.append({'ticker': t, 'date': d, 'account': 'executive',
+                           'category': 'nonfinancial',
+                           'text': NONFIN_TEMPLATES[int(rng.integers(0, 5))]})
+
+firm_posts = pd.DataFrame(firm_posts)
+exec_posts = pd.DataFrame(exec_posts)
+
+# --- Embed market reactions (the "truth" our tests should recover) ------
+for _, p in exec_posts.iterrows():
+    i = DATES.get_loc(p.date)
+    if p.category == 'financial_novel':
+        returns.loc[DATES[i], p.ticker] += 0.010
+        if i + 1 < len(DATES):
+            returns.loc[DATES[i + 1], p.ticker] += 0.005
+    elif p.category == 'financial_confirmatory':
+        returns.loc[DATES[i], p.ticker] += 0.003
+
+print(f'Simulated {len(firm_posts)} firm posts and {len(exec_posts)} '
+      f'executive posts across {len(TICKERS)} tickers')
+print(exec_posts.category.value_counts())
+```
+
+### Classifying Financial Content {#sec-textual-exec-classify}
+
+@crowley2024executive first separate financial from non-financial tweets with a supervised classifier trained on manually labeled data. We replicate that step with the TF-IDF representation of @sec-textual-tfidf and a logistic regression. In the sandbox the labels come from the simulation; in production they come from a manual annotation round (a few hundred posts is typically sufficient to start), after which the classifier can be upgraded to a fine-tuned PhoBERT (@sec-textual-phobert) or an LLM zero-shot classifier (@sec-textual-llm) without changing anything downstream.
+
+```{python}
+#| label: exec-social-classify
+#| code-summary: "Financial-content classifier for Vietnamese posts"
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+exec_posts['is_financial'] = (exec_posts.category != 'nonfinancial').astype(int)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    exec_posts.text, exec_posts.is_financial,
+    test_size=0.3, random_state=42, stratify=exec_posts.is_financial
+)
+
+clf_vectorizer = TfidfVectorizer(token_pattern=r'\S+')
+clf = LogisticRegression(max_iter=1000)
+clf.fit(clf_vectorizer.fit_transform(X_train), y_train)
+
+y_pred = clf.predict(clf_vectorizer.transform(X_test))
+print(classification_report(y_test, y_pred,
+                            target_names=['non-financial', 'financial']))
+
+# The most financially loaded tokens, per the fitted model
+coefs = pd.Series(clf.coef_[0], index=clf_vectorizer.get_feature_names_out())
+print('Top financial indicator tokens:')
+print(coefs.sort_values(ascending=False).head(8).round(2))
+```
+
+### Measuring Executive-Firm Content Similarity {#sec-textual-exec-similarity}
+
+The core construct in @crowley2024executive is the content similarity between an executive's post and the firm's own recent posts, which converts the two market-reaction mechanisms into a measurable split: an executive financial post that closely resembles recent firm content is *confirmatory* (its reaction, if any, operates through credibility), while a financial post with no similar firm content is *novel* (its reaction reveals new information reaching the market through the executive). We implement the construct as the maximum cosine similarity between each executive financial post and the same firm's official posts over the trailing seven calendar days, in a shared TF-IDF space (@sec-textual-tfidf-similarity).
+
+```{python}
+#| label: exec-social-similarity
+#| code-summary: "Executive-firm content similarity and novelty split"
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+all_text = pd.concat([exec_posts.text, firm_posts.text])
+sim_vectorizer = TfidfVectorizer(token_pattern=r'\S+').fit(all_text)
+
+SIM_WINDOW_DAYS = 7
+SIM_THRESHOLD = 0.30
+
+def max_similarity_to_firm(row) -> float:
+    window = firm_posts[
+        (firm_posts.ticker == row.ticker) &
+        (firm_posts.date <= row.date) &
+        (firm_posts.date >= row.date - pd.Timedelta(days=SIM_WINDOW_DAYS))
+    ]
+    if window.empty:
+        return 0.0
+    sims = cosine_similarity(
+        sim_vectorizer.transform([row.text]),
+        sim_vectorizer.transform(window.text)
+    )
+    return float(sims.max())
+
+fin_posts = exec_posts[exec_posts.is_financial == 1].copy()
+fin_posts['max_sim_to_firm'] = fin_posts.apply(max_similarity_to_firm, axis=1)
+fin_posts['post_type'] = np.where(fin_posts.max_sim_to_firm >= SIM_THRESHOLD,
+                                  'confirmatory', 'novel')
+
+print(fin_posts.groupby('post_type').max_sim_to_firm.describe().round(3))
+print('\nClassification vs simulated ground truth:')
+print(pd.crosstab(fin_posts.post_type, fin_posts.category))
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+sns.histplot(data=fin_posts, x='max_sim_to_firm', hue='category',
+             bins=30, ax=ax)
+ax.axvline(SIM_THRESHOLD, color='black', linestyle='--',
+           label=f'threshold = {SIM_THRESHOLD}')
+ax.set_xlabel('Max cosine similarity to firm posts (trailing 7 days)')
+ax.set_title('Executive-firm content similarity separates novel from '
+             'confirmatory posts')
+plt.tight_layout()
+plt.show()
+```
+
+The similarity distribution is sharply bimodal: paraphrased earnings posts sit near the top of the range while guidance-like posts cluster near zero, so the split is not sensitive to the exact threshold. In production, the threshold should be validated against a manually labeled sample, and the TF-IDF space can be replaced by PhoBERT sentence embeddings (@sec-textual-embedding-similarity) to catch paraphrases that share meaning but not vocabulary.
+
+### Market Reactions to Executive Posts {#sec-textual-exec-reaction}
+
+With posts classified and split, the market-reaction test follows the event-study logic: compute market-adjusted abnormal returns and cumulate them over the post window, separately for novel financial, confirmatory financial, and non-financial posts. Non-financial posts serve as the placebo, exactly as in @crowley2024executive; if greetings and holiday wishes move prices, the design is contaminated.
+
+```{python}
+#| label: exec-social-reaction
+#| code-summary: "CARs around executive posts by post type"
+
+from scipy import stats
+
+abnormal = returns.sub(pd.Series(mkt_ret, index=DATES), axis=0)
+
+def car_around(ticker: str, date: pd.Timestamp, w: Tuple[int, int]) -> float:
+    i = DATES.get_loc(date)
+    lo, hi = max(0, i + w[0]), min(len(DATES) - 1, i + w[1])
+    return float(abnormal[ticker].iloc[lo:hi + 1].sum())
+
+events = pd.concat([
+    fin_posts[['ticker', 'date', 'post_type']],
+    exec_posts.loc[exec_posts.is_financial == 0,
+                   ['ticker', 'date']].assign(post_type='nonfinancial')
+])
+events['car_0_1'] = events.apply(
+    lambda r: car_around(r.ticker, r.date, (0, 1)), axis=1)
+
+summary = []
+for ptype, grp in events.groupby('post_type'):
+    tstat, pval = stats.ttest_1samp(grp.car_0_1, 0.0)
+    summary.append({'post_type': ptype, 'n': len(grp),
+                    'mean_car_pct': 100 * grp.car_0_1.mean(),
+                    't_stat': tstat, 'p_value': pval})
+summary = (pd.DataFrame(summary)
+           .set_index('post_type')
+           .loc[['novel', 'confirmatory', 'nonfinancial']])
+print(summary.round(3))
+
+novel = events.loc[events.post_type == 'novel', 'car_0_1']
+confirm = events.loc[events.post_type == 'confirmatory', 'car_0_1']
+t_diff, p_diff = stats.ttest_ind(novel, confirm, equal_var=False)
+print(f'\nNovel minus confirmatory: '
+      f'{100 * (novel.mean() - confirm.mean()):.2f} pp '
+      f'(t = {t_diff:.2f}, p = {p_diff:.4f})')
+
+fig, ax = plt.subplots(figsize=(8, 4.5))
+order = ['novel', 'confirmatory', 'nonfinancial']
+means = summary.loc[order, 'mean_car_pct']
+errs = [100 * 1.96 * events.loc[events.post_type == p, 'car_0_1'].sem()
+        for p in order]
+ax.bar(order, means, yerr=errs, capsize=5)
+ax.axhline(0, color='black', linewidth=0.8)
+ax.set_ylabel('Mean CAR[0,+1], %')
+ax.set_title('Market reactions to executive posts by content type')
+plt.tight_layout()
+plt.show()
+```
+
+The sandbox recovers the structure we embedded, which is also the structure @crowley2024executive find in actual US data: novel financial posts carry large and statistically significant reactions (the new-information channel), while non-financial posts are flat placebos. The confirmatory category is instructive in a different way: its embedded reaction is real but small, and at this simulated sample size it is not reliably distinguishable from zero, a reminder that credibility-channel effects require large post panels to detect (@crowley2024executive identify theirs from the full S&P 1500 tweet history), so a Vietnamese researcher should expect the novel-post result to emerge first and the confirmatory result to require accumulating years of data. On real Vietnamese data, this simple market-adjusted CAR should be replaced by the full inference machinery of the event studies chapter (risk-model abnormal returns, BMP and rank tests, and wider windows to respect price limits), and reactions should be measured in volume and volatility as well as returns, since retail-driven attention effects often appear in volume first.
+
+### From Replication to Production Monitoring {#sec-textual-exec-production}
+
+Everything above composes into a monitor that runs continuously: collect new posts, classify financial content, compute similarity against the firm's official stream, and react within minutes rather than at the end of a research quarter. The skeleton below is deliberately thin; each method delegates to a component already built in this section.
+
+```{python}
+#| label: exec-social-monitor
+#| eval: false
+#| code-summary: "Production: real-time executive post monitor"
+
+class ExecutiveSocialMonitor:
+    """Poll -> classify -> similarity -> alert, on a fixed schedule.
+
+    Schedule with cron / Task Scheduler at the desired latency, e.g.
+    every 5 minutes during HOSE trading hours (09:00-14:45 ICT).
+    """
+
+    def __init__(self, db_path, clf, clf_vectorizer, sim_vectorizer,
+                 sim_threshold=0.30, sim_window_days=7):
+        self.db_path = db_path
+        self.clf, self.clf_vectorizer = clf, clf_vectorizer
+        self.sim_vectorizer = sim_vectorizer
+        self.sim_threshold = sim_threshold
+        self.sim_window_days = sim_window_days
+
+    def poll(self):
+        """Collect new posts for every registered account (see
+        exec-social-collection) and return those not yet processed."""
+        ...
+
+    def classify(self, posts):
+        """Word-segment (underthesea), then flag financial content."""
+        ...
+
+    def similarity(self, post):
+        """Max cosine similarity vs the firm's official posts in the
+        trailing window; below threshold => novel."""
+        ...
+
+    def alert(self, post, is_novel):
+        """Route by rule:
+        - novel financial post by a covered executive -> analyst channel
+          (candidate trading signal; log expected reaction window)
+        - quantitative claim with no firm disclosure within 24h ->
+          compliance flag (selective disclosure / manipulation risk)
+        - deleted or edited financial post -> archive diff + escalate
+        """
+        ...
+
+    def run_once(self):
+        new_posts = self.poll()
+        for post in self.classify(new_posts):
+            if post['is_financial']:
+                self.alert(post, self.similarity(post) < self.sim_threshold)
+```
+
+::: {.callout-warning title="Compliance and Ethics in the Vietnamese Setting"}
+A production monitor must respect three constraints. First, collect only public business communications of public-company executives; Vietnam's Personal Data Protection Decree (13/2023/NĐ-CP) and platform terms of service both bind, and private profiles are out of scope. Second, the same system that surfaces trading signals surfaces manipulation: executives or affiliated accounts posting inflated claims ahead of insider sales is exactly the pattern securities regulators sanction, so log everything immutably; the archive is evidence. Third, trading on a novel executive post is trading on public information the moment it is posted, but a researcher who receives material information *privately* from an executive is in different legal territory entirely. @jung2018firms is the reminder that the observable stream is strategically selected; absence of posts is not absence of news.
+:::
+
+::: {.callout-tip title="Deployment Checklist"}
+1. **Registry**: executive accounts verified from annual reports and governance disclosures; re-verify quarterly.
+2. **Collection**: scheduled polling with immutable raw-JSON archive; deletion and edit tracking; UTC to ICT conversion; ATC-cutoff mapping to trading days.
+3. **Models**: classifier retrained on a growing labeled set; similarity threshold re-validated; PhoBERT embeddings once paraphrase volume warrants it.
+4. **Measurement**: CARs from the event studies chapter's pipeline; volume and volatility reactions alongside returns.
+5. **Governance**: compliance alerts routed separately from research alerts; quarterly review of false positive rates for both.
+:::
+
+The research agenda this enables in Vietnam is largely unwritten: no published study yet measures whether Vietnamese executives' Facebook and Zalo posts move the prices of their firms, how reactions differ across the retail-heavy HOSE investor base versus institutional holders, or whether the credibility mechanism of @crowley2024executive is stronger in a market where person-to-person trust plausibly substitutes for a thinner formal disclosure environment. The pipeline in this section is the infrastructure for all three questions.
+
 # Method Comparison and Best Practices {#sec-textual-comparison}
 
 | Method | Interpretability | Semantic | Speed | VN Support | Data Req. | Best Use Case |
@@ -1571,7 +1999,7 @@ plt.show()
 
 # Conclusion {#sec-textual-conclusion}
 
-This chapter has demonstrated the full pipeline of textual analysis methods applied to Vietnamese listed firms, from classical bag-of-words approaches to state-of-the-art large language models. The key takeaways for practitioners and researchers are:
+This chapter worked through the full pipeline of textual analysis methods applied to Vietnamese listed firms, from classical bag-of-words approaches to transformer-based language models. The key takeaways for practitioners and researchers are:
 
 First, Vietnamese text preprocessing requires a word segmentation step that has no parallel in English-language NLP. Using tools like VnCoreNLP or underthesea for this step is essential and significantly affects downstream analysis quality.
 

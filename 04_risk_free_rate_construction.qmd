@@ -843,6 +843,14 @@ def extract_ns_short_rate(govt_yields, target_maturity=1/12):
 ns_short_rates = extract_ns_short_rate(govt_yields)
 ```
 
+### Duration-Matched Excess Returns
+
+The yield curve is also the input to a more radical proposal about what "excess return" should mean. The convention used throughout this book, subtracting a short rate from a monthly stock return, aligns the maturity of the benchmark with the *frequency at which returns are measured* rather than with the *maturity of the cash flows being priced*. Equities are long-duration claims; a one-month bill is not. @binsbergen2026factor argue that a cleaner counterfactual replaces each portfolio's claim to the cash flow at horizon $h$ with a zero-coupon government bond of maturity $h$, strip by strip, and defines the excess return as the raw return less the return on that duration-matched bond portfolio. What remains is compensation for bearing risky cash flows, with the term premium stripped out and left to the fixed-income literature.
+
+The consequences are larger than the mechanical nature of the adjustment suggests. On U.S. data from 1962 to 2020, the conventional market excess return averages 0.53% per month, while the duration-adjusted version averages $-0.20\%$ per month with roughly double the volatility, and the two series correlate below 0.5. In the cross-section, the value and investment premia grow under the duration-adjusted definition, the size premium shrinks, and momentum is essentially unchanged because winner and loser portfolios have similar duration. Across 153 published anomalies, 20 change significance status when only the excess return definition is altered [@binsbergen2026factor], a point we return to in @sec-factor-zoo-scale.
+
+For Vietnam the same logic applies over a shorter and steeper rate path. The Nelson-Siegel curve fitted above is the raw material for a duration-matched benchmark, but two practical obstacles stand in the way. First, secondary market liquidity is concentrated in the 3-5 year segment (@tbl-govt-bond-characteristics), so the fitted curve is extrapolation as much as estimation at both the very short and the very long end, precisely the maturities the strip-matching requires. Second, the strip weights need a dividend yield and an expected growth rate for each portfolio, which is fragile for firms with irregular payout histories, and Vietnamese payout policy is irregular by developed-market standards. A workable compromise is to report factor premia against both a short rate and a fixed long-maturity government bond, and to disclose the dividend yield differential between the long and short legs so readers can judge how much of a premium could be a duration bet.
+
 ## Real vs. Nominal Risk-Free Rates
 
 For certain applications, particularly long-horizon valuation and real return analysis, the real (inflation-adjusted) risk-free rate is more appropriate than the nominal rate. The Fisher equation relates them:

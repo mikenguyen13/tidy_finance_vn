@@ -104,7 +104,7 @@ This proxy introduces several problems that are well-documented in the literatur
 
 **Problem 3: Measurement error in denominator.** Book values of assets reflect historical cost, depreciation schedules, and accounting conventions that may poorly approximate replacement cost. This is especially problematic in Vietnam, where revaluation of fixed assets is infrequent and inflation has historically been volatile, creating wedges between historical and replacement cost.
 
-**Problem 4: Errors-in-variables bias.** Because the empirical $Q$ is a noisy proxy for the true $Q$, OLS estimates of $\beta_1$ in @eq-investment-q-regression suffer from classical attenuation bias (i.e., $hat{\beta}_1$ is biased toward zero). @erickson2012treating develop a higher-order cumulant estimator that corrects for this bias without requiring external instruments.
+**Problem 4: Errors-in-variables bias.** Because the empirical $Q$ is a noisy proxy for the true $Q$, OLS estimates of $\beta_1$ in @eq-investment-q-regression suffer from classical attenuation bias (i.e., $\hat{\beta}_1$ is biased toward zero). @erickson2012treating develop a higher-order cumulant estimator that corrects for this bias without requiring external instruments.
 
 ```{python}
 #| label: construct-q
@@ -457,6 +457,255 @@ for k, v in ew_result.items():
     else:
         print(f"  {k}: {v}")
 ```
+
+### Marginal $q$ from Market Values {#sec-cf-marginal-q}
+
+The Erickson-Whited correction treats Tobin's $Q$ as a noisy measure of the right object. @gala2026marginal argue that it is also a measure of the wrong object. $Q$-theory says investment responds to *marginal* $q$, the shadow value of one more unit of capital, $q = \partial V / \partial K$. Average $Q = V/K$ equals marginal $q$ only under the knife-edge homogeneity conditions of @hayashi1982tobin, and no correction for classical measurement error can close a gap that comes from misspecification. Their insight is that the value function is not as unobservable as it looks. The market value of the firm *is* the value function, observed with noise, and its arguments (the capital stock and the firm's productivity) are measurable. Marginal $q$ can therefore be obtained by estimating the value function and differentiating it.
+
+The estimator has two steps. First, project the log of market value per unit of capital on a polynomial in log capital, $k_{i,t} = \ln K_{i,t}$, and log productivity, $a_{i,t} = \ln A_{i,t}$, with firm and year fixed effects:
+
+$$
+v_{i,t} \equiv \ln Q_{i,t} = \sum_{j_k=0}^{n_k} \sum_{j_a=0}^{n_a} c_{j_k, j_a}\, k_{i,t}^{j_k} a_{i,t}^{j_a} + \alpha_i + \tau_t + \varepsilon_{i,t}.
+$$ {#eq-cf-value-projection}
+
+The year effects absorb aggregate state variables, such as the discount rate, without requiring them to be measured, and the firm effects absorb time-invariant heterogeneity in input prices and depreciation. The authors find that a complete second-order polynomial (linear, squared, and interaction terms) captures the variation in market values, and that higher-order terms selected by an adaptive Lasso change little. Second, differentiate the fitted value function. Since $V = QK$,
+
+$$
+q_{i,t} = \frac{\partial V_{i,t}}{\partial K_{i,t}} = \widehat{Q}_{i,t}\left(1 + \frac{\partial \hat{v}_{i,t}}{\partial k_{i,t}}\right),
+\qquad
+\frac{\partial \hat{v}_{i,t}}{\partial k_{i,t}} = \hat{c}_{1,0} + 2\hat{c}_{2,0}\, k_{i,t} + \hat{c}_{1,1}\, a_{i,t},
+$$ {#eq-cf-marginal-q}
+
+where $\widehat{Q}_{i,t} = \exp(\hat{v}_{i,t})$ is the fitted value of @eq-cf-value-projection, which the authors call **Fitted $Q$**. Fitted $Q$ is average $Q$ purged of all variation unrelated to the fundamental state variables, so it is a direct, observation-level correction for classical measurement error, including the error that comes from stock-market mispricing. Marginal $q$ goes further and corrects the misspecification as well. Hayashi's equivalence $q = Q$ holds exactly when $\partial v / \partial k = 0$, that is, when every coefficient on a term involving $k$ is zero, so @eq-cf-value-projection also delivers a Wald test of the assumption that the investment-$Q$ literature has maintained for four decades. The authors reject it decisively.
+
+The findings, from Compustat manufacturing firms over 1973–2019 in the working-paper version, are large.
+
+-   **Levels.** Average marginal $q$ is 0.81, against 1.33 for Fitted $Q$ and 2.87 for Tobin's $Q$, and it is far less volatile. Marginal $q$ always lies below Fitted $Q$, as concavity of the value function requires.
+-   **Adjustment costs.** Because optimal investment maximizes $qI - \Phi(I, K)$, which must be non-negative, marginal $q$ is an upper bound on total adjustment costs (purchase price included) per unit of investment. Marginal $q$ caps them at 81% on average; treating Tobin's $Q$ as marginal $q$ would allow 287%. Estimated quadratic adjustment-cost parameters fall from about 4.5 with Tobin's $Q$ to about 1.3 with marginal $q$.
+-   **Investment regressions.** In the regression of investment on $Q$ with firm and year effects, the slope on Tobin's $Q$ is 0.007 and the within-$R^2$ about 0.03; with marginal $q$ the slope is 0.38 and the within-$R^2$ about 0.49. The cash flow coefficient, the centerpiece of the financing-constraints debate discussed below, shrinks to zero once marginal $q$ is used.
+-   **The widening gap.** In the published version, the authors show that the gap between marginal $q$ and Tobin's $Q$ has widened over time, driven mainly by market power and intangible capital, two forces that raise the value of the firm without raising the value of an additional unit of physical capital [@peters2017intangible].
+
+The procedure needs no assumption about the form of adjustment costs, the stochastic discount factor, or the production technology beyond differentiability, which is why the authors describe the resulting $q$ as quasi-model-free. It does need one thing that is easy to get wrong. The derivative in @eq-cf-marginal-q holds *productivity* fixed, so $a_{i,t}$ must measure the exogenous state, not an outcome that moves mechanically with $K$. The authors estimate it with production-function methods [@olley1996dynamics; @ackerberg2015identification]. A sales-to-capital ratio is a poor substitute: holding $\ln(Y/K)$ fixed while varying $K$ assumes constant returns, which is precisely the assumption the method is designed to avoid.
+
+The estimator fits in a few lines. The function below implements the second-order version of @eq-cf-value-projection and @eq-cf-marginal-q, returns Fitted $Q$ and marginal $q$ for every firm-year, and reports the Wald test of $q = Q$.
+
+```{python}
+#| label: marginal-q-estimator
+#| code-summary: "Two-step projection estimator of marginal q"
+
+def estimate_marginal_q(df, v="ln_q", k="ln_k", a="ln_a",
+                        entity="ticker", time="year"):
+    """
+    Projection estimator of marginal q (Gala, Gomes, and Liu).
+
+    Step 1: regress v = ln(V/K) on a complete second-order polynomial in
+            k = ln K and a = ln A with firm and year fixed effects.
+    Step 2: differentiate the fitted value function with respect to k,
+            q = Fitted Q * (1 + dv/dk).
+    """
+    d = df.dropna(subset=[v, k, a]).copy()
+    d["k_sq"] = d[k] ** 2
+    d["a_sq"] = d[a] ** 2
+    d["k_x_a"] = d[k] * d[a]
+    d = d.set_index([entity, time])
+
+    terms = [k, a, "k_sq", "a_sq", "k_x_a"]
+    fit = PanelOLS(
+        d[v], d[terms], entity_effects=True, time_effects=True,
+        check_rank=False
+    ).fit(cov_type="clustered", cluster_entity=True)
+
+    c = fit.params
+    # Fitted value function includes the estimated firm and year effects
+    v_hat = fit.fitted_values.iloc[:, 0] + fit.estimated_effects.iloc[:, 0]
+    dv_dk = c[k] + 2 * c["k_sq"] * d[k] + c["k_x_a"] * d[a]
+
+    d["fitted_q"] = np.exp(v_hat)
+    d["dv_dk"] = dv_dk
+    d["marginal_q"] = d["fitted_q"] * (1 + dv_dk)
+
+    # Wald test of Hayashi's q = Q: all coefficients on terms in k are zero
+    R = np.zeros((3, len(terms)))
+    for row, term in enumerate([k, "k_sq", "k_x_a"]):
+        R[row, terms.index(term)] = 1.0
+    qq_test = fit.wald_test(R, np.zeros(3))
+
+    return d.reset_index(), fit, qq_test
+```
+
+Before applying it, it is worth checking that the estimator recovers marginal $q$ when the truth is known. The simulation below builds a panel of 600 firms over 15 years with a concave value function, lets investment respond to *true* marginal $q$ with a quadratic adjustment-cost parameter of 2.5, and contaminates observed $Q$ with log-normal measurement error. Nothing in it is calibrated to Vietnam; its only purpose is to show what each $Q$ measure does to the investment regression when the data-generating process is known.
+
+```{python}
+#| label: marginal-q-simulation
+#| code-summary: "Simulate a panel with a known marginal q"
+
+rng_q = np.random.default_rng(20260819)
+n_firms, n_years = 600, 15
+firm_id = np.repeat(np.arange(n_firms), n_years)
+year_id = np.tile(np.arange(n_years), n_firms)
+
+# State variables: log capital and persistent log productivity
+ln_k = (np.repeat(rng_q.normal(4.5, 1.5, n_firms), n_years)
+        + rng_q.normal(0, 0.4, n_firms * n_years))
+a_mean = rng_q.normal(0.0, 0.3, n_firms)
+ln_a = np.empty(n_firms * n_years)
+for i in range(n_firms):
+    path = np.empty(n_years)
+    shocks = rng_q.normal(0, 0.25, n_years)
+    path[0] = a_mean[i] + shocks[0]
+    for t in range(1, n_years):
+        path[t] = a_mean[i] + 0.7 * (path[t - 1] - a_mean[i]) + shocks[t]
+    ln_a[i * n_years:(i + 1) * n_years] = path
+
+# True concave value function v = ln(V/K) and the implied marginal q
+c_true = {"k": -0.50, "a": 0.55, "k_sq": 0.025, "a_sq": 0.30, "k_x_a": -0.05}
+v_true = (1.5
+          + np.repeat(rng_q.normal(0, 0.3, n_firms), n_years)
+          + np.tile(rng_q.normal(0, 0.15, n_years), n_firms)
+          + c_true["k"] * ln_k + c_true["a"] * ln_a
+          + c_true["k_sq"] * ln_k**2 + c_true["a_sq"] * ln_a**2
+          + c_true["k_x_a"] * ln_k * ln_a)
+dv_dk_true = c_true["k"] + 2 * c_true["k_sq"] * ln_k + c_true["k_x_a"] * ln_a
+q_true = np.exp(v_true) * (1 + dv_dk_true)
+
+# Investment responds to true marginal q; observed Q is measured with error
+gamma_true = 2.5
+sim_q = pd.DataFrame({
+    "ticker": firm_id, "year": year_id, "ln_k": ln_k, "ln_a": ln_a,
+    "ln_q": v_true + rng_q.normal(0, 0.5, n_firms * n_years),
+    "inv_rate": (q_true - 0.4) / gamma_true
+                + rng_q.normal(0, 0.03, n_firms * n_years),
+    "q_true": q_true,
+})
+sim_q["tobins_q"] = np.exp(sim_q["ln_q"])
+
+sim_est, sim_fit, sim_qq = estimate_marginal_q(sim_q)
+print(f"Wald test of q = Q: chi2 = {sim_qq.stat:.1f}, p = {sim_qq.pval:.4f}")
+print(f"Correlation of estimated with true marginal q: "
+      f"{sim_est['marginal_q'].corr(sim_est['q_true']):.3f}")
+```
+
+```{python}
+#| label: tbl-marginal-q-simulation
+#| tbl-cap: "Investment Regressions Under Alternative Q Measures (Simulated Panel, True Adjustment-Cost Parameter 2.5)"
+
+def fe_slope(data, y, x):
+    d = data.set_index(["ticker", "year"])
+    res = PanelOLS(d[y], d[[x]], entity_effects=True, time_effects=True,
+                   check_rank=False).fit(cov_type="clustered",
+                                         cluster_entity=True)
+    return res.params[x], res.std_errors[x], res.rsquared_within
+
+rows = []
+for label, col in [("Tobin's Q (observed)", "tobins_q"),
+                   ("Fitted Q", "fitted_q"),
+                   ("Marginal q (estimated)", "marginal_q"),
+                   ("Marginal q (true)", "q_true")]:
+    slope, se, r2 = fe_slope(sim_est, "inv_rate", col)
+    rows.append({"Q measure": label,
+                 "Mean": sim_est[col].mean(),
+                 "Slope of I/K": slope,
+                 "Std. error": se,
+                 "Within R²": r2,
+                 "Implied adjustment cost (1/slope)": 1 / slope})
+
+pd.DataFrame(rows).set_index("Q measure").round(3)
+```
+
+The simulation reproduces the paper's ranking. Observed Tobin's $Q$ has the highest mean and the weakest link to investment: its slope implies an adjustment-cost parameter more than ten times the true value, the familiar implausibly large adjustment costs of the investment-$Q$ literature. Fitted $Q$ removes the measurement error and most of the bias, but because it is still *average* $Q$ it overstates marginal $q$, and its slope is only about half the true one. Estimated marginal $q$ recovers both the level and the slope of the true series. The remaining discrepancy reflects estimation error in the first step, which is why inference on second-step coefficients should bootstrap the whole procedure by firm rather than treat $\hat{q}$ as data.
+
+Applying the estimator to Vietnamese listed firms follows the same steps, with capital measured by beginning-of-year net PPE, $V$ by the market value of equity plus book debt, and productivity by a revenue production-function residual estimated industry by industry.
+
+```{python}
+#| label: marginal-q-vietnam
+#| eval: false
+#| code-summary: "Marginal q for Vietnamese listed firms"
+
+mq = panel.copy()
+
+# Capital stock: beginning-of-year net PPE (gross PPE if available)
+mq["K"] = mq["lag_ppe"]
+mq = mq[(mq["K"] > 0) & (mq["revenue"] > 0)].copy()
+
+# Average Q on capital and investment rate on capital
+mq["tobins_q_k"] = (mq["market_cap"] + mq["total_debt"]) / mq["K"]
+mq = mq[mq["tobins_q_k"] > 0].copy()
+mq["ln_q"] = np.log(mq["tobins_q_k"])
+mq["ln_k"] = np.log(mq["K"])
+mq["inv_rate_k"] = mq["capex"] / mq["K"]
+mq["cf_k"] = mq["operating_cf"] / mq["K"]
+
+# Productivity: residual of a within-firm revenue production function,
+# estimated separately by industry. A control-function estimator
+# (Olley-Pakes, Levinsohn-Petrin, Ackerberg-Caves-Frazer) is preferable
+# when labor and materials data are available.
+mq["ln_y"] = np.log(mq["revenue"])
+theta = {}
+for ind, g in mq.groupby("industry"):
+    g = g.set_index(["ticker", "year"])
+    if g.index.get_level_values(0).nunique() < 10:
+        continue
+    pf = PanelOLS(g["ln_y"], g[["ln_k"]], entity_effects=True,
+                  time_effects=True, check_rank=False).fit()
+    theta[ind] = pf.params["ln_k"]
+mq["theta"] = mq["industry"].map(theta)
+mq["ln_a"] = mq["ln_y"] - mq["theta"] * mq["ln_k"]
+
+# Trim the tails of the regression variables at 0.5% and 99.5%
+for col in ["ln_q", "ln_k", "ln_a", "inv_rate_k", "cf_k"]:
+    lo, hi = mq[col].quantile([0.005, 0.995])
+    mq = mq[mq[col].between(lo, hi)]
+
+# Keep firms with at least two observations
+mq = mq[mq.groupby("ticker")["year"].transform("count") >= 2]
+
+vn_est, vn_fit, vn_qq = estimate_marginal_q(mq)
+print(vn_fit.summary)
+print(f"Wald test of q = Q: chi2 = {vn_qq.stat:.1f}, p = {vn_qq.pval:.4f}")
+print(f"Share of firm-years with negative marginal q: "
+      f"{(vn_est['marginal_q'] < 0).mean():.3f}")
+```
+
+```{python}
+#| label: tbl-marginal-q-vietnam
+#| eval: false
+#| tbl-cap: "Investment on Tobin's Q, Fitted Q, and Marginal q: Vietnamese Listed Firms"
+
+vn_rows = []
+for label, col in [("Tobin's Q", "tobins_q_k"),
+                   ("Fitted Q", "fitted_q"),
+                   ("Marginal q", "marginal_q")]:
+    d = vn_est.set_index(["ticker", "year"])
+    for with_cf in [False, True]:
+        regressors = [col, "cf_k"] if with_cf else [col]
+        res = PanelOLS(d["inv_rate_k"], d[regressors], entity_effects=True,
+                       time_effects=True, check_rank=False).fit(
+            cov_type="clustered", cluster_entity=True)
+        vn_rows.append({
+            "Q measure": label,
+            "Cash flow": "Yes" if with_cf else "No",
+            "Slope on Q": f"{res.params[col]:.3f} ({res.std_errors[col]:.3f})",
+            "Slope on CF/K": (f"{res.params['cf_k']:.3f} "
+                              f"({res.std_errors['cf_k']:.3f})")
+                             if with_cf else "",
+            "Within R²": round(res.rsquared_within, 3),
+            "N": int(res.nobs),
+        })
+
+pd.DataFrame(vn_rows)
+```
+
+Several features of the Vietnamese setting bear on the implementation and the interpretation.
+
+**Fitted $Q$ is the natural answer to noisy prices.** The measurement problems listed earlier in this section (retail-driven mispricing, price limits that compress the numerator, thin trading) are all forms of variation in market value that is unrelated to the firm's fundamental state. The first-step projection discards exactly that variation, so in Vietnam the gain from Fitted $Q$ over observed $Q$ may be larger than in US data.
+
+**The capital stock needs a deliberate definition.** Book PPE poorly approximates replacement cost when fixed assets are rarely revalued, and land-use rights, which are economically part of the capital of real-estate, industrial-park, and many manufacturing firms, are recorded as intangible assets under Vietnamese accounting standards. Report results with and without land-use rights in $K$. Firm fixed effects absorb much of any time-invariant proportional error in measured capital, but not a revaluation that happens mid-sample, such as one at equitization.
+
+**Productivity data are the binding constraint.** Control-function estimators need labor or intermediate inputs. Employee counts appear in many annual reports but not consistently in databases, so the revenue residual used above is a fallback. Its main weakness, correlation between capital and the contemporaneous productivity shock, biases $\theta$ upward and shifts measured productivity accordingly.
+
+**Additional state variables can enter the value function.** State ownership, foreign-ownership room, and business-group affiliation all plausibly affect firm value. The projection accommodates them as extra state variables, but only if they are exogenous to the firm's current decisions, since marginal $q$ is identified off the exogenous states (the authors' footnote on identification is explicit about this).
+
+**Revisit the earlier results with marginal $q$.** The state-ownership interaction in @tbl-soe-interaction and the cash-flow sensitivity tests below were run with average $Q$. If, as in US data, marginal $q$ drives out cash flow, much of what looks like financing constraints in Vietnamese investment regressions is mismeasured investment opportunities. If cash flow survives, especially among non-state firms with limited bank access, that is stronger evidence of constraints than any result obtained with average $Q$.
 
 ## Cash Flow Sensitivity of Investment
 

@@ -4,7 +4,7 @@ Financial markets are networks. Every stock return is shaped by connections: fir
 
 The Vietnamese financial system is particularly network-dense. State ownership creates a lattice of cross-connected enterprises: the same line ministry may oversee the borrower, the lender, and the insurer. Pyramidal business groups (such as Vingroup, Masan, and FPT) link dozens of listed and unlisted entities through chains of equity ownership. The banking system is small and concentrated, with a few state-owned commercial banks accounting for the majority of assets, generating dense interbank exposures. Board interlocks (e.g., directors who serve on multiple boards simultaneously) are pervasive and often follow ownership lines. And the equity market itself exhibits return co-movement patterns that, when represented as a correlation network, reveal sector-level and ownership-level clustering invisible in standard factor analysis.
 
-This chapter covers the full spectrum of network methods used in financial economics, from classical graph theory through modern graph neural networks (GNNs). We organize the material in seven sections. First, graph theory fundamentals and the representation of financial data as networks. Second, ownership and control networks, which are the most distinctive network structure in Vietnamese markets. Third, board interlock and governance networks. Fourth, supply chain and trade networks. Fifth, correlation and co-movement networks for portfolio construction and systemic risk monitoring. Sixth, interbank and contagion networks. Seventh, graph neural networks and graph-based machine learning for asset pricing, credit risk, and anomaly detection.
+This chapter covers the full spectrum of network methods used in financial economics, from classical graph theory through modern graph neural networks (GNNs). We organize the material in eight sections. First, graph theory fundamentals and the representation of financial data as networks. Second, ownership and control networks, which are the most distinctive network structure in Vietnamese markets. Third, board interlock and governance networks. Fourth, supply chain and trade networks. Fifth, correlation and co-movement networks for portfolio construction and systemic risk monitoring. Sixth, interbank and contagion networks. Seventh, social networks between places, measured with the Social Connectedness Index, and their role as conduits of financial information [@allen2026social]. Eighth, graph neural networks and graph-based machine learning for asset pricing, credit risk, and anomaly detection.
 
 ```{python}
 #| label: setup
@@ -1378,6 +1378,71 @@ cascade_df = pd.DataFrame(cascade_results).sort_values(
 cascade_df.head(15).round(4)
 ```
 
+## Social Connectedness Between Places {#sec-networks-social}
+
+Every network in this chapter so far connects firms or financial institutions. A different network connects people, and through them places. It matters for finance because households learn about financial products from people they know, and because lenders and investors learn about distant borrowers and firms partly through the same ties. Until recently that network could not be measured at scale. The **Social Connectedness Index** (SCI) of @bailey2018social changed this. Built from the universe of friendship links among Facebook users, it measures, for every pair of regions $i$ and $j$, the relative probability that a user in $i$ and a user in $j$ are friends:
+
+$$
+\text{SCI}_{ij} = \frac{\text{Connections}_{ij}}{\text{Users}_i \times \text{Users}_j}.
+$$ {#eq-networks-sci}
+
+Connectedness falls steeply with geographic distance, but it also reflects migration history, transport links, and political and cultural boundaries [@bailey2018social]. For a given region, the SCI defines a set of weights over all other regions. The most useful are friend shares, the fraction of region $i$'s friendship links that lead to region $j$,
+
+$$
+w_{ij} = \frac{\text{SCI}_{ij} \times \text{Users}_j}{\sum_{k} \text{SCI}_{ik} \times \text{Users}_k},
+$$ {#eq-networks-friend-share}
+
+which turn any regional variable $X_j$ into a **social exposure**:
+
+$$
+\text{SocialExp}_i(X) = \sum_{j \in \mathcal{N}(i)} w_{ij}\, X_j ,
+$$ {#eq-networks-social-exposure}
+
+where $\mathcal{N}(i)$ is the set of regions over which exposure is taken: all regions, or only those geographically distant from $i$. Two templates built on @eq-networks-social-exposure anchor the social-finance literature surveyed by @kuchler2021social. In @bailey2018economic, $X_j$ is house-price growth in friends' regions: individuals whose friends experienced larger house-price gains expect larger future gains and buy bigger houses at higher prices. In @kuchler2022social, $X_j$ is the institutional capital located in region $j$: firms headquartered in regions with high *social proximity to capital* have higher institutional ownership, valuations, and liquidity, with the effects concentrated among small firms that analysts do not cover. Earlier work established the individual-level version of the idea, from stock-market participation spreading through social interaction [@hong2004social] to lenders on a peer-to-peer platform treating borrowers' friendship networks as a signal of credit quality [@lin2013judging].
+
+### Social Networks as Conduits for Credit {#sec-networks-allen-peng-shan}
+
+@allen2026social bring this machinery to consumer credit and, unusually, to both sides of the market at once. Their setting is LendingClub, the largest US marketplace lender, whose public data cover rejected as well as approved applications, so that funding *decisions* can be studied rather than only the loans that were made. The earlier version of the paper used applications from 2010 to 2017, located borrowers by three-digit ZIP code, and mapped those areas to county-level SCI.
+
+**Demand.** Applications for online loans in an area rise after online borrowing has risen in areas that are geographically distant but socially connected to it. The geographic restriction carries the identification. Nearby friends share local economic conditions, so a correlation between an area's borrowing and its friends' borrowing could reflect a common shock rather than learning. Restricting $\mathcal{N}(i)$ in @eq-networks-social-exposure to distant regions (out of state, in the earlier draft, following the design of @bailey2018economic) strips out that common component. What remains is consistent with awareness of a new financial product spreading through social ties: people hear about a platform from friends who have used it.
+
+**Supply.** Applications from areas with high social proximity to deposit-rich regions, a measure in the spirit of @kuchler2022social with deposits in place of institutional capital, are more likely to be funded. On its own, this result could reflect either of two channels that the paper sets against each other. Social ties may transmit hard-to-obtain *information* about a community's credit conditions to those in a position to fund it. Or they may transmit *affinity*: familiarity, and the repetition of opinions through a network that produces persuasion bias, leading funders to favor connected borrowers regardless of quality. Both channels predict that connected borrowers obtain more credit. They disagree about how the marginal loan performs. Affinity lowers the bar, so the additional loans should default more often; information sharpens screening, so they should default less. Ex post performance is better, which points to information. @lin2013judging reach a parallel conclusion from individual borrowers' friendship links on Prosper, and when @duarte2012trust apply the same logic to borrower appearance, they find that the trustworthy-looking borrowers whom lenders favor do in fact default less often.
+
+**Identification.** Social connectedness is not randomly assigned. Areas whose residents have geographically dispersed networks tend to be richer, more educated, and more mobile [@bailey2018social], and each of those characteristics affects credit outcomes directly. The published paper therefore establishes causality with **shift-share instruments**. The shares are the social-network weights $w_{ij}$, and the shifts are events in the connected regions that move credit demand or supply there without reflecting conditions in the borrower's own area: natural disasters on the demand side and financial adviser misconduct on the supply side. Adviser misconduct is unusually well measured in the United States because broker disciplinary records are public, the data that @egan2019market exploit.
+
+**Distribution.** Both the demand and the supply effects are strongest in disadvantaged communities, and they come without higher delinquency. Social ties to more prosperous regions appear to substitute, in part, for the local information infrastructure (bank branches, long credit histories, relationship lenders) that disadvantaged areas lack.
+
+The paper repays close reading by anyone building network measures, for four reasons. It treats a network between places as an observable object, measurable on a par with ownership or supply-chain links. It studies both sides of one market through the same network, which few network papers manage. It uses ex post performance as the test that separates information from bias, a test that any claim that networks "improve" allocation should be required to pass. And it makes explicit that a social-exposure variable is a shift-share construct, which determines what can identify it.
+
+### Shift-Share Logic and Inference {#sec-networks-ssiv}
+
+@eq-networks-social-exposure is a share-weighted sum of regional shifts, the same structure as the Bartik instruments of labor economics, and the econometric literature on these designs is precise about when they identify a causal effect. Identification can come from exogenous shares [@goldsmith2020bartik]. Here that means an area's pattern of social ties is unrelated to its credit outcomes except through the shocks the ties transmit, a strong assumption when those patterns reflect migration, ethnicity, and industry structure. Alternatively, identification can come from shifts that are as good as randomly assigned across regions, conditional on the shares [@borusyak2022quasi]. Natural disasters are attractive shifts precisely because the second route is plausible for them. Under either route, inference requires care. Regions with similar exposure weights receive correlated shocks, so conventional and region-clustered standard errors overstate precision. @adao2019shift derive standard errors that are robust to this exposure-induced correlation. A social-exposure regression reported without them, and without balance tests of the shifts against pre-period regional characteristics, has not yet made its case.
+
+### Social Connectedness in Vietnam {#sec-networks-social-vietnam}
+
+The data exist. Meta's public SCI release covers countries outside Europe at the first-level administrative unit, which for Vietnam means the 63 provinces on the boundary vintage used in the release. Facebook use is widespread in Vietnam, but much private communication runs through Zalo, which the SCI does not observe. Province-pair connectedness from Facebook therefore measures one channel of social contact, not all of them.
+
+Two features of the setting need attention before any regression is run. First, the 2025 consolidation of Vietnam's provinces from 63 to 34 means that current provincial statistics must be mapped back to the old boundaries, or the SCI aggregated forward with population weights, and neither mapping is innocuous for provinces that were divided among new units. Second, internal migration is the main determinant of connectedness, and the census records it directly. The 2009 and 2019 Population and Housing Censuses record each respondent's province of residence five years earlier, which yields province-to-province migration matrices. An exposure measure weighted by migration is both a validation check on the SCI and, because it predates most outcomes of interest, a candidate instrument for it.
+
+Four research designs transfer most directly.
+
+**Social proximity to capital for listed firms.** Investable capital and brokerage activity in Vietnam are concentrated in Ho Chi Minh City and Hanoi. The @kuchler2022social measure, computed for each firm's headquarters province with provincial deposits or income standing in for institutional capital, asks whether firms headquartered in provinces socially close to those centers enjoy higher liquidity, valuations, and foreign ownership. The headquarters province appears in every listing prospectus, and the outcome variables are standard in this book.
+
+**Diffusion of retail participation.** The surge in new brokerage accounts during 2020–2022 is a demand-side event of exactly the kind @allen2026social study: awareness of a financial product spreading through social ties. The design asks whether account openings in a province accelerated after openings rose in distant but socially connected provinces. The binding constraint is data. Account statistics are published nationally, and a provincial breakdown would require cooperation from brokerages.
+
+**Marketplace lending under the sandbox.** Decree 94/2025/ND-CP, effective July 2025, created a controlled-testing mechanism for peer-to-peer lending alongside credit scoring and open APIs. A platform market in its first years is the setting of the @allen2026social demand result, and if data on sandbox participants become available to researchers, the platforms' spread across provinces is close to a replication opportunity. Vietnam is also where the supply-side result may matter most. As discussed in @sec-data-alternative, credit-bureau coverage remains thin, and @allen2026social suggest that social ties to wealthier regions can partly stand in for missing information infrastructure.
+
+**Shocks for shift-share designs.** On the demand side, typhoons and floods strike identifiable provinces at well-documented dates, Typhoon Yagi in the northern provinces in September 2024 among them, and these are natural shifts. On the supply side, the closest Vietnamese counterpart to US adviser misconduct is the sale of corporate bonds to bank depositors through branch networks that came to light in the Van Thinh Phat and SCB case in 2022, a shock to trust in bank-intermediated saving. Using it as a shift requires knowing where the affected bondholders lived, which is not public, and the design should not be attempted without that information.
+
+Six practical rules follow for province-level social-network research in Vietnam.
+
+1.  **Define "distant" by region, not by adjacency.** Vietnam's long, narrow shape means that neighboring provinces can be economically far apart and distant ones closely integrated. Measure exposure over provinces outside the borrower's own socio-economic region, the analogue of the out-of-state restriction, and show that results survive alternative cutoffs.
+2.  **Fix the boundary vintage.** Work with the 63 pre-2025 provinces throughout, and document the crosswalk for any data reported on the 34-province system.
+3.  **Treat the SCI as a snapshot of an endogenous network.** It is observed at a few dates, after much of the migration that created it. For outcomes that predate the snapshot, use the 2009 census migration matrix as the earlier-vintage measure.
+4.  **Report shift-share diagnostics.** Show which shares drive the estimate [@goldsmith2020bartik], test the shifts for balance against pre-period provincial characteristics [@borusyak2022quasi], and use exposure-robust standard errors [@adao2019shift].
+5.  **Run the performance test.** Any finding that social ties raise approval, funding, or investment must be followed by a test on ex post outcomes, defaults for credit and subsequent returns for equity, that distinguishes information from affinity, as @allen2026social do.
+6.  **Respect the small number of units.** With 63 provinces, clustered inference rests on few clusters. Report wild-cluster bootstrap p-values alongside conventional ones.
+
 ## Graph Neural Networks for Financial Prediction
 
 ### From Graphs to Predictions
@@ -1876,6 +1941,7 @@ class CreditRiskGNN(nn.Module):
 | How does a shock propagate? | Cascade simulation | Eisenberg-Noe default model |
 | What is the optimal portfolio given network risk? | Network-regularized optimization | Correlation MST filtering |
 | How does the network change over time? | Temporal GNN or rolling analysis | DY rolling connectedness |
+| Does information travel between regions through social ties? | Social exposure over distant regions + shift-share IV | Online credit diffusion [@allen2026social] |
 
 : Decision Framework for Network Methods {#tbl-network-decision}
 
@@ -1890,6 +1956,7 @@ class CreditRiskGNN(nn.Module):
 | Interbank | Bilateral exposures | Limited (SBV data, banks' notes to FS) | Quarterly |
 | Co-holdings | Institutional holdings | Moderate (semi-annual disclosures) | Semi-annual |
 | Lending | Loan-level data | Limited (banking supervision data) | Quarterly |
+| Social connectedness | Region-pair friendship links; migration matrices | Moderate (Meta SCI for 63 provinces; 2009 and 2019 census migration) | Periodic snapshots |
 
 : Financial Network Data Sources in Vietnam {#tbl-network-data}
 
@@ -1915,7 +1982,7 @@ class CreditRiskGNN(nn.Module):
 
 This chapter developed the network toolkit for Vietnamese financial markets, spanning classical graph theory, domain-specific financial network construction, and modern graph neural networks.
 
-The central insight is that financial networks encode information invisible to standard panel regressions. Ownership networks reveal pyramidal control structures and tunneling risk that explain cross-sectional differences in firm value. Board interlocks serve as information channels through which compensation practices, investment policies, and governance norms diffuse. Supply chain networks propagate real economic shocks: the customer momentum anomaly demonstrates that market prices incorporate supply chain information with a predictable delay. Correlation networks capture co-movement structure that both reveals sector clustering and evolves across market regimes. And interbank networks determine whether individual bank failures cascade into systemic crises.
+The central insight is that financial networks encode information invisible to standard panel regressions. Ownership networks reveal pyramidal control structures and tunneling risk that explain cross-sectional differences in firm value. Board interlocks serve as information channels through which compensation practices, investment policies, and governance norms diffuse. Supply chain networks propagate real economic shocks: the customer momentum anomaly demonstrates that market prices incorporate supply chain information with a predictable delay. Correlation networks capture co-movement structure that both reveals sector clustering and evolves across market regimes. Interbank networks determine whether individual bank failures cascade into systemic crises. And social networks between places carry information that formal channels miss: @allen2026social show that intercommunity ties expand both the demand for and the supply of online credit, most of all in disadvantaged communities, without raising delinquency, which makes the Social Connectedness Index a measurement tool of particular value in a market where formal credit information is thin.
 
 Vietnamese markets are particularly network-dense because of the pervasive role of state ownership, the prominence of business groups, and the concentration of the banking system. The control-cash flow wedge (i.e., the gap between control rights and cash flow rights created by pyramidal ownership) is larger and more variable than in markets with stronger minority shareholder protections. This wedge, which is computable only through network analysis of ownership chains, is both a governance risk measure and a predictor of firm value.
 

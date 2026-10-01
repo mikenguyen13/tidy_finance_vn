@@ -782,6 +782,8 @@ plt.show()
 
 The most important lesson in factor construction is that the resulting factor premium is *not* uniquely determined by the economic hypothesis; it depends substantially on implementation choices. We systematically vary each choice and examine how the factor changes.
 
+The choices varied below are the ones researchers usually think of as choices: weighting, breakpoints, the number of groups, rebalancing frequency. The benchmark subtracted to form excess returns is rarely on that list, yet @binsbergen2026factor show it belongs there. Replacing the short rate with a duration-matched government bond portfolio changes the sign or significance of a substantial minority of published U.S. anomalies without touching the sorting variable at all. We do not implement that adjustment here, but it is worth keeping in mind that the sensitivity table produced at the end of this section understates the full multiverse of defensible specifications.
+
 ### Weighting: Value-Weighted vs. Equal-Weighted
 
 ```{python}

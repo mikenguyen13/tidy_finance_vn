@@ -66,6 +66,18 @@ Event studies in emerging markets face distinct challenges:
 
 -   **Market microstructure.** Price limits ($\pm$ 7% on HOSE, $\pm$ 10% on HNX, $\pm$ 15% on UPCOM in Vietnam), T+2 settlement, and the absence of short-selling affect the speed of price adjustment. Researchers should consider wider event windows to accommodate slower information incorporation [@bhattacharya2000event; @griffin2010market].
 
+### Beyond Announcement Returns: Mergers, Acquisitions, and Employee Welfare {#sec-event-ma-employees}
+
+Mergers and acquisitions are the archetypal event-study application, and the announcement-window facts are well established: target shareholders earn large positive abnormal returns while average acquirer returns hover near zero [@jensen1983market; @andrade2001new]. Announcement CARs, however, measure only shareholder wealth. A growing literature applies the same event logic to non-price outcomes to ask what mergers do to the firm's other stakeholders, employees above all.
+
+The most direct evidence comes from @bach2026mergers, who link Swedish matched employer-employee records to individual health registries and document that the incidence of stress, anxiety, and depression and the use of psychiatric medication rise significantly among employees after mergers. The effects are not a phenomenon of distressed targets: they appear among employees of both targets and acquirers, in weak as well as growing and profitable firms, and they concentrate among blue-collar workers, lower-skilled employees, and those whose careers stall inside the merged firm. Strikingly, mergers that generate more mental illness among employees also perform worse after the transaction: the human costs of a badly integrated deal and its economic costs move together, so employee welfare is informative about deal quality rather than being a pure transfer from workers to shareholders.
+
+The pecuniary counterpart to these health costs is documented by @lagaras2026mas, who links Brazilian matched employer-employee administrative records to hand-collected M&A data and traces the earnings of incumbent target-firm employees for years after a deal. Target employees suffer large and persistent earnings declines, but the losses are concentrated almost entirely among workers who *leave* the target: those who stay are largely unaffected. Decomposing the losses is what makes the paper methodologically valuable. Part is displacement (a sharp, mostly short-lived shock to employment), but the larger and more durable part is a reallocation cost: displaced workers move to lower-paying employers, with roughly 47% landing at firms with lower wage premiums, and the fall in the *employer* wage premium accounts for the majority of the long-run wage loss. The losses are worst for low-skilled and older workers and for those with substantial firm-specific human capital, consistent with the destruction of job-specific match value and the depreciation of industry-specific skills rather than a uniform decline in worker productivity. Read alongside @bach2026mergers, the two papers describe the same event through different registries: a merger reallocates labor, and the workers who are reallocated bear the cost in both earnings and health.
+
+These results sit at the intersection of several literatures. On the health side, @sullivan2009job show with US administrative data that job displacement raises worker mortality for decades afterward, and @engelberg2016worrying document that stock market declines predict same-day hospital admissions, especially for anxiety and related psychological conditions, so economic shocks transmit to health quickly and persistently. On the labor side of M&A, @dessaint2017employment show that stringent employment protection legislation, by making post-merger labor restructuring costlier, reduces both takeover activity and merger gains; @john2015employee find that acquirers operating under strong employee rights earn lower announcement returns, cut fewer jobs after deals, and realize smaller combined gains; @lee2018human show that deals between firms with related human capital are more likely to occur, earn higher announcement returns, and perform better afterward; and @ma2025mergers document that M&A serves as a channel of technology adoption in which routine-intensive jobs at targets are displaced, linking merger activity to wage inequality.
+
+For Vietnam, the shareholder side of this research program is directly implementable with the pipeline developed in this chapter: landmark transactions such as ThaiBev's 2017 acquisition of Sabeco, the wave of foreign strategic stakes in banking and consumer sectors, and the compulsory transfers of weak banks to healthier institutions in 2024--2025 all provide clean announcement dates for CAR estimation (subject to the price-limit caveats above). The stakeholder side is harder, but less out of reach than it first appears. Vietnam has no linkable health registry, so a Swedish-style design in the spirit of @bach2026mergers is not currently feasible. The Brazilian design of @lagaras2026mas, however, is a much closer template: it requires only matched employer-employee administrative records, and Vietnam Social Security maintains exactly this kind of longitudinal contribution data, recording employer identity and insured earnings for participating workers. A researcher who obtained access to those records (or to anonymized extracts) could replicate the core decomposition---separating displacement effects from reallocation effects, and identifying employer wage premiums from workers who switch firms---for Vietnamese deals, with the caveats that informal employment lies outside the system and that contribution earnings are capped and therefore censored at the top. Failing that, enterprise surveys, labor-force surveys, and firm-level employment and payroll disclosures offer coarser but usable windows onto post-merger employment and wage outcomes. That an emerging-market study is the methodological model here is not incidental: Brazil's combination of administrative data coverage and an active but less-regulated M&A market resembles Vietnam's trajectory far more than the Nordic or US settings do. The broader lesson of @bach2026mergers and @lagaras2026mas for any M&A event study is worth internalizing: a price-based CAR captures the market's estimate of shareholder value creation at announcement, not the deal's welfare consequences. And because employee distress predicts weak post-merger performance, even a shareholder-focused analyst has reason to track what happens to the workforce.
+
 ## Mathematical Framework
 
 This section presents the complete mathematical specification of the event study methodology. We follow the notation conventions of @campbell1998econometrics and @kothari2007econometrics.
@@ -1826,6 +1838,191 @@ print(f"\n{sig_005}/{total_tests} tests significant at 5% level")
 print(f"\nRobustness: Results checked across {len(models_daily)} risk models "
       f"and {len(windows)} event windows")
 ```
+
+## Market Reactions to Macroeconomic News and Belief Overreaction {#sec-event-belief-overreaction}
+
+The event studies in this chapter measure how one firm's price responds to one firm's news. The aggregate market responds to a different kind of event: scheduled macroeconomic releases, central bank decisions, and the clustered earnings announcements of large firms. Whether those responses are rational, excessive, or too small is a long-standing question, and the standard tool for answering it, a regression of survey forecast errors on forecast revisions, has two weaknesses. It says nothing about *which* news investors overreact to, and in real-time data it often finds no reliable relation at all.
+
+@bianchi2026hundreds take a different route. They estimate a structural asset-pricing model in which a representative investor's beliefs about several macroeconomic shocks may be distorted, and they let the data choose the direction and size of the distortion. The rational benchmark is supplied by a machine-learning forecaster that uses only information available in real time and beats survey forecasts out of sample. They then filter how the investor's perceptions of each shock were revised around hundreds of specific news events (macroeconomic data releases, earnings announcements, and Federal Reserve communications) and compare the market's actual reaction with the reaction a rational investor would have had.
+
+Three findings stand out.
+
+-   **Investors overreact to every perceived shock.** The estimated distortion parameter, in the spirit of diagnostic expectations, is $\theta = 1.58$, well above zero. Inattention, which would imply underreaction, is allowed by the model and rejected by the data. Investors also over-extrapolate news about the payout share of output.
+-   **Overreaction to each shock does not imply overreaction to each event.** Most real news moves perceptions of several shocks at once, often in directions with opposing implications for prices. Because the shocks differ in volatility and persistence, overreaction to each can net out to a market response that is *smaller* than the rational one.
+-   **Belief distortion stabilized the market when it mattered.** The authors estimate that this compositional underreaction describes several post-2000 episodes, most notably the global financial crisis. Over the post-2000 period as a whole, a rational benchmark with the estimated shocks would have produced a *more* volatile market than observed, a puzzle of excess stability rather than excess volatility.
+
+The mechanism can be seen in the paper's simplified model, which is small enough to reproduce here. Log payout growth is the sum of output growth $y_t$ and the change in the log payout share $k_t$, both autoregressive:
+
+$$
+\Delta d_{t+1} = y_{t+1} + k_{t+1} - k_t, \qquad
+y_{t+1} = \rho_y y_t + \varepsilon_{y,t+1}, \qquad
+k_{t+1} = \rho_k k_t + \varepsilon_{k,t+1}.
+$$ {#eq-event-blm-payout}
+
+A rise in output growth is persistent good news. A fall in the payout share is transitory, so it implies catch-up growth later and, under rational expectations, barely moves the price. With the Campbell-Shiller approximation and a constant discount rate, the price-payout ratio loads on the two states with coefficients $a_y = \rho_y/(1-\rho\rho_y) > 0$ and $a_k = (\rho_k - 1)/(1-\rho\rho_k) < 0$. Diagnostic beliefs inflate the perceived news in each innovation by the factor $1 + \theta$, so the return on impact of an event that moves perceptions by $(\varepsilon_y, \varepsilon_k)$ is
+
+$$
+r = \left[1 + a_y(1+\theta)\right]\varepsilon_y + \left[1 + a_k(1+\theta)\right]\varepsilon_k ,
+$$ {#eq-event-blm-response}
+
+which reduces to the rational response at $\theta = 0$. Because $a_k$ is negative, overreaction to a payout-share shock pushes the price in the *opposite* direction to overreaction to an output shock of the same sign. The code below evaluates @eq-event-blm-response for every direction of news and compares the distorted with the rational response. The persistence values are illustrative, not the authors' estimates; $\theta = 1.58$ is their estimate.
+
+```{python}
+#| label: belief-overreaction-model
+#| code-summary: "Rational and distorted market responses to news"
+def news_response(eps_y, eps_k, theta, rho_y=0.2, rho_k=0.9, rho=0.997):
+    """
+    Impact return of a news event in the simplified model of Bianchi,
+    Ludvigson, and Ma: payout growth = output growth + change in the log
+    payout share, both AR(1), priced with the Campbell-Shiller identity.
+
+    eps_y, eps_k : perceived innovations to output growth and the payout share
+    theta        : diagnostic distortion (0 = rational expectations)
+    Returns the log return on impact (price-payout change plus payout growth).
+    """
+    a_y = rho_y / (1 - rho * rho_y)            # price-payout loading on output growth
+    a_k = (rho_k - 1) / (1 - rho * rho_k)      # loading on the payout share (< 0)
+    return ((1 + a_y * (1 + theta)) * eps_y
+            + (1 + a_k * (1 + theta)) * eps_k)
+
+
+angles = np.linspace(-np.pi, np.pi, 721)
+news = pd.DataFrame({"angle": angles,
+                     "eps_y": np.cos(angles), "eps_k": np.sin(angles)})
+news["re"] = news_response(news["eps_y"], news["eps_k"], theta=0.0)
+frames = []
+for theta in [0.5, 1.58]:
+    de = news_response(news["eps_y"], news["eps_k"], theta=theta)
+    frames.append(news.assign(theta=theta, de=de,
+                              ratio=np.abs(de) / np.abs(news["re"])))
+overreaction = pd.concat(frames, ignore_index=True)
+
+# Share of news compositions for which the market underreacts despite theta > 0
+print(overreaction.assign(under=overreaction["ratio"] < 1)
+      .groupby("theta")["under"].mean().round(3))
+```
+
+```{python}
+#| label: fig-belief-overreaction
+#| fig-cap: "Distorted relative to rational market response to a news event, by the composition of perceived output and payout-share news, in the simplified model of Bianchi, Ludvigson, and Ma. Values below one are underreaction."
+#| fig-alt: "Line chart of the ratio of the distorted to the rational response, on a log scale, against the angle of the news vector. The ratio is above one for most compositions but falls well below one in two regions where output and payout-share news have the same sign, and spikes where the rational response is near zero."
+plot_df = overreaction.copy()
+plot_df["angle_deg"] = np.degrees(plot_df["angle"])
+# Mask the points where the rational response is essentially zero
+plot_df["ratio_plot"] = plot_df["ratio"].where(plot_df["ratio"].between(0.02, 50))
+
+fig, ax = plt.subplots(figsize=(10, 4.5))
+for (theta, grp), color in zip(plot_df.groupby("theta"), ["#5B8BD0", "#2E5090"]):
+    ax.plot(grp["angle_deg"], grp["ratio_plot"], color=color, lw=1.8,
+            label=f"Diagnostic distortion θ = {theta:g}")
+ax.axhline(1, color="#C0392B", ls="--", lw=1, label="Rational response")
+for x0, x1, txt in [(-180, -90, "bad output,\nbad payout share"),
+                    (-90, 0, "good output,\nbad payout share"),
+                    (0, 90, "good output,\ngood payout share"),
+                    (90, 180, "bad output,\ngood payout share")]:
+    ax.text((x0 + x1) / 2, 40, txt, ha="center", va="top", fontsize=8, color="grey")
+ax.set_yscale("log")
+ax.set_ylim(0.02, 50)
+ax.set_xticks([-180, -90, 0, 90, 180])
+ax.set_xlabel("Composition of perceived news (angle of the shock vector, degrees)")
+ax.set_ylabel("|Distorted response| / |rational response|")
+ax.legend(loc="lower right", frameon=False)
+plt.tight_layout()
+plt.show()
+```
+
+@fig-belief-overreaction shows both regimes. When an event's news is mostly about output, or when output and payout-share news point in opposite directions, the distorted response exceeds the rational one: the textbook overreaction that amplifies volatility. Near pure payout-share news the rational response is close to zero while the distorted one is not, so the ratio explodes. But for most compositions in which the two shocks have the same sign (bad output growth together with a fall in the payout share, or the mirror image), the overreaction to the transitory payout-share news offsets the overreaction to the output news, and the market moves *less* than it rationally should. For roughly a quarter to a third of all possible news compositions in this example, a market that overreacts to every shock underreacts to the event.
+
+### What This Means for Vietnamese Research {#sec-event-belief-overreaction-vietnam}
+
+The full structural-AI synthesis requires real-time vintages of hundreds of macroeconomic series, survey expectations of investors and analysts, and futures prices, most of which do not exist for Vietnam. Its central insight transfers nonetheless, and in one respect Vietnam is a better laboratory than the United States.
+
+**Vietnamese macro news arrives bundled.** The General Statistics Office publishes inflation, industrial production, retail sales, trade, and investment together in a single report on a pre-announced schedule. Every release day is therefore a multi-shock event in the sense of @eq-event-blm-response, with frequent conflicting signals (higher inflation alongside stronger output, for example). The compositional prediction is testable directly: the market's response to a release should be dampened, relative to a model fitted on releases with consistent signals, when the components of the news have counteracting implications.
+
+**State Bank decisions are unscheduled.** Changes to policy rates and credit-growth targets are announced without a fixed meeting calendar, so their timing is itself news. They are natural events for this design but require care in defining the event day.
+
+**The rational benchmark must be real-time.** The paper's machine forecaster uses only data available at each date. Vietnamese macroeconomic series are revised, and historical vintages are rarely archived, so a benchmark built from today's revised data overstates what investors could have known and inflates measured belief distortions. Archive releases as published, or restrict the benchmark to series that are not revised.
+
+**Daily data limit the event window.** Intraday index data allow windows of minutes around a release; with daily data, other news on the same day contaminates the response, and price limits can truncate it on large-surprise days (@sec-price-limit-distortion).
+
+The code below sets up the reduced-form version of the exercise. It builds a real-time machine forecast of each indicator from information released before each date, measures surprises, estimates the VN-Index response on release days, and tests the two predictions that matter: that responses reverse when they reflect overreaction, and that responses are dampened when a release delivers conflicting signals. The release calendar, a file of release dates and first-print values, has to be assembled from GSO publications.
+
+```{python}
+#| label: macro-news-event-study
+#| eval: false
+#| code-summary: "Real-time surprises and the VN-Index response to GSO releases"
+from sklearn.linear_model import ElasticNetCV
+from datacore import DataCoreClient
+
+client = DataCoreClient()
+
+# Release calendar assembled from GSO reports: one row per release date and
+# indicator, holding the value as first published on that date
+releases = pd.read_csv("data/gso_releases.csv", parse_dates=["release_date"])
+panel = (releases.pivot(index="release_date", columns="indicator", values="value")
+                 .sort_index())
+indicators = list(panel.columns)
+
+
+def real_time_surprises(panel, n_lags=6, min_train=36):
+    """First print minus an elastic-net forecast fitted only on earlier releases."""
+    lagged = pd.concat({f"{c}_lag{l}": panel[c].shift(l)
+                        for c in panel.columns for l in range(1, n_lags + 1)}, axis=1)
+    surprise = pd.DataFrame(index=panel.index, columns=panel.columns, dtype=float)
+    for i in range(n_lags + min_train, len(panel)):
+        train = lagged.iloc[n_lags:i].dropna()
+        x_now = lagged.iloc[[i]]
+        if x_now.isna().any(axis=None):
+            continue
+        for c in panel.columns:
+            model = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], cv=5, max_iter=10000)
+            model.fit(train, panel[c].loc[train.index])
+            surprise.iloc[i, panel.columns.get_loc(c)] = (
+                panel[c].iloc[i] - model.predict(x_now)[0])
+    return surprise / surprise.std()      # standardized surprises
+
+
+surprises = real_time_surprises(panel).dropna()
+
+vn = client.get_index_returns("VNINDEX", frequency="daily",
+                              start_date="2010-01-01", end_date="2024-12-31")
+vn["date"] = pd.to_datetime(vn["date"])
+ret = vn.set_index("date")["return"].sort_index()
+
+# Event day: first trading day on or after the release. Check GSO's release
+# time; a release after the close moves the event to the next trading day.
+pos = ret.index.searchsorted(surprises.index)
+keep = pos < len(ret)
+events = surprises[keep].copy()
+events["event_day"] = ret.index[pos[keep]]
+events["r0"] = ret.reindex(events["event_day"]).values
+post = ret[::-1].rolling(5).sum()[::-1].shift(-1)          # return over days +1..+5
+events["r_post"] = post.reindex(events["event_day"]).values
+events = events.dropna()
+
+# 1. Release-day response to each indicator's surprise
+response = sm.OLS(events["r0"], sm.add_constant(events[indicators])).fit(cov_type="HC1")
+
+# 2. Composition: how much of the news pushes against its net direction
+contrib = events[indicators] * response.params[indicators]
+gross = contrib.abs().sum(axis=1)
+events["news_index"] = contrib.sum(axis=1)
+events["conflict"] = np.minimum(contrib.clip(lower=0).sum(axis=1),
+                                -contrib.clip(upper=0).sum(axis=1)) / gross
+
+# 3. Reversal versus continuation. A negative slope of r_post on r0 indicates
+#    overreaction; the interaction asks whether releases with conflicting
+#    signals behave differently, as the compositional mechanism predicts.
+events["r0_x_conflict"] = events["r0"] * events["conflict"]
+reversal = sm.OLS(events["r_post"],
+                  sm.add_constant(events[["r0", "conflict", "r0_x_conflict"]])
+                  ).fit(cov_type="HC1")
+
+print(response.summary().tables[1])
+print(reversal.summary().tables[1])
+```
+
+Read the output in two steps. In the reversal regression, a negative coefficient on the release-day return means release-day moves partly unwind over the following week, the signature of overreaction; a positive coefficient means they continue, the signature of underreaction. The compositional mechanism predicts a positive interaction: releases whose components conflict should show less reversal, or outright continuation, than releases whose components agree. With about a dozen GSO releases a year, statistical power is the binding constraint. Pooling them with State Bank decisions and the clustered quarterly earnings announcements of VN30 constituents raises the number of events, at the cost of mixing news types that the structural model would treat separately.
 
 ## Practical Recommendations
 

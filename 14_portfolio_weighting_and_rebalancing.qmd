@@ -1490,6 +1490,485 @@ plt.tight_layout()
 plt.show()
 ```
 
+## Machine Learning and the Implementable Efficient Frontier {#sec-weight-ief}
+
+Every scheme in this chapter was chosen first and charged for trading afterwards. @jensen2026machine argue that this order is backwards for any strategy that trades on signals, and that the right object of evaluation is the **implementable efficient frontier**: the highest expected return *net of trading costs* attainable at each level of risk. They build a portfolio method around that objective, apply machine learning to it, and show that the ranking of strategies and of the characteristics that drive them changes once costs enter the objective rather than the accounting.
+
+### The Problem {#sec-weight-ief-problem}
+
+An investor with wealth $W_t$ holds portfolio weights $\pi_t$ in $N$ stocks. Between rebalancing dates the weights drift with returns, so the portfolio inherited at $t$ is $g_t \pi_{t-1}$, where $g_t$ is a diagonal matrix with entries $(1 + r^f_t + r_{i,t})/(1 + g^W_t)$ and $g^W_t$ is the growth of wealth. Moving to $\pi_t$ requires trading $W_t(\pi_t - g_t\pi_{t-1})$ in currency units, and trading moves prices linearly in the trade size, with a diagonal price-impact matrix $\Lambda_t$. The return net of the risk-free rate and of trading costs is
+
+$$
+r^{\text{net}}_{t+1} = \pi_t^\top r_{t+1} - \frac{W_t}{2}\left(\pi_t - g_t\pi_{t-1}\right)^\top \Lambda_t \left(\pi_t - g_t\pi_{t-1}\right),
+$$ {#eq-weight-ief-net}
+
+and the investor maximizes its mean minus $\gamma/2$ times its variance. Two features of @eq-weight-ief-net matter. Trading costs are quadratic in the trade, which is the linear-price-impact specification of @garleanu2013dynamic rather than the square-root model in @eq-tc-model; the choice buys tractability at the cost of understating the cost of small trades. And costs scale with wealth: the same weights cost a larger investor more. The authors calibrate impact so that trading 1% of a stock's daily dollar volume moves its price by 0.1%, which gives $\lambda_{i,t} = 0.2 / \text{ADV}_{i,t}$.
+
+The frontier traced by varying $\gamma$ has a property the textbook frontier lacks. Without costs, any point on the capital market line is reached by levering the tangency portfolio, so the Sharpe ratio is constant along the line. With costs, larger positions mean larger trades, so the net Sharpe ratio *declines* along the implementable frontier. An investor therefore cannot maximize the net Sharpe ratio and then choose leverage; risk, return, and cost have to be chosen together. And the frontier of a larger investor lies everywhere below that of a smaller one.
+
+### The Solution: Trade Toward an Aim {#sec-weight-ief-solution}
+
+Generalizing @garleanu2013dynamic to stationary returns and to expected returns that are arbitrary functions of characteristics, the authors show that the optimal portfolio takes the form
+
+$$
+\pi_t = m\, g_t \pi_{t-1} + (I - m)\, A_t ,
+$$ {#eq-weight-ief-rule}
+
+so the investor starts from the inherited portfolio and trades a fraction $I - m$ of the way toward an **aim portfolio** $A_t$. The matrix $m$ solves a fixed-point equation in $\gamma\Sigma$ and $W\Lambda$ and governs trading speed: it rises toward the identity, meaning slower trading, as wealth or price impact rise and as risk aversion falls. The aim is a discounted sum of current *and expected future* Markowitz portfolios,
+
+$$
+A_t \approx (I - m)^{-1} \sum_{\tau = 0}^{\infty} (m\bar{g})^{\tau}\, c\; \mathbb{E}_t\!\left[\frac{1}{\gamma}\Sigma^{-1}\mu_{t+\tau}\right],
+$$ {#eq-weight-ief-aim}
+
+with $c$ a matrix that depends on $m$. Because the investor will hold whatever it buys today for a while, a signal that predicts returns for many months is worth more than an equally strong signal that decays within a month. This is the economic content of "alpha decay," and it is exactly what a cost-agnostic or a static cost-aware portfolio ignores. The static alternative, which trades toward today's Markowitz portfolio while penalizing today's trade, has the same partial-adjustment form but aims at the wrong target.
+
+### Portfolio-ML: Learning the Aim Directly {#sec-weight-ief-pfml}
+
+Implementing @eq-weight-ief-aim requires forecasts of returns at every horizon. The authors' preferred method, **Portfolio-ML**, skips return forecasting altogether and learns the aim directly. It parameterizes the aim as a linear function of random Fourier features of the characteristics, scaled by each stock's volatility,
+
+$$
+A_t = \operatorname{diag}(\sigma_t)^{-1}\, \text{RF}(s_t)\,\beta ,
+$$ {#eq-weight-ief-parametric}
+
+an idea that extends the parametric portfolio policies of @brandt2009parametric to a dynamic problem with trading costs. The random features, $\cos(s_{i,t}^\top w_j)$ and $\sin(s_{i,t}^\top w_j)$ for random Gaussian vectors $w_j$, let a linear model approximate nonlinear functions and interactions of the characteristics, the device whose statistical properties in return prediction are studied by @kelly2024virtue. Substituting @eq-weight-ief-parametric into @eq-weight-ief-rule makes the portfolio approximately linear in $\beta$, $\pi_t \approx \Omega_t\beta$, where $\Omega_t$ is a persistence- and growth-weighted average of current and past scaled signals. Realized utility is then quadratic in $\beta$, and the optimal coefficients have a closed form:
+
+$$
+\hat{\beta} = \left(\frac{1}{T}\sum_t D_t + \ell I\right)^{-1} \frac{1}{T}\sum_t \Omega_t^\top r_{t+1},
+\qquad
+D_t = \gamma\, \Omega_t^\top \Sigma_t \Omega_t + W\, \Delta\Omega_t^\top \Lambda_t\, \Delta\Omega_t ,
+$$ {#eq-weight-ief-beta}
+
+where $\Delta\Omega_t = \Omega_t - g_t\Omega_{t-1}$ is the implied trade and $\ell$ is a ridge penalty. The number of random features, their scale, and $\ell$ are chosen each year by an expanding-window validation on realized utility. No second tuning layer is needed, because the objective that fits $\beta$ is already the investor's objective.
+
+### The Evidence {#sec-weight-ief-evidence}
+
+The application uses US stocks above the NYSE median market capitalization, 115 characteristics from @jensen2023there, a factor-model covariance matrix in the style of commercial risk models, and an out-of-sample period from 1981 to 2020 for an investor with risk aversion 10 whose fund grows with the market to $10 billion by 2020. The figures below are from the authors' working-paper version and may differ slightly in the published article.
+
+-   **Cost-agnostic machine learning is not implementable.** The Markowitz portfolio built on machine-learning return forecasts has a gross Sharpe ratio of 2.0 but turnover so extreme that its net return is catastrophically negative. A standard decile long-short sort on the same forecasts turns over 260% of capital a month and has a net Sharpe ratio of about −12.
+-   **Static cost awareness helps but misplaces the investor.** The static method earns a positive net Sharpe ratio of 0.94 yet a negative realized utility, because its realized risk far exceeds its ex ante risk.
+-   **Portfolio-ML dominates.** It earns a net Sharpe ratio of 1.38 with a monthly turnover of 32%, and the highest realized utility. Even after the authors give the forecast-based methods a second tuning layer that rescales their inputs, Portfolio-ML beats them by roughly 20% in net Sharpe ratio and 60% in utility.
+-   **Costs change which characteristics matter.** Measured by the utility lost when a characteristic is withheld, the "economic feature importance" of short-term reversal, which dominates cost-agnostic models, collapses, and value and quality become the most important characteristics.
+
+The authors' replication code is public ([GitHub: theisij/ml-and-the-implementable-efficient-frontier](https://github.com/theisij/ml-and-the-implementable-efficient-frontier)). It is written in R, requires the characteristics data of @jensen2023there from WRDS, and is designed for a computing cluster. The repository carries no license, so we do not reproduce it here. The code below is an independent Python implementation of Portfolio-ML that follows the formulas above, checked first in a simulation and then applied to Vietnamese data.
+
+### An Independent Implementation {#sec-weight-ief-code}
+
+The core of the method is five small functions: the trading-speed matrix $m$, the scaling of signals, random Fourier features, the implied-weights matrix $\Omega_t$, and the closed-form coefficients of @eq-weight-ief-beta.
+
+```{python}
+#| label: portfolio-ml-core
+#| code-summary: "Core functions for Portfolio-ML"
+def trading_speed(sigma, lam, wealth, gamma, mu=0.007, rf=0.0, iters=10):
+    """
+    Persistence matrix m in the optimal rule pi_t = m g_t pi_{t-1} + (I - m) A_t.
+
+    Solves the fixed point m~ = (x + I + diag(G) - m~ o G)^{-1}, where
+    x = (gamma / wealth) Lambda^{-1/2} Sigma Lambda^{-1/2}, G is the second
+    moment of portfolio-weight growth, and m = Lambda^{-1/2} m~ Lambda^{1/2}.
+    `lam` is the diagonal of the price-impact matrix (per unit of currency).
+    """
+    n = len(lam)
+    G = np.ones((n, n)) + sigma / (1 + rf + mu) ** 2
+    lam_isqrt = 1 / np.sqrt(lam)
+    x = (gamma / wealth) * sigma * np.outer(lam_isqrt, lam_isqrt)
+    # Start from the closed-form solution when weight growth is deterministic
+    ev, evec = np.linalg.eigh(x + 2 * np.eye(n))
+    m_tilde = evec @ np.diag(0.5 * (ev - np.sqrt(ev**2 - 4))) @ evec.T
+    base = x + np.eye(n) + np.diag(np.diag(G))
+    for _ in range(iters):
+        m_tilde = np.linalg.inv(base - m_tilde * G)
+    return lam_isqrt[:, None] * m_tilde * np.sqrt(lam)[None, :]
+
+
+def scale_signals(features, vol):
+    """Demean features, add a constant, give each column unit length, divide rows by volatility."""
+    f = features - features.mean(axis=0)
+    f = np.column_stack([np.ones(len(f)), f])
+    f = f / np.sqrt((f**2).sum(axis=0))
+    return f / vol[:, None]
+
+
+def random_fourier_features(features, W):
+    """Random Fourier features: cos and sin of random projections of the features."""
+    z = features @ W
+    return np.hstack([np.cos(z), np.sin(z)])
+
+
+def implied_weights(S_hist, g_hist, m):
+    """
+    Omega_t such that the portfolio implied by aim coefficients beta is Omega_t beta.
+    S_hist[i] is the scaled signal matrix i months ago (i = 0 is today);
+    g_hist[i] is the weight-growth vector realized over the month ending i months ago.
+    """
+    n = m.shape[0]
+    M, num, den = np.eye(n), np.zeros_like(S_hist[0]), np.zeros((n, n))
+    for i, S_i in enumerate(S_hist):
+        num += M @ S_i
+        den += M
+        if i < len(g_hist):
+            M = M @ m @ np.diag(g_hist[i])
+    return np.linalg.solve(den, num)
+
+
+def portfolio_ml_moments(S, g, ret, sigma, lam, m, wealth, gamma, months, lookback=11):
+    """Per-month ingredients of the Portfolio-ML objective: r_tilde_t and D_t."""
+    r_tilde, D = {}, {}
+    for t in months:
+        om = implied_weights([S[t - i] for i in range(lookback + 1)],
+                             [g[t - 1 - i] for i in range(lookback)], m)
+        om_prev = implied_weights([S[t - 1 - i] for i in range(lookback + 1)],
+                                  [g[t - 2 - i] for i in range(lookback)], m)
+        trade = om - g[t - 1][:, None] * om_prev
+        r_tilde[t] = om.T @ ret[t]
+        D[t] = gamma * om.T @ sigma @ om + wealth * trade.T @ (lam[:, None] * trade)
+    return r_tilde, D
+
+
+def fit_aim_coefficients(r_tilde, D, months, ridge):
+    """Closed-form Portfolio-ML coefficients: (mean D + ridge I)^{-1} mean r_tilde."""
+    r_bar = np.mean([r_tilde[t] for t in months], axis=0)
+    D_bar = np.mean([D[t] for t in months], axis=0)
+    return np.linalg.solve(D_bar + ridge * np.eye(len(r_bar)), r_bar)
+
+
+def objective(beta, r_tilde, D, months):
+    """Average realized utility r_tilde' beta - beta' D beta / 2 over the given months."""
+    return np.mean([r_tilde[t] @ beta - 0.5 * beta @ D[t] @ beta for t in months])
+```
+
+To see the method at work where the truth is known, the simulation below creates markets of 60 stocks over 35 years with two signals of very different persistence: a value-like signal with monthly autocorrelation 0.97 and a reversal-like signal that is independent from month to month but three times as predictive per unit. Liquidity varies across stocks by three orders of magnitude, and the investor has $10 billion and risk aversion 10. Four rules compete over the final ten years. Three of them are *oracles* that know the true expected returns: the cost-agnostic Markowitz portfolio, the static cost-aware portfolio, and the dynamic optimum of @eq-weight-ief-rule and @eq-weight-ief-aim computed from the known signal dynamics. Portfolio-ML knows nothing about the data-generating process and learns its coefficients from the first 25 years, once with the two signals alone and once with a liquidity rank and its interactions with the signals added as features. Repeating the exercise over 20 simulated markets guards against reading too much into one draw.
+
+```{python}
+#| label: portfolio-ml-simulation
+#| code-summary: "Simulated markets with persistent and fleeting signals"
+GAMMA, WEALTH, LOOKBACK = 10.0, 1e10, 11
+N_STOCKS, N_MONTHS = 60, 420
+TRAIN_END, TEST_START = 240, 300
+RIDGES = [0.0] + list(np.exp(np.arange(-10, 7)))
+
+
+def simulate_market(seed, phi_slow=0.97, b_slow=0.04, b_fast=0.12):
+    """A market with one persistent and one fleeting signal and heterogeneous liquidity."""
+    rng = np.random.default_rng(seed)
+    n, T = N_STOCKS, N_MONTHS
+    dolvol = np.exp(rng.normal(np.log(2e8), 1.2, n))   # daily dollar volume
+    lam = 0.2 / dolvol                                  # 1% of volume moves price 0.1%
+    beta_mkt = rng.uniform(0.6, 1.4, n)
+    ivol = rng.uniform(0.06, 0.12, n)
+    sigma = 0.045**2 * np.outer(beta_mkt, beta_mkt) + np.diag(ivol**2)
+    vol = np.sqrt(np.diag(sigma))
+
+    s_slow = np.zeros((T, n))
+    s_slow[0] = rng.normal(size=n)
+    for t in range(1, T):
+        s_slow[t] = phi_slow * s_slow[t - 1] + np.sqrt(1 - phi_slow**2) * rng.normal(size=n)
+    s_fast = rng.normal(size=(T, n))
+
+    mu = vol * (b_slow * s_slow + b_fast * s_fast)      # E_t[r_{t+1}]
+    ret = mu + (np.linalg.cholesky(sigma) @ rng.normal(size=(n, T))).T
+    g = (1 + ret) / (1 + ret.mean(axis=1))[:, None]     # weight growth
+    liq = (np.argsort(np.argsort(dolvol)) + 0.5) / n - 0.5
+    return dict(lam=lam, sigma=sigma, vol=vol, s_slow=s_slow, s_fast=s_fast,
+                mu=mu, ret=ret, g=g, liq=liq, phi_slow=phi_slow,
+                b_slow=b_slow, b_fast=b_fast)
+
+
+def backtest(mkt, weight_rule, months):
+    """Realized gross return, trading cost, and turnover of a weight rule."""
+    rows, w_prev = [], np.zeros(N_STOCKS)
+    for t in months:
+        w_start = mkt["g"][t - 1] * w_prev
+        w = weight_rule(t, w_start)
+        trade = w - w_start
+        rows.append({"gross": w @ mkt["ret"][t],
+                     "tc": 0.5 * WEALTH * np.sum(mkt["lam"] * trade**2),
+                     "turnover": np.abs(trade).sum()})
+        w_prev = w
+    out = pd.DataFrame(rows)
+    out["net"] = out["gross"] - out["tc"]
+    return out
+
+
+def run_one(seed):
+    mkt = simulate_market(seed)
+    T, n = N_MONTHS, N_STOCKS
+    sigma, lam, vol = mkt["sigma"], mkt["lam"], mkt["vol"]
+    m = trading_speed(sigma, lam, WEALTH, GAMMA)
+    I_n, I_m = np.eye(n), np.eye(n) - m
+    sig_inv = np.linalg.inv(sigma)
+
+    # Oracle benchmarks that know the true expected returns
+    markowitz = np.einsum("ij,tj->ti", sig_inv, mkt["mu"]) / GAMMA
+    static_inv = np.linalg.inv(GAMMA * sigma + WEALTH * np.diag(lam))
+    mk_fast = np.einsum("ij,tj->ti", sig_inv, vol * mkt["b_fast"] * mkt["s_fast"]) / GAMMA
+    mk_slow = np.einsum("ij,tj->ti", sig_inv, vol * mkt["b_slow"] * mkt["s_slow"]) / GAMMA
+    slow_boost = np.linalg.solve(I_n - mkt["phi_slow"] * m, I_m)
+    rules = {
+        "Markowitz (oracle, cost-agnostic)": lambda t, w0: markowitz[t],
+        "Static (oracle)": lambda t, w0: static_inv @ (mkt["mu"][t] + WEALTH * lam * w0),
+        "Dynamic optimum (oracle)":
+            lambda t, w0: m @ w0 + I_m @ (I_m @ mk_fast[t] + slow_boost @ mk_slow[t]),
+    }
+
+    # Portfolio-ML learned from data, with and without liquidity interactions
+    liq = np.tile(mkt["liq"], (T, 1))
+    feature_sets = {
+        "Portfolio-ML: signals only": np.stack([mkt["s_slow"], mkt["s_fast"]], axis=2),
+        "Portfolio-ML: signals x liquidity": np.stack(
+            [mkt["s_slow"], mkt["s_fast"], liq,
+             mkt["s_slow"] * liq, mkt["s_fast"] * liq], axis=2),
+    }
+    months_fit = range(LOOKBACK + 2, T - 1)
+    train = [t for t in months_fit if t < TRAIN_END]
+    valid = [t for t in months_fit if TRAIN_END <= t < TEST_START]
+    for name, feats in feature_sets.items():
+        S = np.stack([scale_signals(feats[t], vol) for t in range(T)])
+        r_tilde, D = portfolio_ml_moments(S, mkt["g"], mkt["ret"], sigma, lam, m,
+                                          WEALTH, GAMMA, months_fit, LOOKBACK)
+        ridge = max(RIDGES, key=lambda l: objective(
+            fit_aim_coefficients(r_tilde, D, train, l), r_tilde, D, valid))
+        beta = fit_aim_coefficients(r_tilde, D, train + valid, ridge)
+        rules[name] = (lambda S_, b_: lambda t, w0: m @ w0 + I_m @ (S_[t] @ b_))(S, beta)
+
+    test = list(range(TEST_START, T - 1))
+    rows = []
+    for name, rule in rules.items():
+        bt = backtest(mkt, rule, test)
+        rows.append({"seed": seed, "Method": name,
+                     "Net Sharpe": np.sqrt(12) * bt["net"].mean() / bt["net"].std(),
+                     "Trading cost": 12 * bt["tc"].mean(),
+                     "Utility": 12 * (bt["net"].mean() - 0.5 * GAMMA * bt["net"].var()),
+                     "Turnover": bt["turnover"].mean()})
+    return pd.DataFrame(rows)
+
+
+sim_results = pd.concat([run_one(seed) for seed in range(20)],
+                        ignore_index=True)
+```
+
+```{python}
+#| label: tbl-portfolio-ml-simulation
+#| tbl-cap: "Out-of-Sample Performance in Simulated Markets: Medians over 20 Markets (Risk Aversion 10, Wealth 10 Billion)"
+order = ["Markowitz (oracle, cost-agnostic)", "Static (oracle)",
+         "Portfolio-ML: signals only", "Portfolio-ML: signals x liquidity",
+         "Dynamic optimum (oracle)"]
+summary = (sim_results.groupby("Method")[["Net Sharpe", "Trading cost", "Utility", "Turnover"]]
+           .median().loc[order])
+wide = sim_results.pivot(index="seed", columns="Method", values="Utility")
+summary["Beats static oracle (share of seeds)"] = [
+    (wide[name] > wide["Static (oracle)"]).mean() for name in order]
+summary.round(3)
+```
+
+The simulation reproduces the paper's logic in miniature. The cost-agnostic Markowitz portfolio is destroyed by its own trading even though it knows the true expected returns. The dynamic optimum beats the static oracle in most markets although both have the same perfect one-month forecasts: aiming at today's Markowitz portfolio ignores the persistence of the value-like signal and overpays to chase the reversal-like one. Portfolio-ML, which must learn everything from data, earns a higher net Sharpe ratio than the static oracle with roughly half its turnover, and comparable utility. It falls short of the dynamic optimum because it estimates with noise what the oracle knows.
+
+The two Portfolio-ML variants carry a lesson about features. The optimal aim treats liquid and illiquid stocks differently: it trades toward signals quickly in liquid names and slowly in illiquid ones, and it is willing to hold persistent signals in illiquid names but not fleeting ones. A rule that is linear in the signals alone cannot express this, so it can only scale everything down, which shows up as very low turnover and lower utility. Adding liquidity and its interactions recovers much of the gap. In the paper, the random Fourier features of 115 characteristics, several of which measure liquidity, generate such interactions automatically.
+
+Applying the method to Vietnamese stocks uses the liquid universe and the Ledoit-Wolf covariance estimator defined earlier in this chapter, the characteristics panel from the factor-construction chapter, and price impact calibrated to each stock's average daily traded value in VND. The code is not executed here: the hyperparameter search refits the model for every combination of random features, feature scale, and ridge penalty, and takes several minutes per wealth and risk-aversion pair.
+
+```{python}
+#| label: pfml-vn-data
+#| eval: false
+#| code-summary: "Characteristics and wide panels for Portfolio-ML"
+# Characteristics panel from the factor-construction chapter
+characteristics = client.get_characteristics_panel(
+    exchanges=["HOSE", "HNX"],
+    start_date="2008-01-01",
+    end_date="2024-12-31",
+    include_delisted=True,
+)
+char_cols = [c for c in characteristics.columns if c not in ["ticker", "month_end"]]
+
+# Rank-standardize each characteristic to [0, 1] within month; missing -> 0.5
+ranked = characteristics.copy()
+ranked[char_cols] = (ranked.groupby("month_end")[char_cols]
+                     .rank(pct=True).fillna(0.5))
+
+# Wide month x ticker panels on the liquid universe
+ret_wide = universe_liquid.pivot(index="month_end", columns="ticker",
+                                 values="monthly_return").sort_index()
+adv_wide = universe_liquid.pivot(index="month_end", columns="ticker",
+                                 values="turnover_value_avg_20d").reindex(ret_wide.index)
+mcap_wide = universe_liquid.pivot(index="month_end", columns="ticker",
+                                  values="market_cap").reindex(ret_wide.index)
+char_wide = {c: ranked.pivot(index="month_end", columns="ticker", values=c)
+                     .reindex(index=ret_wide.index, columns=ret_wide.columns)
+             for c in char_cols}
+
+# Value-weighted market return drives the growth of portfolio weights
+lag_mcap = mcap_wide.shift(1).where(ret_wide.notna())
+mkt_ret = (ret_wide * lag_mcap).sum(axis=1) / lag_mcap.sum(axis=1)
+months = ret_wide.index
+```
+
+```{python}
+#| label: pfml-vn-inputs
+#| eval: false
+#| code-summary: "Monthly universe, covariance, and price impact"
+LOOKBACK = 11
+_base_cache = {}
+
+
+def base_state(i, lookback=LOOKBACK):
+    """
+    Universe, covariance, and price impact at month i (no look-ahead).
+    A stock is investable if it has returns over the last lookback + 2 months.
+    Next month's return is used only to evaluate the decision; a missing
+    value (for example, a delisting) is recorded as zero.
+    """
+    if i in _base_cache:
+        return _base_cache[i]
+    window = ret_wide.iloc[i - lookback - 1:i + 1]
+    tickers = window.columns[window.notna().all()]
+    cov, cov_tickers = estimate_covariance(universe_liquid, months[i])
+    state = None
+    if cov is not None:
+        adv = adv_wide.iloc[i]
+        tickers = [t for t in tickers if t in cov_tickers and adv.get(t, 0) > 0]
+        if len(tickers) >= 30:
+            sigma = cov.loc[tickers, tickers].values
+            # growth[k] = growth of portfolio weights over month i - k
+            growth = ((1 + window[tickers].values)
+                      / (1 + mkt_ret.iloc[i - lookback - 1:i + 1].values)[:, None])[::-1]
+            state = dict(tickers=tickers, sigma=sigma, vol=np.sqrt(np.diag(sigma)),
+                         lam=0.2 / adv[tickers].values,   # 1% of ADV moves price 0.1%
+                         growth=growth,
+                         ret_next=ret_wide.iloc[i + 1][tickers].fillna(0).values)
+    _base_cache[i] = state
+    return state
+
+
+def month_signals(i, tickers, vol, W, lookback=LOOKBACK):
+    """Scaled random-feature signals for months i, i-1, ..., i-lookback-1."""
+    out = []
+    for lag in range(lookback + 2):
+        X = np.column_stack([char_wide[c].iloc[i - lag][tickers].fillna(0.5).values
+                             for c in char_cols])
+        out.append(scale_signals(random_fourier_features(X, W), vol))
+    return out
+```
+
+```{python}
+#| label: pfml-vn-backtest
+#| eval: false
+#| code-summary: "Tuning and out-of-sample backtest of Portfolio-ML"
+def run_portfolio_ml(wealth, gamma, first_val_year=2017, first_test_year=2020,
+                     p_grid=(16, 32, 64), g_grid=(np.exp(-3), np.exp(-2)),
+                     ridges=(0.0, *np.exp(np.arange(-10, 7))),
+                     cost_mult=1.0, long_only=False, seed=1, lookback=LOOKBACK):
+    """Portfolio-ML with yearly expanding-window tuning and an out-of-sample backtest."""
+    rng = np.random.default_rng(seed)
+    states = {}
+    for i in range(lookback + 2, len(months) - 1):
+        st = base_state(i, lookback)
+        if st is None:
+            continue
+        lam = cost_mult * st["lam"]
+        m = trading_speed(st["sigma"], lam, wealth, gamma, mu=mkt_ret.iloc[:i].mean())
+        states[i] = {**st, "lam": lam, "m": m}
+    year = {i: months[i].year for i in states}
+    last_year = max(year.values())
+
+    # Step 1: objective ingredients for every (p, g) and month
+    candidates = {}
+    for p in p_grid:
+        for g_rff in g_grid:
+            W = rng.normal(0, np.sqrt(g_rff), size=(len(char_cols), p // 2))
+            r_tilde, D, S_now = {}, {}, {}
+            for i, st in states.items():
+                S_hist = month_signals(i, st["tickers"], st["vol"], W, lookback)
+                om = implied_weights(S_hist[:lookback + 1],
+                                     st["growth"][:lookback], st["m"])
+                om_prev = implied_weights(S_hist[1:],
+                                          st["growth"][1:lookback + 1], st["m"])
+                trade = om - st["growth"][0][:, None] * om_prev
+                r_tilde[i] = om.T @ st["ret_next"]
+                D[i] = (gamma * om.T @ st["sigma"] @ om
+                        + wealth * trade.T @ (st["lam"][:, None] * trade))
+                S_now[i] = S_hist[0]
+            # Step 2: expanding-window validation, one year at a time
+            for l in ridges:
+                val = {}
+                for y in range(first_val_year, last_year + 1):
+                    fit_m = [i for i in states if year[i] < y]
+                    eval_m = [i for i in states if year[i] == y]
+                    if fit_m and eval_m:
+                        beta = fit_aim_coefficients(r_tilde, D, fit_m, l)
+                        val[y] = objective(beta, r_tilde, D, eval_m)
+                candidates[(p, g_rff, l)] = dict(r=r_tilde, D=D, S=S_now, val=val)
+
+    # Step 3: each test year, use the best hyperparameters so far and trade
+    rows, w_prev, lam_prev = [], pd.Series(dtype=float), pd.Series(dtype=float)
+    for y in range(first_test_year, last_year + 1):
+        best = max(candidates, key=lambda h: np.mean(
+            [v for yy, v in candidates[h]["val"].items() if yy < y] or [-np.inf]))
+        c = candidates[best]
+        beta = fit_aim_coefficients(c["r"], c["D"],
+                                    [i for i in states if year[i] < y], best[2])
+        for i in [i for i in states if year[i] == y]:
+            st, tick = states[i], states[i]["tickers"]
+            w_start = w_prev.reindex(tick).fillna(0).values   # already grown
+            aim = c["S"][i] @ beta
+            w = st["m"] @ w_start + (np.eye(len(tick)) - st["m"]) @ aim
+            if long_only:
+                w = np.clip(w, 0, None)
+            trade = w - w_start
+            exits = w_prev.index.difference(tick)               # forced liquidations
+            tc = (0.5 * wealth * np.sum(st["lam"] * trade**2)
+                  + 0.5 * wealth * np.sum(lam_prev.reindex(exits).fillna(0).values
+                                          * w_prev.reindex(exits).fillna(0).values**2))
+            rows.append({"month": months[i + 1], "gross": w @ st["ret_next"], "tc": tc,
+                         "turnover": np.abs(trade).sum(), "leverage": np.abs(w).sum(),
+                         "p": best[0], "ridge": best[2]})
+            w_prev = pd.Series(w * (1 + st["ret_next"]) / (1 + mkt_ret.iloc[i + 1]),
+                               index=tick)
+            lam_prev = pd.Series(st["lam"], index=tick)
+    bt = pd.DataFrame(rows)
+    bt["net"] = bt["gross"] - bt["tc"]
+    return bt
+
+
+def summarize(bt, gamma):
+    return pd.Series({
+        "Gross return": 12 * bt["gross"].mean(),
+        "Trading cost": 12 * bt["tc"].mean(),
+        "Net return": 12 * bt["net"].mean(),
+        "Volatility": np.sqrt(12) * bt["net"].std(),
+        "Net Sharpe": np.sqrt(12) * bt["net"].mean() / bt["net"].std(),
+        "Utility": 12 * (bt["net"].mean() - 0.5 * gamma * bt["net"].var()),
+        "Turnover": bt["turnover"].mean(),
+        "Leverage": bt["leverage"].mean(),
+    })
+```
+
+```{python}
+#| label: tbl-pfml-vn
+#| eval: false
+#| tbl-cap: "The Implementable Efficient Frontier for Vietnamese Stocks: Portfolio-ML by Fund Size and Risk Aversion"
+# Points on the implementable efficient frontier for three fund sizes
+frontier = {}
+for wealth in [1e11, 1e12, 1e13]:            # VND 100 billion, 1 trillion, 10 trillion
+    for gamma in [5, 10, 20]:
+        for long_only in [False, True]:
+            bt = run_portfolio_ml(wealth, gamma, long_only=long_only)
+            frontier[(f"{wealth / 1e9:,.0f}bn", gamma,
+                      "long-only" if long_only else "long-short")] = summarize(bt, gamma)
+frontier = pd.DataFrame(frontier).T
+frontier.index.names = ["Wealth (VND)", "Risk aversion", "Positions"]
+frontier.round(3)
+```
+
+### What This Means for Vietnamese Research {#sec-weight-ief-vietnam}
+
+The case for the method is stronger in Vietnam than in the US large-cap universe the authors study, because the forces it is built to handle are larger here: liquidity is concentrated in a few dozen stocks (@sec-weight-data), and many of the anomalies documented for Vietnamese stocks live in exactly the small, illiquid names where costs bite. Several adaptations are needed.
+
+1.  **Short selling is not available.** Portfolio-ML as specified is a long-short portfolio, and in Vietnam it is a research object rather than a fund: it measures which characteristics carry value net of costs and how the frontier shrinks with size. The long-only variant in the code simply sets negative weights to zero after each rebalancing. That is a heuristic projection, not the constrained optimum. A properly constrained version maximizes the same objective numerically with $\pi_t \geq 0$, or works with active weights around a benchmark such as VN30, where an underweight of at most the benchmark weight replaces a short position.
+2.  **Calibrate price impact for Vietnam and stress it.** The US calibration (0.1% impact for 1% of daily volume) almost certainly understates impact for Vietnamese mid caps. Report results for cost multipliers of 1, 2, and 4 (the `cost_mult` argument), and compare the implied costs with the trading-cost model in @eq-tc-model.
+3.  **Proportional costs are missing from the model.** Commissions and the 0.1% selling tax are linear in the trade (@tbl-weight-costs), and linear costs create a no-trade region that a quadratic model cannot produce. Subtract them in the backtest at minimum; treat a result that survives only without them as not implementable.
+4.  **Respect the market's rules.** Daily price limits cap how much of a position can be traded on a given day when a stock moves sharply, and foreign ownership limits make some stocks unbuyable for foreign investors. For a foreign-investor version, drop stocks at their limits from the buy side.
+5.  **The sample is short.** With characteristics from 2008, a 60-month covariance window, and yearly validation, only a few validation years inform the choice of hyperparameters. Keep the number of random features small, let the ridge penalty work, and report how sensitive the results are to the random seed that draws the features.
+6.  **Use economic feature importance as the anomaly test.** Withholding one characteristic at a time and measuring the loss in net utility answers the question the factor zoo (@sec-factor-zoo-multiple-testing) cannot: which Vietnamese anomalies are worth trading for an investor of a given size once costs are paid. The answer will differ by fund size, and the frontier across VND 100 billion, 1 trillion, and 10 trillion shows how quickly the opportunity set shrinks toward the most liquid names.
+
 ## Practical Guidance for Vietnam {#sec-weight-practical}
 
 The preceding analysis yields several practical recommendations for researchers and investors working with Vietnamese equities:

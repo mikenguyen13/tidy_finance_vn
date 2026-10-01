@@ -151,6 +151,74 @@ plt.show()
 
 This retail dominance has several consequences for microstructure. First, retail investors tend to submit smaller orders and trade more frequently, generating high message-to-trade ratios but limited depth at each price level. Second, retail order flow is more susceptible to herding and sentiment, which can amplify momentum and generate excess volatility [@barber2009just; @kaniel2012individual]. Third, the limited institutional presence means that sophisticated liquidity provision is scarce, particularly in mid- and small-cap stocks.
 
+## Which Prices Get Chosen: Digit Preferences and Superstition {#sec-micro-superstition}
+
+The tick schedule in @tbl-tick-sizes determines which prices are *possible*. It does not determine which of the possible prices are *chosen*. If traders were indifferent between adjacent grid points, the final digit of a transaction price would be close to uniformly distributed whenever the price ranges over many ticks, so any systematic departure from uniformity is evidence about how the price was set. This is an old diagnostic in microstructure. @harris1991stock documents that stock prices cluster on round fractions, more so for higher-priced and more volatile stocks, and interprets clustering as traders economizing on negotiation costs by using a coarser effective grid than the exchange requires. @christie1994nasdaq use the same object for a sharper purpose: NASDAQ dealers' near-total avoidance of odd-eighth quotes in active stocks could not be explained by negotiation costs and pointed instead to implicit collusion on wider spreads. In both cases the distribution of the final digit is a footprint of the price-formation process, recoverable from nothing more than a price series.
+
+Culture supplies a reason for digit preferences that has nothing to do with negotiation or collusion. In Chinese, 8 is lucky because its pronunciation evokes prosperity, and 4 is unlucky because it sounds like the word for death. @hirshleifer2018superstition show that Chinese IPO firms receive lucky listing codes more often than chance allows, trade at a premium, and subsequently underperform. @bhattacharya2018superstitious find that in Taiwan's index futures market individual investors submit disproportionately more limit orders at prices ending in 8 than in 4, institutions do not, and the superstitious traders lose money. Both papers locate superstition among retail participants in a single market.
+
+### Superstition Everywhere {#sec-micro-superstition-evidence}
+
+@chang2026superstition ask two broader questions: whether the same digit preference appears in the prices of every major Chinese asset class, including those traded almost exclusively by institutions, and whether its presence implies mispricing. Their measurement follows the Chinese reading convention, under which the last *nonzero* digit of a quoted price is the one that counts. A price of 20.58 ends in 8; a price of 20.50 is read as 20.5 and ends in 5. The core statistic is therefore a conditional probability,
+
+$$
+H_d = \Pr\left(\text{hundredths digit} = d \;\middle|\; \text{hundredths digit} \neq 0\right), \qquad d = 1, \dots, 9,
+$$ {#eq-micro-digit-prob}
+
+which equals $1/9 \approx 11.1\%$ for every $d$ when the final digit is set by chance. The test is whether $H_8$ lies above $1/9$ and $H_4$ below it. Instruments quoted to more decimal places are treated the same way at their own last place: the fourth decimal for exchange rates, the integer unit for commodity futures. Commodity contracts whose minimum price increment does not allow all ten final digits are dropped rather than corrected, since on a grid of 5 the final digit can only be 0 or 5.
+
+The effect turns out to be pervasive. The magnitudes below are from the authors' working-paper version and may differ slightly from the published article.
+
+-   **IPOs.** From 1995 to June 2014, when IPO prices were set with considerable market input, $H_8 = 33.2\%$ and $H_4 = 4.6\%$. The preference is strong enough to appear even at the tenths place among IPO prices that end there ($23.0\%$ versus $6.2\%$). It vanishes the moment a binding regulatory P/E ceiling took effect in July 2014 and the market stopped setting the price: in the strict-control period neither $H_8$ nor $H_4$ differs significantly from $1/9$.
+-   **Seasoned offerings.** Private placements, negotiated with at most ten investors, show a smaller but persistent effect ($13.9\%$ versus $8.2\%$).
+-   **Secondary-market stock prices.** Opening prices, set by call auction, show $H_8 = 13.6\%$ and $H_4 = 8.6\%$, and closing prices set by call auction show $12.4\%$ versus $9.9\%$. Closing prices computed as the volume-weighted average of the final minute's trades, the rule before each exchange adopted a closing auction, show no effect ($11.5\%$ versus $10.9\%$), and the gap between $H_8$ and $H_4$ opens immediately after each exchange switched mechanism.
+-   **Bonds.** Issuance coupon rates show no effect for Treasury, policy-bank, or local-government bonds, but a strong one for bonds that carry credit risk. It rises from financial bonds ($17.6\%$ versus $7.1\%$) to public non-financial corporate bonds ($20.3\%$ versus $7.4\%$) to privately placed non-financial corporate bonds ($24.2\%$ versus $5.2\%$), and within each category it strengthens as the rating falls, reaching $30.6\%$ versus $3.5\%$ for privately placed bonds rated below AAA. It is stronger for bonds issued on the exchange market than in the institutions-only interbank market, but present in both.
+-   **Exchange rates and commodities.** Interbank closing rates of the US dollar, euro, yen, and Hong Kong dollar against the renminbi all show the effect. Opening rates, which are anchored by the central bank's published central parity, do not. Pooled opening prices of 29 commodity futures show $13.7\%$ versus $8.7\%$.
+
+The design is persuasive less because of any single number than because of the placebos built into it. Wherever a price is set mechanically, by a regulator's formula, a central parity, or an arithmetic average, the effect disappears. Wherever a price is set by aggregating prices that people submit, it appears. A cultural preference cannot survive averaging, and it cannot operate where no one chooses the price.
+
+### Why Sophisticated Investors Do It Too {#sec-micro-superstition-mechanism}
+
+The presence of the effect in the interbank bond market, a wholesale market of banks and large institutions, is the paper's most surprising finding. It forces a distinction between two mechanisms.
+
+The first is **anchoring under ambiguity**. No valuation model pins a price down to the last tick. If careful analysis can only narrow a bond's yield to somewhere between 5.52% and 5.62%, every point in the interval is defensible, and a culturally shared focal point such as 5.58% makes it easier for buyer and seller to settle. This is the reference-point behavior of @tversky1974judgment applied to an interval that fundamentals leave undetermined. It predicts a stronger effect where value is more ambiguous (credit-risky bonds rather than sovereigns, IPOs rather than seasoned placements, lower ratings rather than higher), which is exactly the pattern above. In the secondary stock market the authors test the prediction directly. Using the ambiguity measure of @brenner2018asset, which is built from the month-to-month variation in a stock's estimated daily return distribution, they find in a firm-year panel with firm and year fixed effects that higher ambiguity predicts more lucky and fewer unlucky auction prices, holding return volatility constant. Ambiguity, not risk, predicts the digit.
+
+The second is **overoptimism among unsophisticated investors**. Investors who are already enthusiastic about an asset reach for the lucky number as an expression of that enthusiasm. This predicts a stronger effect where optimism is likely to be high, and the authors find one: among IPOs, $H_8$ rises from $29.3\%$ in the lowest P/E group to $46.0\%$ in the highest, whereas private placements, whose buyers are sophisticated, show no such gradient. In the secondary-market panel, a lower book-to-market ratio predicts a stronger effect.
+
+The two mechanisms carry different implications for prices, and this is what earns the paper a place in a microstructure chapter. Anchoring picks a point from an interval that fundamentals have already determined, so it should leave no systematic mispricing. Overoptimism should leave some. The evidence lines up accordingly.
+
+-   In Fama-MacBeth regressions of monthly market-adjusted returns over the three years after listing, IPOs priced with a final 8 underperform by about $0.47\%$ a month in the flexible-pricing period, roughly 15% cumulatively. The coefficient is insignificant in the strict-control period and for private placements.
+-   In the secondary market, a portfolio long the quintile of stocks with the smallest excess of lucky over unlucky auction closes in the previous month, and short the quintile with the largest, earns a Fama-French three-factor alpha of about $0.48\%$ a month among small stocks. It earns nothing among large stocks, even though large stocks show the digit effect too, and nothing when closes are volume-weighted averages.
+-   Among public non-financial corporate bonds issued on the exchange market, a lucky coupon is associated with an issuance spread about 5.4 basis points lower, controlling for issuer and bond characteristics. There is no such discount in the interbank market or for privately placed bonds, whose buyers are the most sophisticated.
+
+The general lesson reaches well beyond superstition: **a behavioral footprint in prices is not by itself evidence of mispricing.** A digit preference can be strong, statistically unambiguous, and present in markets dominated by professionals while costing no one anything, because it only selects among prices that are equally consistent with fundamentals. Mispricing appears only where the same footprint is a symptom of optimism among investors who set the *level* of the price as well as its last digit.
+
+### What This Means for Vietnamese Research {#sec-micro-superstition-vietnam}
+
+The premise transfers to Vietnam, though not unchanged. Vietnamese numerology overlaps with the Chinese: 4 (*tứ*) is avoided for its closeness to *tử*, death, and 8 (*bát*) is favored for its association with *phát*, prosperity. The Vietnamese ranking differs, however, in ways that matter for test design. Nine is at least as favored as eight, 6 (*lộc*, fortune) is favored, two-digit endings such as 68, 39, and 79 carry meanings of their own, and 7 is avoided by some. The public auctions of vehicle license plates held since 2023, in which plates made of repeated favored digits have sold at very large premia, show that these preferences command real money. A study that imposes the Chinese 8-versus-4 contrast risks missing the main effect, so the first step should be a test of the full digit distribution against uniformity, followed by tests of digits named before the data are examined.
+
+The tick grid determines which digit can carry a preference at all, and on HOSE the grid changes with the price level (@tbl-tick-sizes). Prices are displayed in thousands of dong, so 25.35 means 25,350 VND. Below 10,000 VND the tick is 10 VND, and the displayed final digit (tens of dong) can take any value. Between 10,000 and 50,000 VND the tick is 50 VND, so the tens digit can only be 0 or 5 and the only digit free to express a preference is the hundreds. Above 50,000 VND, and on UPCoM at every price level, the tick is 100 VND and the hundreds digit is again the free one. The Vietnamese analogue of @eq-micro-digit-prob must therefore be computed tier by tier, on the last digit the grid leaves unconstrained, in the same spirit in which @chang2026superstition drop commodity contracts whose increments make some digits unreachable. Pooling across tiers mixes a free digit with a constrained one and yields a distribution that is non-uniform by construction.
+
+Two mechanical forces specific to Vietnam must also be removed before a digit can be read as anyone's choice.
+
+**Limit prices are arithmetic, not choices.** A stock that closes at its ceiling or floor closes at the reference price multiplied by one plus or minus the band, rounded to the tick, so its final digit is fixed by yesterday's price rather than chosen by anyone today. Limit hits are frequent, especially among small stocks (@sec-price-limit-prevalence). Failing to drop them dilutes the effect precisely in the segment where the overoptimism mechanism predicts it should be strongest.
+
+**The auction tie-break rule pulls toward yesterday's close.** When several prices maximize executed volume, the auction selects the one closest to the previous closing price, as described under order types and matching rules above. The previous close's final digit is therefore a mechanical attractor for today's auction price, and part of any day-to-day persistence in digits is a rule rather than a preference. Conditioning on the reference price's final digit separates the two.
+
+Vietnam also offers a natural counterpart to the placebo that makes the Chinese evidence convincing. HOSE opening and closing prices are set by call auctions (@tbl-trading-sessions), the mechanism under which digit preferences survive aggregation. The UPCoM reference price, by contrast, is the volume-weighted average of the previous day's round-lot continuous-matching prices, rounded to the tick: the averaging mechanism under which the Chinese effect disappears. A digit preference in HOSE auction prices that is absent from UPCoM reference prices is the Vietnamese version of their placebo, provided the comparison is made on the digit that rounding to a 100 VND grid leaves free.
+
+The primary markets are where the overoptimism mechanism can be tested most sharply. Auctions of shares in equitized state-owned enterprises collect sealed price bids, and the published results, which report winning prices, give a first look at the prices bidders choose. Privately placed corporate bonds are an even closer match to the strongest Chinese result. Their issuance terms, including coupon rates, are disclosed on the Hanoi Stock Exchange's specialized corporate bond information page. In the 2019–2021 boom a substantial share of these bonds was bought by individuals, often through bank and securities-company channels, and the 2022 tightening of who qualifies as a professional investor eligible to buy them (Decree 65/2022/ND-CP) changed the sophistication of the buyer base almost overnight. The @chang2026superstition framework yields two testable predictions: the share of coupons ending in favored digits should fall after the tightening, and bonds issued before it with favored coupons should have fared worse in the 2022–2023 wave of payment extensions and defaults. Government bond auctions on HNX, whose bidders are banks and insurers, serve as the risk-free placebo, for which the framework predicts no effect.
+
+Seven practical rules follow.
+
+1.  **Use raw, unadjusted prices.** Adjustment for dividends and share issues rescales prices by factors that destroy the final digit. Every digit test must be run on the traded price, which many data products do not deliver by default.
+2.  **Compute digit distributions within tick tiers, on the last digit the grid leaves free.** Never pool prices across the 10,000 and 50,000 VND boundaries.
+3.  **Drop limit-hit closes, and condition on the reference price's final digit.** Both remove digits that a rule set rather than an investor.
+4.  **Test the full distribution before testing named digits.** Report a test of uniformity across all free digits, then test digits chosen in advance, such as 8, 9, and 6 against 4 and 7. With nine digits, several tick tiers, and three venues, the multiple-testing logic of @sec-factor-zoo-multiple-testing applies on a small scale.
+5.  **Let the price-formation mechanism do the identifying.** Compare HOSE auction prices with continuous-session trade prices and with UPCoM reference prices. A pattern common to all three is more likely a data artifact than a preference.
+6.  **Separate presence from pricing.** A digit preference is a fact about how prices are formed. Whether it costs anyone money is a separate question, answered by return or yield tests in which the digit is the treatment, run within groups of differing investor sophistication.
+7.  **Mind the sample size per stock.** A monthly lucky index built from twenty closes, some of them limit hits or days without trades, is noisy. Require a minimum number of eligible auction prices, and compare the realized statistic with its distribution when digits are randomly permuted within each stock.
+
 ## Price Limits and Their Consequences
 
 Vietnam enforces daily price limits on all listed equities. A stock's price cannot move beyond a fixed percentage of the previous day's closing price within a single trading day. The limit bands are $\pm$ 7% on HOSE, $\pm$ 10% on HNX, and $\pm$ 15% on UPCoM.
@@ -550,6 +618,232 @@ ax1.spines["top"].set_visible(False)
 plt.tight_layout()
 plt.show()
 ```
+
+### Realized Illiquidity from Intraday Data {#sec-micro-realized-illiq}
+
+Every measure in @tbl-liquidity-measures is computed from daily data, which is what makes them usable across the whole Vietnamese cross-section. The cost of that convenience is precision, and the Amihud ratio pays the largest share of it. Its numerator, $|r_{i,d}|$, is a single draw standing in for an entire day of price movement.
+
+@lacava2026realized propose replacing that single absolute return with a high-frequency estimate of the same day's price variation, giving the **realized Amihud**
+
+$$
+\text{RILLIQ}_{i,d} = \sqrt{\frac{2}{\pi}}\,\frac{\sqrt{\text{RV}_{i,d}}}{\text{DVOL}_{i,d}},
+\qquad
+\text{RV}_{i,d} = \sum_{j=1}^{M} r_{i,d,j}^2
+$$ {#eq-micro-realized-amihud}
+
+where $r_{i,d,j}$ are intraday returns over $M$ intervals within day $d$ and the constant $\sqrt{2/\pi}$ puts the measure on the same scale as the daily ratio, so the two are numerically interchangeable. The estimator's econometric foundations — the semimartingale setup, the assumptions, the bipower-variation variant that survives jumps, and the derivation of the precision gain — are developed in the liquidity chapter (@sec-liquidity-realized). This section addresses the question that belongs here instead: **what it takes to compute @eq-micro-realized-amihud correctly on HOSE, and whether the precision gain actually materializes in a market this thin.**
+
+The short answer is that the gain is real but is governed by how often a stock trades, not by how finely the day is partitioned. For a VN30 constituent the improvement is close to the theoretical sevenfold; for a stock trading five times a day it is under twofold and comes with a substantial downward bias. Because that distinction is invisible in the output of any standard realized-variance routine, it has to be enforced by screening.
+
+#### Building a Session-Aware Intraday Grid
+
+Vietnam's session structure (@tbl-trading-sessions) rules out the naive approach of resampling the day onto a uniform time grid. Three features of the trading day must be respected.
+
+**The lunch break is not a return interval.** The 11:30–13:00 gap separates two continuous sessions. Differencing the 13:00 price against the 11:30 price manufactures a "five-minute return" spanning ninety minutes of closed market, which enters $\text{RV}$ as a large squared term and inflates the estimate. The correct treatment computes $\text{RV}$ separately within the morning session (09:15–11:30, 135 minutes) and the afternoon session (13:00–14:30, 90 minutes) and sums the two. At five-minute sampling this yields $27 + 18 = 45$ intervals, the $M = 45$ used throughout.
+
+**Auction prices are not continuous-market prices.** The ATO price (09:00–09:15) and the ATC price (14:30–14:45) are single clearing prices from batch auctions, determined by a different mechanism than the continuous limit order book. Including them as grid points mixes two price-formation processes and imports whatever auction-specific distortion is present — which, as noted in the discussion of @tbl-trading-sessions, can be material for less liquid stocks where a single order moves the close.
+
+**Put-through volume must be excluded from the denominator.** The 14:45–15:00 negotiated window produces trades at prices agreed bilaterally, outside the order book. If those blocks enter $\text{DVOL}$ while the numerator is measured over continuous trading only, the ratio's numerator and denominator describe different markets, and a single large block can make a stock appear an order of magnitude more liquid for that day.
+
+The following constructs the measures under these conventions. It requires intraday trade data, which is not part of the daily pipeline used elsewhere in this chapter, so it is not executed here.
+
+```{python}
+#| label: realized-illiquidity-hose
+#| eval: false
+#| code-summary: "Session-aware realized measures for HOSE intraday data"
+import pandas as pd
+import numpy as np
+
+# HOSE continuous sessions only: auctions and put-through are excluded.
+HOSE_SESSIONS = [("09:15", "11:30"), ("13:00", "14:30")]
+SAMPLING_MINUTES = 5
+
+
+def session_grid_returns(day_ticks, freq_min=SAMPLING_MINUTES):
+    """
+    Log returns on a `freq_min` grid, computed WITHIN each continuous session.
+
+    `day_ticks` holds one trading day for one symbol with columns
+    [timestamp, price]. Returns a list of per-session return arrays plus the
+    number of grid intervals in which the price actually changed.
+    """
+    out, n_active, n_grid = [], 0, 0
+    day = day_ticks["timestamp"].dt.normalize().iloc[0]
+
+    for start, end in HOSE_SESSIONS:
+        lo = day + pd.Timedelta(start + ":00")
+        hi = day + pd.Timedelta(end + ":00")
+        sess = day_ticks[(day_ticks["timestamp"] >= lo) &
+                         (day_ticks["timestamp"] <= hi)]
+        if len(sess) < 2:
+            continue
+
+        # Last traded price at each grid point; ffill makes staleness explicit.
+        grid = (sess.set_index("timestamp")["price"]
+                    .resample(f"{freq_min}min", origin=lo, label="right",
+                              closed="right")
+                    .last()
+                    .ffill()
+                    .dropna())
+        if len(grid) < 2:
+            continue
+
+        r = np.diff(np.log(grid.to_numpy()))
+        out.append(r)
+        n_grid += len(r)
+        n_active += int(np.sum(r != 0))     # intervals carrying real trading
+
+    return out, n_active, n_grid
+
+
+def realized_measures(day_ticks, dvol_continuous):
+    """
+    Realized and bipower Amihud for one symbol-day.
+
+    `dvol_continuous` is VND volume from the continuous sessions ONLY, with
+    put-through blocks removed.
+    """
+    sessions, n_active, n_grid = session_grid_returns(day_ticks)
+    if not sessions or dvol_continuous <= 0:
+        return None
+
+    # Sum WITHIN sessions, never across the lunch break.
+    rv = float(sum(np.sum(r ** 2) for r in sessions))
+    bv = float(sum((np.pi / 2) * np.sum(np.abs(r[1:]) * np.abs(r[:-1]))
+                   for r in sessions if len(r) > 1))
+
+    k = np.sqrt(2.0 / np.pi)
+    return {
+        "rv": rv,
+        "bv": bv,
+        "n_active": n_active,
+        "n_grid": n_grid,
+        "active_share": n_active / n_grid if n_grid else np.nan,
+        "rilliq": k * np.sqrt(rv) / dvol_continuous,
+        "rilliq_bv": k * np.sqrt(max(bv, 0.0)) / dvol_continuous,
+    }
+
+
+def realized_illiquidity_panel(ticks, dvol_daily, min_active=20):
+    """
+    Build a symbol-day panel, flagging days too thin for the estimator.
+
+    `min_active` is the screen developed below: below roughly 20 traded
+    intervals of 45 the precision advantage largely disappears.
+    """
+    recs = []
+    for (sym, day), grp in ticks.groupby(["symbol", ticks["timestamp"].dt.date]):
+        dv = dvol_daily.get((sym, day))
+        if dv is None:
+            continue
+        m = realized_measures(grp.sort_values("timestamp"), dv)
+        if m is None:
+            continue
+        m.update(symbol=sym, date=pd.Timestamp(day),
+                 reliable=m["n_active"] >= min_active)
+        recs.append(m)
+
+    panel = pd.DataFrame(recs)
+    if len(panel):
+        share = 100 * panel["reliable"].mean()
+        print(f"{len(panel):,} symbol-days; {share:.1f}% clear the "
+              f"min_active={min_active} screen")
+    return panel
+```
+
+#### Does the Precision Gain Survive Thin Trading?
+
+The theoretical sevenfold improvement assumes $M = 45$ *informative* returns. A stock that trades five times a session does not have that. Its five-minute grid is mostly forward-filled stale prices, and a forward-filled interval contributes a mechanical zero to $\text{RV}$ — an interval in which the estimator reads no volatility, not because the value did not move but because nobody traded.
+
+The simulation below quantifies what this costs. An efficient price diffuses on a one-minute grid over HOSE's 225 continuous minutes; trades arrive as a Poisson process whose intensity we vary; the observed five-minute price is the last traded price at or before each grid point. Because trading volume is held **identical across all stocks by construction**, every difference in the measured ratio is attributable to the numerator alone.
+
+```{python}
+#| label: thin-trading-realized
+#| code-summary: "Does the realized Amihud's precision gain survive thin trading?"
+import numpy as np
+import pandas as pd
+from scipy import stats
+
+rng_thin = np.random.default_rng(20260818)
+
+MIN_PER_DAY = 225                       # HOSE continuous minutes
+GRID_MIN = 5
+M_GRID = MIN_PER_DAY // GRID_MIN        # 45 five-minute intervals
+
+
+def simulate_thin(n_days, trades_per_day):
+    """Efficient diffusion sampled through a Poisson trade process."""
+    m1 = MIN_PER_DAY
+    IV = rng_thin.gamma(4.0, (0.025 ** 2) / 4.0, size=n_days)
+    steps = rng_thin.normal(0, 1, size=(n_days, m1)) * np.sqrt(IV / m1)[:, None]
+    eff = np.cumsum(steps, axis=1)
+
+    traded = rng_thin.random((n_days, m1)) < min(trades_per_day / m1, 1.0)
+    traded[:, 0] = True                                   # opening trade
+
+    # Forward fill: observed price is the last TRADED price.
+    idx = np.maximum.accumulate(
+        np.where(traded, np.arange(m1)[None, :], 0), axis=1)
+    obs = np.take_along_axis(eff, idx, axis=1)
+
+    grid = np.arange(GRID_MIN - 1, m1, GRID_MIN)
+    r = np.diff(obs[:, grid], axis=1, prepend=obs[:, [0]])
+
+    return dict(IV=IV, RV=np.sum(r ** 2, axis=1),
+                n_active=np.sum(r != 0, axis=1),
+                R_day=obs[:, -1] - obs[:, 0])
+
+
+k_thin = np.sqrt(2.0 / np.pi)
+DVOL_FIXED = 5.0        # billions VND, IDENTICAL for every stock
+
+rows_thin = []
+for lam in [1000, 500, 200, 100, 50, 20, 10, 5]:
+    s = simulate_thin(20_000, lam)
+    truth = k_thin * np.sqrt(s["IV"]) / DVOL_FIXED
+    realized = k_thin * np.sqrt(s["RV"]) / DVOL_FIXED
+    classic = np.abs(s["R_day"]) / DVOL_FIXED
+
+    def rel_rmse(e):
+        return np.sqrt(((e - truth) ** 2).mean()) / truth.mean()
+
+    m_eff = s["n_active"].mean()
+    rows_thin.append({
+        "trades/day": lam,
+        "active of 45": round(m_eff, 1),
+        "bias % (realized)": round(100 * (realized.mean() / truth.mean() - 1), 1),
+        "RMSE classic": round(rel_rmse(classic), 3),
+        "RMSE realized": round(rel_rmse(realized), 3),
+        "gain": round(rel_rmse(classic) / rel_rmse(realized), 2),
+        "predicted gain": round(np.sqrt(2 * m_eff * (np.pi / 2 - 1)), 2),
+        "rank rho realized": round(stats.spearmanr(realized, truth).statistic, 3),
+        "rank rho classic": round(stats.spearmanr(classic, truth).statistic, 3),
+    })
+
+print(pd.DataFrame(rows_thin).to_string(index=False))
+```
+
+The table supports four conclusions.
+
+**The precision gain is governed by trades, not by grid points.** The realized measure beats the daily one by a factor of about 7.2 when trading is continuous, and the observed factor tracks $\sqrt{2 M_{\text{eff}}(\pi/2 - 1)}$ almost exactly once $M_{\text{eff}}$ is defined as the number of intervals in which the price actually changed rather than the 45 intervals on the grid. At 20 trades per day, only about 17 intervals are active and the realized gain falls to roughly 3.4; at five trades per day it is about 1.7. Refining the grid does not help, because the constraint is the arrival of trades, not the resolution of the clock.
+
+**Staleness biases the measure downward, and the bias is small until trading gets genuinely thin.** It stays under 2% down to 50 trades per day, reaches about $-5\%$ at 20, and about $-19\%$ at 5. The mechanism is worth understanding precisely, because the intuitive story is wrong: coarsening the sampling of a martingale does *not* bias realized variance, since $\mathbb{E}[\text{RV}]$ equals integrated variance for any partition. What staleness actually removes is the price movement occurring before the first trade and after the last one — the ends of the day, not the middle. That is why the bias is modest for moderately traded stocks and only becomes severe for stocks whose first and last trades are far from the session boundaries. It is nonetheless a bias in the dangerous direction: it makes the least liquid stocks look *more* liquid, which is the opposite of the error a researcher would expect and would not be caught by an outlier screen.
+
+**The daily Amihud ratio carries almost no cross-sectional information in its numerator.** With trading volume held fixed across stocks, the rank correlation between the classic ratio and true illiquidity is only about 0.26, essentially flat across every trading intensity. The realized version achieves about 0.92 in the liquid case. This is a direct demonstration of a point discussed in @sec-liquidity-amihud-original: sorting on the Amihud ratio in real data works largely because the *denominator* varies enormously across stocks and is measured without error. The numerator, taken alone, orders stocks barely better than noise. It also indicates what the realized estimator is for — it is an improvement to the component of the measure that currently contributes least.
+
+**There is a usable screening threshold.** The gain is above 5$\times$ while at least roughly 30 intervals are active, and falls below 2.5$\times$ once fewer than 10 are. Requiring `n_active >= 20` of 45, as in the panel constructor above, sits between those points: it keeps the realized measure comfortably better than 3$\times$ the daily one and holds the staleness bias to a few percent, while discarding the region where the estimator degrades fastest. Stocks failing the screen should fall back to the daily Amihud ratio, and the fraction falling back should be reported, since it will be strongly correlated with size and will therefore interact with any size-sorted analysis.
+
+#### Relation to Non-Synchronous Trading
+
+The mechanism here is the same one that produces the beta bias treated in the discussion of the Dimson and Scholes–Williams estimators later in this chapter: infrequent trading means observed prices are stale, and stale prices understate the covariation of the underlying efficient prices. The difference is which moment is affected. Non-synchronous trading attenuates the *covariance* between a stock and the market, biasing betas downward. Staleness in @eq-micro-realized-amihud attenuates the stock's own *variance*, biasing the illiquidity estimate downward. Both errors are increasing in thinness, and both therefore mislabel the same stocks — the smallest, least traded names get simultaneously understated betas and understated illiquidity, two errors that push in the same direction in any cross-sectional test that includes both.
+
+#### Practical Notes for Vietnamese Data
+
+1.  **Data availability is the binding constraint.** Intraday trade-and-quote data for HOSE is not part of the standard daily pipeline used in this book and must be sourced separately. The realized measures should be treated as a refinement available for the liquid end of the market — approximately the VN30 and larger mid-caps — rather than a replacement for the daily ratio across the full panel.
+2.  **Screen on traded intervals, never on grid intervals.** A resampling routine will happily return 45 prices for a stock that traded twice, because forward filling is silent. Count price changes, not rows.
+3.  **Use the bipower variant on price-limit days.** As shown in @sec-liquidity-realized, an information jump inflates $\text{RV}$ but leaves bipower variation nearly unbiased. Given the frequency of limit hits documented earlier in this chapter, this is the default worth preferring on Vietnamese data.
+4.  **Do not sample below five minutes.** The tick-size schedule in @tbl-tick-sizes makes the noise-to-signal ratio in HOSE prices worse than in the US markets where the five-minute convention was established, so the optimal interval is if anything longer. Sampling finer amplifies bid-ask bounce faster than it adds information; @sec-liquidity-realized quantifies the resulting bias.
+5.  **Report the fallback rate alongside any result.** Because the screen removes stocks non-randomly, a cross-sectional result computed on the surviving sample is conditioned on liquidity, which is exactly the variable under study.
 
 ::: callout-important
 ## Practical Recommendation
