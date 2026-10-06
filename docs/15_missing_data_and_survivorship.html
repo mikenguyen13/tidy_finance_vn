@@ -2,10 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.7.33">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="An open-source, code-first guide to empirical finance on Vietnamese market data with Python: portfolio sorts, factor models, asset pricing tests, valuation, and machine learning.">
 
 <title>13&nbsp; Missing Data and Survivorship Bias – Applying Tidy Finance with Python to Vietnam</title>
 <style>
@@ -90,19 +91,18 @@ div.csl-indent {
 <link href="./favicon.ico" rel="icon">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-bc185b5c5bdbcb35c2eb49d8a876ef70.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ed993afc62d41eaa40b4794cd0abf8eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-72097b8a1e3a3da1d7b8bbfaaf81c3d8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-ed993afc62d41eaa40b4794cd0abf8eb.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-1776ed5e610a858552a3b6811fac5435.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-5ee5e5a16e06a4aa31defda297eed821.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-1776ed5e610a858552a3b6811fac5435.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -130,14 +130,38 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<!-- =====================================================================
+     SEO: schema.org Book JSON-LD, injected into the <head> of every page
+     via format.html include-in-header. The plain meta description and the
+     og:/twitter: descriptions come from the book `description:` key in
+     _quarto.yml - don't repeat them here (duplicate meta description).
+     ===================================================================== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": "Applying Tidy Finance with Python to Vietnam",
+  "url": "https://mikenguyen13.github.io/tidy_finance_vn/",
+  "inLanguage": "en",
+  "bookFormat": "https://schema.org/EBook",
+  "genre": "Empirical Finance",
+  "description": "An open-source, code-first guide to empirical finance on Vietnamese market data using Python: accessing and managing financial data, portfolio construction, asset pricing models, cross-sectional tests, firm fundamentals and valuation, and alternative data.",
+  "keywords": "tidy finance, Vietnam stock market, empirical finance, asset pricing, Fama-French, portfolio sorts, factor models, Python finance, VN30, HOSE",
+  "author": {
+    "@type": "Person",
+    "name": "Mike Nguyen"
+  },
+  "isAccessibleForFree": true
+}
+</script>
 
 
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="13&nbsp; Missing Data and Survivorship Bias – Applying Tidy Finance with Python to Vietnam">
-<meta property="og:description" content="">
+<meta property="og:description" content="An open-source, code-first guide to empirical finance on Vietnamese market data with Python: portfolio sorts, factor models, asset pricing tests, valuation, and machine learning.">
 <meta property="og:site_name" content="Applying Tidy Finance with Python to Vietnam">
 <meta name="twitter:title" content="13&nbsp; Missing Data and Survivorship Bias – Applying Tidy Finance with Python to Vietnam">
-<meta name="twitter:description" content="">
+<meta name="twitter:description" content="An open-source, code-first guide to empirical finance on Vietnamese market data with Python: portfolio sorts, factor models, asset pricing tests, valuation, and machine learning.">
 <meta name="twitter:card" content="summary">
 <link rel="canonical" href="https://mikenguyen13.github.io/tidy_finance_vn/15_missing_data_and_survivorship.html">
 <link rel="alternate" hreflang="en" href="https://mikenguyen13.github.io/tidy_finance_vn/15_missing_data_and_survivorship.html">
@@ -898,7 +922,7 @@ Table&nbsp;13.1: Taxonomy of missing data in Vietnamese equity databases
 <section id="sec-missing-data" class="level2" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="sec-missing-data"><span class="header-section-number">13.2</span> Data Construction</h2>
 <div id="setup" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
@@ -915,10 +939,10 @@ Table&nbsp;13.1: Taxonomy of missing data in Vietnamese equity databases
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">'font.size'</span>: <span class="dv">11</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="data-load" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -963,7 +987,7 @@ Table&nbsp;13.1: Taxonomy of missing data in Vietnamese equity databases
 <span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Active: </span><span class="sc">{</span>listing_history[<span class="st">'is_active'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Delisted: </span><span class="sc">{</span>(<span class="op">~</span>listing_history[<span class="st">'is_active'</span>])<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily observations: </span><span class="sc">{</span>daily_returns<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly observations: </span><span class="sc">{</span>monthly_returns<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly observations: </span><span class="sc">{</span>monthly_returns<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="sec-missing-listing-dynamics" class="level2" data-number="13.3">
@@ -974,7 +998,7 @@ Table&nbsp;13.1: Taxonomy of missing data in Vietnamese equity databases
 <div id="fig-listing-growth" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-listing-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>listing_history[<span class="st">'listing_date'</span>] <span class="op">=</span> pd.to_datetime(listing_history[<span class="st">'listing_date'</span>])</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>listing_history[<span class="st">'listing_date'</span>] <span class="op">=</span> pd.to_datetime(listing_history[<span class="st">'listing_date'</span>])</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>listing_history[<span class="st">'delisting_date'</span>] <span class="op">=</span> pd.to_datetime(listing_history[<span class="st">'delisting_date'</span>])</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Count active listings at each month-end</span></span>
@@ -1040,7 +1064,7 @@ Table&nbsp;13.1: Taxonomy of missing data in Vietnamese equity databases
 <span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend()</span>
 <span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-listing-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.1
@@ -1052,7 +1076,7 @@ Figure&nbsp;13.1
 <h3 data-number="13.3.2" class="anchored" data-anchor-id="delisting-reasons"><span class="header-section-number">13.3.2</span> Delisting Reasons</h3>
 <p>Vietnamese delistings are not homogeneous. The SSC mandates delisting for specific regulatory violations, but firms may also voluntarily delist, merge, or transfer between exchanges. The reason for delisting matters because it determines the likely terminal return.</p>
 <div id="delisting-reasons" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>delisted <span class="op">=</span> listing_history[listing_history[<span class="st">'delisting_date'</span>].notna()].copy()</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>delisted <span class="op">=</span> listing_history[listing_history[<span class="st">'delisting_date'</span>].notna()].copy()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize delisting reasons into categories</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>reason_map <span class="op">=</span> {</span>
@@ -1084,12 +1108,12 @@ Figure&nbsp;13.1
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Delisting Reasons:"</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reason_counts.<span class="bu">round</span>(<span class="dv">1</span>).to_string())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(reason_counts.<span class="bu">round</span>(<span class="dv">1</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="fig-delisting-reasons" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-delisting-reasons-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Pie chart</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>colors_pie <span class="op">=</span> [<span class="st">'#C0392B'</span>, <span class="st">'#E74C3C'</span>, <span class="st">'#8E44AD'</span>, <span class="st">'#27AE60'</span>,</span>
@@ -1112,7 +1136,7 @@ Figure&nbsp;13.1
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend(fontsize<span class="op">=</span><span class="dv">7</span>, loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-delisting-reasons-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.2
@@ -1126,7 +1150,7 @@ Figure&nbsp;13.2
 <div id="fig-delisting-characteristics" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-delisting-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get fundamentals in the last available year before delisting</span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get fundamentals in the last available year before delisting</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>last_year_delisted <span class="op">=</span> (</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    delisted[[<span class="st">'ticker'</span>, <span class="st">'delisting_date'</span>]]</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    .assign(last_fy<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">'delisting_date'</span>].dt.year <span class="op">-</span> <span class="dv">1</span>)</span>
@@ -1214,7 +1238,7 @@ Figure&nbsp;13.2
 <span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> a[np.isfinite(a)]</span>
 <span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>    t, p <span class="op">=</span> stats.ttest_ind(d, a, equal_var<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>col<span class="sc">:&lt;15}</span><span class="ss">: Delisted = </span><span class="sc">{</span>d<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">, "</span></span>
-<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"Active = </span><span class="sc">{</span>a<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">, t = </span><span class="sc">{</span>t<span class="sc">:.2f}</span><span class="ss">, p = </span><span class="sc">{</span>p<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"Active = </span><span class="sc">{</span>a<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">, t = </span><span class="sc">{</span>t<span class="sc">:.2f}</span><span class="ss">, p = </span><span class="sc">{</span>p<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-delisting-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.3
@@ -1230,7 +1254,7 @@ Figure&nbsp;13.3
 <p>Survivorship bias arises when a study uses only firms that are currently listed (or listed at the end of the sample), excluding firms that delisted during the sample period. Because delisted firms disproportionately experienced negative returns before delisting, their exclusion inflates average returns, understates risk, and distorts cross-sectional patterns.</p>
 <p>We quantify the magnitude of survivorship bias by comparing portfolio returns computed from the <strong>survivorship-bias-free</strong> sample (all firms, including those that subsequently delisted) against a <strong>survivors-only</strong> sample (firms that remained listed through the end of the sample).</p>
 <div id="survivorship-magnitude" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define survivors: firms active as of 2024-12-31</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define survivors: firms active as of 2024-12-31</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>survivors <span class="op">=</span> <span class="bu">set</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    listing_history[listing_history[<span class="st">'is_active'</span>]][<span class="st">'ticker'</span>]</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1286,12 +1310,12 @@ Figure&nbsp;13.3
 <span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  EW: </span><span class="sc">{</span>bias_ew[<span class="st">'bias'</span>]<span class="sc">.</span>mean() <span class="op">*</span> <span class="dv">12</span><span class="sc">:.4f}</span><span class="ss"> "</span></span>
 <span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>bias_ew[<span class="st">'bias'</span>]<span class="sc">.</span>mean() <span class="op">*</span> <span class="dv">1200</span><span class="sc">:.1f}</span><span class="ss"> bps/year)"</span>)</span>
 <span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  VW: </span><span class="sc">{</span>bias_vw[<span class="st">'bias'</span>]<span class="sc">.</span>mean() <span class="op">*</span> <span class="dv">12</span><span class="sc">:.4f}</span><span class="ss"> "</span></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>bias_vw[<span class="st">'bias'</span>]<span class="sc">.</span>mean() <span class="op">*</span> <span class="dv">1200</span><span class="sc">:.1f}</span><span class="ss"> bps/year)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>bias_vw[<span class="st">'bias'</span>]<span class="sc">.</span>mean() <span class="op">*</span> <span class="dv">1200</span><span class="sc">:.1f}</span><span class="ss"> bps/year)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="fig-survivorship-bias" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-survivorship-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (bias_df, title) <span class="kw">in</span> <span class="bu">enumerate</span>(</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    [(bias_ew, <span class="st">'Panel A: Equal-Weighted'</span>),</span>
@@ -1318,7 +1342,7 @@ Figure&nbsp;13.3
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                 bbox<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.8</span>))</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-survivorship-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.4
@@ -1332,7 +1356,7 @@ Figure&nbsp;13.4
 <div id="fig-rolling-bias" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bias_ew[<span class="st">'rolling_bias_12m'</span>] <span class="op">=</span> bias_ew[<span class="st">'bias'</span>].rolling(<span class="dv">12</span>).mean() <span class="op">*</span> <span class="dv">12</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bias_ew[<span class="st">'rolling_bias_12m'</span>] <span class="op">=</span> bias_ew[<span class="st">'bias'</span>].rolling(<span class="dv">12</span>).mean() <span class="op">*</span> <span class="dv">12</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>), height_ratios<span class="op">=</span>[<span class="dv">2</span>, <span class="dv">1</span>])</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1362,7 +1386,7 @@ Figure&nbsp;13.4
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">'Panel B: Quarterly Delisting Activity'</span>)</span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rolling-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.5
@@ -1374,7 +1398,7 @@ Figure&nbsp;13.5
 <h3 data-number="13.4.3" class="anchored" data-anchor-id="survivorship-bias-in-cross-sectional-anomalies"><span class="header-section-number">13.4.3</span> Survivorship Bias in Cross-Sectional Anomalies</h3>
 <p>The bias is not uniform across strategies. Anomalies that overweight small, distressed, or low-quality firms, precisely the firms most likely to delist, are most severely affected. We test this for the size, value, and momentum anomalies.</p>
 <div id="anomaly-bias" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_long_short(df, sort_var, n_quantiles<span class="op">=</span><span class="dv">5</span>):</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_long_short(df, sort_var, n_quantiles<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute long-short portfolio returns from quintile sorts.</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Long = top quintile, Short = bottom quintile.</span></span>
@@ -1453,7 +1477,7 @@ Figure&nbsp;13.5
 <span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>anomaly_bias_df <span class="op">=</span> pd.DataFrame(anomaly_bias).T</span>
 <span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Survivorship Bias by Anomaly:"</span>)</span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(anomaly_bias_df.<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(anomaly_bias_df.<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1517,7 +1541,7 @@ Table&nbsp;13.2: Delisting return imputation rules.
 </div>
 <p><strong>Step 3.</strong> Apply the imputed return to the month of delisting to complete the return series.</p>
 <div id="delisting-imputation" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> impute_delisting_returns(listing_df, daily_df, monthly_df):</span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> impute_delisting_returns(listing_df, daily_df, monthly_df):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Impute terminal returns for delisted firms.</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1583,13 +1607,13 @@ Table&nbsp;13.2: Delisting return imputation rules.
 <span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Imputed delisting returns: </span><span class="sc">{</span><span class="bu">len</span>(imputed_returns)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Imputed return distribution:"</span>)</span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(imputed_returns[<span class="st">'monthly_return'</span>].value_counts().sort_index())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(imputed_returns[<span class="st">'monthly_return'</span>].value_counts().sort_index())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="impact-of-delisting-return-imputation" class="level3" data-number="13.5.2">
 <h3 data-number="13.5.2" class="anchored" data-anchor-id="impact-of-delisting-return-imputation"><span class="header-section-number">13.5.2</span> Impact of Delisting Return Imputation</h3>
 <div id="delisting-impact" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Augmented sample: monthly returns + imputed delisting returns</span></span>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Augmented sample: monthly returns + imputed delisting returns</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>augmented <span class="op">=</span> pd.concat([</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    monthly_returns[[<span class="st">'ticker'</span>, <span class="st">'month_end'</span>, <span class="st">'monthly_return'</span>, <span class="st">'market_cap'</span>]],</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    imputed_returns[[<span class="st">'ticker'</span>, <span class="st">'month_end'</span>, <span class="st">'monthly_return'</span>, <span class="st">'market_cap'</span>]]</span>
@@ -1615,7 +1639,7 @@ Table&nbsp;13.2: Delisting return imputation rules.
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Delisting Return Imputation Impact:"</span>)</span>
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  EW without imputation: </span><span class="sc">{</span>ann_original<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_original<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  EW with imputation:    </span><span class="sc">{</span>ann_augmented<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_augmented<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Difference:            </span><span class="sc">{</span>ann_effect<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_effect<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Difference:            </span><span class="sc">{</span>ann_effect<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_effect<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1627,7 +1651,7 @@ Table&nbsp;13.2: Delisting return imputation rules.
 <div id="fig-zero-trading" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-zero-trading-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute zero-volume fraction per firm-year</span></span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute zero-volume fraction per firm-year</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>daily_returns[<span class="st">'year'</span>] <span class="op">=</span> pd.to_datetime(daily_returns[<span class="st">'date'</span>]).dt.year</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>daily_returns[<span class="st">'zero_volume'</span>] <span class="op">=</span> (daily_returns[<span class="st">'volume'</span>] <span class="op">==</span> <span class="dv">0</span>).astype(<span class="bu">int</span>)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1681,7 +1705,7 @@ Table&nbsp;13.2: Delisting return imputation rules.
 <span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">'Panel B: Zero-Volume Days by Size'</span>)</span>
 <span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-zero-trading-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.6
@@ -1697,7 +1721,7 @@ Figure&nbsp;13.6
 <p><strong>Approach 3: Distribute uniformly.</strong> Spread the accumulated return evenly across zero-volume days. This is economically unrealistic, but it reduces the impact of single-day outliers.</p>
 <p><strong>Approach 4: Treat as missing and model.</strong> Treat zero-volume days as genuinely missing returns and use the <span class="citation" data-cites="lesmond2005liquidity">Lesmond (<a href="references.html#ref-lesmond2005liquidity" role="doc-biblioref">2005</a>)</span> zero-return measure as a liquidity proxy.</p>
 <div id="zero-vol-correction" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> correct_zero_volume_returns(daily_df, method<span class="op">=</span><span class="st">'compound'</span>):</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> correct_zero_volume_returns(daily_df, method<span class="op">=</span><span class="st">'compound'</span>):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Correct returns during zero-volume periods.</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1789,7 +1813,7 @@ Figure&nbsp;13.6
 <span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>    mean_ret <span class="op">=</span> corrected[<span class="st">'daily_return'</span>].mean() <span class="op">*</span> <span class="dv">252</span></span>
 <span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>    vol <span class="op">=</span> corrected[<span class="st">'daily_return'</span>].std() <span class="op">*</span> np.sqrt(<span class="dv">252</span>)</span>
 <span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>method<span class="sc">:&lt;12}</span><span class="ss">: Ann. Return = </span><span class="sc">{</span>mean_ret<span class="sc">:.4f}</span><span class="ss">, "</span></span>
-<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"Ann. Vol = </span><span class="sc">{</span>vol<span class="sc">:.4f}</span><span class="ss">, N = </span><span class="sc">{</span><span class="bu">len</span>(corrected)<span class="sc">:,}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"Ann. Vol = </span><span class="sc">{</span>vol<span class="sc">:.4f}</span><span class="ss">, N = </span><span class="sc">{</span><span class="bu">len</span>(corrected)<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1809,7 +1833,7 @@ Figure&nbsp;13.6
 <h3 data-number="13.7.2" class="anchored" data-anchor-id="point-in-time-adjustment"><span class="header-section-number">13.7.2</span> Point-in-Time Adjustment</h3>
 <p>We implement a point-in-time adjustment for accounting data that respects the actual reporting lag:</p>
 <div id="point-in-time" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> point_in_time_merge(monthly_df, fundamentals_df, filings_df,</span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> point_in_time_merge(monthly_df, fundamentals_df, filings_df,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                         lag_months<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Merge accounting data with monthly returns respecting</span></span>
@@ -1880,14 +1904,14 @@ Figure&nbsp;13.6
 <span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Point-in-time merge vs naive merge:"</span>)</span>
 <span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Naive: use fiscal year directly (introduces look-ahead bias)"</span>)</span>
-<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  PIT: use only data available as of the portfolio formation date"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  PIT: use only data available as of the portfolio formation date"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="quantifying-look-ahead-bias-in-value-strategies" class="level3" data-number="13.7.3">
 <h3 data-number="13.7.3" class="anchored" data-anchor-id="quantifying-look-ahead-bias-in-value-strategies"><span class="header-section-number">13.7.3</span> Quantifying Look-Ahead Bias in Value Strategies</h3>
 <p>Value strategies sort stocks on book-to-market ratios computed from accounting data. Using end-of-fiscal-year data without respecting reporting lags inflates the value premium because it implicitly uses information that was not yet publicly available.</p>
 <div id="lookahead-value" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive approach: use fiscal year data immediately</span></span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive approach: use fiscal year data immediately</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>monthly_naive <span class="op">=</span> monthly_returns.merge(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    fundamentals[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'total_equity'</span>]],</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span>[<span class="st">'ticker'</span>, monthly_returns[<span class="st">'month_end'</span>].dt.year],</span>
@@ -1927,7 +1951,7 @@ Figure&nbsp;13.6
 <span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Value Premium (HML):"</span>)</span>
 <span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Naive (look-ahead):     </span><span class="sc">{</span>ann_naive<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_naive<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span>
 <span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Point-in-time:          </span><span class="sc">{</span>ann_pit<span class="sc">:.4f}</span><span class="ss"> (</span><span class="sc">{</span>ann_pit<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr)"</span>)</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Look-ahead inflation:   </span><span class="sc">{</span>(ann_naive <span class="op">-</span> ann_pit)<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Look-ahead inflation:   </span><span class="sc">{</span>(ann_naive <span class="op">-</span> ann_pit)<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%/yr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1937,7 +1961,7 @@ Figure&nbsp;13.6
 <h3 data-number="13.8.1" class="anchored" data-anchor-id="the-transfer-problem"><span class="header-section-number">13.8.1</span> The Transfer Problem</h3>
 <p>Vietnamese firms frequently transfer between exchanges (e.g., from HNX to HOSE upon meeting HOSE’s listing requirements, or from HOSE to UPCoM/HNX following regulatory issues). These transfers can break the continuity of return series if the database treats each exchange listing as a separate entity.</p>
 <div id="transfers" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>transfers <span class="op">=</span> listing_history[</span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>transfers <span class="op">=</span> listing_history[</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    listing_history[<span class="st">'transfer_from'</span>].notna()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>].copy()</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1946,10 +1970,10 @@ Figure&nbsp;13.6
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>transfer_pattern <span class="op">=</span> transfers.groupby(</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'transfer_from'</span>, <span class="st">'transfer_to'</span>]</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>).size().sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(transfer_pattern.head(<span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(transfer_pattern.head(<span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="link-transfers" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> link_transfer_returns(monthly_df, transfers_df):</span>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> link_transfer_returns(monthly_df, transfers_df):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Link return series across exchange transfers to create</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">    continuous firm-level return histories.</span></span>
@@ -1983,7 +2007,7 @@ Figure&nbsp;13.6
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>linked <span class="op">=</span> link_transfer_returns(monthly_returns, transfers)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>linked <span class="op">=</span> link_transfer_returns(monthly_returns, transfers)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1993,7 +2017,7 @@ Figure&nbsp;13.6
 <h3 data-number="13.9.1" class="anchored" data-anchor-id="how-fragile-are-your-results"><span class="header-section-number">13.9.1</span> How Fragile Are Your Results?</h3>
 <p>Rather than choosing a single approach to handle missing data, a robust study tests how sensitive its conclusions are to different assumptions. We implement a systematic sensitivity framework that re-runs a given analysis under multiple data treatment assumptions.</p>
 <div id="sensitivity-framework" class="cell" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sensitivity_analysis(monthly_df, listing_df, sort_variable,</span>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sensitivity_analysis(monthly_df, listing_df, sort_variable,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                          compute_fn):</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Run an analysis under multiple data treatment assumptions.</span></span>
@@ -2076,12 +2100,12 @@ Figure&nbsp;13.6
 <span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a><span class="co"># sensitivity_results = sensitivity_analysis(</span></span>
 <span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a><span class="co">#     monthly_with_chars, listing_history, 'log_mcap',</span></span>
 <span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="co">#     compute_size_premium</span></span>
-<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="fig-sensitivity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="20">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: create synthetic sensitivity results for plotting</span></span>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustrative: create synthetic sensitivity results for plotting</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>assumptions <span class="op">=</span> [</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Survivors Only'</span>,</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Full Sample</span><span class="ch">\n</span><span class="st">(no imputation)'</span>,</span>
@@ -2115,7 +2139,7 @@ Figure&nbsp;13.6
 <span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;13.7
@@ -2239,88 +2263,164 @@ Little, Roderick JA, and Donald B Rubin. 2019. <em>Statistical Analysis with Mis
 Rubin, Donald B. 1976. <span>“Inference and Missing Data.”</span> <em>Biometrika</em> 63 (3): 581–92.
 </div>
 <div id="ref-shumway1997delisting" class="csl-entry" role="listitem">
-Shumway, Tyler. 1997. <span>“The Delisting Bias in CRSP Data.”</span> <em>The Journal of Finance</em> 52 (1): 327–40.
+Shumway, Tyler. 1997. <span>“The Delisting Bias in CRSP Data.”</span> <em>The Journal of Finance</em> 52 (1): 327–40. <a href="https://doi.org/10.1111/j.1540-6261.1997.tb03818.x">https://doi.org/10.1111/j.1540-6261.1997.tb03818.x</a>.
 </div>
 </div>
 </section>
 
 </main> <!-- /main -->
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
+
   const year = new Date().getFullYear();
+
   document.getElementById("copyright").textContent = "© " + year;
+
 });
+
 </script>
+
 <script>
+
 (function () {
+
   const GA_ID = "G-LMDLDJXXSC";   // your real GA4 ID
+
   const CONSENT_KEY = "cookie_consent_v1";
 
+
+
   function log(msg) {
+
     console.log("[GA Loader]", msg);
+
   }
 
+
+
   function loadGtag() {
+
     if (window.__gtag_loaded__) {
+
       log("GA already loaded, skipping");
+
       return;
+
     }
+
+
 
     log("Loading Google Analytics...");
 
+
+
     window.__gtag_loaded__ = true;
 
+
+
     const script = document.createElement("script");
+
     script.async = true;
+
     script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
 
+
+
     script.onload = function () {
+
       log("gtag.js loaded");
 
+
+
       window.dataLayer = window.dataLayer || [];
+
       function gtag(){ dataLayer.push(arguments); }
+
       window.gtag = gtag;
 
+
+
       gtag("js", new Date());
+
       gtag("config", GA_ID, {
+
         anonymize_ip: true,
+
         transport_type: "beacon"
+
       });
 
+
+
       log("GA initialized successfully");
+
     };
+
+
 
     script.onerror = function () {
+
       log("FAILED to load gtag.js. Likely blocked by ad blocker or network.");
+
     };
 
+
+
     document.head.appendChild(script);
+
   }
+
+
 
   function checkConsentAndLoad() {
+
     const consent = localStorage.getItem(CONSENT_KEY);
+
     log("Stored consent value = " + consent);
 
+
+
     if (consent === "accepted") {
+
       loadGtag();
+
     } else {
+
       log("Analytics blocked due to missing or declined consent");
+
     }
+
   }
 
+
+
   // Run on page load
+
   checkConsentAndLoad();
 
+
+
   // Listen for cookie banner decisions
+
   window.addEventListener("cookie-consent-changed", function (e) {
+
     log("Consent event received: " + e.detail);
+
     if (e.detail === "accepted") {
+
       loadGtag();
+
     }
+
   });
 
+
+
 })();
+
 </script>
+
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
@@ -2385,14 +2485,13 @@ document.addEventListener("DOMContentLoaded", function () {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -2458,7 +2557,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/github\.com\/mikenguyen13\/tidy_finance_vn");
+        var filterRegex = new RegExp("https:\/\/mikenguyen13\.github\.io\/tidy_finance_vn\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -2797,7 +2896,7 @@ document.addEventListener("DOMContentLoaded", function () {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Missing Data and Survivorship Bias</span></span>
+<div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Missing Data and Survivorship Bias</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>In this chapter, we document the patterns of missing data, survivorship bias, and delisting bias in Vietnamese equity markets, develop diagnostic tools to detect these problems, and implement correction methods that yield more reliable empirical results.</span>
@@ -4108,7 +4207,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb21-1349"><a href="#cb21-1349" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-1350"><a href="#cb21-1350" aria-hidden="true" tabindex="-1"></a><span class="in">8. **Cross-country comparison.** Compare the survivorship bias magnitude in Vietnam to estimates for the U.S. [@shumway1997delisting], other ASEAN markets, and China. What institutional features explain cross-country differences in the severity of survivorship bias? --&gt;</span></span>
 <span id="cb21-1351"><a href="#cb21-1351" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

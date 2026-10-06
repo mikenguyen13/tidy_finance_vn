@@ -6,202 +6,198 @@
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/00_institutional_background.html</loc>
-    <lastmod>2026-02-13T23:29:11.390Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.779Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/01_accessing_and_managing_financial_data.html</loc>
-    <lastmod>2026-02-13T23:10:11.003Z</lastmod>
+    <lastmod>2026-10-01T18:56:52.100Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/02_datacore_data.html</loc>
-    <lastmod>2026-02-24T22:00:40.388Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.781Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/03_market_microstructure.html</loc>
-    <lastmod>2026-02-24T23:54:08.258Z</lastmod>
+    <lastmod>2026-10-05T23:55:50.729Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/04_risk_free_rate_construction.html</loc>
-    <lastmod>2026-03-02T22:57:18.132Z</lastmod>
+    <lastmod>2026-08-26T17:51:14.796Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/05_working_with_stock_returns.html</loc>
-    <lastmod>2026-02-13T11:13:31.511Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.797Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/06_compound_return.html</loc>
-    <lastmod>2026-02-13T11:02:03.657Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.797Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/10_modern_portfolio_theory.html</loc>
-    <lastmod>2026-02-01T20:08:44.706Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.797Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/11_univariate_portfolio_sort.html</loc>
-    <lastmod>2026-02-14T22:23:48.090Z</lastmod>
+    <lastmod>2026-10-05T23:55:50.849Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/12_size_sorts.html</loc>
-    <lastmod>2026-02-15T11:19:15.286Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.801Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/13_value_bivariate.html</loc>
-    <lastmod>2026-02-15T11:48:07.277Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.801Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/14_portfolio_weighting_and_rebalancing.html</loc>
-    <lastmod>2026-02-19T04:03:33.787Z</lastmod>
+    <lastmod>2026-10-01T18:47:38.136Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/15_missing_data_and_survivorship.html</loc>
-    <lastmod>2026-02-19T04:18:16.099Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.806Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/16_liquidity_and_turnover_measures.html</loc>
-    <lastmod>2026-02-19T21:49:14.700Z</lastmod>
+    <lastmod>2026-08-18T19:36:18.481Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/17_beta_estimation.html</loc>
-    <lastmod>2026-02-04T03:18:09.819Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.808Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/20_capm.html</loc>
-    <lastmod>2026-02-14T21:58:44.950Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.810Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/21_fama_french.html</loc>
-    <lastmod>2026-02-13T10:27:51.118Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.812Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/22_momentum.html</loc>
-    <lastmod>2026-02-13T11:04:47.947Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.812Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/23_factor_construction_principles.html</loc>
-    <lastmod>2026-02-19T23:53:38.694Z</lastmod>
+    <lastmod>2026-08-26T17:50:28.904Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/24_fama_macbeth.html</loc>
-    <lastmod>2026-02-12T19:09:06.290Z</lastmod>
+    <lastmod>2026-10-05T23:55:50.961Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/25_factor_zoo_and_multiple_testing.html</loc>
-    <lastmod>2026-02-19T23:56:06.913Z</lastmod>
+    <lastmod>2026-08-26T17:51:01.696Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/26_time_series_vs_cross_section.html</loc>
-    <lastmod>2026-02-19T23:22:19.647Z</lastmod>
+    <lastmod>2026-07-19T04:23:48.858Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/30_financial_statement_analysis.html</loc>
-    <lastmod>2026-02-15T11:20:57.473Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.818Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/31_discounted_cash_flow.html</loc>
-    <lastmod>2026-02-15T11:21:17.425Z</lastmod>
+    <lastmod>2026-10-05T23:55:51.053Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/32_info_earnings.html</loc>
-    <lastmod>2026-02-16T11:24:54.462Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.820Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/33_accruals.html</loc>
-    <lastmod>2026-02-16T09:54:36.775Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.822Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/34_earning_management.html</loc>
-    <lastmod>2026-02-17T04:55:21.089Z</lastmod>
+    <lastmod>2026-07-19T04:11:23.084Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/35_pe_ratio.html</loc>
-    <lastmod>2026-02-11T23:33:12.241Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.823Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/36_valuation.html</loc>
-    <lastmod>2026-02-19T04:36:07.790Z</lastmod>
+    <lastmod>2026-08-20T21:58:00.235Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/37_disclosure_quality_and_timing.html</loc>
-    <lastmod>2026-02-18T22:45:20.430Z</lastmod>
+    <lastmod>2026-08-18T20:06:48.070Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/38_sue.html</loc>
-    <lastmod>2026-02-21T21:59:42.690Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.830Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/39_divop.html</loc>
-    <lastmod>2026-02-12T21:40:23.000Z</lastmod>
+    <lastmod>2026-08-18T20:11:39.748Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/50_institutional_ownership.html</loc>
-    <lastmod>2026-02-12T21:28:01.646Z</lastmod>
+    <lastmod>2026-07-18T04:50:08.088Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/52_institutional_trade_flow.html</loc>
-    <lastmod>2026-02-13T09:45:26.336Z</lastmod>
+    <lastmod>2026-09-13T01:20:18.908Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/53_governance.html</loc>
-    <lastmod>2026-02-16T05:19:06.181Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.837Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/54_return_gaps.html</loc>
-    <lastmod>2026-02-13T09:44:13.188Z</lastmod>
+    <lastmod>2026-09-08T18:57:19.857Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/55_price_limits_and_volatility.html</loc>
-    <lastmod>2026-02-20T10:22:17.012Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.840Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/56_market_integration_and_segmentation.html</loc>
-    <lastmod>2026-02-21T00:38:18.683Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.841Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/57_exchange_rate.html</loc>
-    <lastmod>2026-02-19T04:04:03.967Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.843Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/60_event_studies.html</loc>
-    <lastmod>2026-02-19T21:51:24.303Z</lastmod>
+    <lastmod>2026-10-05T23:55:51.140Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/61_tail_risk_extreme_events.html</loc>
-    <lastmod>2026-02-20T22:50:07.981Z</lastmod>
+    <lastmod>2026-10-01T18:32:38.347Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/62_corporate_finance_estimators.html</loc>
-    <lastmod>2026-02-21T00:31:52.518Z</lastmod>
+    <lastmod>2026-10-01T18:29:26.049Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/63_structural_models_finance.html</loc>
-    <lastmod>2026-02-21T02:33:49.722Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.851Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/70_textual.html</loc>
-    <lastmod>2026-02-21T00:39:16.982Z</lastmod>
+    <lastmod>2026-09-08T18:52:22.568Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/71_image.html</loc>
-    <lastmod>2026-02-21T21:40:53.172Z</lastmod>
+    <lastmod>2026-08-26T17:57:03.463Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/73_networks_graphs.html</loc>
-    <lastmod>2026-02-21T21:38:56.905Z</lastmod>
+    <lastmod>2026-10-01T17:49:02.397Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/74_multimodel.html</loc>
-    <lastmod>2026-02-21T20:30:33.500Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.857Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/99_conclusion.html</loc>
-    <lastmod>2026-02-01T23:51:59.082Z</lastmod>
+    <lastmod>2026-07-07T01:29:54.860Z</lastmod>
   </url>
   <url>
     <loc>https://mikenguyen13.github.io/tidy_finance_vn/references.html</loc>
-    <lastmod>2026-01-31T21:44:11.581Z</lastmod>
-  </url>
-  <url>
-    <loc>https://mikenguyen13.github.io/tidy_finance_vn/Applying-Tidy-Finance-with-Python-to-Vietnam.pdf</loc>
-    <lastmod>2026-03-02T23:33:48.012Z</lastmod>
+    <lastmod>2026-07-07T01:29:57.145Z</lastmod>
   </url>
 </urlset>
