@@ -110,6 +110,7 @@ book:
         - 36_valuation.qmd
         - 37_disclosure_quality_and_timing.qmd
         - 38_sue.qmd
+        - 40_ml_earnings_forecasts.qmd
         # - 38_sue_pead.qmd
         - 39_divop.qmd
         

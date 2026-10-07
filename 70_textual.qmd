@@ -33,7 +33,7 @@ The application of textual analysis to financial data has a rich history. @tetlo
 
 @hoberg2010product and @hoberg2016text pioneered the use of product descriptions from 10-K filings to construct text-based industry classifications (TNIC), demonstrating that these dynamic, firm-specific industry definitions outperform static SIC and NAICS codes in explaining firm behavior, including profitability, stock returns, and M&A activity. Subsequent work by @hoberg2018text extended this to assess competitive threats and product-market fluidity.
 
-More recent work has leveraged advances in deep learning. @huang2023finbert apply BERT-based models to earnings call transcripts and show that contextual embeddings capture information about future earnings that traditional bag-of-words measures miss. @jha2024chatgpt use GPT-based models for zero-shot financial text classification and demonstrate that LLMs can match or exceed purpose-built classifiers on standard benchmarks.
+More recent work has leveraged advances in deep learning. @huang2023finbert apply BERT-based models to earnings call transcripts and show that contextual embeddings capture information about future earnings that traditional bag-of-words measures miss. @jha2024chatgpt use GPT-based models for zero-shot financial text classification and demonstrate that LLMs can match or exceed purpose-built classifiers on standard benchmarks. Earnings calls are also read by regulators: @lerman2026earnings show that the SEC cites voluntary call disclosures in comment letters, mostly to show that the mandatory filing says too little, and that firms then change their filings (@sec-textual-call-sec-review).
 
 Text can also measure the *uncertainty* investors face, not only its tone. @wei2026narrative extract a narrative-based ambiguity measure from economic news articles, distinct from survey- and return-based ambiguity proxies, and show that it predicts aggregate stock market returns both in and out of sample. Investors are on average ambiguity averse, but ambiguity tolerance emerges when the probability of loss is high, and aligning industry-specific narrative ambiguity (chiefly from consumption-, energy-, and technology-related news) yields a stronger market predictor. The predictability extends to international markets and other asset classes, which makes the approach a natural candidate for Vietnamese financial news.
 
@@ -1926,6 +1926,243 @@ A production monitor must respect three constraints. First, collect only public 
 :::
 
 The research agenda this enables in Vietnam is largely unwritten: no published study yet measures whether Vietnamese executives' Facebook and Zalo posts move the prices of their firms, how reactions differ across the retail-heavy HOSE investor base versus institutional holders, or whether the credibility mechanism of @crowley2024executive is stronger in a market where person-to-person trust plausibly substitutes for a thinner formal disclosure environment. The pipeline in this section is the infrastructure for all three questions.
+
+## Earnings Call Graphs: Structure-Aware Document Models {#sec-textual-call-graph}
+
+Every representation built so far collapses a document into a single vector: a bag of words, an LDA mixture, a Doc2Vec paragraph vector, or an averaged PhoBERT embedding (@sec-textual-bow-tfidf, @sec-textual-lda, @sec-textual-deep-learning). That is a reasonable choice for an annual report, where we care about *what* a firm says. It discards exactly the information that matters most in an **earnings conference call**, which is a *conversation*: the order in which topics arise, whether an analyst's question returns to something management said earlier, and whether management volunteers a new subject. A mean-pooled embedding of a one-hour call is identical for two calls that discuss the same topics in very different ways.
+
+@yang2026learning propose to keep that structure. Their starting problem is that call transcripts are long and the risk-relevant signal is sparsely distributed across them, so models that compress a whole transcript into one vector tend to miss it. They instead model each transcript as a **conversational graph** whose nodes are discussed topics and whose edges link similar topics, so that the representation captures *what* is discussed (topical content), *how* it is discussed (cross-referencing earlier topics versus introducing new ones) and *in what manner* (sentiment and other linguistic features). A graph neural network (GNN) then learns a transcript-level representation for forecasting financial risk. The abstract reports four findings: forecast errors fall significantly relative to existing deep-learning and LLM baselines; the gain persists after controlling for firm fundamentals; the gain grows with transcript length; and, in the interpretability analysis, more cross-referencing, more newly introduced topics and a more positive tone are associated with lower subsequent risk. The paper appears in *Information Systems Research* 37(3), 1681--1705.
+
+::: {.callout-note title="What this section does and does not replicate"}
+I had access to the paper's abstract and publication record, not its full text, so the code below is **not** a replication of the authors' architecture, data or numbers. It implements the *idea* (transcript to topic graph to graph features and message passing to risk forecast) on simulated data, so that every step can be run and inspected. The graph neural network here has fixed random weights and a ridge readout; the authors train a GNN end to end. Treat the simulated results as a demonstration that the method *can* recover structure that pooled embeddings cannot, not as evidence about how large the gain is in real data.
+:::
+
+### A Simulation of Conversations with Structure {#sec-textual-call-graph-sim}
+
+We generate 900 synthetic call transcripts. Each call has a number of turns (20 to 200, so length varies a lot) and a latent topic that evolves by a simple Markov rule: at each turn the discussion *stays* on the current topic, *returns* to a topic already raised with probability $p_{\text{ref}}$ (a cross-reference), or *opens* a topic not yet raised with probability $p_{\text{new}}$. Each turn is an embedding equal to its topic's centroid plus noise (a stand-in for a PhoBERT sentence embedding), with a turn-level sentiment equal to the call's tone plus noise. Next-period log volatility depends on three fundamentals (log size, leverage, past volatility) and, with the signs reported by @yang2026learning, negatively on $p_{\text{ref}}$, $p_{\text{new}}$ and tone. The point of the design is that $p_{\text{ref}}$ and $p_{\text{new}}$ are properties of the *sequence* of topics: they are invisible to any statistic that ignores turn order.
+
+```{python}
+#| label: call-graph-simulate
+#| code-summary: "Simulate call transcripts as sequences of topic-labelled turns"
+
+from sklearn.cluster import KMeans
+from sklearn.linear_model import RidgeCV
+from sklearn.metrics import r2_score
+
+cg_rng = np.random.default_rng(2026)
+CG_K, CG_D, CG_N = 8, 16, 900
+cg_centroids = cg_rng.normal(0, 1, (CG_K, CG_D))
+
+def simulate_call(p_ref, p_new, tone, n_turns):
+    """One call: Markov topic path -> turn embeddings and turn sentiment."""
+    topic = int(cg_rng.integers(CG_K))
+    seen, path = [topic], [topic]
+    for _ in range(n_turns - 1):
+        u = cg_rng.random()
+        unused = [k for k in range(CG_K) if k not in seen]
+        if u < p_new and unused:                     # introduce a new topic
+            topic = int(cg_rng.choice(unused)); seen.append(topic)
+        elif u < p_new + p_ref and len(seen) > 1:    # cross-reference
+            topic = int(cg_rng.choice([k for k in seen if k != topic]))
+        path.append(topic)
+    emb = cg_centroids[path] + cg_rng.normal(0, 0.8, (n_turns, CG_D))
+    sent = tone + cg_rng.normal(0, 0.8, n_turns)
+    return emb, sent
+
+cg_firms = pd.DataFrame({
+    'size': cg_rng.normal(size=CG_N), 'lev': cg_rng.normal(size=CG_N),
+    'past_vol': cg_rng.normal(size=CG_N),
+    'p_ref': cg_rng.uniform(0.05, 0.35, CG_N),
+    'p_new': cg_rng.uniform(0.03, 0.20, CG_N),
+    'tone': cg_rng.normal(0, 0.5, CG_N),
+    'n_turns': np.clip(cg_rng.lognormal(4.0, 0.5, CG_N), 20, 200).astype(int),
+})
+cg_firms['y'] = (0.6 * cg_firms.past_vol + 0.15 * cg_firms.lev
+                 - 0.10 * cg_firms['size']
+                 - 6 * cg_firms.p_ref - 8 * cg_firms.p_new - 0.5 * cg_firms.tone
+                 + cg_rng.normal(0, 0.35, CG_N))          # next-period log volatility
+cg_calls = [simulate_call(r.p_ref, r.p_new, r.tone, r.n_turns)
+            for r in cg_firms.itertuples()]
+print(f'{CG_N} calls, {sum(len(c[1]) for c in cg_calls):,} turns; '
+      f'median length {int(cg_firms.n_turns.median())} turns')
+```
+
+### From Transcript to Graph {#sec-textual-call-graph-build}
+
+The graph builder has three steps. First, learn a corpus-level **topic vocabulary** by clustering all turn embeddings (here $k$-means; BERTopic, @sec-textual-bertopic, is the natural production choice). Second, assign each turn to a topic; the distinct topics in a call become its nodes, with node features for topic share, mean sentiment, relative position of first mention and visit intensity, and edges between topics whose in-call centroids have high cosine similarity (the similarity edges of @yang2026learning). Third, read off the graph and the discourse path. The **new-topic rate** is the number of nodes per turn. The **cross-reference rate** is the fraction of topic *switches* that return to an already-raised topic. We also compute a one-layer message-passing representation, $\tanh(\hat{A}XW)$ mean-pooled over nodes, where $\hat{A}$ is the symmetrically normalised adjacency with self-loops.
+
+```{python}
+#| label: call-graph-build
+#| code-summary: "Build topic graphs and graph features per call"
+
+def call_graph(emb, sent, km, sim_threshold=0.3):
+    """Topic graph and discourse features for one call.
+
+    emb: (turns, dim) turn embeddings; sent: (turns,) turn sentiment;
+    km: fitted KMeans topic vocabulary.
+    """
+    lab = km.predict(emb); L = len(lab)
+    nodes = sorted(set(lab))
+    first = {k: int(np.argmax(lab == k)) for k in nodes}
+    X = np.array([[np.mean(lab == k), sent[lab == k].mean(), first[k] / L,
+                   np.sum(lab == k) / L * len(nodes)] for k in nodes])
+    C = np.array([emb[lab == k].mean(0) for k in nodes])
+    Cn = C / np.linalg.norm(C, axis=1, keepdims=True)
+    A = ((Cn @ Cn.T) > sim_threshold).astype(float)
+    np.fill_diagonal(A, 1.0)
+    d = A.sum(1); Ahat = A / np.sqrt(np.outer(d, d))
+    switches = np.flatnonzero(lab[1:] != lab[:-1]) + 1
+    returns = [lab[t] in set(lab[:t]) for t in switches]
+    return dict(X=X, Ahat=Ahat, new_rate=len(nodes) / L,
+                xref=float(np.mean(returns)) if len(switches) else 0.0,
+                switch_rate=len(switches) / L,
+                density=(A.sum() - len(nodes)) / max(len(nodes) * (len(nodes) - 1), 1),
+                tone=sent.mean(), tone_sd=X[:, 1].std())
+
+cg_km = KMeans(CG_K, n_init=10, random_state=0).fit(np.vstack([c[0] for c in cg_calls]))
+cg_graphs = [call_graph(e, s, cg_km) for e, s in cg_calls]
+
+GRAPH_COLS = ['new_rate', 'xref', 'switch_rate', 'density', 'tone', 'tone_sd']
+F_graph = pd.DataFrame([{k: g[k] for k in GRAPH_COLS} for g in cg_graphs])
+cg_W = cg_rng.normal(0, 1, (4, 16))                 # untrained message-passing weights
+F_mp = np.array([np.tanh(g['Ahat'] @ g['X'] @ cg_W).mean(0) for g in cg_graphs])
+F_bag = np.column_stack([[c[0].mean(0) for c in cg_calls], F_graph.tone])  # pooled baseline
+
+print(F_graph.assign(p_ref=cg_firms.p_ref, p_new=cg_firms.p_new)
+      .corr().loc[['new_rate', 'xref'], ['p_new', 'p_ref']].round(2))
+```
+
+The correlations show that the observed graph statistics recover the latent discourse parameters: the new-topic rate tracks $p_{\text{new}}$ and the cross-reference rate tracks $p_{\text{ref}}$, even though topics are only *estimated* from noisy embeddings.
+
+### Does Structure Add Forecasting Power? {#sec-textual-call-graph-eval}
+
+We mirror the paper's "beyond fundamentals" logic: fit ridge regressions of next-period log volatility on (i) fundamentals only; (ii) fundamentals plus the pooled representation (mean embedding and mean tone); (iii) fundamentals plus the graph features; (iv) fundamentals plus message-passing features and tone. All models are fit on a 70% training split and scored out of sample, overall and by transcript-length tercile.
+
+```{python}
+#| label: call-graph-eval
+#| code-summary: "Out-of-sample comparison, overall and by transcript length"
+
+fund = cg_firms[['size', 'lev', 'past_vol']].values
+train = cg_rng.random(CG_N) < 0.7; test = ~train
+y = cg_firms.y.values
+
+def fit_predict(X):
+    X = np.asarray(X, float)
+    mu, sd = X[train].mean(0), X[train].std(0) + 1e-9
+    Z = (X - mu) / sd
+    return RidgeCV(alphas=np.logspace(-2, 3, 20)).fit(Z[train], y[train]).predict(Z)
+
+specs = {
+    'Fundamentals only': fund,
+    '+ pooled embedding and tone': np.column_stack([fund, F_bag]),
+    '+ graph features': np.column_stack([fund, F_graph]),
+    '+ message passing': np.column_stack([fund, F_mp, F_graph.tone]),
+}
+tercile = pd.qcut(cg_firms.n_turns, 3, labels=['short', 'mid', 'long']).values
+rows = []
+for name, X in specs.items():
+    p = fit_predict(X)
+    row = {'model': name, 'OOS R2': r2_score(y[test], p[test]),
+           'RMSE': np.sqrt(np.mean((y[test] - p[test]) ** 2))}
+    for t in ['short', 'mid', 'long']:
+        m = test & (tercile == t)
+        row[f'RMSE ({t})'] = np.sqrt(np.mean((y[m] - p[m]) ** 2))
+    rows.append(row)
+cg_results = pd.DataFrame(rows).set_index('model')
+base = cg_results.loc['Fundamentals only']
+gain = 1 - cg_results.filter(like='RMSE (').div(base.filter(like='RMSE ('))
+print(cg_results.round(3).to_string())
+print('\nRMSE reduction vs fundamentals-only, by call length:')
+print(gain.round(3).to_string())
+```
+
+Three patterns appear, all of which are *built into* the simulation, so they validate the machinery and are not evidence about real markets. The pooled baseline adds almost nothing, because averaging embeddings cannot see turn order. The graph features add a great deal, because $p_{\text{ref}}$ and $p_{\text{new}}$ are structural. The RMSE reduction is larger for long calls, because a long call contains more turns from which to estimate the call's discourse rates; this is one mechanical route to the length gradient that @yang2026learning report, though their data may generate it through other channels, such as the sparse-signal problem for models that pool a long transcript. The untrained message-passing representation helps less than the hand-built graph features, which is a reminder that the paper's gain comes from *training* the network on the structure and not from the architecture label.
+
+### Production Application with DataCore.vn {#sec-textual-call-graph-datacore}
+
+The production version swaps the simulated turns for real call transcripts. The cell below is a skeleton: `get_earnings_call_transcripts` follows the chapter's DataCore conventions for text retrieval, and the helper `embed_turns` should use the PhoBERT sentence encoder of @sec-textual-phobert on word-segmented turns (@sec-textual-segmentation). It reuses `call_graph` from above unchanged, which is the point of keeping that function dependent only on turn embeddings and turn sentiment.
+
+```{python}
+#| label: call-graph-datacore
+#| eval: false
+#| code-summary: "Production: Vietnamese earnings call graphs and volatility forecast"
+
+# Transcripts: one row per speaker turn (ticker, call_date, turn_idx, role, text)
+turns = dc.get_earnings_call_transcripts(start='2018-01-01', end='2024-12-31')
+turns = turns.sort_values(['ticker', 'call_date', 'turn_idx'])
+
+# Turn embeddings (PhoBERT sentence encoder) and sentiment (see sec-textual-bert-sentiment)
+turns['emb'] = list(embed_turns(turns['text_segmented']))
+turns['sent'] = sentiment_score(turns['text_segmented'])
+
+# Corpus-level topic vocabulary: fit on the training period only
+train_turns = turns[turns.call_date < '2022-01-01']
+topic_km = KMeans(30, n_init=10, random_state=0).fit(np.vstack(train_turns['emb']))
+
+rows = []
+for (tic, dt), g in turns.groupby(['ticker', 'call_date']):
+    feats = call_graph(np.vstack(g['emb']), g['sent'].values, topic_km)
+    rows.append({'ticker': tic, 'call_date': dt, 'n_turns': len(g),
+                 **{k: feats[k] for k in GRAPH_COLS}})
+graph_df = pd.DataFrame(rows)
+
+# Target: realised volatility over the 21 trading days after the call (skip day 0)
+vol = dc.get_realized_volatility(window=21, offset=1)
+fundamentals = dc.get_fundamentals(['log_size', 'leverage', 'past_vol'])
+panel = (graph_df.merge(vol, on=['ticker', 'call_date'])
+                 .merge(fundamentals, on=['ticker', 'call_date']))
+
+# Same split-by-time ridge comparison as the simulation, with time-based train/test
+```
+
+### Vietnam-Specific Research Design {#sec-textual-call-graph-vn}
+
+Applying this design in Vietnam changes the problem in four ways.
+
+1.  **Data are the binding constraint.** Quarterly earnings calls are a US institution. Vietnamese listed firms mostly communicate through filed reports, annual general meetings (AGMs, *Đại hội đồng cổ đông*), investor-relations presentations and analyst roadshows, with call transcripts available for only a fraction of larger HOSE names. The same graph construction applies to *any* multi-party dialogue: the Q&A part of an AGM, an analyst roadshow Q&A, or a broker-hosted corporate access day. Start by counting how many firm-quarters have a usable transcript before designing anything else.
+2.  **Replace the topic vocabulary and the sentiment measure.** Fit the topic model on Vietnamese financial text with word-segmented input (@sec-textual-segmentation) and use ViFinBERT or the dictionary of @sec-textual-dict-sentiment for tone. A topic vocabulary fit on the full sample leaks future information, so fit it on the training period only, as in the code above.
+3.  **Choose the target to match market structure.** The paper's target is financial risk. For Vietnam, use post-call realised volatility, but note the daily price limits of $\pm 7\%$ (HOSE), $\pm 10\%$ (HNX) and $\pm 15\%$ (UPCoM), which truncate return-based risk on event days; a high-low range measure or a multi-day window is less affected. Control for foreign ownership room and retail turnover share, which drive volatility independently of what is said.
+4.  **Interpretation beyond prediction.** The paper's finding that cross-referencing, new topics and a positive tone coincide with *lower* risk is a statement about predictive association. In a retail-heavy market, where managers know the audience is less specialised, the same patterns could reflect managerial choices (a scripted call that avoids new topics) and not underlying fundamentals. Compare calls with and without independent analyst participation, and test whether the new-topic rate reflects analyst questions (exogenous to management) or management's own agenda.
+
+A practical research design therefore: (a) assemble all Vietnamese transcripts and estimate coverage by size tercile; (b) construct topic graphs and the discourse features above; (c) run the nested comparison of fundamentals, pooled text and graph features out of sample on a rolling time split; and (d) report the length gradient, which is the most informative diagnostic for whether structure matters in this market.
+
+## Earnings Calls in Regulatory Review {#sec-textual-call-sec-review}
+
+The previous section treats an earnings call as a signal for investors. @lerman2026earnings show that the regulator reads the same transcripts. The SEC's Division of Corporation Finance reviews every registrant's periodic filings at least once every three years and sends comment letters when it finds deficiencies in disclosure or accounting. The letters and the firms' responses become public after the review closes. Lerman, Steffen and Zhang hand-collect the comment letters that cite what management said on a *voluntary* earnings conference call. They then ask three questions: what the SEC uses that information for, when it does so, and what changes afterwards.
+
+Their sample covers a little over 800 letters from 2005 to 2018, slightly more than 1% of all comment-letter conversations. Most come from reviews of 10-K filings (over two-thirds) and 10-Q filings (18%).[^70_textual-sec] The main findings are:
+
+[^70_textual-sec]: Sample sizes and percentages in this section come from the authors' summary of the working-paper version (CLS Blue Sky Blog, July 2023). The qualitative findings match the published abstract.
+
+1.  **Calls are a benchmark for mandatory filings.** In about 80% of the letters the SEC cites the call to show that the 10-K or 10-Q says *too little*: management discussed a driver, metric or segment on the call that the filing omits. About 15% point to *inconsistencies* between the call and the filing. Few letters criticise the call itself, except for its use of non-GAAP measures. Revenue, segment reporting, and non-GAAP measures or KPIs together make up about 45% of the sample, and MD&A topics (risk factors, products, customers, markets, seasonality) another 23%.
+2.  **Determinants.** Call-referencing letters are more likely when the filing review is more complex (larger review teams with more accountants), when SEC staff are less resource constrained, and for firms with more institutional investors and analyst following. These are the firms whose calls are most closely followed.
+3.  **Remediation costs.** These letters occur during higher-quality reviews. They raise more issues per conversation, need more rounds of correspondence, and take longer to reach "no further comment" than other letters.
+4.  **Consequences.** Firms change their subsequent mandatory filings more after a call-referencing letter, especially when they agree with the comment. The filings get longer, more negative in tone, and use more uncertain and constraining words as measured by the @loughran2011liability word lists. The effect on the wider information environment is mixed: bid-ask spreads and illiquidity *rise*. This fits an unintended consequence: once managers learn that the regulator reads the call, the call itself may become less informative.
+
+For a textual-analysis chapter, the paper makes three points. First, the regulator is doing *cross-document comparison* by hand: it holds the call next to the filing and looks for content in one that is missing from, or contradicts, the other. This is a measurable construct. Second, call language responds to enforcement. Models that treat call text as unconstrained managerial communication (@sec-textual-call-graph) should allow for the fact that what managers say is shaped by who is listening. Third, the outcome measures are standard dictionary counts (@sec-textual-dict-sentiment) applied to filings, so the paper also shows how tone measures serve as dependent variables, not only as return predictors.
+
+A scalable version of the regulator's comparison is a *call-to-filing coverage gap*. This measure is our suggestion; the paper itself codes letters by hand. Let $S^{\text{call}}_{it}$ be the sentences of firm $i$'s call for period $t$ and $S^{\text{file}}_{it}$ the sentences of the subsequent periodic report, each embedded as $e_s$ with a sentence encoder (@sec-textual-embedding-similarity). Then
+
+$$
+\text{Gap}_{it} = \frac{1}{|S^{\text{call}}_{it}|} \sum_{s \in S^{\text{call}}_{it}} \mathbf{1}\left\{ \max_{f \in S^{\text{file}}_{it}} \cos(e_s, e_f) < \tau \right\},
+$$ {#eq-textual-call-gap}
+
+the share of call sentences with no close counterpart in the filing. Restrict $S^{\text{call}}_{it}$ to sentences that carry hard information (numbers, segment names, KPI terms), because the SEC's "insufficiency" comments target exactly these. Choose $\tau$ by hand-labelling a validation sample of matched and unmatched pairs. Inconsistencies are harder to detect: within matched sentence pairs, extract the numbers with their units and flag pairs whose values disagree.
+
+### Vietnam-Specific Research Design {#sec-textual-call-sec-review-vn}
+
+The US design does not transplant directly, because Vietnam has no public comment-letter process. The State Securities Commission (SSC, *Ủy ban Chứng khoán Nhà nước*) does not publish its review correspondence. The voluntary channel also differs: quarterly earnings calls are held by only a minority of large caps, while AGMs, investor-relations presentations and analyst meetings carry most voluntary disclosure (@sec-textual-call-graph-vn). What does exist publicly are several "regulator meets disclosure" records:
+
+1.  **Mandated profit explanations.** Under Circular 96/2020/TT-BTC, listed firms must publish an explanation (*giải trình*) when after-tax profit changes by 10% or more year on year or swings from profit to loss, and when audited profit differs by 5% or more from the pre-audit figure. The pre-audit versus audited gap is the closest local analogue to the SEC's "inconsistency" comments, and it is filed as text on the HOSE and HNX disclosure portals.
+2.  **Enforcement outcomes.** SSC administrative sanction decisions for disclosure violations are published, and the exchanges place stocks on warning or control lists for late filings or modified audit opinions. These are noisier than comment letters but play the same role as the outcome variable.
+3.  **Auditor modifications.** Qualified opinions and emphasis-of-matter paragraphs are a third party's "comment" on the filing and can be dated precisely.
+
+Research designs that follow from this:
+
+-   **Voluntary-to-mandatory gap as a predictor.** Compute @eq-textual-call-gap with AGM minutes or IR presentations in place of the call, and the annual report or MD&A in place of the 10-K. Test whether a larger gap predicts a later profit explanation, a pre-audit to audited revision of 5% or more, a modified audit opinion, or an SSC sanction.
+-   **Who gets scrutinised.** In the US, call-referencing letters concentrate on firms with institutional and analyst following. In Vietnam, foreign institutional ownership is concentrated in large caps, while enforcement has targeted manipulation in retail-heavy small caps, as in the 2022 FLC and Tân Hoàng Minh cases. Expect a different determinant structure, and test it before assuming the US pattern.
+-   **Chilling effect on voluntary disclosure.** The paper's mixed information-environment result suggests testing whether firms (or industry peers) say less in AGM Q&A or IR materials after a sanction or a visible enforcement wave. Measure this with transcript length, the share of sentences with numbers, and the forward-looking word share. Compare with firms that were not exposed.
+-   **Bilingual consistency.** Larger listed firms publish both Vietnamese and English versions of their reports. Apply the same gap measure *across languages* with a multilingual encoder. Divergence between the two versions is a Vietnam-specific inconsistency that foreign investors may price.
 
 # Method Comparison and Best Practices {#sec-textual-comparison}
 

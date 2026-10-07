@@ -1,4 +1,4 @@
-# Standardized Earnings Surprises (SUE)
+# Standardized Earnings Surprises (SUE) {#sec-sue}
 
 In the context of the Ho Chi Minh Stock Exchange (HOSE) and the Hanoi Stock Exchange (HNX), earnings announcements represent critical information events. Investors and quantitative analysts continuously monitor the deviation between reported earnings and market expectations. This deviation is quantified as the Standardized Earnings Surprise (SUE).
 
@@ -39,6 +39,8 @@ The SUE calculation then follows the seasonal logic but uses the adjusted EPS fi
 This method relies on market consensus rather than historical time series. It compares the actual reported earnings against the median analyst forecast provided prior to the announcement.
 
 $$SUE_{3} = \frac{Actual \ EPS - Median \ Estimate}{P_{t}}$$
+
+Whether the consensus is the right expectation, and when a machine-learning correction of it is better, is the subject of @sec-mlef.
 
 ## Data Description
 
