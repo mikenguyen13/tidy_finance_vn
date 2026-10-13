@@ -872,7 +872,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_institutional_background.html">Vietnam Financial Markets, Institutions, and Data</a></li><li class="breadcrumb-item"><a href="./04_risk_free_rate_construction.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Risk-Free Rate Construction in Vietnam</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Risk-Free Rate Construction in Vietnam</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Risk-Free Rate Construction in Vietnam</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1217,6 +1217,8 @@ Table&nbsp;5.4: Comparison of Risk-Free Rate Proxies in Vietnam
 <section id="loading-and-cleaning-rate-data" class="level3" data-number="5.4.1">
 <h3 data-number="5.4.1" class="anchored" data-anchor-id="loading-and-cleaning-rate-data"><span class="header-section-number">5.4.1</span> Loading and Cleaning Rate Data</h3>
 <div id="load-rf-data" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1226,10 +1228,13 @@ Table&nbsp;5.4: Comparison of Risk-Free Rate Proxies in Vietnam
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview available rate types</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Available rate types:"</span>)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rf_raw[<span class="st">"rate_type"</span>].value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-rf-raw-series" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="2">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rf-raw-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="fl">4.5</span>))</span>
@@ -1258,6 +1263,7 @@ Table&nbsp;5.4: Comparison of Risk-Free Rate Proxies in Vietnam
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>ax.spines[<span class="st">"right"</span>].set_visible(<span class="va">False</span>)</span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rf-raw-series-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.1
@@ -1272,6 +1278,8 @@ Figure&nbsp;5.1
 <p><strong>Irregular to monthly</strong>: For series with gaps (e.g., treasury bills), forward-fill the most recent observation, then average within each month.</p>
 <p><strong>Annualized to monthly</strong>: Under simple compounding, <span class="math inline">\(r_f^{monthly} = r_f^{annual} / 12\)</span>. Under continuous compounding, <span class="math inline">\(r_f^{monthly} = r_f^{annual} / 12\)</span> (since continuous rates are additive). We use simple compounding for consistency with the convention that stock returns are computed as arithmetic returns.</p>
 <div id="construct-monthly-rf" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct monthly risk-free rates from each proxy</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_monthly_rf(rf_raw, rate_type, method<span class="op">=</span><span class="st">"mean"</span>):</span>
@@ -1324,12 +1332,15 @@ Figure&nbsp;5.1
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    rf_proxies[proxy][<span class="st">"proxy"</span>] <span class="op">=</span> proxy</span>
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>rf_all <span class="op">=</span> pd.concat(rf_proxies.values(), ignore_index<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="handling-missing-data-and-structural-breaks" class="level3" data-number="5.4.3">
 <h3 data-number="5.4.3" class="anchored" data-anchor-id="handling-missing-data-and-structural-breaks"><span class="header-section-number">5.4.3</span> Handling Missing Data and Structural Breaks</h3>
 <p>Vietnamese rate data may contain gaps due to market closures, reporting changes, or the introduction of new instruments. We handle these systematically:</p>
 <div id="check-missing" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check coverage for each proxy</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>coverage <span class="op">=</span> (</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    rf_all</span>
@@ -1345,9 +1356,12 @@ Figure&nbsp;5.1
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coverage)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>For periods where the primary proxy is unavailable, we construct a blended series using a priority hierarchy:</p>
 <div id="construct-blended-rf" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_blended_rf(rf_proxies, priority<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Construct a blended monthly risk-free rate using proxy priority.</span></span>
@@ -1394,6 +1408,7 @@ Figure&nbsp;5.1
 <span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> blended</span>
 <span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>rf_blended <span class="op">=</span> construct_blended_rf(rf_proxies)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-blended-source" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1401,6 +1416,8 @@ Figure&nbsp;5.1
 Table&nbsp;5.5: Data Source Composition of Blended Risk-Free Rate Series
 </figcaption>
 <div aria-describedby="tbl-blended-source-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>source_comp <span class="op">=</span> (</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    rf_blended</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"source"</span>)</span>
@@ -1413,6 +1430,7 @@ Table&nbsp;5.5: Data Source Composition of Blended Risk-Free Rate Series
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>source_comp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1425,6 +1443,8 @@ Table&nbsp;5.5: Data Source Composition of Blended Risk-Free Rate Series
 Table&nbsp;5.6: Summary Statistics of Monthly Risk-Free Rate Proxies
 </figcaption>
 <div aria-describedby="tbl-rf-summary-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rf_wide <span class="op">=</span> rf_all.pivot_table(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"proxy"</span>, values<span class="op">=</span><span class="st">"rf_monthly"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1437,12 +1457,15 @@ Table&nbsp;5.6: Summary Statistics of Monthly Risk-Free Rate Proxies
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to annualized percentage for interpretability</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>(summary <span class="op">*</span> <span class="dv">12</span> <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="fig-rf-monthly-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rf-monthly-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>), sharex<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Level</span></span>
@@ -1486,6 +1509,7 @@ Table&nbsp;5.6: Summary Statistics of Monthly Risk-Free Rate Proxies
 <span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rf-monthly-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.2
@@ -1502,10 +1526,13 @@ Figure&nbsp;5.2
 Table&nbsp;5.7: Pairwise Correlation of Monthly Risk-Free Rate Proxies
 </figcaption>
 <div aria-describedby="tbl-rf-correlation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rf_corr <span class="op">=</span> rf_wide.corr().<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>rf_corr.index <span class="op">=</span> [x.replace(<span class="st">"_"</span>, <span class="st">" "</span>).title() <span class="cf">for</span> x <span class="kw">in</span> rf_corr.index]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>rf_corr.columns <span class="op">=</span> [x.replace(<span class="st">"_"</span>, <span class="st">" "</span>).title() <span class="cf">for</span> x <span class="kw">in</span> rf_corr.columns]</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>rf_corr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1559,6 +1586,8 @@ Table&nbsp;5.8: Consistency Requirements for Excess Returns
 </figure>
 </div>
 <div id="construct-excess-returns" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load monthly stock returns</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>stock_returns <span class="op">=</span> pd.read_parquet(<span class="st">"data/monthly_returns.parquet"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume columns: symbol, date (month-end), ret</span></span>
@@ -1573,11 +1602,14 @@ Table&nbsp;5.8: Consistency Requirements for Excess Returns
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute excess returns</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>stock_returns[<span class="st">"ret_excess"</span>] <span class="op">=</span> stock_returns[<span class="st">"ret"</span>] <span class="op">-</span> stock_returns[<span class="st">"rf"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="market-excess-return" class="level3" data-number="5.5.2">
 <h3 data-number="5.5.2" class="anchored" data-anchor-id="market-excess-return"><span class="header-section-number">5.5.2</span> Market Excess Return</h3>
 <div id="compute-mktrf" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Value-weighted market return</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>market_monthly <span class="op">=</span> (</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    stock_returns</span>
@@ -1594,10 +1626,13 @@ Table&nbsp;5.8: Consistency Requirements for Excess Returns
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>market_monthly <span class="op">=</span> market_monthly.merge(rf_for_merge, on<span class="op">=</span><span class="st">"date"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>market_monthly[<span class="st">"mktrf"</span>] <span class="op">=</span> market_monthly[<span class="st">"rm"</span>] <span class="op">-</span> market_monthly[<span class="st">"rf"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-mktrf-timeseries" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mktrf-timeseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="fl">3.5</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ax.bar(</span>
@@ -1612,6 +1647,7 @@ Table&nbsp;5.8: Consistency Requirements for Excess Returns
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>ax.spines[<span class="st">"right"</span>].set_visible(<span class="va">False</span>)</span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-mktrf-timeseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.3
@@ -1631,6 +1667,8 @@ Figure&nbsp;5.3
 Table&nbsp;5.9: Annualized Equity Premium Under Alternative Risk-Free Proxies
 </figcaption>
 <div aria-describedby="tbl-equity-premium-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> proxy_name, proxy_df <span class="kw">in</span> rf_proxies.items():</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    rf_merge <span class="op">=</span> proxy_df[[<span class="st">"date"</span>, <span class="st">"rf_monthly"</span>]].rename(</span>
@@ -1655,6 +1693,7 @@ Table&nbsp;5.9: Annualized Equity Premium Under Alternative Risk-Free Proxies
 <span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(results).style.hide(axis<span class="op">=</span><span class="st">"index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1667,6 +1706,8 @@ Table&nbsp;5.9: Annualized Equity Premium Under Alternative Risk-Free Proxies
 Table&nbsp;5.10: Factor Premium Sensitivity to Risk-Free Proxy (Annualized %)
 </figcaption>
 <div aria-describedby="tbl-factor-premium-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load or construct factor returns</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume factors_monthly has: date, smb, hml (these are long-short, rf-independent)</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Only MKTRF changes with the proxy</span></span>
@@ -1693,6 +1734,7 @@ Table&nbsp;5.10: Factor Premium Sensitivity to Risk-Free Proxy (Annualized %)
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>proxy_name<span class="sc">:&gt;25s}</span><span class="ss">: MKTRF = </span><span class="sc">{</span>mean_mktrf<span class="sc">:6.2f}</span><span class="ss">%, "</span></span>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"SMB = </span><span class="sc">{</span>mean_smb<span class="sc">:6.2f}</span><span class="ss">%, HML = </span><span class="sc">{</span>mean_hml<span class="sc">:6.2f}</span><span class="ss">%"</span></span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1707,6 +1749,8 @@ Table&nbsp;5.10: Factor Premium Sensitivity to Risk-Free Proxy (Annualized %)
 Table&nbsp;5.11: Momentum Portfolio Alpha Sensitivity to Risk-Free Proxy
 </figcaption>
 <div aria-describedby="tbl-alpha-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume momentum_ret contains: date, mom_ret (raw return of WML portfolio)</span></span>
@@ -1740,6 +1784,7 @@ Table&nbsp;5.11: Momentum Portfolio Alpha Sensitivity to Risk-Free Proxy
 <span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(alpha_results).style.hide(axis<span class="op">=</span><span class="st">"index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1753,6 +1798,8 @@ Table&nbsp;5.11: Momentum Portfolio Alpha Sensitivity to Risk-Free Proxy
 Table&nbsp;5.12: Cost of Equity and Terminal Value Sensitivity to Risk-Free Proxy
 </figcaption>
 <div aria-describedby="tbl-valuation-sensitivity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: firm with beta = 1.0, expected CF = 1 billion VND, growth = 3%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>beta_example <span class="op">=</span> <span class="fl">1.0</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>cf <span class="op">=</span> <span class="fl">1e9</span>  <span class="co"># VND</span></span>
@@ -1783,6 +1830,7 @@ Table&nbsp;5.12: Cost of Equity and Terminal Value Sensitivity to Risk-Free Prox
 <span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(valuation_results).style.hide(axis<span class="op">=</span><span class="st">"index"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1816,6 +1864,8 @@ f(\tau) = \beta_0 + \beta_1 \exp\left(-\frac{\tau}{\lambda}\right) + \beta_2 \fr
 y(\tau) = \beta_0 + \beta_1 \frac{1 - \exp(-\tau/\lambda)}{\tau/\lambda} + \beta_2 \left[\frac{1 - \exp(-\tau/\lambda)}{\tau/\lambda} - \exp(-\tau/\lambda)\right]
 \tag{5.8}\]</span></span></p>
 <div id="nelson-siegel-estimation" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nelson_siegel_yield(tau, beta0, beta1, beta2, lam):</span>
@@ -1854,10 +1904,13 @@ y(\tau) = \beta_0 + \beta_1 \frac{1 - \exp(-\tau/\lambda)}{\tau/\lambda} + \beta
 <span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> fit_nelson_siegel(maturities, yields)</span>
 <span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>beta0, beta1, beta2, lam <span class="op">=</span> params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-yield-curve" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-yield-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tau_fine <span class="op">=</span> np.linspace(<span class="fl">0.25</span>, <span class="dv">30</span>, <span class="dv">200</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>fitted_yields <span class="op">=</span> nelson_siegel_yield(tau_fine, <span class="op">*</span>params)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1883,6 +1936,7 @@ y(\tau) = \beta_0 + \beta_1 \frac{1 - \exp(-\tau/\lambda)}{\tau/\lambda} + \beta
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  β₁ (slope)     = </span><span class="sc">{</span>beta1<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  β₂ (curvature) = </span><span class="sc">{</span>beta2<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  λ (decay)      = </span><span class="sc">{</span>lam<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-yield-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.4
@@ -1906,6 +1960,8 @@ Tip
 <section id="extracting-the-short-rate-from-the-yield-curve" class="level3" data-number="5.7.2">
 <h3 data-number="5.7.2" class="anchored" data-anchor-id="extracting-the-short-rate-from-the-yield-curve"><span class="header-section-number">5.7.2</span> Extracting the Short-Rate from the Yield Curve</h3>
 <div id="extract-short-rate" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract 1-month rate from Nelson-Siegel curve at each date</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_ns_short_rate(govt_yields, target_maturity<span class="op">=</span><span class="dv">1</span><span class="op">/</span><span class="dv">12</span>):</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1934,6 +1990,7 @@ Tip
 <span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(short_rates)</span>
 <span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>ns_short_rates <span class="op">=</span> extract_ns_short_rate(govt_yields)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="duration-matched-excess-returns" class="level3" data-number="5.7.3">
@@ -1951,6 +2008,8 @@ r_f^{real} \approx r_f^{nominal} - \pi^{e}
 \tag{5.9}\]</span></span></p>
 <p>where <span class="math inline">\(\pi^e\)</span> is expected inflation. In practice, we can use realized CPI inflation as a proxy for expected inflation (under the assumption of rational expectations, or as an ex-post adjustment).</p>
 <div id="compute-real-rf" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load CPI data</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume cpi_data contains: date, cpi_index (or inflation_mom for month-over-month)</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cpi_data <span class="op">=</span> pd.read_parquet(<span class="st">"data/cpi_monthly.parquet"</span>)</span>
@@ -1961,10 +2020,13 @@ r_f^{real} \approx r_f^{nominal} - \pi^{e}
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    cpi_data[[<span class="st">"date"</span>, <span class="st">"inflation_monthly"</span>]], on<span class="op">=</span><span class="st">"date"</span>, how<span class="op">=</span><span class="st">"inner"</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>rf_real[<span class="st">"rf_real"</span>] <span class="op">=</span> rf_real[<span class="st">"rf_monthly"</span>] <span class="op">-</span> rf_real[<span class="st">"inflation_monthly"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-real-vs-nominal" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-real-vs-nominal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ax.plot(</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    rf_real[<span class="st">"date"</span>], rf_real[<span class="st">"rf_monthly"</span>] <span class="op">*</span> <span class="dv">100</span>,</span>
@@ -1982,6 +2044,7 @@ r_f^{real} \approx r_f^{nominal} - \pi^{e}
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>ax.spines[<span class="st">"right"</span>].set_visible(<span class="va">False</span>)</span>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-real-vs-nominal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.5
@@ -2075,7 +2138,10 @@ Table&nbsp;5.13: Risk-Free Rate Proxies: International Comparison
 </figure>
 </div>
 <div id="8f54fa50" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># get the risk-free rate of Asian markets</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Vietnam’s risk-free rate environment is characterized by relatively high nominal rates (reflecting inflation and growth dynamics), limited availability of very-short-maturity sovereign instruments, and greater reliance on interbank rates as the operational proxy. This is broadly similar to other ASEAN frontier markets but contrasts sharply with developed Asian markets, where deep government securities markets provide clean short-term benchmarks.</p>
 </section>
@@ -2150,6 +2216,8 @@ Table&nbsp;5.14: Best Practices for Risk-Free Rate Construction
 <h2 data-number="5.11" class="anchored" data-anchor-id="saving-the-risk-free-rate-for-downstream-use"><span class="header-section-number">5.11</span> Saving the Risk-Free Rate for Downstream Use</h2>
 <p>The final step is to save the constructed risk-free rate series for use in subsequent chapters.</p>
 <div id="save-rf-series" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save all variants for flexibility</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>rf_output <span class="op">=</span> rf_blended[[<span class="st">"date"</span>, <span class="st">"rf_monthly"</span>, <span class="st">"source"</span>]].copy()</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>rf_output[<span class="st">"rf_annual_pct"</span>] <span class="op">=</span> rf_output[<span class="st">"rf_monthly"</span>] <span class="op">*</span> <span class="dv">12</span> <span class="op">*</span> <span class="dv">100</span></span>
@@ -2171,6 +2239,7 @@ Table&nbsp;5.14: Best Practices for Risk-Free Rate Construction
 <span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Risk-free rate series saved: </span><span class="sc">{</span><span class="bu">len</span>(rf_output)<span class="sc">}</span><span class="ss"> months"</span>)</span>
 <span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date range: </span><span class="sc">{</span>rf_output[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>rf_output[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Columns: </span><span class="sc">{</span><span class="bu">list</span>(rf_output.columns)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">

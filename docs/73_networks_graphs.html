@@ -877,7 +877,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./70_textual.html">Alternative Data and AI for Finance</a></li><li class="breadcrumb-item"><a href="./73_networks_graphs.html"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Networks and Graphs in Finance</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Networks and Graphs in Finance</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">48</span>&nbsp; <span class="chapter-title">Networks and Graphs in Finance</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -898,6 +898,8 @@ window.Quarto = {
 <p>The Vietnamese financial system is particularly network-dense. State ownership creates a lattice of cross-connected enterprises: the same line ministry may oversee the borrower, the lender, and the insurer. Pyramidal business groups (such as Vingroup, Masan, and FPT) link dozens of listed and unlisted entities through chains of equity ownership. The banking system is small and concentrated, with a few state-owned commercial banks accounting for the majority of assets, generating dense interbank exposures. Board interlocks (e.g., directors who serve on multiple boards simultaneously) are pervasive and often follow ownership lines. And the equity market itself exhibits return co-movement patterns that, when represented as a correlation network, reveal sector-level and ownership-level clustering invisible in standard factor analysis.</p>
 <p>This chapter covers the full spectrum of network methods used in financial economics, from classical graph theory through modern graph neural networks (GNNs). We organize the material in eight sections. First, graph theory fundamentals and the representation of financial data as networks. Second, ownership and control networks, which are the most distinctive network structure in Vietnamese markets. Third, board interlock and governance networks. Fourth, supply chain and trade networks. Fifth, correlation and co-movement networks for portfolio construction and systemic risk monitoring. Sixth, interbank and contagion networks. Seventh, social networks between places, measured with the Social Connectedness Index, and their role as conduits of financial information <span class="citation" data-cites="allen2026social">(<a href="references.html#ref-allen2026social" role="doc-biblioref">L. Allen, Peng, and Shan 2026</a>)</span>. Eighth, graph neural networks and graph-based machine learning for asset pricing, credit risk, and anomaly detection.</p>
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -924,11 +926,15 @@ window.Quarto = {
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn <span class="im">as</span> nn</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch.nn.functional <span class="im">as</span> F</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="56f149c4" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DataCore.vn API</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCore</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataCore()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="graph-theory-foundations-for-finance" class="level2" data-number="48.1">
 <h2 data-number="48.1" class="anchored" data-anchor-id="graph-theory-foundations-for-finance"><span class="header-section-number">48.1</span> Graph Theory Foundations for Finance</h2>
@@ -966,6 +972,8 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <p>where <span class="math inline">\(T_i\)</span> is the number of triangles containing node <span class="math inline">\(i\)</span>. High clustering indicates tightly knit groups (e.g., business groups, lending circles, co-invested portfolios).</p>
 <p><strong>Community structure.</strong> Many financial networks exhibit modular structure: groups of densely connected nodes with sparse connections between groups. Community detection algorithms (Louvain, label propagation, spectral clustering) identify these modules, which in financial networks often correspond to business groups, industry sectors, or lending clusters.</p>
 <div id="graph-fundamentals" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_network_metrics(G):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute standard network metrics for a graph.</span></span>
@@ -1049,6 +1057,7 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> node_metrics, graph_metrics</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-adjacency-matrix-and-its-spectral-properties" class="level3" data-number="48.1.3">
@@ -1062,6 +1071,8 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 </ul>
 <p>The normalized Laplacian <span class="math inline">\(\tilde{L} = D^{-1/2} L D^{-1/2}\)</span> is used in GCNs because it stabilizes message passing across nodes with different degrees.</p>
 <div id="spectral-analysis" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> spectral_graph_analysis(A, n_components<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute spectral properties of a financial network.</span></span>
@@ -1116,6 +1127,7 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">"spectral_gap"</span>: spectral_gap,</span>
 <span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">"spectral_embedding"</span>: eigenvectors[:, <span class="dv">1</span>:n_components <span class="op">+</span> <span class="dv">1</span>]</span>
 <span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1128,6 +1140,8 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <p><strong>Private business groups.</strong> Vietnamese conglomerates (Vingroup, Masan, FPT, Hoà Phát, Thaco) create complex webs of cross-ownership, subsidiary relationships, and associate stakes. These structures serve multiple purposes: internal capital markets, tax optimization, regulatory arbitrage, and control enhancement.</p>
 <p><strong>Circular and cross-ownership.</strong> Vietnamese regulations do not effectively prevent circular ownership (firm <span class="math inline">\(A\)</span> owns firm <span class="math inline">\(B\)</span> which owns firm <span class="math inline">\(C\)</span> which owns firm <span class="math inline">\(A\)</span>), creating loops in the ownership graph that amplify control beyond direct stakes and inflate accounting equity <span class="citation" data-cites="bebchuk1999rent">(<a href="references.html#ref-bebchuk1999rent" role="doc-biblioref">Bebchuk 1999</a>)</span>.</p>
 <div id="ownership-network-data" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load ownership data</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ownership <span class="op">=</span> dc.get_ownership_network(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    date<span class="op">=</span><span class="st">"2024-06-30"</span>,</span>
@@ -1143,8 +1157,11 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Ownership edges: </span><span class="sc">{</span><span class="bu">len</span>(ownership)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique owners: </span><span class="sc">{</span>ownership[<span class="st">'owner_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique targets: </span><span class="sc">{</span>ownership[<span class="st">'target_ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="build-ownership-graph" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build directed ownership graph</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>G_own <span class="op">=</span> nx.DiGraph()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1180,6 +1197,7 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Ownership Network Summary:"</span>)</span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, v <span class="kw">in</span> graph_metrics_own.items():</span>
 <span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-ownership-network-stats" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1187,10 +1205,13 @@ C_C(i) = \frac{2 T_i}{k_i(k_i - 1)}
 Table&nbsp;48.1: Ownership Network: Graph-Level Statistics
 </figcaption>
 <div aria-describedby="tbl-ownership-network-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>own_stats <span class="op">=</span> pd.DataFrame([graph_metrics_own]).T</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>own_stats.columns <span class="op">=</span> [<span class="st">"Value"</span>]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>own_stats <span class="op">=</span> own_stats.<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>own_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1203,6 +1224,8 @@ Table&nbsp;48.1: Ownership Network: Graph-Level Statistics
 \tag{48.5}\]</span></span></p>
 <p>where <span class="math inline">\(w_{ij}\)</span> is the direct stake of <span class="math inline">\(i\)</span> in <span class="math inline">\(j\)</span>. When multiple paths exist from <span class="math inline">\(A\)</span> to <span class="math inline">\(Z\)</span>, the total ultimate ownership is the sum across paths. The control rights, however, are determined by the weakest link in the chain (the minimum stake along the path), reflecting the principle that control requires a majority at each level.</p>
 <div id="ultimate-ownership" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_ultimate_ownership(G, source, target, max_depth<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute ultimate ownership of source in target through all paths.</span></span>
@@ -1301,6 +1324,7 @@ Table&nbsp;48.1: Ownership Network: Graph-Level Statistics
 <span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>listed_firms <span class="op">=</span> [n <span class="cf">for</span> n, d <span class="kw">in</span> G_own.nodes(data<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> d.get(<span class="st">"node_type"</span>) <span class="op">==</span> <span class="st">"firm"</span>]</span>
 <span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>wedge_df <span class="op">=</span> compute_control_wedge(G_own, listed_firms)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-control-wedge" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1308,17 +1332,22 @@ Table&nbsp;48.1: Ownership Network: Graph-Level Statistics
 Table&nbsp;48.2: Control-Cash Flow Wedge: Summary Statistics
 </figcaption>
 <div aria-describedby="tbl-control-wedge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wedge_summary <span class="op">=</span> wedge_df[</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"direct_stake"</span>, <span class="st">"ultimate_ownership"</span>, <span class="st">"control_rights"</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>     <span class="st">"n_ownership_paths"</span>, <span class="st">"wedge"</span>]</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>].describe(percentiles<span class="op">=</span>[<span class="fl">0.1</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">0.9</span>]).T.<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>wedge_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="fig-control-wedge" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-control-wedge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    p9.ggplot(wedge_df, p9.aes(x<span class="op">=</span><span class="st">"wedge"</span>))</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.geom_histogram(bins<span class="op">=</span><span class="dv">50</span>, fill<span class="op">=</span><span class="st">"#2E5090"</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
@@ -1331,6 +1360,7 @@ Table&nbsp;48.2: Control-Cash Flow Wedge: Summary Statistics
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-control-wedge-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;48.1
@@ -1345,6 +1375,8 @@ Figure&nbsp;48.1
 Q_{i,t} = \beta_0 + \beta_1 \text{Centrality}_{i,t} + \beta_2 \text{Wedge}_{i,t} + \boldsymbol{\gamma}' \mathbf{X}_{i,t} + \alpha_{\text{ind}} + \delta_t + \varepsilon_{i,t}
 \tag{48.6}\]</span></span></p>
 <div id="ownership-valuation" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge network metrics with firm characteristics</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>node_metrics_own_df <span class="op">=</span> node_metrics_own.reset_index().rename(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>{<span class="st">"index"</span>: <span class="st">"ticker"</span>}</span>
@@ -1375,12 +1407,15 @@ Q_{i,t} = \beta_0 + \beta_1 \text{Centrality}_{i,t} + \beta_2 \text{Wedge}_{i,t}
 <span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> var <span class="kw">in</span> [<span class="st">"eigenvector"</span>, <span class="st">"betweenness"</span>, <span class="st">"wedge"</span>]:</span>
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>var<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>model_network_val<span class="sc">.</span>params[var]<span class="sc">:.4f}</span><span class="ss"> "</span></span>
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"(t = </span><span class="sc">{</span>model_network_val<span class="sc">.</span>tvalues[var]<span class="sc">:.3f}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="business-group-detection" class="level3" data-number="48.2.4">
 <h3 data-number="48.2.4" class="anchored" data-anchor-id="business-group-detection"><span class="header-section-number">48.2.4</span> Business Group Detection</h3>
 <p>Business groups (i.e., collections of legally independent firms linked by common ownership) are a defining feature of Vietnamese corporate structure. We detect them algorithmically using community detection on the ownership graph.</p>
 <div id="business-groups" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> detect_business_groups(G, min_group_size<span class="op">=</span><span class="dv">3</span>, ownership_threshold<span class="op">=</span><span class="fl">0.10</span>):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Detect business groups from ownership network.</span></span>
@@ -1451,6 +1486,7 @@ Q_{i,t} = \beta_0 + \beta_1 \text{Centrality}_{i,t} + \beta_2 \text{Wedge}_{i,t}
 <span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>groups_df <span class="op">=</span> detect_business_groups(G_own)</span>
 <span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Business groups detected: </span><span class="sc">{</span>groups_df[<span class="st">'group_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Firms in groups: </span><span class="sc">{</span><span class="bu">len</span>(groups_df[groups_df[<span class="st">'node_type'</span>] <span class="op">==</span> <span class="st">'firm'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-business-groups" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1458,6 +1494,8 @@ Q_{i,t} = \beta_0 + \beta_1 \text{Centrality}_{i,t} + \beta_2 \text{Wedge}_{i,t}
 Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysis
 </figcaption>
 <div aria-describedby="tbl-business-groups-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>top_groups <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    groups_df.groupby(<span class="st">"group_id"</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -1473,6 +1511,7 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>top_groups[<span class="st">"total_mcap_bn"</span>] <span class="op">=</span> top_groups[<span class="st">"total_mcap"</span>] <span class="op">/</span> <span class="fl">1e9</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>top_groups[[<span class="st">"apex"</span>, <span class="st">"n_members"</span>, <span class="st">"n_listed"</span>, <span class="st">"total_mcap_bn"</span>, <span class="st">"industries"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1485,6 +1524,8 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <p>A board interlock exists when a director serves on the boards of two or more firms simultaneously. The board interlock network is a unipartite projection of the bipartite director<span class="math inline">\(\times\)</span>firm graph: two firms are connected if they share at least one director, weighted by the number of shared directors.</p>
 <p>Board interlocks are an information channel. <span class="citation" data-cites="bizjak2008does">Bizjak, Lemmon, and Naveen (<a href="references.html#ref-bizjak2008does" role="doc-biblioref">2008</a>)</span> show that compensation practices diffuse through board networks. <span class="citation" data-cites="cai2014board">Cai et al. (<a href="references.html#ref-cai2014board" role="doc-biblioref">2014</a>)</span> demonstrate that firms connected through interlocks have correlated investment policies. In Vietnamese markets, interlocks often follow ownership lines (e.g., the parent company appoints directors to subsidiary boards), creating a governance channel that reinforces the ownership channel.</p>
 <div id="board-interlock-data" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load board membership data</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>board_data <span class="op">=</span> dc.get_board_memberships(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    date<span class="op">=</span><span class="st">"2024-06-30"</span></span>
@@ -1516,8 +1557,11 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Firms: </span><span class="sc">{</span>G_interlock<span class="sc">.</span>number_of_nodes()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Interlocking pairs: </span><span class="sc">{</span>G_interlock<span class="sc">.</span>number_of_edges()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Density: </span><span class="sc">{</span>nx<span class="sc">.</span>density(G_interlock)<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="interlock-vs-ownership" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Do board interlocks follow ownership lines?</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare interlock edges with ownership edges</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>interlock_edges <span class="op">=</span> <span class="bu">set</span>(G_interlock.edges())</span>
@@ -1542,6 +1586,7 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> n_interlock <span class="op">&gt;</span> <span class="dv">0</span>:</span>
 <span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Fraction of interlocks with ownership link: "</span></span>
 <span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>n_overlap <span class="op">/</span> n_interlock<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="interlocks-and-return-co-movement" class="level3" data-number="48.3.2">
@@ -1551,6 +1596,8 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 \rho_{ij,t} = \alpha + \beta \cdot \text{Interlock}_{ij,t} + \gamma \cdot \text{SameIndustry}_{ij} + \delta \cdot \text{SizeProximity}_{ij,t} + \varepsilon_{ij,t}
 \tag{48.7}\]</span></span></p>
 <div id="interlock-comovement" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute pairwise return correlations for interlocked and non-interlocked pairs</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>monthly_returns <span class="op">=</span> dc.get_monthly_returns(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2023-01-01"</span>,</span>
@@ -1589,6 +1636,7 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Non-interlocked: n=</span><span class="sc">{</span><span class="bu">len</span>(non_interlock_corrs)<span class="sc">}</span><span class="ss">, "</span></span>
 <span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"mean corr=</span><span class="sc">{</span>np<span class="sc">.</span>mean(non_interlock_corrs)<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Difference t-stat: </span><span class="sc">{</span>t_stat<span class="sc">:.3f}</span><span class="ss">, p-value: </span><span class="sc">{</span>p_val<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1598,6 +1646,8 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <h3 data-number="48.4.1" class="anchored" data-anchor-id="constructing-the-supply-chain-graph"><span class="header-section-number">48.4.1</span> Constructing the Supply Chain Graph</h3>
 <p>Supply chain relationships (customer-supplier linkages) represent real economic connections through which shocks propagate. <span class="citation" data-cites="acemoglu2015systemic">Acemoglu, Ozdaglar, and Tahbaz-Salehi (<a href="references.html#ref-acemoglu2015systemic" role="doc-biblioref">2015</a>)</span> demonstrate theoretically that in the presence of supply chain linkages, idiosyncratic shocks to individual firms can generate aggregate fluctuations rather than washing out. <span class="citation" data-cites="cohen2008economic">Cohen and Frazzini (<a href="references.html#ref-cohen2008economic" role="doc-biblioref">2008</a>)</span> and <span class="citation" data-cites="menzly2010market">Menzly and Ozbas (<a href="references.html#ref-menzly2010market" role="doc-biblioref">2010</a>)</span> show that supply chain connections predict cross-sectional return differences: when a major customer’s stock drops, its suppliers’ stocks follow with a delay.</p>
 <div id="supply-chain-data" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load supply chain data</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>supply_chain <span class="op">=</span> dc.get_supply_chain_data(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2020-01-01"</span>,</span>
@@ -1619,6 +1669,7 @@ Table&nbsp;48.3: Largest Vietnamese Business Groups by Ownership Network Analysi
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Supply chain links: </span><span class="sc">{</span>G_supply<span class="sc">.</span>number_of_edges()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Firms involved: </span><span class="sc">{</span>G_supply<span class="sc">.</span>number_of_nodes()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="customer-momentum" class="level3" data-number="48.4.2">
@@ -1629,6 +1680,8 @@ r_{i,t+1} = \alpha + \beta \cdot \text{CustomerReturn}_{i,t} + \gamma \cdot r_{i
 \tag{48.8}\]</span></span></p>
 <p>where <span class="math inline">\(\text{CustomerReturn}_{i,t} = \sum_{j \in \text{Customers}(i)} w_{ij} \cdot r_{j,t}\)</span> is the weighted average return of firm <span class="math inline">\(i\)</span>’s customers.</p>
 <div id="customer-momentum" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute customer-weighted returns for each supplier</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_customer_returns(supply_graph, monthly_returns):</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1696,6 +1749,7 @@ r_{i,t+1} = \alpha + \beta \cdot \text{CustomerReturn}_{i,t} + \gamma \cdot r_{i
 <span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a>    mom_clean[<span class="st">"ret_lead"</span>],</span>
 <span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>    sm.add_constant(mom_clean[[<span class="st">"customer_ret_lag"</span>, <span class="st">"own_ret_lag"</span>]])</span>
 <span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>).fit(cov_type<span class="op">=</span><span class="st">"cluster"</span>, cov_kwds<span class="op">=</span>{<span class="st">"groups"</span>: mom_clean[<span class="st">"ticker"</span>]})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-customer-momentum" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1703,6 +1757,8 @@ r_{i,t+1} = \alpha + \beta \cdot \text{CustomerReturn}_{i,t} + \gamma \cdot r_{i
 Table&nbsp;48.4: Customer Momentum: Supplier Returns Predicted by Customer Returns
 </figcaption>
 <div aria-describedby="tbl-customer-momentum-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mom_results <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Coefficient"</span>: model_mom.params.<span class="bu">round</span>(<span class="dv">4</span>),</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Std Error"</span>: model_mom.bse.<span class="bu">round</span>(<span class="dv">4</span>),</span>
@@ -1710,6 +1766,7 @@ Table&nbsp;48.4: Customer Momentum: Supplier Returns Predicted by Customer Retur
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"p-value"</span>: model_mom.pvalues.<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>mom_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1718,6 +1775,8 @@ Table&nbsp;48.4: Customer Momentum: Supplier Returns Predicted by Customer Retur
 <h3 data-number="48.4.3" class="anchored" data-anchor-id="network-propagation-shock-diffusion-through-supply-chains"><span class="header-section-number">48.4.3</span> Network Propagation: Shock Diffusion Through Supply Chains</h3>
 <p>The <span class="citation" data-cites="acemoglu2015systemic">Acemoglu, Ozdaglar, and Tahbaz-Salehi (<a href="references.html#ref-acemoglu2015systemic" role="doc-biblioref">2015</a>)</span> model predicts that the aggregate effect of an idiosyncratic shock depends on the network’s topology. In a star network (one central hub), hub shocks generate aggregate fluctuations. In a symmetric network, shocks cancel out. We implement a simulation-based approach to measure shock propagation in the Vietnamese supply chain.</p>
 <div id="shock-propagation" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_shock_propagation(G, shocked_node, shock_size<span class="op">=-</span><span class="fl">0.10</span>,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                                decay<span class="op">=</span><span class="fl">0.5</span>, max_steps<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1789,6 +1848,7 @@ Table&nbsp;48.4: Customer Momentum: Supplier Returns Predicted by Customer Retur
 <span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>    <span class="bu">list</span>(systemic_importance.items()),</span>
 <span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[<span class="st">"ticker"</span>, <span class="st">"systemic_impact"</span>]</span>
 <span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>).sort_values(<span class="st">"systemic_impact"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-systemic-supply-chain" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1796,12 +1856,15 @@ Table&nbsp;48.4: Customer Momentum: Supplier Returns Predicted by Customer Retur
 Table&nbsp;48.5: Most Systemically Important Firms in the Supply Chain Network
 </figcaption>
 <div aria-describedby="tbl-systemic-supply-chain-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>top_systemic <span class="op">=</span> systemic_df.head(<span class="dv">20</span>).merge(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    firms[[<span class="st">"ticker"</span>, <span class="st">"industry"</span>, <span class="st">"market_cap"</span>]],</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"ticker"</span>, how<span class="op">=</span><span class="st">"left"</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>top_systemic[<span class="st">"market_cap_bn"</span>] <span class="op">=</span> top_systemic[<span class="st">"market_cap"</span>] <span class="op">/</span> <span class="fl">1e9</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>top_systemic[[<span class="st">"ticker"</span>, <span class="st">"industry"</span>, <span class="st">"market_cap_bn"</span>, <span class="st">"systemic_impact"</span>]].<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1818,6 +1881,8 @@ Table&nbsp;48.5: Most Systemically Important Firms in the Supply Chain Network
 <li><p><strong>Analyze the graph.</strong> Community detection reveals sector clustering; centrality identifies market bellwethers; temporal evolution tracks regime changes.</p></li>
 </ol>
 <div id="correlation-network" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute correlation matrix from daily returns</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>daily_returns <span class="op">=</span> dc.get_daily_returns(</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2023-01-01"</span>,</span>
@@ -1865,6 +1930,7 @@ Table&nbsp;48.5: Most Systemically Important Firms in the Supply Chain Network
 <span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Corr network (ρ &gt; </span><span class="sc">{</span>threshold<span class="sc">}</span><span class="ss">): "</span></span>
 <span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>G_corr<span class="sc">.</span>number_of_nodes()<span class="sc">}</span><span class="ss"> nodes, "</span></span>
 <span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>G_corr<span class="sc">.</span>number_of_edges()<span class="sc">}</span><span class="ss"> edges"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-diebold-yilmaz-connectedness-framework" class="level3" data-number="48.5.2">
@@ -1879,6 +1945,8 @@ C_{i \leftarrow j}(H) = \frac{\tilde{\theta}_{ij}^g(H)}{\sum_{j=1}^{n} \tilde{\t
 \tag{48.10}\]</span></span></p>
 <p>High TCI indicates a tightly connected system where shocks propagate widely; low TCI indicates relative isolation.</p>
 <div id="diebold-yilmaz" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diebold_yilmaz_connectedness(returns_df, var_order<span class="op">=</span><span class="dv">2</span>,</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                                  forecast_horizon<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1960,6 +2028,7 @@ C_{i \leftarrow j}(H) = \frac{\tilde{\theta}_{ij}^g(H)}{\sum_{j=1}^{n} \tilde{\t
 <span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a>dy_results <span class="op">=</span> diebold_yilmaz_connectedness(top_returns)</span>
 <span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total Connectedness Index: </span><span class="sc">{</span>dy_results[<span class="st">'TCI'</span>]<span class="sc">:.2f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-connectedness" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="24">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1967,6 +2036,8 @@ C_{i \leftarrow j}(H) = \frac{\tilde{\theta}_{ij}^g(H)}{\sum_{j=1}^{n} \tilde{\t
 Table&nbsp;48.6: Diebold-Yilmaz Net Connectedness: Net Transmitters (+) and Receivers (−)
 </figcaption>
 <div aria-describedby="tbl-connectedness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>net_df <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TO_others"</span>: dy_results[<span class="st">"TO"</span>].<span class="bu">round</span>(<span class="dv">2</span>),</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FROM_others"</span>: dy_results[<span class="st">"FROM"</span>].<span class="bu">round</span>(<span class="dv">2</span>),</span>
@@ -1974,10 +2045,13 @@ Table&nbsp;48.6: Diebold-Yilmaz Net Connectedness: Net Transmitters (+) and Rece
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>}).sort_values(<span class="st">"NET"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>net_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="rolling-connectedness" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling TCI to track systemic risk over time</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rolling_tci(returns_wide, window<span class="op">=</span><span class="dv">252</span>, step<span class="op">=</span><span class="dv">21</span>, var_order<span class="op">=</span><span class="dv">1</span>,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                 forecast_horizon<span class="op">=</span><span class="dv">10</span>, min_stocks<span class="op">=</span><span class="dv">10</span>):</span>
@@ -2016,6 +2090,7 @@ Table&nbsp;48.6: Diebold-Yilmaz Net Connectedness: Net Transmitters (+) and Rece
 <span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a><span class="co"># tci_df = rolling_tci(daily_wide, window=252, step=21)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2028,6 +2103,8 @@ Table&nbsp;48.6: Diebold-Yilmaz Net Connectedness: Net Transmitters (+) and Rece
 <p><strong>Ring network (each bank linked to one neighbor).</strong> Each bank’s exposure is concentrated in a single counterpart. A failure in one bank can topple its neighbor, triggering a chain of cascading defaults. The network is fragile.</p>
 <p>The Vietnamese banking system, with its concentration of state-owned banks and the regulatory emphasis on interbank lending for liquidity management, lies between these extremes.</p>
 <div id="interbank-network" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load interbank exposure data</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>interbank <span class="op">=</span> dc.get_interbank_exposures(</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    date<span class="op">=</span><span class="st">"2024-06-30"</span></span>
@@ -2056,6 +2133,7 @@ Table&nbsp;48.6: Diebold-Yilmaz Net Connectedness: Net Transmitters (+) and Rece
 <span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>        })</span>
 <span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>bank_metrics, bank_graph_stats <span class="op">=</span> compute_network_metrics(G_bank)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="cascading-default-simulation" class="level3" data-number="48.6.2">
@@ -2066,6 +2144,8 @@ p_i^* = \min\left(\bar{p}_i, \; e_i + \sum_{j} \frac{L_{ji}}{\sum_k L_{jk}} p_j^
 \tag{48.11}\]</span></span></p>
 <p>where <span class="math inline">\(p_i^*\)</span> is bank <span class="math inline">\(i\)</span>’s actual payment, <span class="math inline">\(\bar{p}_i\)</span> is its total obligation, <span class="math inline">\(e_i\)</span> is its external assets minus external liabilities, and <span class="math inline">\(L_{ji}/\sum_k L_{jk}\)</span> is the fraction of bank <span class="math inline">\(j\)</span>’s obligations owed to bank <span class="math inline">\(i\)</span>.</p>
 <div id="cascading-defaults" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_cascading_defaults(G, initial_failure, </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                                  equity_buffer<span class="op">=</span><span class="fl">0.08</span>,</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                  max_rounds<span class="op">=</span><span class="dv">20</span>):</span>
@@ -2160,6 +2240,7 @@ p_i^* = \min\left(\bar{p}_i, \; e_i + \sum_{j} \frac{L_{ji}}{\sum_k L_{jk}} p_j^
 <span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a>cascade_df <span class="op">=</span> pd.DataFrame(cascade_results).sort_values(</span>
 <span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a>    <span class="st">"systemic_loss_pct"</span>, ascending<span class="op">=</span><span class="va">False</span></span>
 <span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-systemic-banks" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="28">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2167,7 +2248,10 @@ p_i^* = \min\left(\bar{p}_i, \; e_i + \sum_{j} \frac{L_{ji}}{\sum_k L_{jk}} p_j^
 Table&nbsp;48.7: Systemically Important Banks: Cascading Default Analysis
 </figcaption>
 <div aria-describedby="tbl-systemic-banks-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cascade_df.head(<span class="dv">15</span>).<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -2247,6 +2331,8 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 \tag{48.17}\]</span></span></p>
 <p>This allows the model to learn which neighbors are most informative for each node, rather than treating all neighbors equally.</p>
 <div id="gnn-models" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GCNLayer(nn.Module):</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Graph Convolutional Network layer (Kipf &amp; Welling, 2016)."""</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2416,12 +2502,15 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 <span id="cb29-167"><a href="#cb29-167" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-168"><a href="#cb29-168" aria-hidden="true" tabindex="-1"></a>        predictions <span class="op">=</span> <span class="va">self</span>.head(h).squeeze(<span class="op">-</span><span class="dv">1</span>)</span>
 <span id="cb29-169"><a href="#cb29-169" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> predictions, attention_weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="gnn-for-cross-sectional-return-prediction" class="level3" data-number="48.8.4">
 <h3 data-number="48.8.4" class="anchored" data-anchor-id="gnn-for-cross-sectional-return-prediction"><span class="header-section-number">48.8.4</span> GNN for Cross-Sectional Return Prediction</h3>
 <p>We apply the GNN to predict cross-sectional stock returns, where the graph encodes ownership connections between firms. The hypothesis is that firms connected through ownership have correlated return dynamics that the GNN can exploit.</p>
 <div id="gnn-return-prediction" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_gnn_data(firms_df, ownership_graph, returns_df, date):</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Prepare node features and adjacency matrix for GNN prediction.</span></span>
@@ -2533,6 +2622,7 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 <span id="cb30-109"><a href="#cb30-109" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-110"><a href="#cb30-110" aria-hidden="true" tabindex="-1"></a>    model.load_state_dict(best_state)</span>
 <span id="cb30-111"><a href="#cb30-111" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model, best_val_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="temporal-graph-networks" class="level3" data-number="48.8.5">
@@ -2543,6 +2633,8 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 \tag{48.18}\]</span></span></p>
 <p>where <span class="math inline">\(\mathbf{s}_i(t)\)</span> is the memory state of node <span class="math inline">\(i\)</span> at time <span class="math inline">\(t\)</span>, <span class="math inline">\(\text{msg}(i, t)\)</span> is the message aggregated from events at time <span class="math inline">\(t\)</span>, and GRU is a gated recurrent unit.</p>
 <div id="temporal-gnn" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TemporalFinancialGNN(nn.Module):</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Temporal GNN for dynamic financial networks.</span></span>
@@ -2645,12 +2737,15 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 <span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a>        predictions <span class="op">=</span> <span class="va">self</span>.head(combined).squeeze(<span class="op">-</span><span class="dv">1</span>)</span>
 <span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> predictions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="gnn-for-credit-risk-and-fraud-detection" class="level3" data-number="48.8.6">
 <h3 data-number="48.8.6" class="anchored" data-anchor-id="gnn-for-credit-risk-and-fraud-detection"><span class="header-section-number">48.8.6</span> GNN for Credit Risk and Fraud Detection</h3>
 <p>Beyond return prediction, GNNs are particularly powerful for credit risk assessment and fraud detection, where the network structure itself is informative. In credit risk, firms connected to defaulted counterparties face elevated risk. In fraud detection, suspicious transaction patterns propagate through networks of related entities.</p>
 <div id="gnn-credit-risk" class="cell" data-execution_count="32">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CreditRiskGNN(nn.Module):</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co">    GNN for credit default prediction using firm and bank networks.</span></span>
@@ -2680,6 +2775,7 @@ h_i^{(\ell+1)} = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(\ell)} W^
 <span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>        logits, attn <span class="op">=</span> <span class="va">self</span>.gnn(x, adj)</span>
 <span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>        probs <span class="op">=</span> <span class="va">self</span>.sigmoid(logits)</span>
 <span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> probs, attn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>

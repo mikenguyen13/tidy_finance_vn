@@ -164,6 +164,9 @@ format:
       dark: darkly
     css: styles.css
     code-tools: true
+    # Collapse code cells; each shows its code-summary (or "Show code")
+    code-fold: true
+    code-summary: "Show code"
 
     toc-expand: false
 
@@ -193,3 +196,6 @@ format:
     include-in-header:
       text: |
         \usepackage{multirow}
+        % Wrap long code lines (URLs, data rows) instead of clipping them
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,breakanywhere,breaknonspaceingroup,commandchars=\\\{\}}

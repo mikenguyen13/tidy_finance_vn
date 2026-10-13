@@ -857,7 +857,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./40_ml_earnings_forecasts.html"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Machine Learning Earnings Forecasts and Market Expectations</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span id="sec-mlef" class="quarto-section-identifier"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Machine Learning Earnings Forecasts and Market Expectations</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-mlef" class="quarto-section-identifier"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Machine Learning Earnings Forecasts and Market Expectations</span></span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1501,6 +1501,8 @@ Table&nbsp;32.7: Earnings-response tests (published Table 7, recomputed in <a hr
 <h2 data-number="32.3" class="anchored" data-anchor-id="sec-mlef-replication"><span class="header-section-number">32.3</span> Replication from the Authors’ Data</h2>
 <p>The replication package contains the monthly GBRT-indirect forecasts (<code>DataShare.dta</code>, 279 MB, 1.16 million firm-months) together with realised EPS, the consensus, price, size, institutional ownership, the firm attributes, and size-adjusted three-day announcement returns. It also includes a summary of all 3,024 models (<code>Specification_Sumstats.csv</code>). The model training code is not included, so the replicable part is everything downstream of the forecasts: the accuracy measure, the size sorts, the time trend and the market tests. The cell below is our own implementation. It is not evaluated when the book is built because the data file is not distributed with the book. Download the package from the DOI above to run it.</p>
 <div id="mlef-replicate" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Recompute ML Superiority, size sorts and ERC weights from DataShare.dta</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> linearmodels <span class="im">import</span> PanelOLS</span>
@@ -1556,6 +1558,7 @@ Table&nbsp;32.7: Earnings-response tests (published Table 7, recomputed in <a hr
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> erc([<span class="st">"afe_t"</span>, <span class="st">"bias_t"</span>]).params</span>
 <span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"w_AF / (w_AF + w_ML) = </span><span class="sc">%.3f</span><span class="st">"</span> <span class="op">%</span> (b[<span class="st">"bias_t"</span>] <span class="op">/</span> b[<span class="st">"mle_t"</span>]))</span>
 <span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"w_AF / w_ML          = </span><span class="sc">%.3f</span><span class="st">"</span> <span class="op">%</span> (<span class="op">-</span>b[<span class="st">"bias_t"</span>] <span class="op">/</span> g[<span class="st">"bias_t"</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Running this code on the package data (October 2026, about one minute) reproduces the published numbers:</p>
 <div id="tbl-mlef-replication" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1646,6 +1649,8 @@ Table&nbsp;32.8: Replication of headline results. Both versions cluster by firm 
 <li>Each announcement is forecast three times (12, 6 and 1 month ahead), so targets overlap across rows, as with I/B/E/S monthly forecasts.</li>
 </ul>
 <div id="mlef-sim-panel" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Simulate a firm-year panel with informed but predictably biased analysts</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1702,6 +1707,7 @@ Table&nbsp;32.8: Replication of headline results. Both versions cluster by firm 
 <span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"median </span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> afe<span class="sc">.</span>median()<span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
 <span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean analyst error by horizon (</span><span class="sc">% o</span><span class="st">f price):"</span>,</span>
 <span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">100</span> <span class="op">*</span> afe.groupby(panel[<span class="st">"horizon"</span>]).mean()).<span class="bu">round</span>(<span class="dv">2</span>).to_dict())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>22,500 firm-horizon-years; mean analyst error -1.98% of price, median -0.85%
 mean analyst error by horizon (% of price): {1: -1.48, 6: -1.95, 12: -2.51}</code></pre>
@@ -1712,6 +1718,8 @@ mean analyst error by horizon (% of price): {1: -1.48, 6: -1.95, 12: -2.51}</cod
 <h3 data-number="32.4.1" class="anchored" data-anchor-id="sec-mlef-sim-grid"><span class="header-section-number">32.4.1</span> The Specification Grid</h3>
 <p>We estimate fifteen models: three ways of using analysts (<a href="#sec-mlef-indirect" class="quarto-xref"><span>Section 32.2.3</span></a>) crossed with five algorithm–loss pairs. The linear MAE model is least-absolute-deviation regression, the lasso uses MSE with a fixed penalty on standardised features, and GBRT is scikit-learn’s histogram gradient boosting with either loss. Training uses an expanding window and refits every three years, the cheap options that <a href="#tbl-mlef-what-matters" class="quarto-xref">Table&nbsp;<span>32.3</span></a> says cost little accuracy.</p>
 <div id="mlef-sim-grid" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Fit 15 forecasting specifications out of sample</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>BASE <span class="op">=</span> [<span class="st">"size"</span>, <span class="st">"price"</span>, <span class="st">"x0"</span>, <span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"lag_eps"</span>, <span class="st">"horizon"</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ANALYST <span class="op">=</span> [<span class="st">"af"</span>, <span class="st">"lag_err"</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>APPROACHES <span class="op">=</span> [<span class="st">"Direct w/o analysts"</span>, <span class="st">"Direct w/ analysts"</span>, <span class="st">"Indirect"</span>]</span>
@@ -1775,6 +1783,7 @@ mean analyst error by horizon (% of price): {1: -1.48, 6: -1.95, 12: -2.51}</cod
 <span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>          .loc[[<span class="ss">f"</span><span class="sc">{</span>g<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span>l<span class="sc">}</span><span class="ss">)"</span> <span class="cf">for</span> g, l <span class="kw">in</span> MODELS], APPROACHES].<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span>
 <span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>same <span class="op">=</span> np.allclose(oos[<span class="st">"Direct w/ analysts | Linear | MSE"</span>], oos[<span class="st">"Indirect | Linear | MSE"</span>])</span>
 <span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">OLS direct-with-analysts identical to OLS indirect: </span><span class="sc">{</span>same<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>approach      Direct w/o analysts  Direct w/ analysts  Indirect
 model                                                          
@@ -1788,6 +1797,8 @@ OLS direct-with-analysts identical to OLS indirect: True</code></pre>
 </div>
 </div>
 <div id="cell-fig-mlef-sim-grid" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> grid.assign(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    approach<span class="op">=</span>pd.Categorical(grid[<span class="st">"approach"</span>], APPROACHES),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span>pd.Categorical(grid[<span class="st">"model"</span>], [<span class="ss">f"</span><span class="sc">{</span>g<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span>l<span class="sc">}</span><span class="ss">)"</span> <span class="cf">for</span> g, l <span class="kw">in</span> MODELS][::<span class="op">-</span><span class="dv">1</span>]),</span>
@@ -1801,6 +1812,7 @@ OLS direct-with-analysts identical to OLS indirect: True</code></pre>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> labs(x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">"ML Superiority (pp)"</span>, fill<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> theme_minimal()</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a> <span class="op">+</span> theme(figure_size<span class="op">=</span>(<span class="dv">9</span>, <span class="fl">3.6</span>), legend_position<span class="op">=</span><span class="st">"bottom"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div id="fig-mlef-sim-grid" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Horizontal bar chart in three panels, one per forecasting approach. In the panel without analyst inputs every bar is negative. With analyst inputs, the MSE-loss models are only slightly above zero and the MAE-loss models are clearly positive. The indirect GBRT with MAE loss has the longest positive bar.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1826,6 +1838,8 @@ Figure&nbsp;32.1: Out-of-sample ML Superiority (percentage points of price) of 1
 <h3 data-number="32.4.2" class="anchored" data-anchor-id="sec-mlef-sim-cv"><span class="header-section-number">32.4.2</span> Why Time-Series Cross-Validation</h3>
 <p>The specification above fixes the GBRT hyperparameters. In practice they are tuned, and the paper finds that the way the validation sample is formed matters more than how often tuning is repeated. In our panel each announcement appears in three rows (one per horizon) with the same target and almost the same features. A shuffled <span class="math inline">\(k\)</span>-fold split puts some of those rows in training and the others in validation, so the validation error rewards models that memorise firm-years. A time-series split validates only on years after the training years, as a real forecaster must.</p>
 <div id="mlef-sim-cv" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Tune GBRT complexity with shuffled k-fold versus time-series validation</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cv_train <span class="op">=</span> panel[panel[<span class="st">"year"</span>] <span class="op">&lt;</span> <span class="dv">8</span>].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>cv_test <span class="op">=</span> panel[panel[<span class="st">"year"</span>] <span class="op">&gt;=</span> <span class="dv">8</span>]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>FEATS <span class="op">=</span> BASE <span class="op">+</span> ANALYST</span>
@@ -1865,6 +1879,7 @@ Figure&nbsp;32.1: Out-of-sample ML Superiority (percentage points of price) of 1
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">k-fold picks:      "</span>, cv_table[<span class="st">"k-fold CV MAE"</span>].idxmin())</span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"time-series picks: "</span>, cv_table[<span class="st">"time-series CV MAE"</span>].idxmin())</span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"best out of sample:"</span>, cv_table[<span class="st">"true OOS superiority"</span>].idxmax())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                              k-fold CV MAE  time-series CV MAE  true OOS superiority
 model                                                                                
@@ -1882,6 +1897,8 @@ best out of sample: shallow (leaf 300, 7 leaves)</code></pre>
 <section id="sec-mlef-sim-when" class="level3" data-number="32.4.3">
 <h3 data-number="32.4.3" class="anchored" data-anchor-id="sec-mlef-sim-when"><span class="header-section-number">32.4.3</span> Size and Horizon</h3>
 <div id="mlef-sim-when" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Where the best model beats analysts: size quintiles and horizons</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>best <span class="op">=</span> <span class="st">"Indirect | GBRT | MAE"</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>oos[<span class="st">"sup_best"</span>] <span class="op">=</span> superiority(oos[<span class="st">"eps"</span>], oos[<span class="st">"af"</span>], oos[best])</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>oos[<span class="st">"size_q"</span>] <span class="op">=</span> oos.groupby(<span class="st">"year"</span>)[<span class="st">"size"</span>].transform(</span>
@@ -1890,6 +1907,7 @@ best out of sample: shallow (leaf 300, 7 leaves)</code></pre>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(oos.groupby(<span class="st">"size_q"</span>, observed<span class="op">=</span><span class="va">True</span>)[<span class="st">"sup_best"</span>].mean().<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">By months to announcement (pp):"</span>)</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(oos.groupby(<span class="st">"horizon"</span>)[<span class="st">"sup_best"</span>].mean().<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>By size quintile (pp):
 size_q
@@ -1912,6 +1930,8 @@ horizon
 <h3 data-number="32.4.4" class="anchored" data-anchor-id="sec-mlef-sim-erc"><span class="header-section-number">32.4.4</span> What the Market-Expectations Regression Identifies</h3>
 <p>Finally, we generate announcement returns from a market whose expectation puts weight <span class="math inline">\(w_{AF} = 0.38\)</span> on the consensus, matching <a href="#tbl-mlef-erc" class="quarto-xref">Table&nbsp;<span>32.7</span></a>, and check whether <a href="#eq-mlef-weights" class="quarto-xref">Equation&nbsp;<span>32.5</span></a> recovers it. We do this twice. In case A, the remaining weight is on <em>our estimated machine forecast</em>, which is the assumption in <a href="#eq-mlef-mix" class="quarto-xref">Equation&nbsp;<span>32.3</span></a>. In case B, the remaining weight is on the <em>true</em> conditional median given analysts’ information, which the machine only approximates.</p>
 <div id="mlef-sim-erc" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Recover the market’s weight on analysts from earnings-response regressions</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>W_AF, ERC_TRUE <span class="op">=</span> <span class="fl">0.38</span>, <span class="fl">1.5</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ev <span class="op">=</span> oos[oos[<span class="st">"horizon"</span>] <span class="op">==</span> <span class="dv">1</span>].copy()       <span class="co"># forecasts one month before the announcement</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>ev[<span class="st">"sue_ml"</span>] <span class="op">=</span> ev[<span class="st">"eps"</span>] <span class="op">-</span> ev[best]</span>
@@ -1946,6 +1966,7 @@ horizon
 <span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"lambda-hat (realised analyst error on G): </span><span class="sc">{</span>lam_hat<span class="sc">:.3f}</span><span class="ss">; corrected weight = "</span></span>
 <span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"1 - (1 - </span><span class="sc">{</span>ratio_b<span class="sc">:.3f}</span><span class="ss">) / lambda-hat = </span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> (<span class="dv">1</span> <span class="op">-</span> ratio_b) <span class="op">/</span> lam_hat<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">simulation section run time: </span><span class="sc">{</span>time<span class="sc">.</span>time() <span class="op">-</span> mlef_t0<span class="sc">:.0f}</span><span class="ss"> s"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                  truth  A: market mixes AF and the machine  B: market mixes AF and the true median
 beta1             1.500                               1.498                                   1.493
@@ -1994,6 +2015,8 @@ simulation section run time: 39 s</code></pre>
 <h3 data-number="32.6.2" class="anchored" data-anchor-id="sec-mlef-vn-code"><span class="header-section-number">32.6.2</span> Implementation</h3>
 <p>The cell below implements the indirect GBRT forecast for covered Vietnamese firms, the superiority evaluation, and the ERC weight test. DataCore method and field names follow the conventions used elsewhere in the book. Check them against your DataCore schema, because broker-consensus coverage depends on the subscription. The code was test-run on synthetic data with the same columns before being included here.</p>
 <div id="mlef-vn" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Indirect GBRT earnings forecasts and market-expectation tests for Vietnam</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
@@ -2128,6 +2151,7 @@ simulation section run time: 39 s</code></pre>
 <span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"market weight on analysts:"</span>, <span class="bu">round</span>(ratio, <span class="dv">3</span>), <span class="st">"| lambda-hat:"</span>, <span class="bu">round</span>(lam_hat, <span class="dv">3</span>),</span>
 <span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a>      <span class="st">"| corrected:"</span>, <span class="bu">round</span>(<span class="dv">1</span> <span class="op">-</span> (<span class="dv">1</span> <span class="op">-</span> ratio) <span class="op">/</span> lam_hat, <span class="dv">3</span>))</span>
 <span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inter.params.<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The output to look for has four parts:</p>
 <ul>

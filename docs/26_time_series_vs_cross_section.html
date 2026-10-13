@@ -875,7 +875,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./20_capm.html">Asset Pricing Models and Cross-Sectional Tests</a></li><li class="breadcrumb-item"><a href="./26_time_series_vs_cross_section.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Time-Series vs.&nbsp;Cross-Sectional Factor Tests</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Time-Series vs.&nbsp;Cross-Sectional Factor Tests</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Time-Series vs.&nbsp;Cross-Sectional Factor Tests</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1004,6 +1004,8 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <section id="sec-ts-cs-data" class="level2" data-number="22.2">
 <h2 data-number="22.2" class="anchored" data-anchor-id="sec-ts-cs-data"><span class="header-section-number">22.2</span> Data Construction</h2>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1021,8 +1023,11 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="data-load" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load factor returns, test portfolios, and individual stock data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1088,8 +1093,11 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"25 Size-Mom portfolios: </span><span class="sc">{</span>test_portfolios_mom<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"10 Industry portfolios: </span><span class="sc">{</span>test_portfolios_ind<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Stock-months: </span><span class="sc">{</span><span class="bu">len</span>(stock_returns)<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="prepare-test-assets" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Prepare excess return matrices for test portfolios</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert test portfolios to excess returns</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Each portfolio set is a DataFrame: rows = months, columns = portfolios</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_test_assets(port_df, rf_df):</span>
@@ -1109,6 +1117,7 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>excess_25_mom<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> months"</span>)</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Industry test assets: </span><span class="sc">{</span>excess_10_ind<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> portfolios, "</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>excess_10_ind<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> months"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-ts-cs-ts-tests" class="level2" data-number="22.3">
@@ -1117,6 +1126,8 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <h3 data-number="22.3.1" class="anchored" data-anchor-id="full-sample-time-series-regressions"><span class="header-section-number">22.3.1</span> Full-Sample Time-Series Regressions</h3>
 <p>We begin by running full-sample time-series regressions of each test portfolio on the Fama-French five-factor model plus momentum:</p>
 <div id="ts-regressions" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Run time-series regressions for all test portfolios</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> time_series_regressions(excess_returns, factor_df, factor_cols,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                              cov_type<span class="op">=</span><span class="st">'HAC'</span>, maxlags<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1184,11 +1195,14 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Mean |alpha| (ann.): </span><span class="sc">{</span>mean_abs_alpha<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  % sig. at 5%: </span><span class="sc">{</span>pct_sig<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
 <span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Mean R²: </span><span class="sc">{</span>mean_r2<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-grs-test" class="level3" data-number="22.3.2">
 <h3 data-number="22.3.2" class="anchored" data-anchor-id="the-grs-test"><span class="header-section-number">22.3.2</span> The GRS Test</h3>
 <div id="grs-test" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Implement and compute the GRS test statistic</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grs_test(excess_returns, factor_df, factor_cols):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Gibbons, Ross, Shanken (1989) test of H0: all alphas = 0.</span></span>
@@ -1274,10 +1288,13 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'mean_abs_alpha'</span>]<span class="op">*</span><span class="dv">12</span><span class="sc">:&gt;10.4f}</span><span class="ss"> "</span></span>
 <span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'sr_factors'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss"> "</span></span>
 <span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'sr_alpha_plus_factors'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-alpha-patterns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-alpha-patterns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot the alpha matrix for Size-BM portfolios</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ff5_result <span class="op">=</span> ts_results[<span class="st">'FF5'</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape alphas into 5x5 matrix</span></span>
@@ -1326,6 +1343,7 @@ Table&nbsp;22.1: Comparison of time-series and cross-sectional testing framework
 <span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-alpha-patterns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.1
@@ -1338,6 +1356,8 @@ Figure&nbsp;22.1
 <div id="fig-grs-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="7">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-grs-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize GRS statistics across models and test assets</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>model_names <span class="op">=</span> <span class="bu">list</span>(models.keys())</span>
@@ -1365,6 +1385,7 @@ Figure&nbsp;22.1
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-grs-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.2
@@ -1379,6 +1400,8 @@ Figure&nbsp;22.2
 <h3 data-number="22.4.1" class="anchored" data-anchor-id="fama-macbeth-with-portfolio-test-assets"><span class="header-section-number">22.4.1</span> Fama-MacBeth with Portfolio Test Assets</h3>
 <p>We implement the Fama-MacBeth two-pass procedure using the 25 size-BM portfolios as test assets:</p>
 <div id="fama-macbeth-portfolios" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Full Fama-MacBeth two-pass procedure on portfolio test assets</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fama_macbeth_two_pass(excess_returns, factor_df, factor_cols,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                            beta_window<span class="op">=</span><span class="st">'full'</span>, rolling_window<span class="op">=</span><span class="dv">60</span>,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                            shanken_correction<span class="op">=</span><span class="va">True</span>):</span>
@@ -1553,6 +1576,7 @@ Figure&nbsp;22.2
 <span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>                      <span class="ss">f"t = </span><span class="sc">{</span>row[t_col]<span class="sc">:.2f}{</span>f_str<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">'avg_cs_r2'</span> <span class="kw">in</span> res.index:</span>
 <span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  Avg CS R²: </span><span class="sc">{</span>res<span class="sc">.</span>loc[<span class="st">'avg_cs_r2'</span>, <span class="st">'estimate'</span>]<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-shanken-correction" class="level3" data-number="22.4.2">
@@ -1562,6 +1586,8 @@ Figure&nbsp;22.2
 \text{Var}(\hat{\gamma})_{\text{Shanken}} = \text{Var}(\hat{\gamma})_{\text{FM}} \times \left(1 + \hat{\gamma}' \hat{\Sigma}_f^{-1} \hat{\gamma}\right)
 \tag{22.5}\]</span></span></p>
 <div id="shanken-impact" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Compare FM t-statistics with and without Shanken correction</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Impact of Shanken Correction on t-statistics:"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Model'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Factor'</span><span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'t (FM)'</span><span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'t (Shanken)'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Ratio'</span><span class="sc">:&gt;8}</span><span class="ss">"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-"</span> <span class="op">*</span> <span class="dv">54</span>)</span>
@@ -1579,12 +1605,15 @@ Figure&nbsp;22.2
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            factor_name <span class="op">=</span> idx.replace(<span class="st">'gamma_'</span>, <span class="st">''</span>)</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>factor_name<span class="sc">:&lt;12}</span><span class="ss"> </span><span class="sc">{</span>t_fm<span class="sc">:&gt;10.2f}</span><span class="ss"> "</span></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"</span><span class="sc">{</span>t_sh<span class="sc">:&gt;12.2f}</span><span class="ss"> </span><span class="sc">{</span>ratio<span class="sc">:&gt;8.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="fama-macbeth-with-individual-stocks" class="level3" data-number="22.4.3">
 <h3 data-number="22.4.3" class="anchored" data-anchor-id="fama-macbeth-with-individual-stocks"><span class="header-section-number">22.4.3</span> Fama-MacBeth with Individual Stocks</h3>
 <p>Using individual stocks instead of portfolios as test assets avoids the <span class="citation" data-cites="lewellen2010skeptical">Lewellen, Nagel, and Shanken (<a href="references.html#ref-lewellen2010skeptical" role="doc-biblioref">2010</a>)</span> critique that sorted portfolios create artificially strong factor structure:</p>
 <div id="fm-individual" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Fama-MacBeth regressions using individual stocks</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fama_macbeth_individual(stock_df, factor_df, factor_cols,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                              beta_window<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">36</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                              min_stocks<span class="op">=</span><span class="dv">100</span>):</span>
@@ -1681,6 +1710,7 @@ Figure&nbsp;22.2
 <span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a>    beta_window<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">36</span></span>
 <span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fm_ind_results.<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1696,6 +1726,8 @@ Figure&nbsp;22.2
 <section id="empirical-comparison-for-vietnam" class="level3" data-number="22.5.2">
 <h3 data-number="22.5.2" class="anchored" data-anchor-id="empirical-comparison-for-vietnam"><span class="header-section-number">22.5.2</span> Empirical Comparison for Vietnam</h3>
 <div id="ts-vs-cs" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Compare time-series alphas with cross-sectional pricing errors</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For FF5 on 25 Size-BM portfolios:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Time-series: alpha from OLS regression</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-section: pricing error from Fama-MacBeth</span></span>
@@ -1717,10 +1749,13 @@ Figure&nbsp;22.2
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    actual_means <span class="op">=</span> excess_25_bm.mean() <span class="op">*</span> <span class="dv">12</span>  <span class="co"># Annualized</span></span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    predicted <span class="op">=</span> (gamma_0 <span class="op">+</span> betas[factor_cols].values <span class="op">@</span> gammas) <span class="op">*</span> <span class="dv">12</span></span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    cs_errors <span class="op">=</span> actual_means.values <span class="op">-</span> predicted</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-ts-vs-cs" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ts-vs-cs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Scatter plot comparing TS alphas and CS pricing errors</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: TS alpha vs CS pricing error</span></span>
@@ -1759,6 +1794,7 @@ Figure&nbsp;22.2
 <span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ts-vs-cs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.3
@@ -1775,6 +1811,8 @@ Figure&nbsp;22.3
 <li>Reporting the cross-sectional <span class="math inline">\(R^2\)</span> from the <em>constrained</em> model alongside the unconstrained estimate.</li>
 </ol>
 <div id="lns-critique" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Implement the Lewellen-Nagel-Shanken diagnostic</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lns_diagnostic(excess_returns, factor_df, factor_cols):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Lewellen-Nagel-Shanken (2010) diagnostic:</span></span>
@@ -1831,10 +1869,13 @@ Figure&nbsp;22.3
 <span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>diag[<span class="st">'r2_unconstrained'</span>]<span class="sc">:&gt;10.3f}</span><span class="ss"> "</span></span>
 <span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>diag[<span class="st">'r2_constrained'</span>]<span class="sc">:&gt;10.3f}</span><span class="ss"> "</span></span>
 <span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>diag[<span class="st">'r2_drop'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-lns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="14">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize constrained vs unconstrained cross-sectional fit</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>diag_ff5 <span class="op">=</span> lns_diagnostic(excess_25_bm, factors,</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                            [<span class="st">'mkt_excess'</span>, <span class="st">'smb'</span>, <span class="st">'hml'</span>, <span class="st">'rmw'</span>, <span class="st">'cma'</span>])</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1883,6 +1924,7 @@ Figure&nbsp;22.3
 <span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-lns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.4
@@ -1909,6 +1951,8 @@ M_t = 1 - b' (f_t - \mu_f)
 \tag{22.8}\]</span></span></p>
 <p>where <span class="math inline">\(g(b) = \frac{1}{T} \sum_t M_t(b) R_t^e\)</span> is the sample analog of the moment conditions.</p>
 <div id="gmm-sdf" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Implement GMM estimation of the linear SDF model</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gmm_sdf(excess_returns, factor_df, factor_cols,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>              weighting<span class="op">=</span><span class="st">'identity'</span>, n_iter<span class="op">=</span><span class="dv">2</span>):</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -2012,6 +2056,7 @@ M_t = 1 - b' (f_t - \mu_f)
 <span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j, f <span class="kw">in</span> <span class="bu">enumerate</span>(factor_cols):</span>
 <span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  λ_</span><span class="sc">{</span>f<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>gmm[<span class="st">'lambda_hat'</span>][j]<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss"> "</span></span>
 <span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>                  <span class="ss">f"(factor mean: </span><span class="sc">{</span>factors[f]<span class="sc">.</span>mean()<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2021,6 +2066,8 @@ M_t = 1 - b' (f_t - \mu_f)
 <h3 data-number="22.7.1" class="anchored" data-anchor-id="the-barillas-shanken-framework"><span class="header-section-number">22.7.1</span> The Barillas-Shanken Framework</h3>
 <p><span class="citation" data-cites="barillas2018comparing">Barillas and Shanken (<a href="references.html#ref-barillas2018comparing" role="doc-biblioref">2018</a>)</span> propose a Bayesian framework for comparing non-nested factor models. The key insight is that model comparison should be based on the factors’ ability to explain each other’s returns, not on their ability to price a fixed set of test assets. Two models differ only in their excluded factors, so the relevant comparison is whether the factors unique to each model have alpha with respect to the other model.</p>
 <div id="barillas-shanken" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Implement Barillas-Shanken model comparison</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> barillas_shanken_compare(factor_df, model_a_cols, model_b_cols):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Barillas-Shanken (2018) pairwise model comparison.</span></span>
@@ -2092,6 +2139,7 @@ M_t = 1 - b' (f_t - \mu_f)
 <span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'mkt_excess'</span>, <span class="st">'smb'</span>, <span class="st">'hml'</span>, <span class="st">'rmw'</span>, <span class="st">'cma'</span>, <span class="st">'wml'</span>]</span>
 <span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bs_3wv5w.<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="comprehensive-model-scorecard" class="level3" data-number="22.7.2">
@@ -2099,6 +2147,8 @@ M_t = 1 - b' (f_t - \mu_f)
 <div id="fig-scorecard" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-scorecard-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Build comprehensive model comparison table</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>scorecard <span class="op">=</span> {}</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> model_name, factor_cols <span class="kw">in</span> models.items():</span>
@@ -2135,6 +2185,7 @@ M_t = 1 - b' (f_t - \mu_f)
 <span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>scorecard_df <span class="op">=</span> pd.DataFrame(scorecard).T</span>
 <span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model Scorecard:"</span>)</span>
 <span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(scorecard_df.<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-scorecard-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.5
@@ -2164,6 +2215,8 @@ Figure&nbsp;22.5
 <h3 data-number="22.8.2" class="anchored" data-anchor-id="sec-ts-cs-stepwise-algo"><span class="header-section-number">22.8.2</span> Implementing the Stepwise Algorithm</h3>
 <p>We first define three self-contained helpers: the maximum squared Sharpe ratio of <a href="#eq-max-sharpe-sq" class="quarto-xref">Equation&nbsp;<span>22.9</span></a>, the spanning-alpha test that drives selection (returning the sample increment <span class="math inline">\(\hat\alpha^2 / \widehat{\sigma}^2(\varepsilon)\)</span> of <a href="#eq-sharpe-increment" class="quarto-xref">Equation&nbsp;<span>22.10</span></a>), and the GRS test used to judge the final model.</p>
 <div id="stepwise-helpers" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Squared Sharpe ratio, spanning-alpha test, and GRS test</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> squared_sharpe(R):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Maximum squared Sharpe ratio of a set of excess-return columns."""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    mu <span class="op">=</span> R.mean(axis<span class="op">=</span><span class="dv">0</span>).values</span>
@@ -2202,9 +2255,12 @@ Figure&nbsp;22.5
 <span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    grs <span class="op">=</span> ((T <span class="op">-</span> N <span class="op">-</span> K) <span class="op">/</span> N) <span class="op">*</span> (<span class="dv">1</span> <span class="op">/</span> (<span class="dv">1</span> <span class="op">+</span> sh2_f)) <span class="op">*</span> sh2_a</span>
 <span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'GRS'</span>: grs, <span class="st">'p_value'</span>: <span class="dv">1</span> <span class="op">-</span> stats.f.cdf(grs, N, T <span class="op">-</span> N <span class="op">-</span> K),</span>
 <span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>            <span class="st">'mean_abs_alpha'</span>: np.<span class="bu">abs</span>(alpha).mean()}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The selection routine implements the forward and backward passes. The <strong>forward</strong> pass ranks every unselected candidate by its squared-Sharpe increment and adds the leader if its spanning alpha is significant; the <strong>backward</strong> pass removes any previously selected factor that has become redundant now that other factors are present (its alpha on the remaining model is no longer significant). The loop halts when no candidate is unspanned, at which point the selected factors span the joint efficient frontier of themselves and all rejected candidates.</p>
 <div id="stepwise-select" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Forward/backward stepwise model selection</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stepwise_select(factors, candidate_cols, baseline_cols, test_assets<span class="op">=</span><span class="va">None</span>,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                    add_threshold<span class="op">=</span><span class="fl">0.05</span>, verbose<span class="op">=</span><span class="va">True</span>):</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Forward/backward stepwise asset-pricing-model selection (Feng et al. 2026).</span></span>
@@ -2245,6 +2301,7 @@ Figure&nbsp;22.5
 <span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>    diag[<span class="st">'unselected'</span>] <span class="op">=</span> {g: spanning_alpha(factors[g], factors[selected])</span>
 <span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>                          <span class="cf">for</span> g <span class="kw">in</span> candidate_cols <span class="cf">if</span> g <span class="kw">not</span> <span class="kw">in</span> selected}</span>
 <span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> diag</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>A note on the stopping rule. With a handful of candidates, a per-factor significance threshold on the spanning alpha is adequate. When the candidate set is large, the individual tests suffer the multiple-comparison problem of <a href="25_factor_zoo_and_multiple_testing.html#sec-factor-zoo-multiple-testing" class="quarto-xref"><span>Section 21.3</span></a>, and <span class="citation" data-cites="feng2026selecting">Feng et al. (<a href="references.html#ref-feng2026selecting" role="doc-biblioref">2026</a>)</span> instead stop on the <strong>high-dimensional alpha test</strong> of <span class="citation" data-cites="pesaran2024testing">Pesaran and Yamagata (<a href="references.html#ref-pesaran2024testing" role="doc-biblioref">2024</a>)</span>, which is designed to test the joint nullity of alphas when the number of test assets is large relative to the sample. In the implementation above, tightening <code>add_threshold</code> (for example to a Bonferroni level <span class="math inline">\(0.05 / \#\text{candidates}\)</span>) is a simple and conservative substitute.</p>
 </section>
@@ -2252,6 +2309,8 @@ Figure&nbsp;22.5
 <h3 data-number="22.8.3" class="anchored" data-anchor-id="sec-ts-cs-stepwise-sim"><span class="header-section-number">22.8.3</span> Replication: Recovering a Known Model</h3>
 <p>Before trusting the procedure on real data, we verify it on simulated data where the correct answer is known by construction. We generate a true four-factor world—a market factor plus three near-orthogonal priced factors with realistic anomaly Sharpe ratios—and contaminate the candidate set with two <strong>redundant</strong> factors (linear combinations of the true factors plus noise, so they carry positive average returns but zero alpha once their parents are included) and one <strong>decoy</strong> with no risk premium at all. Twenty test portfolios are priced by the true four factors with zero alpha.</p>
 <div id="stepwise-simulate" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Simulate a known four-factor world with redundant and decoy candidates</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">2026</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> <span class="dv">480</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> pd.date_range(<span class="st">'1986-01-31'</span>, periods<span class="op">=</span>T, freq<span class="op">=</span><span class="st">'ME'</span>)</span>
@@ -2281,6 +2340,7 @@ Figure&nbsp;22.5
 <span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    g <span class="op">=</span> grs_test(sim_test, sim_factors, cols)</span>
 <span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>    verdict <span class="op">=</span> <span class="st">'REJECTED'</span> <span class="cf">if</span> g[<span class="st">'p_value'</span>] <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="cf">else</span> <span class="st">'not rejected'</span></span>
 <span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>name<span class="sc">:&lt;20}</span><span class="ss"> GRS=</span><span class="sc">{</span>g[<span class="st">'GRS'</span>]<span class="sc">:.2f}</span><span class="ss">  p=</span><span class="sc">{</span>g[<span class="st">'p_value'</span>]<span class="sc">:.3f}</span><span class="ss">  -&gt;  </span><span class="sc">{</span>verdict<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>GRS on the 20 test assets (workhorse baselines):
   CAPM                 GRS=2.96  p=0.000  -&gt;  REJECTED
@@ -2290,6 +2350,8 @@ Figure&nbsp;22.5
 </div>
 <p>The CAPM is decisively rejected on these test assets, while the true four-factor model (and the redundant “kitchen sink” that nests it) is not—exactly the pattern <span class="citation" data-cites="feng2026selecting">Feng et al. (<a href="references.html#ref-feng2026selecting" role="doc-biblioref">2026</a>)</span> document for the workhorse models on real US data. Now we let the algorithm discover the model on its own, starting from the CAPM:</p>
 <div id="stepwise-run" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Run stepwise selection and test the result</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>diag <span class="op">=</span> stepwise_select(sim_factors, candidates, [<span class="st">'mkt'</span>], sim_test)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Selected model : </span><span class="sc">{</span>diag[<span class="st">'selected'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -2298,6 +2360,7 @@ Figure&nbsp;22.5
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Unselected candidates' spanning alphas (should be insignificant):"</span>)</span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k, v <span class="kw">in</span> diag[<span class="st">'unselected'</span>].items():</span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"   </span><span class="sc">{</span>k<span class="sc">:&gt;3}</span><span class="ss">: alpha_ann=</span><span class="sc">{</span>v[<span class="st">'alpha'</span>]<span class="op">*</span><span class="dv">12</span><span class="sc">:+.4f}</span><span class="ss">  t=</span><span class="sc">{</span>v[<span class="st">'t'</span>]<span class="sc">:+.2f}</span><span class="ss">  p=</span><span class="sc">{</span>v[<span class="st">'p'</span>]<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  +   f2  t(alpha)= 5.44  SR2_incr=0.0658  -&gt; model SR2=0.096  Sharpe(ann)=1.07
   +   f3  t(alpha)= 3.58  SR2_incr=0.0296  -&gt; model SR2=0.126  Sharpe(ann)=1.23
@@ -2315,6 +2378,8 @@ Unselected candidates' spanning alphas (should be insignificant):
 <p>The procedure recovers exactly the true model <code>['mkt', 'f2', 'f3', 'f4']</code>: it adds the three priced factors in order of their squared-Sharpe increment (each with a large, significant spanning <span class="math inline">\(t\)</span>-statistic) and then halts, because every remaining candidate is now spanned. The two redundant factors and the decoy are left out, and their post-selection spanning alphas are small and insignificant—the model prices them, which is the property <span class="citation" data-cites="feng2026selecting">Feng et al. (<a href="references.html#ref-feng2026selecting" role="doc-biblioref">2026</a>)</span> require of a valid model. The final GRS test on the test assets is comfortably non-rejected.</p>
 <p>The economic content of the selection is the expansion of the efficient frontier, which we plot as the annualized Sharpe ratio of the selected model at each step.</p>
 <div id="cell-fig-stepwise-frontier" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Plot the frontier expansion across stepwise iterations</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> pd.DataFrame(diag[<span class="st">'history'</span>])</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="bu">range</span>(<span class="bu">len</span>(hist)), hist[<span class="st">'sharpe_ann'</span>], <span class="st">'o-'</span>, lw<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span><span class="st">'#2C5282'</span>)</span>
@@ -2326,6 +2391,7 @@ Unselected candidates' spanning alphas (should be insignificant):
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Efficient-frontier expansion as factors are added'</span>)</span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-stepwise-frontier" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2344,6 +2410,8 @@ Figure&nbsp;22.6: Efficient-frontier expansion under stepwise selection. Each po
 <h3 data-number="22.8.4" class="anchored" data-anchor-id="sec-ts-cs-stepwise-vietnam"><span class="header-section-number">22.8.4</span> Application to Vietnamese Factor Models</h3>
 <p>The procedure transfers directly to Vietnamese data: replace <code>sim_factors</code> with the locally constructed factor panel of <a href="25_factor_zoo_and_multiple_testing.html#sec-factor-zoo-zoo" class="quarto-xref"><span>Section 21.2</span></a> (market, size, value, profitability, investment, momentum, and any additional anomaly long-short returns that survive the multiple-testing screen of <a href="25_factor_zoo_and_multiple_testing.html#sec-factor-zoo-corrections" class="quarto-xref"><span>Section 21.4</span></a>) and <code>sim_test</code> with a set of Vietnamese test portfolios (the size-BM and size-momentum sorts of <a href="#sec-ts-cs-data" class="quarto-xref"><span>Section 22.2</span></a>). The baseline is the market factor; the candidate set is every anomaly factor with adequate coverage.</p>
 <div id="stepwise-vietnam" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Stepwise selection on Vietnamese factors (real data)</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `factors` and the test-portfolio frames come from the DataCore pipeline</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># built earlier in this chapter (see the data-load chunk).</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>vn_candidates <span class="op">=</span> [<span class="st">'smb'</span>, <span class="st">'hml'</span>, <span class="st">'rmw'</span>, <span class="st">'cma'</span>, <span class="st">'wml'</span>]  <span class="co"># extend with local anomalies</span></span>
@@ -2357,6 +2425,7 @@ Figure&nbsp;22.6: Efficient-frontier expansion under stepwise selection. Each po
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Vietnamese stepwise model:"</span>, vn_result[<span class="st">'selected'</span>])</span>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"GRS p-value: </span><span class="sc">{</span>vn_result[<span class="st">'grs'</span>][<span class="st">'p_value'</span>]<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Three caveats specific to the Vietnamese setting deserve emphasis, and each is a direct consequence of the market’s institutional features developed elsewhere in this book:</p>
 <ol type="1">
@@ -2373,6 +2442,8 @@ Figure&nbsp;22.6: Efficient-frontier expansion under stepwise selection. Each po
 <h3 data-number="22.9.1" class="anchored" data-anchor-id="time-varying-betas"><span class="header-section-number">22.9.1</span> Time-Varying Betas</h3>
 <p>Unconditional tests assume constant betas. In practice, Vietnamese stock betas vary substantially over time due to changing market conditions, foreign ownership shifts, and sectoral rotations. We estimate rolling betas to assess the degree of time-variation:</p>
 <div id="rolling-betas" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Estimate and visualize time-varying betas</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rolling 36-month betas for the 25 Size-BM portfolios on FF5</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>rolling_window <span class="op">=</span> <span class="dv">36</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>factor_cols <span class="op">=</span> [<span class="st">'mkt_excess'</span>, <span class="st">'smb'</span>, <span class="st">'hml'</span>, <span class="st">'rmw'</span>, <span class="st">'cma'</span>]</span>
@@ -2403,10 +2474,13 @@ Figure&nbsp;22.6: Efficient-frontier expansion under stepwise selection. Each po
 <span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">pass</span></span>
 <span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>    rolling_betas[port] <span class="op">=</span> pd.DataFrame(betas_t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-rolling-betas" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-betas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot rolling betas over time</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2439,6 +2513,7 @@ Figure&nbsp;22.6: Efficient-frontier expansion under stepwise selection. Each po
 <span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    mkt_std <span class="op">=</span> rb[<span class="st">'beta_mkt_excess'</span>].std()</span>
 <span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    hml_std <span class="op">=</span> rb[<span class="st">'beta_hml'</span>].std()</span>
 <span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>label<span class="sc">:&lt;15}</span><span class="ss">: σ(β_MKT) = </span><span class="sc">{</span>mkt_std<span class="sc">:.3f}</span><span class="ss">, σ(β_HML) = </span><span class="sc">{</span>hml_std<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rolling-betas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;22.7

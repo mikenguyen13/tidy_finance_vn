@@ -880,7 +880,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Financial Statement Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Financial Statement Analysis</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Financial Statement Analysis</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -904,12 +904,15 @@ window.Quarto = {
 <p>This chapter introduces the three primary financial statements: the balance sheet, income statement, and cash flow statement. We then demonstrate how to transform raw accounting data into meaningful financial ratios that facilitate comparison across companies and over time. These ratios serve multiple purposes: they enable investors to benchmark companies against peers, help creditors assess default risk, and provide inputs for asset pricing models like the Fama-French factors we will encounter in later chapters.</p>
 <p>Our analysis combines theoretical frameworks with practical implementation using Vietnamese market data. By the end of this chapter, you will understand how to access financial statements, calculate key ratios across multiple categories, and interpret these metrics in context.</p>
 <div id="13df2875" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adjustText <span class="im">import</span> adjust_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-three-financial-statements" class="level2" data-number="23.2">
@@ -979,6 +982,8 @@ window.Quarto = {
 <h3 data-number="23.2.4" class="anchored" data-anchor-id="illustrating-with-fpts-financial-statements"><span class="header-section-number">23.2.4</span> Illustrating with FPT’s Financial Statements</h3>
 <p>To see these concepts in practice, let’s examine FPT Corporation’s 2023 financial statements. FPT is one of Vietnam’s largest technology companies, providing IT services, telecommunications, and education.</p>
 <div id="3bce8551" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT balance sheet visualization</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice, this would display the actual PDF or cleaned data</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># from DataCore's acquisition pipeline</span></span>
@@ -987,16 +992,23 @@ window.Quarto = {
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Assets: Current assets (cash, receivables, inventory) + Non-current assets (PP&amp;E, intangibles)</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Liabilities: Current liabilities (payables, short-term debt) + Non-current liabilities (long-term debt)</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Equity: Common stock + Retained earnings</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The balance sheet demonstrates the fundamental accounting equation in action. FPT’s assets (e.g., spanning cash, receivables, technology infrastructure, and intangible assets like software) exactly equal the sum of its liabilities and equity.</p>
 <div id="07074008" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT income statement visualization</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Shows the progression from revenue through various profit measures to net income</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>FPT’s income statement reveals how the company transforms revenue into profit. The progression from gross profit through operating income to net income shows the impact of operating expenses, interest costs, and taxes.</p>
 <div id="61029108" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Placeholder for FPT cash flow statement visualization</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Reconciles net income with actual cash generation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The cash flow statement shows how FPT’s reported profits translate into actual cash. Differences between net income and operating cash flow reveal the impact of working capital management and non-cash expenses.</p>
 </section>
@@ -1005,6 +1017,8 @@ window.Quarto = {
 <h2 data-number="23.3" class="anchored" data-anchor-id="loading-financial-statement-data"><span class="header-section-number">23.3</span> Loading Financial Statement Data</h2>
 <p>We now turn to systematic analysis across multiple companies. We load financial statement data for the VN30 index constituents (i.e., the 30 largest and most liquid stocks on Vietnam’s Ho Chi Minh Stock Exchange).</p>
 <div id="e72174c8" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span>
@@ -1016,6 +1030,7 @@ window.Quarto = {
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>comp_vn.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
@@ -1128,6 +1143,8 @@ window.Quarto = {
 </div>
 </div>
 <div id="d48394ce" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vn30_symbols <span class="op">=</span> [</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>, <span class="st">"BCM"</span>, <span class="st">"BID"</span>, <span class="st">"BVH"</span>, <span class="st">"CTG"</span>, <span class="st">"FPT"</span>, <span class="st">"GAS"</span>, <span class="st">"GVR"</span>, <span class="st">"HDB"</span>, <span class="st">"HPG"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>, <span class="st">"MSN"</span>, <span class="st">"MWG"</span>, <span class="st">"PLX"</span>, <span class="st">"POW"</span>, <span class="st">"SAB"</span>, <span class="st">"SHB"</span>, <span class="st">"SSB"</span>, <span class="st">"STB"</span>, <span class="st">"TCB"</span>,</span>
@@ -1136,6 +1153,7 @@ window.Quarto = {
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>comp_vn30 <span class="op">=</span> comp_vn[comp_vn[<span class="st">"symbol"</span>].isin(vn30_symbols)]</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>comp_vn30.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
@@ -1280,6 +1298,8 @@ window.Quarto = {
 <h3 data-number="23.4.4" class="anchored" data-anchor-id="calculating-liquidity-ratios"><span class="header-section-number">23.4.4</span> Calculating Liquidity Ratios</h3>
 <p>Let’s compute these ratios for our VN30 sample:</p>
 <div id="472a508f" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements <span class="op">=</span> (comp_vn30</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        fiscal_year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"year"</span>].astype(<span class="bu">int</span>),</span>
@@ -1300,6 +1320,7 @@ window.Quarto = {
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
@@ -1416,6 +1437,8 @@ window.Quarto = {
 <h3 data-number="23.4.5" class="anchored" data-anchor-id="cross-sectional-comparison-of-liquidity"><span class="header-section-number">23.4.5</span> Cross-Sectional Comparison of Liquidity</h3>
 <p><a href="#fig-409" class="quarto-xref">Figure&nbsp;<span>23.1</span></a> compares liquidity ratios across companies for the most recent fiscal year. This cross-sectional view reveals how different business models and industries maintain different liquidity profiles.</p>
 <div id="cell-fig-409" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>liquidity_ratios <span class="op">=</span> (balance_sheet_statements</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023 &amp; label.notna()"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"current_ratio"</span>, <span class="st">"quick_ratio"</span>, <span class="st">"cash_ratio"</span>])</span>
@@ -1436,6 +1459,7 @@ window.Quarto = {
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>liquidity_ratios_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-409" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Liquidity ratios for VN30 stocks. The figure shows a grouped bar chart comparing current, quick, and cash ratios across companies.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1491,6 +1515,8 @@ Figure&nbsp;23.1: Liquidity ratios measure a company’s ability to meet short-t
 <section id="calculating-leverage-ratios" class="level3" data-number="23.5.5">
 <h3 data-number="23.5.5" class="anchored" data-anchor-id="calculating-leverage-ratios"><span class="header-section-number">23.5.5</span> Calculating Leverage Ratios</h3>
 <div id="8d215fdf" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>balance_sheet_statements <span class="op">=</span> balance_sheet_statements.assign(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    debt_to_equity<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_debt"</span>] <span class="op">/</span> x[<span class="st">"total_equity"</span>],</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    debt_to_asset<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"total_debt"</span>] <span class="op">/</span> x[<span class="st">"at"</span>]</span>
@@ -1510,12 +1536,15 @@ Figure&nbsp;23.1: Liquidity ratios measure a company’s ability to meet short-t
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="leverage-trends-over-time" class="level3" data-number="23.5.6">
 <h3 data-number="23.5.6" class="anchored" data-anchor-id="leverage-trends-over-time"><span class="header-section-number">23.5.6</span> Leverage Trends Over Time</h3>
 <p><a href="#fig-410" class="quarto-xref">Figure&nbsp;<span>23.2</span></a> tracks how debt-to-asset ratios have evolved over time. Time-series analysis reveals whether companies are becoming more or less leveraged.</p>
 <div id="cell-fig-410" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>debt_to_asset <span class="op">=</span> balance_sheet_statements.query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>debt_to_asset_figure <span class="op">=</span> (</span>
@@ -1529,6 +1558,7 @@ Figure&nbsp;23.1: Liquidity ratios measure a company’s ability to meet short-t
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>debt_to_asset_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-410" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Debt-to-asset ratios of VN30 stocks over time. The figure shows a line chart with years on the horizontal axis and debt-to-asset ratios on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1547,6 +1577,8 @@ Figure&nbsp;23.2: Debt-to-asset ratios show the proportion of assets financed by
 <h3 data-number="23.5.7" class="anchored" data-anchor-id="cross-sectional-leverage-comparison"><span class="header-section-number">23.5.7</span> Cross-Sectional Leverage Comparison</h3>
 <p><a href="#fig-411" class="quarto-xref">Figure&nbsp;<span>23.3</span></a> provides a snapshot of leverage across all VN30 constituents for the most recent year.</p>
 <div id="cell-fig-411" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison <span class="op">=</span> balance_sheet_statements.query(<span class="st">"year == 2023"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison[<span class="st">"symbol"</span>] <span class="op">=</span> pd.Categorical(</span>
@@ -1571,6 +1603,7 @@ Figure&nbsp;23.2: Debt-to-asset ratios show the proportion of assets financed by
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>debt_to_asset_comparison_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-411" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Debt-to-asset ratios of VN30 stocks in 2023. The figure shows a horizontal bar chart with companies sorted by their debt-to-asset ratio.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1589,6 +1622,8 @@ Figure&nbsp;23.3: Cross-sectional comparison of debt-to-asset ratios reveals ind
 <h3 data-number="23.5.8" class="anchored" data-anchor-id="the-leverage-coverage-trade-off"><span class="header-section-number">23.5.8</span> The Leverage-Coverage Trade-off</h3>
 <p><a href="#fig-412" class="quarto-xref">Figure&nbsp;<span>23.4</span></a> examines the relationship between leverage levels and debt-servicing ability. Companies with higher debt loads should ideally have stronger interest coverage to maintain financial stability.</p>
 <div id="cell-fig-412" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>interest_coverage <span class="op">=</span> (income_statements</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"interest_coverage"</span>])</span>
@@ -1614,6 +1649,7 @@ Figure&nbsp;23.3: Cross-sectional comparison of debt-to-asset ratios reveals ind
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>interest_coverage_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-412" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Debt-to-asset ratios versus interest coverage. The figure shows a scatter plot with debt-to-asset on the horizontal axis and interest coverage on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1661,6 +1697,8 @@ Figure&nbsp;23.4: The relationship between leverage and interest coverage reveal
 <section id="calculating-efficiency-ratios" class="level3" data-number="23.6.4">
 <h3 data-number="23.6.4" class="anchored" data-anchor-id="calculating-efficiency-ratios"><span class="header-section-number">23.6.4</span> Calculating Efficiency Ratios</h3>
 <div id="a73cdbb1" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>combined_statements <span class="op">=</span> (balance_sheet_statements</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    .get([</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"label"</span>, <span class="st">"current_ratio"</span>, <span class="st">"quick_ratio"</span>,</span>
@@ -1694,6 +1732,7 @@ Figure&nbsp;23.4: The relationship between leverage and interest coverage reveal
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    inventory_turnover<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_cogs"</span>] <span class="op">/</span> x[<span class="st">"ca_total_inventory"</span>],</span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    receivables_turnover<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_revenue"</span>] <span class="op">/</span> x[<span class="st">"ca_acc_receiv"</span>]</span>
 <span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Efficiency ratios vary dramatically across industries, making peer comparison essential. A grocery store and a shipbuilder will have fundamentally different asset and inventory dynamics.</p>
 </section>
@@ -1736,17 +1775,22 @@ Figure&nbsp;23.4: The relationship between leverage and interest coverage reveal
 <section id="calculating-profitability-ratios" class="level3" data-number="23.7.5">
 <h3 data-number="23.7.5" class="anchored" data-anchor-id="calculating-profitability-ratios"><span class="header-section-number">23.7.5</span> Calculating Profitability Ratios</h3>
 <div id="f48d9a17" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>combined_statements <span class="op">=</span> combined_statements.assign(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    gross_margin<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_gross_profit"</span>] <span class="op">/</span> x[<span class="st">"is_revenue"</span>],</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    profit_margin<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_eat"</span>] <span class="op">/</span> x[<span class="st">"is_revenue"</span>],</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    after_tax_roe<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"is_eat"</span>] <span class="op">/</span> x[<span class="st">"total_equity"</span>]</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="gross-margin-trends" class="level3" data-number="23.7.6">
 <h3 data-number="23.7.6" class="anchored" data-anchor-id="gross-margin-trends"><span class="header-section-number">23.7.6</span> Gross Margin Trends</h3>
 <p><a href="#fig-413" class="quarto-xref">Figure&nbsp;<span>23.5</span></a> tracks gross margin evolution over time, revealing whether companies are maintaining pricing power and production efficiency.</p>
 <div id="cell-fig-413" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>gross_margins <span class="op">=</span> combined_statements.query(<span class="st">"symbol in @vn30_symbols"</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>gross_margins_figure <span class="op">=</span> (</span>
@@ -1760,6 +1804,7 @@ Figure&nbsp;23.4: The relationship between leverage and interest coverage reveal
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>gross_margins_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-413" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Gross margins for VN30 stocks over time. The figure shows a line chart with years on the horizontal axis and gross margins on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1778,6 +1823,8 @@ Figure&nbsp;23.5: Gross margin trends reveal changes in pricing power and produc
 <h3 data-number="23.7.7" class="anchored" data-anchor-id="from-gross-to-net-where-do-profits-go"><span class="header-section-number">23.7.7</span> From Gross to Net: Where Do Profits Go?</h3>
 <p><a href="#fig-414" class="quarto-xref">Figure&nbsp;<span>23.6</span></a> examines the relationship between gross and profit margins. The gap between them reveals the impact of operating expenses, interest, and taxes.</p>
 <div id="cell-fig-414" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>profit_margins <span class="op">=</span> combined_statements.query(<span class="st">"year == 2023"</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>profit_margins_figure <span class="op">=</span> (</span>
@@ -1800,6 +1847,7 @@ Figure&nbsp;23.5: Gross margin trends reveal changes in pricing power and produc
 <span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>profit_margins_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-414" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Gross versus profit margins for VN30 stocks. The figure shows a scatter plot with gross margins on the horizontal axis and profit margins on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1823,6 +1871,8 @@ Figure&nbsp;23.6: Comparing gross and profit margins reveals how much of gross p
 <h3 data-number="23.8.1" class="anchored" data-anchor-id="ranking-companies-across-categories"><span class="header-section-number">23.8.1</span> Ranking Companies Across Categories</h3>
 <p><a href="#fig-415" class="quarto-xref">Figure&nbsp;<span>23.7</span></a> compares company rankings across four ratio categories. Rankings closer to 1 indicate better performance within each category, enabling quick identification of relative strengths and weaknesses.</p>
 <div id="cell-fig-415" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>financial_ratios <span class="op">=</span> (combined_statements</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">filter</span>(</span>
@@ -1876,6 +1926,7 @@ Figure&nbsp;23.6: Comparing gross and profit margins reveals how much of gross p
 <span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>final_ranks_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-415" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Average rank in financial ratio categories. The figure shows a scatter plot with ranks for companies across liquidity, leverage, efficiency, and profitability categories.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1917,6 +1968,8 @@ Figure&nbsp;23.7: Ranking companies across multiple ratio categories reveals ove
 <section id="calculating-fama-french-variables" class="level3" data-number="23.9.2">
 <h3 data-number="23.9.2" class="anchored" data-anchor-id="calculating-fama-french-variables"><span class="header-section-number">23.9.2</span> Calculating Fama-French Variables</h3>
 <div id="8fadea47" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM prices_monthly"</span>,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1928,8 +1981,11 @@ Figure&nbsp;23.7: Ranking companies across multiple ratio categories reveals ove
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    .assign(date<span class="op">=</span><span class="kw">lambda</span> x: pd.to_datetime(x[<span class="st">"date"</span>]))</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"date.dt.month == 12"</span>)</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="77859c9b" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>combined_statements_ff <span class="op">=</span> (combined_statements</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"year == 2023"</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    .merge(prices_december, on<span class="op">=</span>[<span class="st">"symbol"</span>, <span class="st">"year"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span>
@@ -1955,6 +2011,7 @@ Figure&nbsp;23.7: Ranking companies across multiple ratio categories reveals ove
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>combined_statements_ff.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="19">
 <div>
 
@@ -2071,6 +2128,8 @@ Figure&nbsp;23.7: Ranking companies across multiple ratio categories reveals ove
 <h3 data-number="23.9.3" class="anchored" data-anchor-id="fama-french-factor-rankings"><span class="header-section-number">23.9.3</span> Fama-French Factor Rankings</h3>
 <p><a href="#fig-416" class="quarto-xref">Figure&nbsp;<span>23.8</span></a> shows how VN30 companies rank on each Fama-French variable, connecting fundamental analysis to asset pricing.</p>
 <div id="cell-fig-416" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>factors_ranks <span class="op">=</span> (combined_statements_ff</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    .get([<span class="st">"symbol"</span>, <span class="st">"size"</span>, <span class="st">"book_to_market"</span>, <span class="st">"operating_profitability"</span>, <span class="st">"investment"</span>])</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{</span>
@@ -2101,6 +2160,7 @@ Figure&nbsp;23.7: Ranking companies across multiple ratio categories reveals ove
 <span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>factors_ranks_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-416" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Rank in Fama-French variables for VN30 stocks. The figure shows a scatter plot with company ranks for size, book-to-market, profitability, and investment factors.">
 <figure class="quarto-float quarto-float-fig figure">

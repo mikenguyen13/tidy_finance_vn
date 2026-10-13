@@ -906,7 +906,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./70_textual.html">Alternative Data and AI for Finance</a></li><li class="breadcrumb-item"><a href="./70_textual.html"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">Textual Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">Textual Analysis</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">46</span>&nbsp; <span class="chapter-title">Textual Analysis</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1036,6 +1036,8 @@ Table&nbsp;47.1: Key Literature on Textual Analysis in Finance
 <h2 data-number="48.1" class="anchored" data-anchor-id="sec-textual-universe"><span class="header-section-number">48.1</span> Constructing the Universe</h2>
 <p>We construct the universe of Vietnamese listed firms. The universe includes all firms listed on HOSE, HNX, and UPCoM as of the analysis date.</p>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import required libraries</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -1053,8 +1055,11 @@ Table&nbsp;47.1: Key Literature on Textual Analysis in Finance
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'figure.figsize'</span>] <span class="op">=</span> (<span class="dv">10</span>, <span class="dv">6</span>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">11</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"whitegrid"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="build-universe" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Connect to DataCore.vn and build universe of listed firms</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreAPI  <span class="co"># DataCore.vn Python client</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize connection</span></span>
@@ -1076,6 +1081,7 @@ Table&nbsp;47.1: Key Literature on Textual Analysis in Finance
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'HOSE: </span><span class="sc">{</span><span class="bu">len</span>(universe[universe.exchange<span class="op">==</span><span class="st">"HOSE"</span>])<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'HNX: </span><span class="sc">{</span><span class="bu">len</span>(universe[universe.exchange<span class="op">==</span><span class="st">"HNX"</span>])<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'UPCoM: </span><span class="sc">{</span><span class="bu">len</span>(universe[universe.exchange<span class="op">==</span><span class="st">"UPCOM"</span>])<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-universe" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1139,6 +1145,8 @@ Table&nbsp;48.1: Universe of Vietnamese Listed Firms by Exchange (as of December
 <h2 data-number="48.2" class="anchored" data-anchor-id="sec-textual-bus-desc"><span class="header-section-number">48.2</span> Retrieving Business Descriptions</h2>
 <p>Business descriptions for all listed firms can be in both Vietnamese and English. We retrieve both versions for our analysis. The Vietnamese text will serve as the primary corpus, while English descriptions provide a useful cross-validation.</p>
 <div id="get-bus-desc" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Retrieve business descriptions.</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get business descriptions (Vietnamese and English)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>bus_desc <span class="op">=</span> dc.get_business_descriptions(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    tickers<span class="op">=</span>universe.ticker.tolist(),</span>
@@ -1159,6 +1167,7 @@ Table&nbsp;48.1: Universe of Vietnamese Listed Firms by Exchange (as of December
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(corpus_df[[<span class="st">'desc_len_vi'</span>, <span class="st">'desc_len_en'</span>, <span class="st">'word_count_vi'</span>]]</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      .describe().<span class="bu">round</span>(<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-desc-stats" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1212,6 +1221,8 @@ Table&nbsp;48.2: Descriptive Statistics of Business Description Text
 <h2 data-number="48.3" class="anchored" data-anchor-id="sec-textual-annual-text"><span class="header-section-number">48.3</span> Retrieving Annual Report Text</h2>
 <p>Beyond business descriptions, annual or quarterly reports provide richer and more time-varying textual data. We extract the Management Discussion and Analysis (MD&amp;A) sections, which are most informative for financial analysis <span class="citation" data-cites="li2010textual bonsall2017plain">(<a href="references.html#ref-li2010textual" role="doc-biblioref">Li et al. 2010</a>; <a href="references.html#ref-bonsall2017plain" role="doc-biblioref">Bonsall IV et al. 2017</a>)</span>. The MD&amp;A section, known in Vietnamese annual reports as “Báo cáo của Ban Giám đốc” or “Báo cáo của Hội đồng quản trị,” discusses business performance, outlook, and risk factors.</p>
 <div id="get-annual-text" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Retrieve annual report MD&amp;A sections</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get annual report MD&amp;A sections (2015-2024)</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>annual_text <span class="op">=</span> dc.get_annual_report_text(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    tickers<span class="op">=</span>universe.ticker.tolist(),</span>
@@ -1232,6 +1243,7 @@ Table&nbsp;48.2: Descriptive Statistics of Business Description Text
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    annual_text.groupby(<span class="st">'ticker'</span>)[<span class="st">'text_len'</span>]</span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    .pct_change() <span class="op">*</span> <span class="dv">100</span></span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1276,6 +1288,8 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 </figure>
 </div>
 <div id="word-segmentation" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Vietnamese word segmentation using underthesea</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> underthesea <span class="im">import</span> word_tokenize</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> segment_vietnamese(text: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
@@ -1300,12 +1314,15 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> corpus_df.iloc[<span class="dv">0</span>]</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Raw:'</span>, sample.bus_desc_vi[:<span class="dv">200</span>])</span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Segmented:'</span>, sample.bus_desc_segmented[:<span class="dv">200</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-cleaning" class="level2" data-number="49.2">
 <h2 data-number="49.2" class="anchored" data-anchor-id="sec-textual-cleaning"><span class="header-section-number">49.2</span> Full Text Cleaning Pipeline</h2>
 <p>After word segmentation, we apply a cleaning pipeline. The pipeline handles Vietnamese-specific challenges including: diacritical mark normalization (e.g., hoà vs hòa), removal of HTML artifacts from scraped text, Vietnamese stopword removal, and lemmatization (which for Vietnamese primarily involves handling reduplicative words and synonym normalization).</p>
 <div id="cleaning-pipeline" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Full Vietnamese text cleaning pipeline</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vietnamese stopwords (domain-adapted)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>VIETNAMESE_STOPWORDS <span class="op">=</span> {</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'có'</span>, <span class="st">'là'</span>, <span class="st">'và'</span>, <span class="st">'của'</span>, <span class="st">'cho'</span>, <span class="st">'được'</span>, <span class="st">'trong'</span>,</span>
@@ -1383,12 +1400,15 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify cleaning quality</span></span>
 <span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Sample cleaned text:'</span>)</span>
 <span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(corpus_df.iloc[<span class="dv">0</span>].text_clean[:<span class="dv">300</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-english-cleaning" class="level2" data-number="49.3">
 <h2 data-number="49.3" class="anchored" data-anchor-id="sec-textual-english-cleaning"><span class="header-section-number">49.3</span> English Text Cleaning</h2>
 <p>For firms that also provide English business descriptions, we apply a standard English NLP pipeline using spaCy and NLTK. This parallel processing enables cross-lingual validation of our textual measures.</p>
 <div id="english-cleaning" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>English text cleaning pipeline</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> spacy</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> stopwords</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gensim</span>
@@ -1414,6 +1434,7 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    corpus_df.bus_desc_en</span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">apply</span>(<span class="kw">lambda</span> x: clean_english_text(x))</span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1427,6 +1448,8 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 \tag{50.1}\]</span></span></p>
 <p>where <span class="math inline">\(\text{tf}(w, d)\)</span> is the term frequency of word <span class="math inline">\(w\)</span> in document <span class="math inline">\(d\)</span>.</p>
 <div id="bow-vectorization" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Bag-of-Words vectorization</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    CountVectorizer, TfidfVectorizer</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1456,10 +1479,13 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Top 20 most frequent terms:'</span>)</span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(word_freq.head(<span class="dv">20</span>).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-word-freq" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-word-freq-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot word frequency distribution</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>top20 <span class="op">=</span> word_freq.head(<span class="dv">20</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ax.barh(<span class="bu">range</span>(<span class="bu">len</span>(top20)), top20.freq.values, color<span class="op">=</span><span class="st">'#2C5282'</span>)</span>
@@ -1470,6 +1496,7 @@ Table&nbsp;49.1: Vietnamese Word Segmentation Example
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Top 20 Most Frequent Terms in Vietnamese Business Descriptions'</span>)</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-word-freq-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;50.1
@@ -1599,6 +1626,8 @@ Table&nbsp;50.1: Top 20 Most Frequent Terms in Vietnamese Business Descriptions
 \tag{50.2}\]</span></span></p>
 <p>where <span class="math inline">\(|D|\)</span> is the total number of documents and <span class="math inline">\(\text{df}(w, D)\)</span> is the number of documents containing term <span class="math inline">\(w\)</span>. This weighting scheme ensures that industry-specific terminology (e.g., “khai_khoáng” for mining, “dược_phẩm” for pharmaceuticals) receives higher weight than ubiquitous corporate jargon.</p>
 <div id="tfidf-vectorization" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>TF-IDF vectorization with per-industry analysis</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tfidf_vectorizer <span class="op">=</span> TfidfVectorizer(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    max_features<span class="op">=</span><span class="dv">10000</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    min_df<span class="op">=</span><span class="dv">5</span>,</span>
@@ -1621,10 +1650,13 @@ Table&nbsp;50.1: Top 20 Most Frequent Terms in Vietnamese Business Descriptions
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="sc">{</span>industry<span class="sc">}</span><span class="ss">:'</span>)</span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> idx <span class="kw">in</span> top_idx:</span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>terms[idx]<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>mean_tfidf[idx]<span class="sc">:.4f}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-tfidf-heatmap" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-tfidf-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize industry-distinctive terms</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build industry x term TF-IDF matrix for top sectors</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>top_sectors <span class="op">=</span> corpus_df.icb_sector.value_counts().head(<span class="dv">8</span>).index.tolist()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>terms <span class="op">=</span> tfidf_vectorizer.get_feature_names_out()</span>
@@ -1651,6 +1683,7 @@ Table&nbsp;50.1: Top 20 Most Frequent Terms in Vietnamese Business Descriptions
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Term'</span>)</span>
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-tfidf-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;50.2
@@ -1671,6 +1704,8 @@ Figure&nbsp;50.2
 <li>For each word position <span class="math inline">\(i\)</span> in document <span class="math inline">\(d\)</span>, draw a topic <span class="math inline">\(z_{d,i} \sim \text{Multinomial}(\boldsymbol{\theta}_d)\)</span> and then draw the word <span class="math inline">\(w_{d,i} \sim \text{Multinomial}(\boldsymbol{\phi}_{z_{d,i}})\)</span>.</li>
 </ol>
 <div id="lda-model" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>LDA topic modeling with grid search over K</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> LatentDirichletAllocation</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid search over number of topics</span></span>
@@ -1711,10 +1746,13 @@ Figure&nbsp;50.2
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>    top_words <span class="op">=</span> [feature_names[i]</span>
 <span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>                 <span class="cf">for</span> i <span class="kw">in</span> topic.argsort()[:<span class="op">-</span><span class="dv">11</span>:<span class="op">-</span><span class="dv">1</span>]]</span>
 <span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Topic </span><span class="sc">{</span>topic_idx<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span><span class="st">" | "</span><span class="sc">.</span>join(top_words)<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-lda-perplexity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-lda-perplexity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot perplexity scores for topic model selection</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>perp_df <span class="op">=</span> pd.DataFrame(perplexity_scores)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ax.plot(perp_df.n_topics, perp_df.perplexity, <span class="st">'o-'</span>, color<span class="op">=</span><span class="st">'#2C5282'</span>,</span>
@@ -1727,6 +1765,7 @@ Figure&nbsp;50.2
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-lda-perplexity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;51.1
@@ -1788,6 +1827,8 @@ Table&nbsp;51.1: Selected LDA Topics from Vietnamese Business Descriptions (K=20
 <h2 data-number="51.2" class="anchored" data-anchor-id="sec-textual-bertopic"><span class="header-section-number">51.2</span> BERTopic: Neural Topic Modeling</h2>
 <p>BERTopic <span class="citation" data-cites="grootendorst2022bertopic">(<a href="references.html#ref-grootendorst2022bertopic" role="doc-biblioref">Grootendorst 2022</a>)</span> represents a significant advance over LDA by leveraging pre-trained language model embeddings, dimensionality reduction via UMAP, and hierarchical density-based clustering (HDBSCAN) to discover topics. Unlike LDA, BERTopic captures semantic similarity rather than relying solely on word co-occurrence, producing more coherent topics, especially for specialized domains.</p>
 <div id="bertopic-model" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>BERTopic with PhoBERT embeddings</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bertopic <span class="im">import</span> BERTopic</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> umap <span class="im">import</span> UMAP</span>
@@ -1825,10 +1866,13 @@ Table&nbsp;51.1: Selected LDA Topics from Vietnamese Business Descriptions (K=20
 <span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect topics</span></span>
 <span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>topic_info <span class="op">=</span> topic_model.get_topic_info()</span>
 <span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(topic_info.head(<span class="dv">20</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-bertopic-viz" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bertopic-viz-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize BERTopic document clusters</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize topic hierarchy</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>fig_hierarchy <span class="op">=</span> topic_model.visualize_hierarchy()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fig_hierarchy.show()</span>
@@ -1842,6 +1886,7 @@ Table&nbsp;51.1: Selected LDA Topics from Vietnamese Business Descriptions (K=20
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Topic word scores (barchart)</span></span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>fig_barchart <span class="op">=</span> topic_model.visualize_barchart(top_n_topics<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>fig_barchart.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-bertopic-viz-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;51.2
@@ -1955,6 +2000,8 @@ Table&nbsp;52.1: Vietnamese Financial Sentiment Lexicon: Sample Entries
 </figure>
 </div>
 <div id="dict-sentiment" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Dictionary-based financial sentiment scoring</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Vietnamese financial sentiment lexicon</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># sentiment_dict = dc.get_sentiment_lexicon(version='vn_financial_v2')</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1996,10 +2043,13 @@ Table&nbsp;52.1: Vietnamese Financial Sentiment Lexicon: Sample Entries
 <span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span> x: pd.Series(compute_sentiment_scores(x))</span>
 <span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>annual_text <span class="op">=</span> pd.concat([annual_text, sentiment_scores], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-sentiment-dist" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-sentiment-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot sentiment distribution</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].hist(annual_text.neg_pct, bins<span class="op">=</span><span class="dv">50</span>, color<span class="op">=</span><span class="st">'#E53E3E'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>,</span>
@@ -2021,6 +2071,7 @@ Table&nbsp;52.1: Vietnamese Financial Sentiment Lexicon: Sample Entries
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>             fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-sentiment-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;52.1
@@ -2032,6 +2083,8 @@ Figure&nbsp;52.1
 <h2 data-number="52.2" class="anchored" data-anchor-id="sec-textual-bert-sentiment"><span class="header-section-number">52.2</span> Transformer-Based Sentiment Classification</h2>
 <p>Dictionary approaches are limited by their inability to capture context, negation, and sarcasm. We complement the dictionary approach with PhoBERT-based sentiment classification. We fine-tune PhoBERT v2.</p>
 <div id="phobert-sentiment" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>PhoBERT-based sentiment classification</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> (</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    AutoModelForSequenceClassification,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    AutoTokenizer,</span>
@@ -2078,6 +2131,7 @@ Figure&nbsp;52.1
 <span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">'bert_tone'</span>: (labels.count(<span class="st">'POSITIVE'</span>) <span class="op">-</span></span>
 <span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>                      labels.count(<span class="st">'NEGATIVE'</span>)) <span class="op">/</span> n</span>
 <span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-sentiment-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2141,6 +2195,8 @@ Table&nbsp;52.2: Sentiment Method Comparison: Dictionary vs.&nbsp;PhoBERT on Val
 \tag{53.1}\]</span></span></p>
 <p>This metric ranges from 0 (completely dissimilar) to 1 (identical content) and is invariant to document length. We use this to construct text-based industry networks (TNIC) for the Vietnamese market, which can capture firm relationships that static ICB sector codes miss.</p>
 <div id="tfidf-similarity" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Pairwise TF-IDF cosine similarity</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics.pairwise <span class="im">import</span> cosine_similarity</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute pairwise similarity matrix</span></span>
@@ -2167,6 +2223,7 @@ Table&nbsp;52.2: Sentiment Method Comparison: Dictionary vs.&nbsp;PhoBERT on Val
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ticker <span class="kw">in</span> [<span class="st">'VCB'</span>, <span class="st">'VNM'</span>, <span class="st">'FPT'</span>, <span class="st">'VIC'</span>, <span class="st">'HPG'</span>]:</span>
 <span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="ss">Top peers for </span><span class="sc">{</span>ticker<span class="sc">}</span><span class="ss">:'</span>)</span>
 <span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(get_top_peers(ticker))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-peers" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2242,6 +2299,8 @@ Table&nbsp;53.1: Text-Based Peer Identification: Top Most Similar Firms (TF-IDF 
 <div id="fig-similarity-heatmap" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="20">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-similarity-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize similarity matrix</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sample_tickers <span class="op">=</span> [<span class="st">'VCB'</span>, <span class="st">'BID'</span>, <span class="st">'CTG'</span>, <span class="st">'VNM'</span>, <span class="st">'MCH'</span>,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'FPT'</span>, <span class="st">'CMG'</span>, <span class="st">'VIC'</span>, <span class="st">'NVL'</span>, <span class="st">'HPG'</span>,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'HSG'</span>, <span class="st">'VHM'</span>, <span class="st">'SSI'</span>, <span class="st">'HCM'</span>, <span class="st">'PNJ'</span>]</span>
@@ -2253,6 +2312,7 @@ Table&nbsp;53.1: Text-Based Peer Identification: Top Most Similar Firms (TF-IDF 
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Pairwise TF-IDF Cosine Similarity</span><span class="ch">\n</span><span class="st">(Selected Vietnamese Listed Firms)'</span>)</span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-similarity-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;53.1
@@ -2264,6 +2324,8 @@ Figure&nbsp;53.1
 <h2 data-number="53.2" class="anchored" data-anchor-id="sec-textual-embedding-similarity"><span class="header-section-number">53.2</span> Embedding-Based Similarity</h2>
 <p>While TF-IDF cosine similarity captures lexical overlap, it misses semantic similarity. Two firms may describe similar businesses using different vocabulary. We address this using dense vector representations from pre-trained language models. Specifically, we compute document embeddings using Sentence-BERT <span class="citation" data-cites="reimers2019sentence">(<a href="references.html#ref-reimers2019sentence" role="doc-biblioref">Reimers and Gurevych 2019</a>)</span> with a Vietnamese bi-encoder model.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <div id="embedding-similarity" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Sentence-BERT embedding-based similarity</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Vietnamese sentence transformer</span></span>
@@ -2292,10 +2354,13 @@ Figure&nbsp;53.1
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    embed_peers <span class="op">=</span> embed_sim_df[ticker].drop(ticker).nlargest(<span class="dv">5</span>)</span>
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="sc">{</span>ticker<span class="sc">}</span><span class="ss"> - TF-IDF peers: </span><span class="sc">{</span>tfidf_peers<span class="sc">.</span>index<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ss">'</span>)</span>
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>ticker<span class="sc">}</span><span class="ss"> - Embed peers:  </span><span class="sc">{</span>embed_peers<span class="sc">.</span>index<span class="sc">.</span>tolist()<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-tsne-embeddings" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-tsne-embeddings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>t-SNE projection of firm embeddings</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.manifold <span class="im">import</span> TSNE</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># t-SNE projection</span></span>
@@ -2319,6 +2384,7 @@ Figure&nbsp;53.1
 <span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'t-SNE 2'</span>)</span>
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-tsne-embeddings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;53.2
@@ -2330,6 +2396,8 @@ Figure&nbsp;53.2
 <h2 data-number="53.3" class="anchored" data-anchor-id="sec-textual-doc2vec"><span class="header-section-number">53.3</span> Doc2Vec</h2>
 <p>We also implement Doc2Vec <span class="citation" data-cites="le2014distributed">(<a href="references.html#ref-le2014distributed" role="doc-biblioref">Le and Mikolov 2014</a>)</span>, which learns fixed-length dense vectors for documents of variable length. Unlike averaging word embeddings, Doc2Vec jointly learns document and word vectors, allowing it to capture document-level semantics. We train Doc2Vec on the Vietnamese business description corpus using the concatenated DBOW+DM approach recommended by <span class="citation" data-cites="lau2016empirical">Lau and Baldwin (<a href="references.html#ref-lau2016empirical" role="doc-biblioref">2016</a>)</span>.</p>
 <div id="doc2vec" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Doc2Vec for firm similarity (DBOW + DM ensemble)</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models.doc2vec <span class="im">import</span> Doc2Vec, TaggedDocument</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare tagged documents</span></span>
@@ -2378,6 +2446,7 @@ Figure&nbsp;53.2
 <span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ticker <span class="kw">in</span> [<span class="st">'VCB'</span>, <span class="st">'FPT'</span>, <span class="st">'VIC'</span>]:</span>
 <span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>    sims <span class="op">=</span> d2v_dbow.dv.most_similar(ticker, topn<span class="op">=</span><span class="dv">5</span>)</span>
 <span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>ticker<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>[(s[<span class="dv">0</span>], <span class="ss">f"</span><span class="sc">{</span>s[<span class="dv">1</span>]<span class="sc">:.3f}</span><span class="ss">"</span>) <span class="cf">for</span> s <span class="kw">in</span> sims]<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2387,6 +2456,8 @@ Figure&nbsp;53.2
 <h2 data-number="54.1" class="anchored" data-anchor-id="sec-textual-phobert"><span class="header-section-number">54.1</span> PhoBERT Embeddings for Financial Text</h2>
 <p>PhoBERT <span class="citation" data-cites="nguyen2020phobert">(<a href="references.html#ref-nguyen2020phobert" role="doc-biblioref">Nguyen and Nguyen 2020</a>)</span>, pre-trained on 20GB of Vietnamese text, provides contextualized word embeddings that capture meaning based on surrounding context. Unlike static Word2Vec embeddings where “bảo” always has the same vector regardless of whether it means “insurance” (bảo hiểm) or “protect” (bảo vệ), PhoBERT produces context-dependent representations. We extract <code>[CLS]</code> token embeddings as document representations.</p>
 <div id="phobert-embeddings" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>PhoBERT document embeddings with chunking strategy</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModel, AutoTokenizer</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2440,6 +2511,7 @@ Figure&nbsp;53.2
 <span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a>    get_long_doc_embedding(text)</span>
 <span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> text <span class="kw">in</span> corpus_df.bus_desc_segmented.tolist()</span>
 <span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-llm" class="level2" data-number="54.2">
@@ -2448,6 +2520,8 @@ Figure&nbsp;53.2
 <section id="sec-textual-zero-shot" class="level3" data-number="54.2.1">
 <h3 data-number="54.2.1" class="anchored" data-anchor-id="sec-textual-zero-shot"><span class="header-section-number">54.2.1</span> Zero-Shot Financial Classification</h3>
 <div id="llm-zero-shot" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>LLM zero-shot financial text classification</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> anthropic  <span class="co"># Or openai, etc.</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> anthropic.Anthropic()</span>
@@ -2481,11 +2555,14 @@ Figure&nbsp;53.2
 <span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>        messages<span class="op">=</span>[{<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: prompt}]</span>
 <span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response.content[<span class="dv">0</span>].text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-extraction" class="level3" data-number="54.2.2">
 <h3 data-number="54.2.2" class="anchored" data-anchor-id="sec-textual-extraction"><span class="header-section-number">54.2.2</span> Structured Information Extraction</h3>
 <div id="llm-extraction" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>LLM structured information extraction from annual reports</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_financial_info(annual_report_text: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
@@ -2519,11 +2596,14 @@ Figure&nbsp;53.2
 <span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>        messages<span class="op">=</span>[{<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: prompt}]</span>
 <span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> json.loads(response.content[<span class="dv">0</span>].text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-esg" class="level3" data-number="54.2.3">
 <h3 data-number="54.2.3" class="anchored" data-anchor-id="sec-textual-esg"><span class="header-section-number">54.2.3</span> Automated ESG Scoring</h3>
 <div id="llm-esg" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>LLM-based ESG scoring from corporate disclosures</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_esg_scores(text: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Score ESG dimensions from Vietnamese corporate disclosure."""</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"""</span></span>
@@ -2567,6 +2647,7 @@ Figure&nbsp;53.2
 <span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Error for </span><span class="sc">{</span>row<span class="sc">.</span>ticker<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>row<span class="sc">.</span>year<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>esg_df <span class="op">=</span> pd.DataFrame(esg_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2581,6 +2662,8 @@ R_{i,t} = \alpha + \beta_1 \text{Tone}_{i,t-1} + \beta_2 \text{Uncertainty}_{i,t
 \tag{55.1}\]</span></span></p>
 <p>where <span class="math inline">\(R_{i,t}\)</span> is the monthly excess return of firm <span class="math inline">\(i\)</span> in month <span class="math inline">\(t\)</span>, <span class="math inline">\(\text{Tone}\)</span> is the net sentiment score (positive minus negative word proportion), <span class="math inline">\(\text{Uncertainty}\)</span> is the proportion of uncertain words, and <span class="math inline">\(\mathbf{X}\)</span> is a vector of controls including the Fama-French-Carhart factors adapted for Vietnam (see Chapter on Factor Models).</p>
 <div id="sentiment-return-regression" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Panel regression: sentiment and stock returns</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.api <span class="im">as</span> sm</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> linearmodels.panel <span class="im">import</span> PanelOLS</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2641,6 +2724,7 @@ R_{i,t} = \alpha + \beta_1 \text{Tone}_{i,t-1} + \beta_2 \text{Uncertainty}_{i,t
 <span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res1.summary)</span>
 <span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res2.summary)</span>
 <span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res3.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-regression" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2776,6 +2860,8 @@ Table&nbsp;55.1: Textual Sentiment and Stock Returns: Panel Regression Results
 <h2 data-number="55.2" class="anchored" data-anchor-id="sec-textual-tnic"><span class="header-section-number">55.2</span> Text-Based Industry Classification</h2>
 <p>We construct Vietnamese Text-Based Network Industries (VN-TNIC) analogous to <span class="citation" data-cites="hoberg2016text">Hoberg and Phillips (<a href="references.html#ref-hoberg2016text" role="doc-biblioref">2016</a>)</span>. For each firm-year, we identify the set of firms with cosine similarity above a threshold <span class="math inline">\(\tau\)</span> as the firm’s text-based industry peers. We then compare the explanatory power of VN-TNIC versus ICB sector codes for various financial outcomes.</p>
 <div id="tnic-construction" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>VN-TNIC construction and evaluation</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct TNIC network</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>TAU <span class="op">=</span> <span class="fl">0.20</span>  <span class="co"># Similarity threshold</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2820,10 +2906,13 @@ Table&nbsp;55.1: Textual Sentiment and Stock Returns: Panel Regression Results
 <span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a>panel[<span class="st">'icb_peer_ret'</span>] <span class="op">=</span> panel.groupby(</span>
 <span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>    [<span class="st">'date'</span>, <span class="st">'icb_sector'</span>]</span>
 <span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>)[<span class="st">'ret'</span>].transform(<span class="st">'mean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-tnic-network" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="30">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-tnic-network-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize TNIC network</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Build network graph (subsample for visualization)</span></span>
@@ -2853,6 +2942,7 @@ Table&nbsp;55.1: Textual Sentiment and Stock Returns: Panel Regression Results
 <span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">'off'</span>)</span>
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-tnic-network-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;55.1
@@ -2864,6 +2954,8 @@ Figure&nbsp;55.1
 <h2 data-number="55.3" class="anchored" data-anchor-id="sec-textual-event-study"><span class="header-section-number">55.3</span> Measuring Textual Similarity Changes Around Corporate Events</h2>
 <p>We examine how firms’ textual similarity changes around major corporate events such as M&amp;A announcements, industry reclassifications, and strategic pivots. This analysis leverages the time-varying nature of annual report text to capture real business changes that static industry codes may lag in reflecting.</p>
 <div id="event-study-text" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Event study on textual similarity changes</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get M&amp;A announcements from DataCore</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ma_events <span class="op">=</span> dc.get_corporate_events(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    event_type<span class="op">=</span><span class="st">'M&amp;A'</span>,</span>
@@ -2921,6 +3013,7 @@ Figure&nbsp;55.1
 <span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f't-stat: </span><span class="sc">{</span>event_df<span class="sc">.</span>delta_similarity<span class="sc">.</span>mean() <span class="op">/</span> <span class="st">'</span></span>
 <span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a><span class="er">      f'(event_df.delta_similarity.std() / '</span></span>
 <span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f'np.sqrt(len(event_df))):.3f</span><span class="er">}</span><span class="ss">'</span><span class="sc">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-exec-social" class="level2" data-number="55.4">
@@ -2993,6 +3086,8 @@ Table&nbsp;55.2: Mapping the executive tweets research design to Vietnam
 <h3 data-number="55.4.1" class="anchored" data-anchor-id="sec-textual-exec-data"><span class="header-section-number">55.4.1</span> Production Data Architecture</h3>
 <p>Production begins with a registry of executive accounts and a collector that archives posts at ingestion time. Archiving matters: posts are routinely edited or deleted after the market reacts, so the version you analyze must be the version investors saw. The collection code below is the production skeleton; it requires platform API credentials and respect for each platform’s terms of service, and it should collect only public, business-related posts.</p>
 <div id="exec-social-collection" class="cell" data-execution_count="32">
+<details class="code-fold">
+<summary>Production: executive account registry and post collector</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime, timezone</span>
@@ -3078,6 +3173,7 @@ Table&nbsp;55.2: Mapping the executive tweets research design to Vietnam
 <span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a>        [{<span class="op">**</span>p, <span class="st">'collected_at'</span>: now} <span class="cf">for</span> p <span class="kw">in</span> posts]</span>
 <span id="cb32-84"><a href="#cb32-84" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb32-85"><a href="#cb32-85" aria-hidden="true" tabindex="-1"></a>    con.commit()<span class="op">;</span> con.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Two timing conventions matter for Vietnamese data. First, timestamps arrive in UTC and must be mapped to Indochina Time (UTC+7). Second, posts must be mapped to <em>trading</em> event days: a post published after the 14:45 ATC session close, or on a weekend or holiday, belongs to the next trading day, exactly as announcement timestamps are handled in the event studies chapter.</p>
 </section>
@@ -3085,6 +3181,8 @@ Table&nbsp;55.2: Mapping the executive tweets research design to Vietnam
 <h3 data-number="55.4.2" class="anchored" data-anchor-id="sec-textual-exec-sim"><span class="header-section-number">55.4.2</span> Replication Sandbox: Simulated Executive Posts</h3>
 <p>The remainder of this section is a fully runnable replication of the <span class="citation" data-cites="crowley2024executive">Crowley, Huang, and Lu (<a href="references.html#ref-crowley2024executive" role="doc-biblioref">2024b</a>)</span> design on simulated Vietnamese data, so that every step (classification, similarity, market reaction) can be executed and inspected before any API credential exists. We simulate 20 synthetic tickers over 500 trading days: each firm posts official announcements around quarterly earnings dates, and each executive posts a mixture of non-financial content, <em>confirmatory</em> financial content that paraphrases the firm’s own announcement, and <em>novel</em> financial content (guidance-like statements ahead of any firm disclosure). Mirroring the paper’s findings, we embed a price reaction to executive financial posts, largest for novel content. All text is pre-segmented Vietnamese (underscored compounds), matching the conventions of <a href="#sec-textual-segmentation" class="quarto-xref"><span>Section 49.1</span></a>. The tickers and executives are synthetic by design; attributing simulated statements to real firms or people would be inappropriate.</p>
 <div id="exec-social-simulate" class="cell" data-execution_count="33">
+<details class="code-fold">
+<summary>Simulate returns, firm posts, and executive posts</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>TICKERS <span class="op">=</span> [<span class="ss">f'T</span><span class="sc">{</span>i<span class="sc">:02d}</span><span class="ss">'</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>)]</span>
@@ -3165,6 +3263,7 @@ Table&nbsp;55.2: Mapping the executive tweets research design to Vietnam
 <span id="cb33-78"><a href="#cb33-78" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Simulated </span><span class="sc">{</span><span class="bu">len</span>(firm_posts)<span class="sc">}</span><span class="ss"> firm posts and </span><span class="sc">{</span><span class="bu">len</span>(exec_posts)<span class="sc">}</span><span class="ss"> '</span></span>
 <span id="cb33-79"><a href="#cb33-79" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f'executive posts across </span><span class="sc">{</span><span class="bu">len</span>(TICKERS)<span class="sc">}</span><span class="ss"> tickers'</span>)</span>
 <span id="cb33-80"><a href="#cb33-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(exec_posts.category.value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Simulated 140 firm posts and 520 executive posts across 20 tickers
 category
@@ -3179,6 +3278,8 @@ Name: count, dtype: int64</code></pre>
 <h3 data-number="55.4.3" class="anchored" data-anchor-id="sec-textual-exec-classify"><span class="header-section-number">55.4.3</span> Classifying Financial Content</h3>
 <p><span class="citation" data-cites="crowley2024executive">Crowley, Huang, and Lu (<a href="references.html#ref-crowley2024executive" role="doc-biblioref">2024b</a>)</span> first separate financial from non-financial tweets with a supervised classifier trained on manually labeled data. We replicate that step with the TF-IDF representation of <a href="#sec-textual-tfidf" class="quarto-xref"><span>Section 50.2</span></a> and a logistic regression. In the sandbox the labels come from the simulation; in production they come from a manual annotation round (a few hundred posts is typically sufficient to start), after which the classifier can be upgraded to a fine-tuned PhoBERT (<a href="#sec-textual-phobert" class="quarto-xref"><span>Section 54.1</span></a>) or an LLM zero-shot classifier (<a href="#sec-textual-llm" class="quarto-xref"><span>Section 54.2</span></a>) without changing anything downstream.</p>
 <div id="exec-social-classify" class="cell" data-execution_count="34">
+<details class="code-fold">
+<summary>Financial-content classifier for Vietnamese posts</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> TfidfVectorizer</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
@@ -3203,6 +3304,7 @@ Name: count, dtype: int64</code></pre>
 <span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>coefs <span class="op">=</span> pd.Series(clf.coef_[<span class="dv">0</span>], index<span class="op">=</span>clf_vectorizer.get_feature_names_out())</span>
 <span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Top financial indicator tokens:'</span>)</span>
 <span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coefs.sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">8</span>).<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>               precision    recall  f1-score   support
 
@@ -3230,6 +3332,8 @@ dtype: float64</code></pre>
 <h3 data-number="55.4.4" class="anchored" data-anchor-id="sec-textual-exec-similarity"><span class="header-section-number">55.4.4</span> Measuring Executive-Firm Content Similarity</h3>
 <p>The core construct in <span class="citation" data-cites="crowley2024executive">Crowley, Huang, and Lu (<a href="references.html#ref-crowley2024executive" role="doc-biblioref">2024b</a>)</span> is the content similarity between an executive’s post and the firm’s own recent posts, which converts the two market-reaction mechanisms into a measurable split: an executive financial post that closely resembles recent firm content is <em>confirmatory</em> (its reaction, if any, operates through credibility), while a financial post with no similar firm content is <em>novel</em> (its reaction reveals new information reaching the market through the executive). We implement the construct as the maximum cosine similarity between each executive financial post and the same firm’s official posts over the trailing seven calendar days, in a shared TF-IDF space (<a href="#sec-textual-tfidf-similarity" class="quarto-xref"><span>Section 53.1</span></a>).</p>
 <div id="cell-exec-social-similarity" class="cell" data-execution_count="35">
+<details class="code-fold">
+<summary>Executive-firm content similarity and novelty split</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics.pairwise <span class="im">import</span> cosine_similarity</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>all_text <span class="op">=</span> pd.concat([exec_posts.text, firm_posts.text])</span>
@@ -3271,6 +3375,7 @@ dtype: float64</code></pre>
 <span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>             <span class="st">'confirmatory posts'</span>)</span>
 <span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>              count   mean    std    min    25%    50%    75%    max
 post_type                                                           
@@ -3297,6 +3402,8 @@ novel                              0               67</code></pre>
 <h3 data-number="55.4.5" class="anchored" data-anchor-id="sec-textual-exec-reaction"><span class="header-section-number">55.4.5</span> Market Reactions to Executive Posts</h3>
 <p>With posts classified and split, the market-reaction test follows the event-study logic: compute market-adjusted abnormal returns and cumulate them over the post window, separately for novel financial, confirmatory financial, and non-financial posts. Non-financial posts serve as the placebo, exactly as in <span class="citation" data-cites="crowley2024executive">Crowley, Huang, and Lu (<a href="references.html#ref-crowley2024executive" role="doc-biblioref">2024b</a>)</span>; if greetings and holiday wishes move prices, the design is contaminated.</p>
 <div id="cell-exec-social-reaction" class="cell" data-execution_count="36">
+<details class="code-fold">
+<summary>CARs around executive posts by post type</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>abnormal <span class="op">=</span> returns.sub(pd.Series(mkt_ret, index<span class="op">=</span>DATES), axis<span class="op">=</span><span class="dv">0</span>)</span>
@@ -3343,6 +3450,7 @@ novel                              0               67</code></pre>
 <span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Market reactions to executive posts by content type'</span>)</span>
 <span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                n  mean_car_pct  t_stat  p_value
 post_type                                       
@@ -3366,6 +3474,8 @@ Novel minus confirmatory: 1.01 pp (t = 2.37, p = 0.0189)</code></pre>
 <h3 data-number="55.4.6" class="anchored" data-anchor-id="sec-textual-exec-production"><span class="header-section-number">55.4.6</span> From Replication to Production Monitoring</h3>
 <p>Everything above composes into a monitor that runs continuously: collect new posts, classify financial content, compute similarity against the firm’s official stream, and react within minutes rather than at the end of a research quarter. The skeleton below is deliberately thin; each method delegates to a component already built in this section.</p>
 <div id="exec-social-monitor" class="cell" data-execution_count="37">
+<details class="code-fold">
+<summary>Production: real-time executive post monitor</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ExecutiveSocialMonitor:</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Poll -&gt; classify -&gt; similarity -&gt; alert, on a fixed schedule.</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3410,6 +3520,7 @@ Novel minus confirmatory: 1.01 pp (t = 2.37, p = 0.0189)</code></pre>
 <span id="cb41-42"><a href="#cb41-42" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> post <span class="kw">in</span> <span class="va">self</span>.classify(new_posts):</span>
 <span id="cb41-43"><a href="#cb41-43" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> post[<span class="st">'is_financial'</span>]:</span>
 <span id="cb41-44"><a href="#cb41-44" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.alert(post, <span class="va">self</span>.similarity(post) <span class="op">&lt;</span> <span class="va">self</span>.sim_threshold)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled" title="Compliance and Ethics in the Vietnamese Setting">
 <div class="callout-header d-flex align-content-center">
@@ -3467,6 +3578,8 @@ What this section does and does not replicate
 <h3 data-number="55.5.1" class="anchored" data-anchor-id="sec-textual-call-graph-sim"><span class="header-section-number">55.5.1</span> A Simulation of Conversations with Structure</h3>
 <p>We generate 900 synthetic call transcripts. Each call has a number of turns (20 to 200, so length varies a lot) and a latent topic that evolves by a simple Markov rule: at each turn the discussion <em>stays</em> on the current topic, <em>returns</em> to a topic already raised with probability <span class="math inline">\(p_{\text{ref}}\)</span> (a cross-reference), or <em>opens</em> a topic not yet raised with probability <span class="math inline">\(p_{\text{new}}\)</span>. Each turn is an embedding equal to its topic’s centroid plus noise (a stand-in for a PhoBERT sentence embedding), with a turn-level sentiment equal to the call’s tone plus noise. Next-period log volatility depends on three fundamentals (log size, leverage, past volatility) and, with the signs reported by <span class="citation" data-cites="yang2026learning">Yang et al. (<a href="references.html#ref-yang2026learning" role="doc-biblioref">2026</a>)</span>, negatively on <span class="math inline">\(p_{\text{ref}}\)</span>, <span class="math inline">\(p_{\text{new}}\)</span> and tone. The point of the design is that <span class="math inline">\(p_{\text{ref}}\)</span> and <span class="math inline">\(p_{\text{new}}\)</span> are properties of the <em>sequence</em> of topics: they are invisible to any statistic that ignores turn order.</p>
 <div id="call-graph-simulate" class="cell" data-execution_count="38">
+<details class="code-fold">
+<summary>Simulate call transcripts as sequences of topic-labelled turns</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> RidgeCV</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> r2_score</span>
@@ -3507,6 +3620,7 @@ What this section does and does not replicate
 <span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> r <span class="kw">in</span> cg_firms.itertuples()]</span>
 <span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>CG_N<span class="sc">}</span><span class="ss"> calls, </span><span class="sc">{</span><span class="bu">sum</span>(<span class="bu">len</span>(c[<span class="dv">1</span>]) <span class="cf">for</span> c <span class="kw">in</span> cg_calls)<span class="sc">:,}</span><span class="ss"> turns; '</span></span>
 <span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f'median length </span><span class="sc">{</span><span class="bu">int</span>(cg_firms.n_turns.median())<span class="sc">}</span><span class="ss"> turns'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>900 calls, 55,938 turns; median length 54 turns</code></pre>
 </div>
@@ -3516,6 +3630,8 @@ What this section does and does not replicate
 <h3 data-number="55.5.2" class="anchored" data-anchor-id="sec-textual-call-graph-build"><span class="header-section-number">55.5.2</span> From Transcript to Graph</h3>
 <p>The graph builder has three steps. First, learn a corpus-level <strong>topic vocabulary</strong> by clustering all turn embeddings (here <span class="math inline">\(k\)</span>-means; BERTopic, <a href="#sec-textual-bertopic" class="quarto-xref"><span>Section 51.2</span></a>, is the natural production choice). Second, assign each turn to a topic; the distinct topics in a call become its nodes, with node features for topic share, mean sentiment, relative position of first mention and visit intensity, and edges between topics whose in-call centroids have high cosine similarity (the similarity edges of <span class="citation" data-cites="yang2026learning">Yang et al. (<a href="references.html#ref-yang2026learning" role="doc-biblioref">2026</a>)</span>). Third, read off the graph and the discourse path. The <strong>new-topic rate</strong> is the number of nodes per turn. The <strong>cross-reference rate</strong> is the fraction of topic <em>switches</em> that return to an already-raised topic. We also compute a one-layer message-passing representation, <span class="math inline">\(\tanh(\hat{A}XW)\)</span> mean-pooled over nodes, where <span class="math inline">\(\hat{A}\)</span> is the symmetrically normalised adjacency with self-loops.</p>
 <div id="call-graph-build" class="cell" data-execution_count="39">
+<details class="code-fold">
+<summary>Build topic graphs and graph features per call</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> call_graph(emb, sent, km, sim_threshold<span class="op">=</span><span class="fl">0.3</span>):</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Topic graph and discourse features for one call.</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3551,6 +3667,7 @@ What this section does and does not replicate
 <span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(F_graph.assign(p_ref<span class="op">=</span>cg_firms.p_ref, p_new<span class="op">=</span>cg_firms.p_new)</span>
 <span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a>      .corr().loc[[<span class="st">'new_rate'</span>, <span class="st">'xref'</span>], [<span class="st">'p_new'</span>, <span class="st">'p_ref'</span>]].<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>          p_new  p_ref
 new_rate   0.51   0.01
@@ -3563,6 +3680,8 @@ xref       0.08   0.34</code></pre>
 <h3 data-number="55.5.3" class="anchored" data-anchor-id="sec-textual-call-graph-eval"><span class="header-section-number">55.5.3</span> Does Structure Add Forecasting Power?</h3>
 <p>We mirror the paper’s “beyond fundamentals” logic: fit ridge regressions of next-period log volatility on (i) fundamentals only; (ii) fundamentals plus the pooled representation (mean embedding and mean tone); (iii) fundamentals plus the graph features; (iv) fundamentals plus message-passing features and tone. All models are fit on a 70% training split and scored out of sample, overall and by transcript-length tercile.</p>
 <div id="call-graph-eval" class="cell" data-execution_count="40">
+<details class="code-fold">
+<summary>Out-of-sample comparison, overall and by transcript length</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fund <span class="op">=</span> cg_firms[[<span class="st">'size'</span>, <span class="st">'lev'</span>, <span class="st">'past_vol'</span>]].values</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>train <span class="op">=</span> cg_rng.random(CG_N) <span class="op">&lt;</span> <span class="fl">0.7</span><span class="op">;</span> test <span class="op">=</span> <span class="op">~</span>train</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> cg_firms.y.values</span>
@@ -3595,6 +3714,7 @@ xref       0.08   0.34</code></pre>
 <span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cg_results.<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span>
 <span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">RMSE reduction vs fundamentals-only, by call length:'</span>)</span>
 <span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gain.<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                             OOS R2   RMSE  RMSE (short)  RMSE (mid)  RMSE (long)
 model                                                                            
@@ -3618,6 +3738,8 @@ Fundamentals only                   0.000       0.000        0.000
 <h3 data-number="55.5.4" class="anchored" data-anchor-id="sec-textual-call-graph-datacore"><span class="header-section-number">55.5.4</span> Production Application with DataCore.vn</h3>
 <p>The production version swaps the simulated turns for real call transcripts. The cell below is a skeleton: <code>get_earnings_call_transcripts</code> follows the chapter’s DataCore conventions for text retrieval, and the helper <code>embed_turns</code> should use the PhoBERT sentence encoder of <a href="#sec-textual-phobert" class="quarto-xref"><span>Section 54.1</span></a> on word-segmented turns (<a href="#sec-textual-segmentation" class="quarto-xref"><span>Section 49.1</span></a>). It reuses <code>call_graph</code> from above unchanged, which is the point of keeping that function dependent only on turn embeddings and turn sentiment.</p>
 <div id="call-graph-datacore" class="cell" data-execution_count="41">
+<details class="code-fold">
+<summary>Production: Vietnamese earnings call graphs and volatility forecast</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transcripts: one row per speaker turn (ticker, call_date, turn_idx, role, text)</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>turns <span class="op">=</span> dc.get_earnings_call_transcripts(start<span class="op">=</span><span class="st">'2018-01-01'</span>, end<span class="op">=</span><span class="st">'2024-12-31'</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>turns <span class="op">=</span> turns.sort_values([<span class="st">'ticker'</span>, <span class="st">'call_date'</span>, <span class="st">'turn_idx'</span>])</span>
@@ -3644,6 +3766,7 @@ Fundamentals only                   0.000       0.000        0.000
 <span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>                 .merge(fundamentals, on<span class="op">=</span>[<span class="st">'ticker'</span>, <span class="st">'call_date'</span>]))</span>
 <span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Same split-by-time ridge comparison as the simulation, with time-based train/test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-textual-call-graph-vn" class="level3" data-number="55.5.5">
@@ -3813,6 +3936,8 @@ Note
 <div id="fig-method-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="42">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-method-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compare methods on peer identification accuracy</summary>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate: what fraction of top-5 peers share ICB sector?</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>methods <span class="op">=</span> {</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'TF-IDF'</span>: sim_df,</span>
@@ -3850,6 +3975,7 @@ Note
 <span id="cb49-35"><a href="#cb49-35" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'</span><span class="sc">{</span>acc<span class="sc">:.1%}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
 <span id="cb49-36"><a href="#cb49-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb49-37"><a href="#cb49-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-method-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;56.1

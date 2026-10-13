@@ -878,7 +878,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./10_modern_portfolio_theory.html">Portfolio Construction, Risk, and Empirical Mechanics</a></li><li class="breadcrumb-item"><a href="./10_modern_portfolio_theory.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modern Portfolio Theory</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modern Portfolio Theory</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Modern Portfolio Theory</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -914,6 +914,8 @@ window.Quarto = {
 <p>The key assumption is that investors care only about these two moments of the return distribution. This assumption is exactly correct if returns are normally distributed, or if investors have quadratic utility functions. Even when these conditions don’t hold precisely, mean-variance analysis often provides a good approximation to optimal portfolio choice.</p>
 <p>By balancing expected return and risk, investors can construct portfolios that either maximize expected return for a given level of risk, or minimize risk for a desired level of expected return. In this chapter, we derive these optimal portfolio decisions analytically and implement the mean-variance approach computationally.</p>
 <div id="395619cf" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
@@ -921,6 +923,7 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adjustText <span class="im">import</span> adjust_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-asset-universe-setting-up-the-problem" class="level2" data-number="8.1">
@@ -950,14 +953,19 @@ window.Quarto = {
 <h3 data-number="8.1.2" class="anchored" data-anchor-id="loading-and-preparing-the-data"><span class="header-section-number">8.1.2</span> Loading and Preparing the Data</h3>
 <p>We work with the VN30 index constituents—the 30 largest and most liquid stocks on Vietnam’s Ho Chi Minh Stock Exchange. This provides a realistic asset universe for a domestic Vietnamese investor.</p>
 <div id="c4582179" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>vn30_symbols <span class="op">=</span> [</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>,<span class="st">"BCM"</span>,<span class="st">"BID"</span>,<span class="st">"BVH"</span>,<span class="st">"CTG"</span>,<span class="st">"FPT"</span>,<span class="st">"GAS"</span>,<span class="st">"GVR"</span>,<span class="st">"HDB"</span>,<span class="st">"HPG"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>,<span class="st">"MSN"</span>,<span class="st">"MWG"</span>,<span class="st">"PLX"</span>,<span class="st">"POW"</span>,<span class="st">"SAB"</span>,<span class="st">"SHB"</span>,<span class="st">"SSB"</span>,<span class="st">"STB"</span>,<span class="st">"TCB"</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TPB"</span>,<span class="st">"VCB"</span>,<span class="st">"VHM"</span>,<span class="st">"VIB"</span>,<span class="st">"VIC"</span>,<span class="st">"VJC"</span>,<span class="st">"VNM"</span>,<span class="st">"VPB"</span>,<span class="st">"VRE"</span>,<span class="st">"EIB"</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>We load the historical price data:</p>
 <div id="584f104f" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> io <span class="im">import</span> BytesIO</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
@@ -1013,6 +1021,7 @@ window.Quarto = {
 <span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="st">"close_price"</span>: <span class="st">"close"</span></span>
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Connected. Buckets:
  - dsteam-data
@@ -1021,8 +1030,11 @@ window.Quarto = {
 </div>
 <p>We filter to keep only the VN30 constituents:</p>
 <div id="be50b923" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> prices[prices[<span class="st">"symbol"</span>].isin(vn30_symbols)]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>prices_daily[[<span class="st">"date"</span>, <span class="st">"symbol"</span>, <span class="st">"adjusted_close"</span>]].head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
@@ -1071,6 +1083,8 @@ window.Quarto = {
 <p>where <span class="math inline">\(r_{i,t}\)</span> is the return of asset <span class="math inline">\(i\)</span> in period <span class="math inline">\(t\)</span>, and <span class="math inline">\(T\)</span> is the total number of periods.</p>
 <p><strong>Why monthly returns?</strong> While daily data provides more observations, monthly returns offer several advantages for portfolio optimization. First, monthly returns are less noisy and exhibit weaker serial correlation. Second, monthly rebalancing is more realistic for most investors, avoiding excessive transaction costs. Third, the estimation error in mean returns is already substantial—using daily data doesn’t materially improve the precision of mean estimates because the mean return scales with the horizon while estimation error scales with the square root of observations.</p>
 <div id="68cfff53" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>returns_monthly <span class="op">=</span> (prices_daily</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  .assign(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    date<span class="op">=</span>prices_daily[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>).dt.to_timestamp()</span>
@@ -1081,6 +1095,7 @@ window.Quarto = {
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    ret<span class="op">=</span><span class="kw">lambda</span> x: x.groupby(<span class="st">"symbol"</span>)[<span class="st">"adjusted_close"</span>].pct_change()</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-volatilities" class="level3" data-number="8.1.4">
@@ -1091,6 +1106,8 @@ window.Quarto = {
 \]</span></p>
 <p>Alternative risk measures exist, including Value-at-Risk, Expected Shortfall, and higher-order moments such as skewness and kurtosis. However, variance remains the workhorse measure in portfolio theory because of its mathematical tractability and the central role of the normal distribution in finance.</p>
 <div id="1b5cc5fc" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> (returns_monthly</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  .groupby(<span class="st">"symbol"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  .agg(</span>
@@ -1098,12 +1115,15 @@ window.Quarto = {
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    sigma<span class="op">=</span>(<span class="st">"ret"</span>, <span class="st">"std"</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="visualizing-the-risk-return-trade-off" class="level3" data-number="8.1.5">
 <h3 data-number="8.1.5" class="anchored" data-anchor-id="visualizing-the-risk-return-trade-off"><span class="header-section-number">8.1.5</span> Visualizing the Risk-Return Trade-off</h3>
 <p><a href="#fig-201" class="quarto-xref">Figure&nbsp;<span>8.1</span></a> displays each asset’s expected return (vertical axis) against its volatility (horizontal axis). This “mean-standard deviation” space is fundamental to portfolio theory.</p>
 <div id="cell-fig-201" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>assets_figure <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  ggplot(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    assets, </span>
@@ -1120,6 +1140,7 @@ window.Quarto = {
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>assets_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-201" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Expected returns and volatilities of VN30 index constituents. The figure is a scatter plot with volatilities on the horizontal and expected returns on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1150,6 +1171,8 @@ Figure&nbsp;8.1: Expected returns and volatilities based on monthly returns adju
 <p>We compute the sample covariance matrix as: <span class="math display">\[\hat{\sigma}_{ij} = \frac{1}{T-1} \sum_{t=1}^{T} (r_{i,t} - \hat{\mu}_i)(r_{j,t} - \hat{\mu}_j)\]</span></p>
 <p>First, we reshape the returns data into a wide format with assets as columns:</p>
 <div id="c9033c8b" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>returns_wide <span class="op">=</span> (returns_monthly</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  .pivot(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"symbol"</span>, values<span class="op">=</span><span class="st">"ret"</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  .reset_index()</span>
@@ -1159,6 +1182,7 @@ Figure&nbsp;8.1: Expected returns and volatilities based on monthly returns adju
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  .drop(columns<span class="op">=</span>[<span class="st">"date"</span>])</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  .cov()</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="interpreting-the-variance-covariance-matrix" class="level3" data-number="8.2.3">
@@ -1168,6 +1192,8 @@ Figure&nbsp;8.1: Expected returns and volatilities based on monthly returns adju
 <p>Correlations are bounded between -1 and +1, making them easier to compare across asset pairs.</p>
 <p><a href="#fig-203" class="quarto-xref">Figure&nbsp;<span>8.2</span></a> visualizes the variance-covariance matrix as a heatmap.</p>
 <div id="cell-fig-203" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sigma_long <span class="op">=</span> (sigma</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  .reset_index()</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  .melt(id_vars<span class="op">=</span><span class="st">"symbol"</span>, var_name<span class="op">=</span><span class="st">"symbol_b"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
@@ -1193,6 +1219,7 @@ Figure&nbsp;8.1: Expected returns and volatilities based on monthly returns adju
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> theme(axis_text_x<span class="op">=</span>element_text(angle<span class="op">=</span><span class="dv">45</span>, hjust<span class="op">=</span><span class="dv">1</span>))</span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>sigma_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-203" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Variance-covariance matrix of VN30 index constituents.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1250,15 +1277,20 @@ Figure&nbsp;8.2: Variances and covariances based on monthly returns adjusted for
 <section id="implementation" class="level3" data-number="8.3.4">
 <h3 data-number="8.3.4" class="anchored" data-anchor-id="implementation"><span class="header-section-number">8.3.4</span> Implementation</h3>
 <div id="cc7079dd" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>iota <span class="op">=</span> np.ones(sigma.shape[<span class="dv">0</span>])</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>sigma_inv <span class="op">=</span> np.linalg.inv(sigma.values)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>omega_mvp <span class="op">=</span> (sigma_inv <span class="op">@</span> iota) <span class="op">/</span> (iota <span class="op">@</span> sigma_inv <span class="op">@</span> iota)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="visualizing-the-minimum-variance-weights" class="level3" data-number="8.3.5">
 <h3 data-number="8.3.5" class="anchored" data-anchor-id="visualizing-the-minimum-variance-weights"><span class="header-section-number">8.3.5</span> Visualizing the Minimum-Variance Weights</h3>
 <p><a href="#fig-204" class="quarto-xref">Figure&nbsp;<span>8.3</span></a> displays the portfolio weights of the minimum-variance portfolio.</p>
 <div id="cell-fig-204" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> assets.assign(omega_mvp<span class="op">=</span>omega_mvp)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>assets[<span class="st">"symbol"</span>] <span class="op">=</span> pd.Categorical(</span>
@@ -1283,6 +1315,7 @@ Figure&nbsp;8.2: Variances and covariances based on monthly returns adjusted for
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>omega_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-204" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Minimum-variance portfolio weights. The figure shows a bar chart with portfolio weights for each VN30 index constituent.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1302,6 +1335,8 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <h3 data-number="8.3.6" class="anchored" data-anchor-id="portfolio-performance"><span class="header-section-number">8.3.6</span> Portfolio Performance</h3>
 <p>Let’s compute the expected return and volatility of the minimum-variance portfolio:</p>
 <div id="beeb7817" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> assets[<span class="st">"mu"</span>].values</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mu_mvp <span class="op">=</span> omega_mvp <span class="op">@</span> mu</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>sigma_mvp <span class="op">=</span> np.sqrt(omega_mvp <span class="op">@</span> sigma.values <span class="op">@</span> omega_mvp)</span>
@@ -1312,6 +1347,7 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"type"</span>: [<span class="st">"Minimum-Variance Portfolio"</span>]</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>summary_mvp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <div>
 
@@ -1339,9 +1375,12 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 </div>
 </div>
 <div id="560e9151" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mu_mvp_fmt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>mu_mvp<span class="sc">:.4f}</span><span class="ss">"</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sigma_mvp_fmt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>sigma_mvp<span class="sc">:.4f}</span><span class="ss">"</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The MVP return is </span><span class="sc">{</span>mu_mvp_fmt<span class="sc">}</span><span class="ss"> and volatility is </span><span class="sc">{</span>sigma_mvp_fmt<span class="sc">}</span><span class="ss">."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>The MVP return is -0.0114 and volatility is 0.0435.</code></pre>
 </div>
@@ -1363,8 +1402,11 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <h3 data-number="8.4.2" class="anchored" data-anchor-id="setting-the-target-return"><span class="header-section-number">8.4.2</span> Setting the Target Return</h3>
 <p>For illustration, suppose the investor wants to earn at least the historical average return of the best-performing stock:</p>
 <div id="5a9c9d06" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mu_bar <span class="op">=</span> assets[<span class="st">"mu"</span>].<span class="bu">max</span>()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Target expected return: </span><span class="sc">{</span>mu_bar<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Target expected return: 0.01886</code></pre>
 </div>
@@ -1389,6 +1431,8 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <section id="implementation-1" class="level3" data-number="8.4.4">
 <h3 data-number="8.4.4" class="anchored" data-anchor-id="implementation-1"><span class="header-section-number">8.4.4</span> Implementation</h3>
 <div id="cb8bcc5e" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> iota <span class="op">@</span> sigma_inv <span class="op">@</span> iota</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> iota <span class="op">@</span> sigma_inv <span class="op">@</span> mu</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>E <span class="op">=</span> mu <span class="op">@</span> sigma_inv <span class="op">@</span> mu</span>
@@ -1403,12 +1447,15 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma"</span>: [sigma_efp],</span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"type"</span>: [<span class="st">"Efficient Portfolio"</span>]</span>
 <span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="comparing-the-portfolios" class="level3" data-number="8.4.5">
 <h3 data-number="8.4.5" class="anchored" data-anchor-id="comparing-the-portfolios"><span class="header-section-number">8.4.5</span> Comparing the Portfolios</h3>
 <p><a href="#fig-205" class="quarto-xref">Figure&nbsp;<span>8.4</span></a> plots both portfolios alongside the individual assets.</p>
 <div id="cell-fig-205" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> pd.concat(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  [assets, summary_mvp, summary_efp], ignore_index<span class="op">=</span><span class="va">True</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1430,6 +1477,7 @@ Figure&nbsp;8.3: Weights are based on historical moments of monthly returns adju
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    ) </span>
 <span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>summaries_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-205" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Efficient &amp; minimum-variance portfolios. The figure shows big dots indicating the location of the minimum-variance and the efficient portfolio that delivers the expected return of the stock with the higehst return, respectively. The small dots indicate the location of the individual constituents.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1475,6 +1523,8 @@ a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2} = \left(\frac{a\mu_1 + (1-a)
 <h3 data-number="8.5.3" class="anchored" data-anchor-id="computing-the-efficient-frontier"><span class="header-section-number">8.5.3</span> Computing the Efficient Frontier</h3>
 <p>Using the minimum-variance portfolio and our efficient portfolio as the two “funds,” we can trace out the entire efficient frontier:</p>
 <div id="882ee3f7" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>efficient_frontier <span class="op">=</span> (</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  pd.DataFrame({</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>: np.arange(<span class="op">-</span><span class="dv">1</span>, <span class="fl">2.01</span>, <span class="fl">0.01</span>)</span>
@@ -1487,6 +1537,7 @@ a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2} = \left(\frac{a\mu_1 + (1-a)
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    sigma<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"omega"</span>].<span class="bu">map</span>(<span class="kw">lambda</span> w: np.sqrt(w <span class="op">@</span> sigma <span class="op">@</span> w))</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Note that we allow <span class="math inline">\(a\)</span> to range from -1 to 2, which means some portfolios involve shorting one of the two basis funds and leveraging into the other. This traces out both the upper and lower portions of the frontier hyperbola.</p>
 </section>
@@ -1494,6 +1545,8 @@ a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2} = \left(\frac{a\mu_1 + (1-a)
 <h3 data-number="8.5.4" class="anchored" data-anchor-id="visualizing-the-efficient-frontier"><span class="header-section-number">8.5.4</span> Visualizing the Efficient Frontier</h3>
 <p><a href="#fig-206" class="quarto-xref">Figure&nbsp;<span>8.5</span></a> displays the efficient frontier alongside individual assets and the benchmark portfolios.</p>
 <div id="cell-fig-206" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>summaries <span class="op">=</span> pd.concat(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  [summaries, efficient_frontier], ignore_index<span class="op">=</span><span class="va">True</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1516,6 +1569,7 @@ a \cdot \omega_{\mu_1} + (1-a) \cdot \omega_{\mu_2} = \left(\frac{a\mu_1 + (1-a)
 <span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    ) </span>
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>summaries_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-206" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Efficient frontier constructed from historical data for VN30 index constituents. The figure shows VN30 index constituents in a mean-variance diagram. A hyperbola indicates the efficient frontier of portfolios that dominate the individual holdings in the sense that they deliver higher expected returns for the same level of volatility.">
 <figure class="quarto-float quarto-float-fig figure">

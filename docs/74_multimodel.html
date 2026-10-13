@@ -867,7 +867,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./70_textual.html">Alternative Data and AI for Finance</a></li><li class="breadcrumb-item"><a href="./74_multimodel.html"><span class="chapter-number">49</span>&nbsp; <span class="chapter-title">Multimodal Models in Finance</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">49</span>&nbsp; <span class="chapter-title">Multimodal Models in Finance</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">49</span>&nbsp; <span class="chapter-title">Multimodal Models in Finance</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -888,6 +888,8 @@ window.Quarto = {
 <p>The answer from the recent machine learning literature is increasingly yes, but with important caveats. Multimodal models can exploit complementarities between modalities (e.g., text describes intentions and context; images reveal physical states; tabular data provides precise quantitative snapshots; time series captures dynamics). However, the gains are not automatic. Naive concatenation of heterogeneous features often degrades performance relative to the best unimodal model, a phenomenon known as the “modality laziness” problem <span class="citation" data-cites="huang2021makes">(<a href="references.html#ref-huang2021makes" role="doc-biblioref">Huang et al. 2021</a>)</span>. Effective fusion requires architectures that align representations across modalities, handle missing modalities gracefully (not every firm-quarter has satellite imagery and an earnings call), and avoid the dominant modality drowning out weaker but complementary signals.</p>
 <p>This chapter develops the multimodal toolkit for Vietnamese financial markets across four progressively complex architectures. We begin with representation alignment (i.e., how to map different modalities into a shared embedding space). We then implement early, late, and cross-attention fusion for return prediction. We build a multimodal document understanding system that jointly processes the text, tables, and images within Vietnamese annual reports. We construct a multimodal earnings surprise model that combines pre-announcement text, satellite imagery, and financial time series. And we address the practical engineering challenges, including missing modalities, computational cost, and evaluation protocols that determine whether multimodal models work in production.</p>
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -919,6 +921,7 @@ window.Quarto = {
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotnine <span class="im">as</span> p9</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="foundations-of-multimodal-learning" class="level2" data-number="49.1">
 <h2 data-number="49.1" class="anchored" data-anchor-id="foundations-of-multimodal-learning"><span class="header-section-number">49.1</span> Foundations of Multimodal Learning</h2>
@@ -1025,6 +1028,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <li><em>Contrastive alignment</em>: Train modality encoders to produce similar representations for matched pairs (the CLIP approach of <span class="citation" data-cites="radford2021learning">Radford et al. (<a href="references.html#ref-radford2021learning" role="doc-biblioref">2021</a>)</span>).</li>
 </ul>
 <div id="load-multimodal-data" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DataCore.vn API</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCore</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataCore()</span>
@@ -1068,6 +1073,7 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Firms with financials: </span><span class="sc">{</span>financials[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Firms with report text: </span><span class="sc">{</span>report_text[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Firms with satellite data: </span><span class="sc">{</span>satellite_features[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1087,6 +1093,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 \tag{49.2}\]</span></span></p>
 <p>where <span class="math inline">\(\tau\)</span> is a learnable temperature parameter and the embeddings are <span class="math inline">\(L_2\)</span>-normalized. This is a symmetric version of the InfoNCE loss <span class="citation" data-cites="oord2018representation">(<a href="references.html#ref-oord2018representation" role="doc-biblioref">Oord, Li, and Vinyals 2018</a>)</span> that simultaneously trains the text encoder to predict the correct image and vice versa.</p>
 <div id="contrastive-alignment" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FinancialCLIP(nn.Module):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Contrastive alignment of text and image embeddings</span></span>
@@ -1139,6 +1147,7 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encode_image(<span class="va">self</span>, image_emb):</span>
 <span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> F.normalize(<span class="va">self</span>.image_proj(image_emb), dim<span class="op">=-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="projection-alignment-for-arbitrary-modalities" class="level3" data-number="49.2.3">
@@ -1156,6 +1165,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{predict}}(\hat{y}, y) + \lambda \cdot \mathcal{L}_{\text{align}}
 \tag{49.5}\]</span></span></p>
 <div id="multi-projection" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultimodalProjector(nn.Module):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Project arbitrary modalities into a shared latent space.</span></span>
@@ -1223,6 +1234,7 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>                n_pairs <span class="op">+=</span> <span class="dv">1</span></span>
 <span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> loss <span class="op">/</span> n_pairs <span class="cf">if</span> n_pairs <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1232,6 +1244,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <h3 data-number="49.3.1" class="anchored" data-anchor-id="unimodal-encoders"><span class="header-section-number">49.3.1</span> Unimodal Encoders</h3>
 <p>Before fusing modalities, we need encoders that produce fixed-dimensional representations from each raw input. We build four encoders corresponding to the primary modalities in Vietnamese equity markets.</p>
 <div id="unimodal-encoders" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TabularEncoder(nn.Module):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Encode financial statement features."""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1329,12 +1343,15 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.pool(x).squeeze(<span class="op">-</span><span class="dv">1</span>)  <span class="co"># (B, 64)</span></span>
 <span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.fc(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="early-fusion" class="level3" data-number="49.3.2">
 <h3 data-number="49.3.2" class="anchored" data-anchor-id="early-fusion"><span class="header-section-number">49.3.2</span> Early Fusion</h3>
 <p>Early fusion concatenates modality embeddings before a shared prediction head. This is the simplest approach and serves as a natural baseline.</p>
 <div id="early-fusion" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> EarlyFusionModel(nn.Module):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Concatenate modality embeddings, then predict.</span></span>
@@ -1388,12 +1405,15 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>        combined <span class="op">=</span> torch.cat(embeddings, dim<span class="op">=-</span><span class="dv">1</span>)</span>
 <span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.head(combined).squeeze(<span class="op">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="late-fusion" class="level3" data-number="49.3.3">
 <h3 data-number="49.3.3" class="anchored" data-anchor-id="late-fusion"><span class="header-section-number">49.3.3</span> Late Fusion</h3>
 <p>Late fusion trains independent models per modality and combines their predictions. The combination weights can be fixed (equal averaging), learned (linear), or adaptive (gating network).</p>
 <div id="late-fusion" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> LateFusionModel(nn.Module):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Independent prediction per modality, learned combination.</span></span>
@@ -1464,6 +1484,7 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.combination <span class="op">==</span> <span class="st">"learned"</span>:</span>
 <span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> F.softmax(<span class="va">self</span>.weights, dim<span class="op">=</span><span class="dv">0</span>).detach().cpu().numpy()</span>
 <span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="cross-attention-fusion" class="level3" data-number="49.3.4">
@@ -1475,6 +1496,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 \tag{49.6}\]</span></span></p>
 <p>where <span class="math inline">\(\mathbf{Q}^{(m)} = \mathbf{z}^{(m)} W_Q\)</span>, <span class="math inline">\(\mathbf{K}^{(m')} = \mathbf{z}^{(m')} W_K\)</span>, <span class="math inline">\(\mathbf{V}^{(m')} = \mathbf{z}^{(m')} W_V\)</span>. The output enriches modality <span class="math inline">\(m\)</span>’s representation with information from modality <span class="math inline">\(m'\)</span>.</p>
 <div id="cross-attention-fusion" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CrossAttentionBlock(nn.Module):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Single cross-attention block: query modality attends to key modality."""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1579,12 +1602,15 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>            dim<span class="op">=-</span><span class="dv">1</span></span>
 <span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.head(combined).squeeze(<span class="op">-</span><span class="dv">1</span>), all_attn_weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="comparison-experiment" class="level3" data-number="49.3.5">
 <h3 data-number="49.3.5" class="anchored" data-anchor-id="comparison-experiment"><span class="header-section-number">49.3.5</span> Comparison Experiment</h3>
 <p>We now compare the three fusion architectures against unimodal baselines on forward quarterly return prediction for Vietnamese equities.</p>
 <div id="multimodal-dataset" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultimodalFinanceDataset(Dataset):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Dataset that aligns multiple modalities per firm-quarter.</span></span>
@@ -1645,8 +1671,11 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>            result[mod] <span class="op">=</span> <span class="va">None</span></span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="prepare-aligned-data" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare aligned firm-quarter dataset</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Financial ratios (tabular)</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>tabular_features <span class="op">=</span> [</span>
@@ -1699,8 +1728,11 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: Forward quarterly returns (target)</span></span>
 <span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Align everything to quarter-end dates</span></span>
 <span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Preparing aligned multimodal dataset..."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="training-loop" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_multimodal_model(model, train_loader, val_loader,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                            n_epochs<span class="op">=</span><span class="dv">50</span>, lr<span class="op">=</span><span class="fl">1e-3</span>, patience<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                            alignment_weight<span class="op">=</span><span class="fl">0.0</span>):</span>
@@ -1809,8 +1841,11 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>        <span class="st">"best_val_r2"</span>: <span class="bu">max</span>(history[<span class="st">"val_r2"</span>]),</span>
 <span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>        <span class="st">"epochs_trained"</span>: <span class="bu">len</span>(history[<span class="st">"train_loss"</span>])</span>
 <span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="model-comparison" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compare_fusion_strategies(dataset, n_splits<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compare unimodal baselines and multimodal fusion strategies</span></span>
@@ -1906,6 +1941,7 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 <span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>        })</span>
 <span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-fusion-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1913,6 +1949,8 @@ I(\text{Returns}; \text{Text}, \text{Image}, \text{Tabular}) \geq \max\left(I(\t
 Table&nbsp;49.2: Out-of-Sample Return Prediction: Unimodal vs.&nbsp;Multimodal
 </figcaption>
 <div aria-describedby="tbl-fusion-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># results_df = compare_fusion_strategies(dataset)</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate across folds</span></span>
@@ -1927,12 +1965,15 @@ Table&nbsp;49.2: Out-of-Sample Return Prediction: Unimodal vs.&nbsp;Multimodal
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     .round(4)</span></span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># summary</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="fig-fusion-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="14">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fusion-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#     p9.ggplot(results_df, p9.aes(x="model", y="val_r2", fill="model"))</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     + p9.geom_boxplot(alpha=0.7)</span></span>
@@ -1944,6 +1985,7 @@ Table&nbsp;49.2: Out-of-Sample Return Prediction: Unimodal vs.&nbsp;Multimodal
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     + p9.theme_minimal()</span></span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#     + p9.theme(figure_size=(10, 6), legend_position="none")</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-fusion-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;49.1
@@ -2004,6 +2046,8 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <li><p><strong>Mixture of Experts (MoE).</strong> Route each observation to a fusion subnetwork specialized for its available modality combination. With <span class="math inline">\(M\)</span> modalities, there are <span class="math inline">\(2^M - 1\)</span> possible subsets, requiring efficient parameter sharing.</p></li>
 </ul>
 <div id="missing-modality-handler" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ModalityDropout(nn.Module):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Randomly drop entire modalities during training.</span></span>
@@ -2116,6 +2160,7 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine</span></span>
 <span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>        combined <span class="op">=</span> torch.cat([aggregated, presence_emb], dim<span class="op">=-</span><span class="dv">1</span>)</span>
 <span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.head(combined).squeeze(<span class="op">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2130,6 +2175,8 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 \tag{49.7}\]</span></span></p>
 <p>where <span class="math inline">\(\mathbf{I}\)</span> is the page image, <span class="math inline">\(\mathbf{T}\)</span> is the OCR text, and <span class="math inline">\(\mathbf{L}\)</span> is the spatial layout (bounding boxes). The joint representation <span class="math inline">\(\mathbf{h}\)</span> captures both what is written and where it appears on the page.</p>
 <div id="multimodal-document" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultimodalDocumentEncoder(nn.Module):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Joint encoder for Vietnamese annual report pages.</span></span>
@@ -2221,12 +2268,15 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return [CLS] representation</span></span>
 <span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output[:, <span class="dv">0</span>, :]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="extracting-structured-financials-from-multimodal-reports" class="level3" data-number="49.5.2">
 <h3 data-number="49.5.2" class="anchored" data-anchor-id="extracting-structured-financials-from-multimodal-reports"><span class="header-section-number">49.5.2</span> Extracting Structured Financials from Multimodal Reports</h3>
 <p>With the document encoder, we can build extraction heads for specific financial fields. The key advantage over the OCR-only pipeline in previous chapter is that the multimodal encoder can resolve ambiguities using visual context (e.g., a number’s meaning depends on where it appears on the page and what headers and labels surround it).</p>
 <div id="financial-extraction-head" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FinancialFieldExtractor(nn.Module):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Extract specific financial fields from a document embedding.</span></span>
@@ -2275,6 +2325,7 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>            results[field] <span class="op">=</span> {<span class="st">"value"</span>: value, <span class="st">"confidence"</span>: conf}</span>
 <span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2296,6 +2347,8 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 \tag{49.8}\]</span></span></p>
 <p>where <span class="math inline">\(E_{i,q}\)</span> is actual earnings per share, <span class="math inline">\(\hat{E}_{i,q}\)</span> is the consensus forecast (or seasonal random walk forecast if analyst coverage is absent), and <span class="math inline">\(\sigma_{i,q}\)</span> is the standard deviation of forecast errors.</p>
 <div id="earnings-surprise-data" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct earnings surprise dataset</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>earnings <span class="op">=</span> dc.get_earnings_announcements(</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2016-01-01"</span>,</span>
@@ -2328,8 +2381,11 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Earnings announcements: </span><span class="sc">{</span><span class="bu">len</span>(earnings)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"With text features: </span><span class="sc">{</span><span class="bu">len</span>(pre_ann_text)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="earnings-model" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultimodalEarningsSurpriseModel(nn.Module):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Predict standardized unexpected earnings (SUE) from</span></span>
@@ -2422,12 +2478,15 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>        combined <span class="op">=</span> torch.cat([aggregated, disagreement], dim<span class="op">=-</span><span class="dv">1</span>)</span>
 <span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.head(combined).squeeze(<span class="op">-</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="modality-importance-analysis" class="level3" data-number="49.6.2">
 <h3 data-number="49.6.2" class="anchored" data-anchor-id="modality-importance-analysis"><span class="header-section-number">49.6.2</span> Modality Importance Analysis</h3>
 <p>A key interpretability question is: which modality contributes most to earnings surprise prediction? We analyze the learned importance weights and conduct ablation experiments.</p>
 <div id="modality-importance" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ablation_study(model, test_loader, modality_names):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Measure each modality's contribution via leave-one-out ablation.</span></span>
@@ -2482,6 +2541,7 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 <span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>        })</span>
 <span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-ablation" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2489,14 +2549,19 @@ Table&nbsp;49.3: Modality Availability in Vietnamese Market Data
 Table&nbsp;49.4: Modality Ablation Study: Contribution to Earnings Surprise Prediction
 </figcaption>
 <div aria-describedby="tbl-ablation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ablation_df = ablation_study(model, test_loader, modality_names)</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ablation_df.round(4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="fig-modality-importance" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-modality-importance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Track importance weights during training</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># importance_history = pd.DataFrame(...)</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2516,6 +2581,7 @@ Table&nbsp;49.4: Modality Ablation Study: Contribution to Earnings Surprise Pred
 <span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     + p9.theme_minimal()</span></span>
 <span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     + p9.theme(figure_size=(10, 5))</span></span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-modality-importance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;49.2
@@ -2537,6 +2603,8 @@ Figure&nbsp;49.2
 <li>Compare current and historical aerial views for change detection</li>
 </ul>
 <div id="vlm-financial-prompting" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vlm_financial_qa(image_path, question, context<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Financial question-answering using a vision-language model.</span></span>
@@ -2625,6 +2693,7 @@ Figure&nbsp;49.2
 <span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cleared land, or infrastructure changes."</span></span>
 <span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="retrieval-augmented-multimodal-analysis" class="level3" data-number="49.7.2">
@@ -2638,6 +2707,8 @@ Figure&nbsp;49.2
 <li><strong>Answer</strong>: Generate a structured response with confidence scores and supporting evidence</li>
 </ol>
 <div id="rag-multimodal" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MultimodalRAG:</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Retrieval-Augmented Generation with multimodal evidence.</span></span>
@@ -2733,6 +2804,7 @@ Figure&nbsp;49.2
 <span id="cb24-93"><a href="#cb24-93" aria-hidden="true" tabindex="-1"></a>            }</span>
 <span id="cb24-94"><a href="#cb24-94" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-95"><a href="#cb24-95" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> analysis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>

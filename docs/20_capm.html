@@ -886,7 +886,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./20_capm.html">Asset Pricing Models and Cross-Sectional Tests</a></li><li class="breadcrumb-item"><a href="./20_capm.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">The Capital Asset Pricing Model</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">The Capital Asset Pricing Model</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">The Capital Asset Pricing Model</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -910,6 +910,8 @@ window.Quarto = {
 <p>The CAPM remains the cornerstone of asset pricing theory, not because it perfectly describes reality, but because it provides the simplest coherent framework for understanding the relationship between risk and expected return. Every extension and alternative model in asset pricing (e.g., from the Fama-French factors to consumption-based pricing) builds upon or reacts against the CAPM’s foundational logic.</p>
 <p>In this chapter, we derive the CAPM from first principles, illustrate its theoretical underpinnings, and show how to estimate its parameters empirically. We download stock market data, estimate betas using regression analysis, and evaluate asset performance relative to model predictions.</p>
 <div id="a5833ec8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tidyfinance <span class="im">as</span> tf</span>
@@ -917,6 +919,7 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adjustText <span class="im">import</span> adjust_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="systematic-versus-idiosyncratic-risk" class="level2" data-number="16.2">
@@ -943,13 +946,18 @@ window.Quarto = {
 <h2 data-number="16.3" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">16.3</span> Data Preparation</h2>
 <p>Building on our analysis from the previous chapter, we examine the VN30 constituents as our asset universe. We download and prepare monthly return data:</p>
 <div id="5c0b92e9" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>vn30_symbols <span class="op">=</span> [</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>, <span class="st">"BCM"</span>, <span class="st">"BID"</span>, <span class="st">"BVH"</span>, <span class="st">"CTG"</span>, <span class="st">"FPT"</span>, <span class="st">"GAS"</span>, <span class="st">"GVR"</span>, <span class="st">"HDB"</span>, <span class="st">"HPG"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>, <span class="st">"MSN"</span>, <span class="st">"MWG"</span>, <span class="st">"PLX"</span>, <span class="st">"POW"</span>, <span class="st">"SAB"</span>, <span class="st">"SHB"</span>, <span class="st">"SSB"</span>, <span class="st">"STB"</span>, <span class="st">"TCB"</span>,</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"TPB"</span>, <span class="st">"VCB"</span>, <span class="st">"VHM"</span>, <span class="st">"VIB"</span>, <span class="st">"VIC"</span>, <span class="st">"VJC"</span>, <span class="st">"VNM"</span>, <span class="st">"VPB"</span>, <span class="st">"VRE"</span>, <span class="st">"EIB"</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="44a29758" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> boto3</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> botocore.client <span class="im">import</span> Config</span>
@@ -993,6 +1001,7 @@ window.Quarto = {
 <span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    low_memory<span class="op">=</span><span class="va">False</span></span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Connected. Buckets:
  - dsteam-data
@@ -1001,6 +1010,8 @@ window.Quarto = {
 </div>
 <p>We process the raw price data to compute adjusted closing prices and standardize column names:</p>
 <div id="14298453" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(prices[<span class="st">"date"</span>])</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"adjusted_close"</span>] <span class="op">=</span> prices[<span class="st">"close_price"</span>] <span class="op">*</span> prices[<span class="st">"adj_ratio"</span>]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.rename(columns<span class="op">=</span>{</span>
@@ -1011,10 +1022,14 @@ window.Quarto = {
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"close_price"</span>: <span class="st">"close"</span></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="52acbc1f" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> prices[prices[<span class="st">"symbol"</span>].isin(vn30_symbols)]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>prices_daily[[<span class="st">"date"</span>, <span class="st">"symbol"</span>, <span class="st">"adjusted_close"</span>]].head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="5">
 <div>
 
@@ -1057,6 +1072,8 @@ window.Quarto = {
 <h3 data-number="16.3.1" class="anchored" data-anchor-id="computing-monthly-returns"><span class="header-section-number">16.3.1</span> Computing Monthly Returns</h3>
 <p>We aggregate daily prices to monthly frequency. Using monthly returns rather than daily returns offers several advantages for portfolio analysis: monthly returns exhibit less noise, better approximate normality, and reduce the impact of microstructure effects like bid-ask bounce.</p>
 <div id="33fe1aef" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>returns_monthly <span class="op">=</span> (prices_daily</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        date<span class="op">=</span>prices_daily[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>).dt.to_timestamp(<span class="st">"M"</span>)</span>
@@ -1070,6 +1087,7 @@ window.Quarto = {
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>returns_monthly.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <div>
 
@@ -1146,6 +1164,8 @@ window.Quarto = {
 <h3 data-number="16.4.4" class="anchored" data-anchor-id="setting-up-the-risk-free-rate"><span class="header-section-number">16.4.4</span> Setting Up the Risk-Free Rate</h3>
 <p>For a realistic proxy of the risk-free rate, we use the Vietnam government bond yield. Government bonds of stable economies are considered “risk-free” because the government can always print money to meet its obligations (though this may cause inflation).</p>
 <div id="819fa1d9" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>all_dates <span class="op">=</span> pd.date_range(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    start<span class="op">=</span>returns_monthly[<span class="st">"date"</span>].<span class="bu">min</span>(), </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    end<span class="op">=</span>returns_monthly[<span class="st">"date"</span>].<span class="bu">max</span>(), </span>
@@ -1168,6 +1188,7 @@ window.Quarto = {
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>risk_free_monthly.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
 
@@ -1204,6 +1225,8 @@ window.Quarto = {
 </div>
 <p>We merge the risk-free rate with our returns data and compute excess returns:</p>
 <div id="614915fe" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>returns_monthly <span class="op">=</span> returns_monthly.merge(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    risk_free_monthly[[<span class="st">"date"</span>, <span class="st">"risk_free"</span>]], </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"date"</span>, </span>
@@ -1222,6 +1245,7 @@ window.Quarto = {
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>returns_monthly.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
@@ -1328,6 +1352,8 @@ window.Quarto = {
 <h3 data-number="16.5.4" class="anchored" data-anchor-id="computing-the-tangency-portfolio"><span class="header-section-number">16.5.4</span> Computing the Tangency Portfolio</h3>
 <p>Let’s compute the tangency portfolio for our VN30 universe:</p>
 <div id="c2f10f19" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>assets <span class="op">=</span> (returns_monthly</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"symbol"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -1346,8 +1372,11 @@ window.Quarto = {
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    .mean()</span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    .values</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="dad04a79" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute tangency portfolio weights</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>w_tan <span class="op">=</span> np.linalg.solve(sigma, mu <span class="op">-</span> rf)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>w_tan <span class="op">=</span> w_tan <span class="op">/</span> np.<span class="bu">sum</span>(w_tan)</span>
@@ -1365,6 +1394,7 @@ window.Quarto = {
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Tangency Portfolio Sharpe Ratio: </span><span class="sc">{</span>sharpe_ratio<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(efficient_portfolios)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tangency Portfolio Sharpe Ratio: -0.5552
                     symbol        mu     sigma
@@ -1377,6 +1407,8 @@ window.Quarto = {
 <h3 data-number="16.5.5" class="anchored" data-anchor-id="visualizing-the-efficient-frontier-with-a-risk-free-asset"><span class="header-section-number">16.5.5</span> Visualizing the Efficient Frontier with a Risk-Free Asset</h3>
 <p><a href="#fig-300" class="quarto-xref">Figure&nbsp;<span>16.1</span></a> shows the efficient frontier when a risk-free asset is available. The frontier is now a straight line (the Capital Market Line) connecting the risk-free asset to the tangency portfolio and extending beyond.</p>
 <div id="cell-fig-300" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>efficient_portfolios_figure <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    ggplot(efficient_portfolios, aes(x<span class="op">=</span><span class="st">"sigma"</span>, y<span class="op">=</span><span class="st">"mu"</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point(data<span class="op">=</span>assets)</span>
@@ -1396,6 +1428,7 @@ window.Quarto = {
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>efficient_portfolios_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-300" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: The efficient frontier with a risk-free asset and VN30 index constituents. The figure shows a scatter plot with volatilities on the horizontal axis and expected returns on the vertical axis. A dotted line represents the Capital Market Line.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1486,6 +1519,8 @@ E(r_i) = r_f + \beta_i [E(r_m) - r_f]
 \]</span></p>
 <p>Unlike the Capital Market Line (which plots expected return against total risk), the Security Market Line plots expected return against systematic risk (beta).</p>
 <div id="c79a1fd1" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>betas <span class="op">=</span> (sigma <span class="op">@</span> w_tan) <span class="op">/</span> (w_tan.T <span class="op">@</span> sigma <span class="op">@</span> w_tan)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>assets[<span class="st">"beta"</span>] <span class="op">=</span> betas.values</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1505,6 +1540,7 @@ E(r_i) = r_f + \beta_i [E(r_m) - r_f]
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>assets_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1548,6 +1584,8 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <h3 data-number="16.8.3" class="anchored" data-anchor-id="loading-factor-data"><span class="header-section-number">16.8.3</span> Loading Factor Data</h3>
 <p>We use Fama-French market excess returns as our market portfolio proxy. These data provide a widely accepted benchmark that is already adjusted for the risk-free rate:</p>
 <div id="12551acf" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span>
@@ -1559,6 +1597,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>factors.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div>
 
@@ -1614,6 +1653,8 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <h3 data-number="16.8.4" class="anchored" data-anchor-id="running-the-regressions"><span class="header-section-number">16.8.4</span> Running the Regressions</h3>
 <p>We estimate CAPM regressions for each stock in our universe:</p>
 <div id="46c37e6a" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>returns_excess_monthly <span class="op">=</span> (returns_monthly</span>
@@ -1639,6 +1680,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>capm_results.head(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <div>
 
@@ -1698,6 +1740,8 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <h3 data-number="16.8.5" class="anchored" data-anchor-id="visualizing-alpha-estimates"><span class="header-section-number">16.8.5</span> Visualizing Alpha Estimates</h3>
 <p><a href="#fig-305" class="quarto-xref">Figure&nbsp;<span>16.2</span></a> shows the estimated alphas across our VN30 sample. Statistical significance (at the 95% level) is indicated by color.</p>
 <div id="cell-fig-305" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>alphas <span class="op">=</span> (capm_results</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"coefficient == 'alpha'"</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    .assign(is_significant<span class="op">=</span><span class="kw">lambda</span> x: np.<span class="bu">abs</span>(x[<span class="st">"t_statistic"</span>]) <span class="op">&gt;=</span> <span class="fl">1.96</span>)</span>
@@ -1723,6 +1767,7 @@ r_{i,t} - r_{f,t} = \alpha_i + \beta_i(r_{m,t} - r_{f,t}) + \varepsilon_{i,t}
 <span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>alphas_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-305" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Estimated CAPM alphas for VN30 index constituents. The figure shows a bar chart with estimated alphas and indicates whether each estimate is statistically significant at 95%.">
 <figure class="quarto-float quarto-float-fig figure">

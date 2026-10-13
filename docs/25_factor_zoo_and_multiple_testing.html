@@ -864,7 +864,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./20_capm.html">Asset Pricing Models and Cross-Sectional Tests</a></li><li class="breadcrumb-item"><a href="./25_factor_zoo_and_multiple_testing.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Factor Zoo and Multiple Testing</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Factor Zoo and Multiple Testing</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Factor Zoo and Multiple Testing</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -905,6 +905,8 @@ Note
 <p>The key insight is that the number of factors <em>tested</em> far exceeds the number <em>published</em>. For every published factor with <span class="math inline">\(t &gt; 2\)</span>, there may be dozens of unpublished tests with <span class="math inline">\(t &lt; 2\)</span> that never saw print, which is the classic file drawer problem. The true number of tests conducted collectively by the profession is unknowable, but certainly in the thousands.</p>
 <p>The coun(<span class="math inline">\(|t| &gt; 1.96\)</span> under both definitions) of <em>signals</em> also understates the problem, because each signal can be measured in many defensible ways. <span class="citation" data-cites="binsbergen2026factor">Binsbergen, Ma, and Schwert (<a href="references.html#ref-binsbergen2026factor" role="doc-biblioref">2026</a>)</span> make this point starkly. They keep the sorting variables fixed but change one seemingly innocuous convention: instead of subtracting a one-month T-bill rate, they subtract the return on a duration-matched portfolio of zero-coupon government bonds, so that a factor is judged against a fixed cash-flow counterfactual of the same maturity rather than against cash. Re-running 153 published anomalies over their original sample periods, they find that 66 are robust (<span class="math inline">\(|t| &gt; 1.96\)</span> under both definitions) while 20 flip status, with roughly 0.30 false discoveries per true discovery. Extending the exercise to 1,395 hypothetical sorts built from Compustat ratios, the ratio of false to true discoveries rises to about 1.0 and is stable across rolling windows. Even the market factor is affected: its duration-adjusted counterpart has a correlation below 0.5 with the conventional market excess return, and the equity premium is no longer statistically distinguishable from zero. The mechanism is the four-decade secular decline in interest rates, which handed a mechanical windfall to long-duration legs of long-short portfolios. Their result is not a claim that the traditional definition is wrong, but that the discovery process is sensitive to a choice most papers never report, which is exactly the “multiverse” of researcher degrees of freedom that multiple-testing corrections do not capture.</p>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -923,8 +925,11 @@ Note
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="data-load" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load returns and characteristics panel</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -963,6 +968,7 @@ Note
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly returns: </span><span class="sc">{</span><span class="bu">len</span>(monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Characteristics: </span><span class="sc">{</span>characteristics<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Available signals: </span><span class="sc">{</span>[c <span class="cf">for</span> c <span class="kw">in</span> characteristics.columns <span class="cf">if</span> c <span class="kw">not</span> <span class="kw">in</span> [<span class="st">'ticker'</span>, <span class="st">'month_end'</span>]]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -972,6 +978,8 @@ Note
 <h3 data-number="21.2.1" class="anchored" data-anchor-id="signal-definitions"><span class="header-section-number">21.2.1</span> Signal Definitions</h3>
 <p>We construct a comprehensive set of anomaly variables spanning the major categories from the literature. Each signal is lagged appropriately to avoid look-ahead bias (accounting signals use point-in-time alignment; price signals use the prior month’s value).</p>
 <div id="signal-construction" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Construct the full set of anomaly signals</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge returns with characteristics</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>panel <span class="op">=</span> monthly.merge(characteristics, on<span class="op">=</span>[<span class="st">'ticker'</span>, <span class="st">'month_end'</span>], how<span class="op">=</span><span class="st">'left'</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>panel <span class="op">=</span> panel.sort_values([<span class="st">'ticker'</span>, <span class="st">'month_end'</span>])</span>
@@ -1071,12 +1079,15 @@ Note
 <span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>]:</span>
 <span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>    n_valid <span class="op">=</span> <span class="bu">sum</span>(<span class="dv">1</span> <span class="cf">for</span> s <span class="kw">in</span> sigs <span class="cf">if</span> s <span class="kw">in</span> valid_signals)</span>
 <span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>cat_name<span class="sc">:&lt;15}</span><span class="ss">: </span><span class="sc">{</span>n_valid<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="bu">len</span>(sigs)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="mass-factor-construction" class="level3" data-number="21.2.2">
 <h3 data-number="21.2.2" class="anchored" data-anchor-id="mass-factor-construction"><span class="header-section-number">21.2.2</span> Mass Factor Construction</h3>
 <p>We run the factor construction engine (from the previous chapter) across all valid signals to produce a “zoo” of factor returns:</p>
 <div id="mass-construction" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Construct long-short portfolios for every valid signal</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the factor engine from previous chapter</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (In practice, this would be imported from a shared module)</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1205,10 +1216,13 @@ Note
 <span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>(zoo_df[<span class="st">'abs_t'</span>] <span class="op">&gt;</span> <span class="fl">2.0</span>)<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">)"</span>)</span>
 <span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Factors with |t| &gt; 3.0: </span><span class="sc">{</span>(zoo_df[<span class="st">'abs_t'</span>] <span class="op">&gt;</span> <span class="fl">3.0</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> "</span></span>
 <span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>(zoo_df[<span class="st">'abs_t'</span>] <span class="op">&gt;</span> <span class="fl">3.0</span>)<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-t-stat-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-t-stat-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize the distribution of t-statistics across all anomalies</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">6</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Histogram</span></span>
@@ -1264,6 +1278,7 @@ Note
 <span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-t-stat-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.1
@@ -1292,6 +1307,8 @@ P(\text{at least one false discovery}) = 1 - (1 - \alpha)^M
 <div id="fig-error-rates" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-error-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize how error rates scale with number of tests</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>M_range <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">301</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1321,6 +1338,7 @@ P(\text{at least one false discovery}) = 1 - (1 - \alpha)^M
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-error-rates-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.2
@@ -1339,6 +1357,8 @@ Figure&nbsp;21.2
 \tag{21.2}\]</span></span></p>
 <p>This controls FWER at <span class="math inline">\(\alpha\)</span> regardless of the dependence structure among tests. The cost is severe loss of power: for <span class="math inline">\(M = 50\)</span> tests at <span class="math inline">\(\alpha = 0.05\)</span>, the per-test threshold becomes <span class="math inline">\(0.001\)</span>, requiring <span class="math inline">\(|t| &gt; 3.29\)</span>.</p>
 <div id="bonferroni" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Apply Bonferroni correction to the anomaly zoo</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> <span class="bu">len</span>(zoo_df)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="op">=</span> <span class="fl">0.05</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1358,6 +1378,7 @@ Figure&nbsp;21.2
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(survivors[[<span class="st">'ann_return'</span>, <span class="st">'t_stat'</span>, <span class="st">'category'</span>]].to_string())</span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"  None survive Bonferroni correction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="holm-step-down-procedure-fwer-control" class="level3" data-number="21.4.2">
@@ -1369,6 +1390,8 @@ Figure&nbsp;21.2
 <li>Stop at the first <span class="math inline">\(i\)</span> where <span class="math inline">\(H_{0,(i)}\)</span> is not rejected</li>
 </ol>
 <div id="holm" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Apply the Holm step-down procedure</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>p_values <span class="op">=</span> zoo_df[<span class="st">'p_value'</span>].values</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>signal_names <span class="op">=</span> zoo_df.index.values</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1386,6 +1409,7 @@ Figure&nbsp;21.2
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Surviving anomalies (Holm):"</span>)</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(holm_survivors[[<span class="st">'ann_return'</span>, <span class="st">'t_stat'</span>, <span class="st">'holm_p_corrected'</span>,</span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'category'</span>]].to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="benjamini-hochberg-procedure-fdr-control" class="level3" data-number="21.4.3">
@@ -1398,6 +1422,8 @@ Figure&nbsp;21.2
 </ol>
 <p>The BH procedure is valid under independence or positive dependence (PRDS), a condition that is generally satisfied for financial factor tests where factors tend to be positively correlated under the null.</p>
 <div id="bh-fdr" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Apply the Benjamini-Hochberg FDR procedure</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BH procedure at q = 0.05 (expect 5% false discoveries)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>reject_bh, pvals_corrected_bh, _, _ <span class="op">=</span> multipletests(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    p_values, alpha<span class="op">=</span><span class="fl">0.05</span>, method<span class="op">=</span><span class="st">'fdr_bh'</span></span>
@@ -1420,10 +1446,13 @@ Figure&nbsp;21.2
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Surviving anomalies (BH, q=0.05):"</span>)</span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(bh_survivors[[<span class="st">'ann_return'</span>, <span class="st">'t_stat'</span>, <span class="st">'bh_p_corrected'</span>,</span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'category'</span>]].head(<span class="dv">20</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-bh-procedure" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bh-procedure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot the BH procedure graphically</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sorted_pvals <span class="op">=</span> np.sort(p_values)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> np.arange(<span class="dv">1</span>, M <span class="op">+</span> <span class="dv">1</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>bh_line_05 <span class="op">=</span> k <span class="op">/</span> M <span class="op">*</span> <span class="fl">0.05</span></span>
@@ -1453,6 +1482,7 @@ Figure&nbsp;21.2
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-bh-procedure-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.3
@@ -1471,6 +1501,8 @@ Figure&nbsp;21.3
 </ul>
 <p>The logic is that even if <em>your</em> study tests only one factor, the fact that hundreds of researchers have tested hundreds of signals before you means the prior probability that your specific signal is a true predictor is low.</p>
 <div id="hlz-threshold" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Apply the Harvey-Liu-Zhu t-statistic thresholds</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hlz_thresholds <span class="op">=</span> {</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Conventional (|t| &gt; 2.0)'</span>: <span class="fl">2.0</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'HLZ 100 tests (|t| &gt; 2.8)'</span>: <span class="fl">2.8</span>,</span>
@@ -1486,6 +1518,7 @@ Figure&nbsp;21.3
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    n_survive <span class="op">=</span> (zoo_df[<span class="st">'abs_t'</span>] <span class="op">&gt;</span> thresh).<span class="bu">sum</span>()</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    pct <span class="op">=</span> n_survive <span class="op">/</span> <span class="bu">len</span>(zoo_df) <span class="op">*</span> <span class="dv">100</span></span>
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;35}</span><span class="ss"> </span><span class="sc">{</span>n_survive<span class="sc">:&gt;10}</span><span class="ss"> </span><span class="sc">{</span>pct<span class="sc">:&gt;10.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1494,6 +1527,8 @@ Figure&nbsp;21.3
 <div id="fig-correction-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-correction-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compare all correction methods side by side</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>comparison <span class="op">=</span> {</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Unadjusted (|t| &gt; 2)'</span>: (zoo_df[<span class="st">'abs_t'</span>] <span class="op">&gt;</span> <span class="fl">2.0</span>).<span class="bu">sum</span>(),</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Bonferroni'</span>: zoo_df[<span class="st">'bonf_reject'</span>].<span class="bu">sum</span>(),</span>
@@ -1524,6 +1559,7 @@ Figure&nbsp;21.3
 <span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>ax.invert_yaxis()</span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-correction-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.4
@@ -1533,6 +1569,8 @@ Figure&nbsp;21.4
 <div id="fig-survival-by-category" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-survival-by-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot survival rates by anomaly category</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cat_survival <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    zoo_df.groupby(<span class="st">'category'</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -1570,6 +1608,7 @@ Figure&nbsp;21.4
 <span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-survival-by-category-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.5
@@ -1590,6 +1629,8 @@ Figure&nbsp;21.5
 \widehat{\text{FDP}}(t^*) = \frac{\hat{\pi}_0 \cdot M \cdot P(|t| &gt; t^* | H_0)}{\#\{|t_i| &gt; t^*\}}
 \tag{21.4}\]</span></span></p>
 <div id="storey-pi0" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Estimate the proportion of true nulls using Storey’s method</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_pi0(p_values, lambdas<span class="op">=</span>np.arange(<span class="fl">0.05</span>, <span class="fl">0.95</span>, <span class="fl">0.05</span>)):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate pi_0 (proportion of true nulls) using Storey (2003).</span></span>
@@ -1617,10 +1658,13 @@ Figure&nbsp;21.5
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Implied proportion of true factors: </span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> pi0_hat<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated number of true factors: </span><span class="sc">{</span>(<span class="dv">1</span> <span class="op">-</span> pi0_hat) <span class="op">*</span> <span class="bu">len</span>(zoo_df)<span class="sc">:.0f}</span><span class="ss"> "</span></span>
 <span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"out of </span><span class="sc">{</span><span class="bu">len</span>(zoo_df)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-pvalue-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pvalue-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot p-value distribution and pi_0 estimation</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: p-value histogram</span></span>
@@ -1648,6 +1692,7 @@ Figure&nbsp;21.5
 <span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-pvalue-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.6
@@ -1661,6 +1706,8 @@ Figure&nbsp;21.6
 <div id="fig-fdp-curve" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="16">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-fdp-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compute and plot the FDP curve</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>t_thresholds <span class="op">=</span> np.arange(<span class="fl">1.0</span>, <span class="fl">5.01</span>, <span class="fl">0.1</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fdp_curve <span class="op">=</span> []</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1709,6 +1756,7 @@ Figure&nbsp;21.6
 <span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-fdp-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.7
@@ -1729,6 +1777,8 @@ Figure&nbsp;21.7
 <li>The p-value for factor <span class="math inline">\(i\)</span> is the proportion of bootstrap samples in which the maximum t-statistic across all factors exceeds the observed t-statistic of factor <span class="math inline">\(i\)</span>.</li>
 </ol>
 <div id="bootstrap-rc" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Implement White’s Reality Check via block bootstrap</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> white_reality_check(factor_returns_dict, n_bootstrap<span class="op">=</span><span class="dv">1000</span>,</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                          block_size<span class="op">=</span><span class="dv">6</span>, seed<span class="op">=</span><span class="dv">42</span>):</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1825,10 +1875,13 @@ Figure&nbsp;21.7
 <span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(boot_results.head(<span class="dv">20</span>).<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span>
 <span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Factors surviving (boot p &lt; 0.05): "</span></span>
 <span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>(boot_results[<span class="st">'boot_pval'</span>] <span class="op">&lt;</span> <span class="fl">0.05</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-bootstrap-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bootstrap-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot the bootstrap null distribution</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ax.hist(max_t_dist, bins<span class="op">=</span><span class="dv">40</span>, density<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'#BDC3C7'</span>,</span>
@@ -1852,6 +1905,7 @@ Figure&nbsp;21.7
 <span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">8</span>, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-bootstrap-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.8
@@ -1863,6 +1917,8 @@ Figure&nbsp;21.8
 <h3 data-number="21.7.2" class="anchored" data-anchor-id="romano-wolf-step-down-bootstrap"><span class="header-section-number">21.7.2</span> Romano-Wolf Step-Down Bootstrap</h3>
 <p>The <span class="citation" data-cites="romano2005exact">Romano and Wolf (<a href="references.html#ref-romano2005exact" role="doc-biblioref">2005</a>)</span> step-down procedure improves on the White Reality Check by iteratively removing rejected hypotheses and re-testing the remaining ones, gaining power at each step:</p>
 <div id="romano-wolf" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Implement the Romano-Wolf step-down bootstrap procedure</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> romano_wolf_stepdown(factor_returns_dict, n_bootstrap<span class="op">=</span><span class="dv">1000</span>,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                           block_size<span class="op">=</span><span class="dv">6</span>, alpha<span class="op">=</span><span class="fl">0.05</span>, seed<span class="op">=</span><span class="dv">42</span>):</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1953,6 +2009,7 @@ Figure&nbsp;21.8
 <span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Romano-Wolf rejections: </span><span class="sc">{</span>rw_results[<span class="st">'rejected'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> / </span><span class="sc">{</span><span class="bu">len</span>(rw_results)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Rejected factors:"</span>)</span>
 <span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rw_results[rw_results[<span class="st">'rejected'</span>]][[<span class="st">'factor'</span>, <span class="st">'t_stat'</span>]].to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1962,6 +2019,8 @@ Figure&nbsp;21.8
 <h3 data-number="21.8.1" class="anchored" data-anchor-id="pre-publication-vs.-post-publication-decay"><span class="header-section-number">21.8.1</span> Pre-Publication vs.&nbsp;Post-Publication Decay</h3>
 <p><span class="citation" data-cites="mclean2016does">McLean and Pontiff (<a href="references.html#ref-mclean2016does" role="doc-biblioref">2016</a>)</span> find that anomaly returns decline by 32% after publication in the U.S. market, suggesting that roughly one-third of the premium was due to mispricing that was corrected by informed trading. For Vietnam, we use a time-series split as a proxy for out-of-sample testing:</p>
 <div id="oos-split" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Compare factor premia in-sample vs out-of-sample</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split at midpoint of available data</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>all_dates <span class="op">=</span> <span class="bu">sorted</span>(panel[<span class="st">'month_end'</span>].unique())</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>mid_date <span class="op">=</span> all_dates[<span class="bu">len</span>(all_dates) <span class="op">//</span> <span class="dv">2</span>]</span>
@@ -2000,10 +2059,13 @@ Figure&nbsp;21.8
 <span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Factors with same sign IS and OOS: "</span></span>
 <span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>oos_df[<span class="st">'same_sign'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
 <span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average OOS decay: </span><span class="sc">{</span>oos_df[<span class="st">'decay_pct'</span>]<span class="sc">.</span>median()<span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-is-oos" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-is-oos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Scatter in-sample vs out-of-sample returns</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Scatter</span></span>
@@ -2050,6 +2112,7 @@ Figure&nbsp;21.8
 <span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-is-oos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.9
@@ -2064,6 +2127,8 @@ Figure&nbsp;21.9
 <h3 data-number="21.9.1" class="anchored" data-anchor-id="a-multi-hurdle-filter"><span class="header-section-number">21.9.1</span> A Multi-Hurdle Filter</h3>
 <p>We now combine all the evidence, including multiple testing corrections, out-of-sample performance, and economic plausibility, to identify the factors that deserve credence in the Vietnamese market.</p>
 <div id="multi-hurdle" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Apply a multi-hurdle filter to identify robust factors</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge all test results</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>final <span class="op">=</span> zoo_df.copy()</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2113,10 +2178,13 @@ Figure&nbsp;21.9
 <span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'oos_return'</span>, <span class="st">'oos_t'</span>, <span class="st">'n_hurdles'</span>, <span class="st">'category'</span>]</span>
 <span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>    available_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> display_cols <span class="cf">if</span> c <span class="kw">in</span> robust_factors.columns]</span>
 <span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(robust_factors[available_cols].<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-hurdle-heatmap" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="23">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hurdle-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Heatmap of multi-hurdle results</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>top25 <span class="op">=</span> final.sort_values(<span class="st">'abs_t'</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">25</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
@@ -2142,6 +2210,7 @@ Figure&nbsp;21.9
 <span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Multi-Hurdle Test Results (Top 25 Anomalies)'</span>)</span>
 <span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-hurdle-heatmap-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;21.10

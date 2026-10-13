@@ -864,7 +864,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./50_institutional_ownership.html">Ownership, Market Frictions, and International Exposure</a></li><li class="breadcrumb-item"><a href="./55_price_limits_and_volatility.html"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Price Limits and Volatility</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Price Limits and Volatility</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Price Limits and Volatility</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -902,6 +902,8 @@ Note
 <section id="institutional-details" class="level3" data-number="38.1.1">
 <h3 data-number="38.1.1" class="anchored" data-anchor-id="institutional-details"><span class="header-section-number">38.1.1</span> Institutional Details</h3>
 <div id="setup" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -919,6 +921,7 @@ Note
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The price limit structure has evolved over time. HOSE began trading in July 2000 with a <span class="math inline">\(\pm\)</span> 2% limit, which was widened to <span class="math inline">\(\pm\)</span> 5% in 2002 and to <span class="math inline">\(\pm\)</span> 7% in 2013. HNX has operated at <span class="math inline">\(\pm\)</span> 10% since its current form, and UPCoM at <span class="math inline">\(\pm\)</span> 15% <a href="#tbl-price-limit-limits" class="quarto-xref">Table&nbsp;<span>38.1</span></a>. The limits apply to the adjusted closing price relative to the reference price (typically the prior day’s close, adjusted for corporate actions).</p>
 <div id="tbl-price-limit-limits" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -968,6 +971,8 @@ Table&nbsp;38.1: Vietnamese daily price limit regime by exchange.
 </div>
 <p>Importantly, the limits are <em>asymmetric in practice</em>: they apply equally to up and down moves, but the economic consequences differ. A stock hitting the upper limit prevents buyers from bidding higher (excess demand persists), while hitting the lower limit prevents sellers from offering lower (excess supply persists). Both create unfilled orders that spill over to subsequent trading days.</p>
 <div id="data-load" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Load daily price data with limit hit indicators</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1005,6 +1010,7 @@ Table&nbsp;38.1: Vietnamese daily price limit regime by exchange.
 <span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily observations: </span><span class="sc">{</span><span class="bu">len</span>(daily)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date range: </span><span class="sc">{</span>daily[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>daily[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique tickers: </span><span class="sc">{</span>daily[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1014,6 +1020,8 @@ Table&nbsp;38.1: Vietnamese daily price limit regime by exchange.
 <h3 data-number="38.2.1" class="anchored" data-anchor-id="aggregate-frequency"><span class="header-section-number">38.2.1</span> Aggregate Frequency</h3>
 <p>How often do Vietnamese stocks hit their price limits? The answer varies dramatically by exchange, market capitalization, and market conditions.</p>
 <div id="limit-frequency" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Compute limit hit frequencies by exchange and over time</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Overall frequencies</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>limit_stats <span class="op">=</span> daily.groupby(<span class="st">'exchange'</span>).agg(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    n_obs<span class="op">=</span>(<span class="st">'daily_return'</span>, <span class="st">'count'</span>),</span>
@@ -1045,10 +1053,13 @@ Table&nbsp;38.1: Vietnamese daily price limit regime by exchange.
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>monthly_limit[<span class="st">'date'</span>] <span class="op">=</span> monthly_limit[<span class="st">'year_month'</span>].dt.to_timestamp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-limit-timeseries" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-limit-timeseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot limit hit frequency over time</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>), sharex<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                          gridspec_kw<span class="op">=</span>{<span class="st">'height_ratios'</span>: [<span class="dv">3</span>, <span class="dv">1</span>]})</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1077,6 +1088,7 @@ Table&nbsp;38.1: Vietnamese daily price limit regime by exchange.
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-limit-timeseries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.1
@@ -1089,6 +1101,8 @@ Figure&nbsp;38.1
 <div id="fig-price-limit-by-size" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-price-limit-by-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compute limit hit rates by size quintile</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge with lagged market cap</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>monthly_mcap <span class="op">=</span> client.get_monthly_returns(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    exchanges<span class="op">=</span>[<span class="st">'HOSE'</span>],</span>
@@ -1142,6 +1156,7 @@ Figure&nbsp;38.1
 <span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-price-limit-by-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.2
@@ -1153,6 +1168,8 @@ Figure&nbsp;38.2
 <h3 data-number="38.2.3" class="anchored" data-anchor-id="consecutive-limit-days"><span class="header-section-number">38.2.3</span> Consecutive Limit Days</h3>
 <p>A single limit hit might simply reflect a large information event that is absorbed within one day. Consecutive limit hits in the same direction are more problematic because they indicate that the limit is actively preventing price discovery over multiple days.</p>
 <div id="consecutive-limits" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Analyze consecutive limit hit sequences</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> count_consecutive_limits(group):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Count consecutive limit-up and limit-down sequences."""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    up_runs <span class="op">=</span> []</span>
@@ -1210,6 +1227,7 @@ Figure&nbsp;38.2
 <span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"    3 days: </span><span class="sc">{</span>(runs_series <span class="op">==</span> <span class="dv">3</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss"> (</span><span class="sc">{</span>(runs_series <span class="op">==</span> <span class="dv">3</span>)<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">)"</span>)</span>
 <span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"    4+ days: </span><span class="sc">{</span>(runs_series <span class="op">&gt;=</span> <span class="dv">4</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss"> (</span><span class="sc">{</span>(runs_series <span class="op">&gt;=</span> <span class="dv">4</span>)<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">)"</span>)</span>
 <span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"    Max consecutive: </span><span class="sc">{</span>runs_series<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1235,6 +1253,8 @@ r^* &amp; \text{if } \underline{L} &lt; r^* &lt; \bar{L} \quad \text{(interior)}
 <div id="fig-return-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-return-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize the effect of price limits on the return distribution</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hose_returns <span class="op">=</span> daily_hose[<span class="st">'daily_return'</span>].dropna()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hose_returns <span class="op">=</span> hose_returns[hose_returns.<span class="bu">abs</span>() <span class="op">&lt;</span> <span class="fl">0.15</span>]  <span class="co"># Remove data errors</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1277,6 +1297,7 @@ r^* &amp; \text{if } \underline{L} &lt; r^* &lt; \bar{L} \quad \text{(interior)}
 <span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>n_at_upper<span class="op">/</span>n_total<span class="sc">:.2%}</span><span class="ss">)"</span>)</span>
 <span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Observations at lower limit: </span><span class="sc">{</span>n_at_lower<span class="sc">:,}</span><span class="ss"> "</span></span>
 <span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(</span><span class="sc">{</span>n_at_lower<span class="op">/</span>n_total<span class="sc">:.2%}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-return-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.3
@@ -1290,6 +1311,8 @@ Figure&nbsp;38.3
 <div id="fig-cross-exchange" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="9">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cross-exchange-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compare return distributions across exchanges</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="fl">4.5</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (exchange, limit, color) <span class="kw">in</span> <span class="bu">enumerate</span>([</span>
@@ -1319,6 +1342,7 @@ Figure&nbsp;38.3
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Return Distributions by Exchange'</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cross-exchange-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.4
@@ -1337,6 +1361,8 @@ Figure&nbsp;38.4
 \tag{38.2}\]</span></span></p>
 <p>where <span class="math inline">\(\phi\)</span> and <span class="math inline">\(\Phi\)</span> are the standard normal PDF and CDF. The key result is that <span class="math inline">\(\text{Var}(r^{\text{obs}}) &lt; \sigma^2\)</span> always—censoring systematically underestimates variance.</p>
 <div id="variance-bias-simulation" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Simulate the variance bias from censoring under different volatility levels</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_censored_variance(true_sigma, limit, n_sim<span class="op">=</span><span class="dv">100000</span>, mu<span class="op">=</span><span class="dv">0</span>):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Simulate observed vs true variance under censoring."""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
@@ -1369,10 +1395,13 @@ Figure&nbsp;38.4
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        results_bias.append(res)</span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>bias_df <span class="op">=</span> pd.DataFrame(results_bias)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-variance-bias" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-variance-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot variance bias across volatility levels</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>colors_exch <span class="op">=</span> {<span class="st">'HOSE $</span><span class="er">\</span><span class="st">pm$ 7%'</span>: <span class="st">'#2C5F8A'</span>, <span class="st">'HNX $</span><span class="er">\</span><span class="st">pm$ 10%'</span>: <span class="st">'#C0392B'</span>,</span>
@@ -1402,6 +1431,7 @@ Figure&nbsp;38.4
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-variance-bias-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.5
@@ -1412,6 +1442,8 @@ Figure&nbsp;38.5
 <section id="empirical-variance-bias-by-size" class="level3" data-number="38.4.2">
 <h3 data-number="38.4.2" class="anchored" data-anchor-id="empirical-variance-bias-by-size"><span class="header-section-number">38.4.2</span> Empirical Variance Bias by Size</h3>
 <div id="empirical-bias" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Estimate the empirical variance bias by comparing HOSE stocks that transferred from HNX</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-listed stocks or transfer events provide a natural experiment:</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Same stock, different limit regime</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative: compare variance of HOSE returns to variance of the same</span></span>
@@ -1497,10 +1529,13 @@ Figure&nbsp;38.5
 <span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean bias:     </span><span class="sc">{</span>tobit_df[<span class="st">'bias_pct'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
 <span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Median bias:   </span><span class="sc">{</span>tobit_df[<span class="st">'bias_pct'</span>]<span class="sc">.</span>median()<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
 <span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Max bias:      </span><span class="sc">{</span>tobit_df[<span class="st">'bias_pct'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-tobit-vs-naive" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-tobit-vs-naive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot Tobit vs naive volatility comparison</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].scatter(tobit_df[<span class="st">'naive_sigma'</span>] <span class="op">*</span> <span class="dv">100</span>,</span>
@@ -1525,6 +1560,7 @@ Figure&nbsp;38.5
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-tobit-vs-naive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.6
@@ -1539,6 +1575,8 @@ Figure&nbsp;38.6
 <h3 data-number="38.5.1" class="anchored" data-anchor-id="range-based-estimators"><span class="header-section-number">38.5.1</span> Range-Based Estimators</h3>
 <p>Range-based volatility estimators use the daily high and low prices rather than close-to-close returns, making them partially robust to closing-price censoring (since intraday prices may approach but not be censored at the same points). However, they are biased when the <em>intraday</em> price trajectory itself is constrained by the limits.</p>
 <div id="range-estimators" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Implement range-based volatility estimators</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parkinson_vol(high, low, n_periods<span class="op">=</span><span class="dv">20</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Parkinson (1980) range-based volatility estimator.</span></span>
@@ -1600,10 +1638,13 @@ Figure&nbsp;38.6
 <span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>sample[<span class="st">'yang_zhang'</span>] <span class="op">=</span> yang_zhang_vol(</span>
 <span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>    sample[<span class="st">'open'</span>], sample[<span class="st">'high'</span>], sample[<span class="st">'low'</span>], sample[<span class="st">'close'</span>], <span class="dv">20</span></span>
 <span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>) <span class="op">*</span> np.sqrt(<span class="dv">252</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-vol-estimators" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-vol-estimators-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot and compare volatility estimators over time</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ax.plot(sample.index, sample[<span class="st">'cc_vol'</span>], color<span class="op">=</span><span class="st">'#BDC3C7'</span>,</span>
@@ -1620,6 +1661,7 @@ Figure&nbsp;38.6
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-vol-estimators-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.7
@@ -1645,6 +1687,8 @@ r_t = \mu + \varepsilon_t, \quad \varepsilon_t = \sigma_t z_t, \quad z_t \sim N(
 \end{cases}
 \tag{38.5}\]</span></span></p>
 <div id="censored-garch" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Implement censored GARCH(1,1) estimation</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> censored_garch11(returns, limit, max_iter<span class="op">=</span><span class="dv">500</span>):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">    GARCH(1,1) with censored normal likelihood.</span></span>
@@ -1771,10 +1815,13 @@ r_t = \mu + \varepsilon_t, \quad \varepsilon_t = \sigma_t z_t, \quad z_t \sim N(
 <span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Uncond σ'</span><span class="sc">:&lt;12}</span><span class="ss"> "</span></span>
 <span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>np<span class="sc">.</span>sqrt(std_result.params[<span class="st">'omega'</span>]<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>std_result.params[<span class="st">'alpha[1]'</span>]<span class="op">-</span>std_result.params[<span class="st">'beta[1]'</span>])<span class="op">/</span><span class="dv">10000</span>)<span class="sc">:&gt;12.4f}</span><span class="ss"> "</span></span>
 <span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>np<span class="sc">.</span>sqrt(cens_result[<span class="st">'uncond_var'</span>])<span class="sc">:&gt;12.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-garch-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-garch-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot standard vs censored GARCH conditional volatility</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> daily_hose[daily_hose[<span class="st">'ticker'</span>] <span class="op">==</span> test_ticker].sort_values(<span class="st">'date'</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>dates <span class="op">=</span> test_data[<span class="st">'date'</span>].values[<span class="op">-</span><span class="bu">len</span>(test_returns):]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1809,6 +1856,7 @@ r_t = \mu + \varepsilon_t, \quad \varepsilon_t = \sigma_t z_t, \quad z_t \sim N(
 <span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-garch-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.8
@@ -1823,6 +1871,8 @@ Figure&nbsp;38.8
 <h3 data-number="38.6.1" class="anchored" data-anchor-id="beta-attenuation"><span class="header-section-number">38.6.1</span> Beta Attenuation</h3>
 <p>Price limits attenuate the covariance between stock returns and factor returns, biasing beta estimates toward zero. The intuition is simple: on days when the market moves 3% but a stock’s true return would have been 6%, the observed return is capped at 7%, understating the stock’s sensitivity.</p>
 <div id="beta-attenuation" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Quantify beta attenuation from price limit censoring</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare betas estimated with all days vs excluding limit-hit days</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Also compare betas from HOSE stocks vs same stocks if they were on HNX</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1878,10 +1928,13 @@ Figure&nbsp;38.8
 <span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean difference:        </span><span class="sc">{</span>beta_df[<span class="st">'beta_diff_pct'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">%"</span>)</span>
 <span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Correlation(diff, limit_freq): "</span></span>
 <span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>beta_df[<span class="st">'beta_diff_pct'</span>]<span class="sc">.</span>corr(beta_df[<span class="st">'pct_limit_hits'</span>])<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-beta-attenuation" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-beta-attenuation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize beta attenuation</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].scatter(beta_df[<span class="st">'beta_all'</span>], beta_df[<span class="st">'beta_interior'</span>],</span>
@@ -1906,6 +1959,7 @@ Figure&nbsp;38.8
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-beta-attenuation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.9
@@ -1917,6 +1971,8 @@ Figure&nbsp;38.9
 <h3 data-number="38.6.2" class="anchored" data-anchor-id="effect-on-factor-premia"><span class="header-section-number">38.6.2</span> Effect on Factor Premia</h3>
 <p>If betas are attenuated by censoring, then cross-sectional Fama-MacBeth risk premia estimates are biased upward (because the denominator of the slope coefficient is too small). We quantify this effect:</p>
 <div id="factor-premium-bias" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Compare factor premia with and without limit-hit days</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Monthly returns: compute with all days vs excluding limit-hit days</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Then construct factors under each definition</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1943,6 +1999,7 @@ Figure&nbsp;38.9
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>monthly_all[<span class="st">'ret_interior'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Avg limit days per stock-month:     "</span></span>
 <span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>monthly_all[<span class="st">'n_limit_days'</span>]<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1953,6 +2010,8 @@ Figure&nbsp;38.9
 <p>The <em>magnet effect</em> hypothesis posits that price limits, rather than cooling the market, actually attract prices to the limit as traders rush to execute before the stock becomes locked <span class="citation" data-cites="cho2003magnet">(<a href="references.html#ref-cho2003magnet" role="doc-biblioref">Cho et al. 2003</a>)</span>. If a stock is approaching the upper limit, buyers accelerate their orders to avoid being shut out, creating a self-fulfilling rush to the boundary.</p>
 <p>We test for the magnet effect by examining the speed of price movement toward the limit conditional on approaching it:</p>
 <div id="magnet-effect" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Test for the magnet effect using intraday price trajectories</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Approach: for days that eventually hit the limit,</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># compare the return in the last hour vs the first hour</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># relative to non-limit days with similar initial trajectories</span></span>
@@ -2044,10 +2103,13 @@ Figure&nbsp;38.9
 <span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a>magnet <span class="op">=</span> magnet_test(daily_hose, <span class="fl">0.07</span>, proximity_threshold<span class="op">=</span><span class="fl">0.8</span>)</span>
 <span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Magnet Effect Test (HOSE):"</span>)</span>
 <span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(magnet.<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-magnet" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-magnet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize magnet effect evidence</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># More granular: bin today's return and compute next-day statistics</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.arange(<span class="op">-</span><span class="fl">0.075</span>, <span class="fl">0.08</span>, <span class="fl">0.005</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>daily_hose_next <span class="op">=</span> daily_hose.copy()</span>
@@ -2109,6 +2171,7 @@ Figure&nbsp;38.9
 <span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-magnet-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;38.10
@@ -2123,6 +2186,8 @@ Figure&nbsp;38.10
 <h3 data-number="38.8.1" class="anchored" data-anchor-id="volatility-spillover"><span class="header-section-number">38.8.1</span> Volatility Spillover</h3>
 <p>If limits prevent full price adjustment on day <span class="math inline">\(t\)</span>, the residual adjustment spills over to day <span class="math inline">\(t+1\)</span> (and possibly further). This predicts higher volatility on the day <em>after</em> a limit hit, and positive return autocorrelation (continuation in the direction of the limit hit). <span class="citation" data-cites="kim1997price">Kim and Rhee (<a href="references.html#ref-kim1997price" role="doc-biblioref">1997</a>)</span> find strong evidence of this in the Tokyo Stock Exchange.</p>
 <div id="spillover" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Test for volatility spillover after limit hit days</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare volatility and return on limit-hit days vs day after</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>spillover_data <span class="op">=</span> daily_hose.copy()</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>spillover_data[<span class="st">'prev_limit_up'</span>] <span class="op">=</span> (</span>
@@ -2166,12 +2231,15 @@ Figure&nbsp;38.10
 <span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(p = </span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> stats<span class="sc">.</span>f<span class="sc">.</span>cdf(f_up, <span class="bu">len</span>(after_up)<span class="op">-</span><span class="dv">1</span>, <span class="bu">len</span>(normal)<span class="op">-</span><span class="dv">1</span>)<span class="sc">:.4f}</span><span class="ss">)"</span>)</span>
 <span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  After lower limit: </span><span class="sc">{</span>f_down<span class="sc">:.3f}</span><span class="ss"> "</span></span>
 <span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(p = </span><span class="sc">{</span><span class="dv">1</span> <span class="op">-</span> stats<span class="sc">.</span>f<span class="sc">.</span>cdf(f_down, <span class="bu">len</span>(after_down)<span class="op">-</span><span class="dv">1</span>, <span class="bu">len</span>(normal)<span class="op">-</span><span class="dv">1</span>)<span class="sc">:.4f}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="multi-day-return-reconstruction" class="level3" data-number="38.8.2">
 <h3 data-number="38.8.2" class="anchored" data-anchor-id="multi-day-return-reconstruction"><span class="header-section-number">38.8.2</span> Multi-Day Return Reconstruction</h3>
 <p>To recover the “true” return that would have occurred without price limits, we can compound returns over consecutive limit-hit days until the stock resumes normal trading:</p>
 <div id="return-reconstruction" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Reconstruct multi-day returns spanning limit-hit sequences</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reconstruct_returns(group, limit):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">    For each limit-hit sequence, compound returns until</span></span>
@@ -2231,6 +2299,7 @@ Figure&nbsp;38.10
 <span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"    Mean resolution-day return: "</span></span>
 <span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"</span><span class="sc">{</span>subset[<span class="st">'resolution_return'</span>]<span class="sc">.</span>mean()<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">%"</span>)</span>
 <span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"    Max compound return: </span><span class="sc">{</span>subset[<span class="st">'compound_return'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2238,6 +2307,8 @@ Figure&nbsp;38.10
 <h2 data-number="38.9" class="anchored" data-anchor-id="sec-price-limit-ivol"><span class="header-section-number">38.9</span> The Idiosyncratic Volatility Puzzle Under Price Limits</h2>
 <p><span class="citation" data-cites="ang2006cross">Ang et al. (<a href="references.html#ref-ang2006cross" role="doc-biblioref">2006</a>)</span> document that stocks with high idiosyncratic volatility earn low subsequent returns—the IVOL puzzle. In Vietnam, price limits contaminate IVOL estimation: stocks that frequently hit limits have <em>understated</em> IVOL (because their returns are censored), which could create a mechanical relation between measured IVOL and returns.</p>
 <div id="ivol-puzzle" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Test whether price limits affect the IVOL-return relation</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly IVOL two ways:</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (a) Naive: std of daily residuals from FF3</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (b) Corrected: excluding limit-hit days</span></span>
@@ -2296,6 +2367,7 @@ Figure&nbsp;38.10
 <span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>(ivol_df[<span class="st">'ivol_corrected'</span>] <span class="op">-</span> ivol_df[<span class="st">'ivol_naive'</span>])<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb24-57"><a href="#cb24-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Correlation:         "</span></span>
 <span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>ivol_df[<span class="st">'ivol_naive'</span>]<span class="sc">.</span>corr(ivol_df[<span class="st">'ivol_corrected'</span>])<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-price-limit-recommendations" class="level2" data-number="38.10">

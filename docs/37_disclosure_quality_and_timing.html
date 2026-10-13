@@ -869,7 +869,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./37_disclosure_quality_and_timing.html"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Disclosure Quality and Timing</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Disclosure Quality and Timing</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Disclosure Quality and Timing</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -981,6 +981,8 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <section id="loading-required-libraries" class="level3" data-number="30.3.1">
 <h3 data-number="30.3.1" class="anchored" data-anchor-id="loading-required-libraries"><span class="header-section-number">30.3.1</span> Loading Required Libraries</h3>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1002,12 +1004,15 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="retrieving-disclosure-data" class="level3" data-number="30.3.2">
 <h3 data-number="30.3.2" class="anchored" data-anchor-id="retrieving-disclosure-data"><span class="header-section-number">30.3.2</span> Retrieving Disclosure Data</h3>
 <p>We assume that we have structured data on filing dates, announcement timestamps, and the textual content of corporate disclosures for all firms.</p>
 <div id="data-load" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load disclosure and financial data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1064,12 +1069,15 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Financials: </span><span class="sc">{</span>financials<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> records"</span>)</span>
 <span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Trading: </span><span class="sc">{</span>trading<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> records"</span>)</span>
 <span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Governance: </span><span class="sc">{</span>governance<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> records"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-dis-qual-timeliness" class="level3" data-number="30.3.3">
 <h3 data-number="30.3.3" class="anchored" data-anchor-id="sec-dis-qual-timeliness"><span class="header-section-number">30.3.3</span> Computing Filing Timeliness</h3>
 <p>We define <strong>reporting lag</strong> as the number of calendar days between the fiscal period-end and the date the firm’s financial statements are made publicly available. For annual reports, the regulatory maximum is 90 days; firms that file earlier than the deadline reveal information sooner, while firms that file late face potential penalties and signal possible difficulties with their accounts.</p>
 <div id="compute-lag" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Compute reporting lag for each filing</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>filings[<span class="st">'fiscal_year_end'</span>] <span class="op">=</span> pd.to_datetime(filings[<span class="st">'fiscal_year_end'</span>])</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>filings[<span class="st">'filing_date'</span>] <span class="op">=</span> pd.to_datetime(filings[<span class="st">'filing_date'</span>])</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>filings[<span class="st">'announcement_date'</span>] <span class="op">=</span> pd.to_datetime(filings[<span class="st">'announcement_date'</span>])</span>
@@ -1102,6 +1110,7 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Annual Report Filing Lag (calendar days):"</span>)</span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(annual_filings[<span class="st">'reporting_lag'</span>].describe().<span class="bu">round</span>(<span class="dv">1</span>))</span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Late filing rate: </span><span class="sc">{</span>annual_filings[<span class="st">'late_filing'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="distribution-of-filing-lags" class="level3" data-number="30.3.4">
@@ -1109,6 +1118,8 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <div id="fig-filing-lag-dist" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="4">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-filing-lag-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot the distribution of annual report filing lags</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram</span></span>
@@ -1150,6 +1161,7 @@ Table&nbsp;30.1: Periodic disclosure deadlines under Vietnamese securities regul
 <span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-filing-lag-dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.1
@@ -1170,6 +1182,8 @@ Figure&nbsp;30.1
 <li><strong>Early/late classification</strong> (categorical): We classify firm-years into terciles based on reporting lag within each fiscal year. This controls for secular trends in filing speed (e.g., driven by regulatory changes or COVID-19 disruptions).</li>
 </ol>
 <div id="timeliness-terciles" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Classify filings into timeliness terciles</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>annual_filings[<span class="st">'lag_tercile'</span>] <span class="op">=</span> (</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    annual_filings</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">'fiscal_year'</span>)[<span class="st">'reporting_lag'</span>]</span>
@@ -1185,6 +1199,7 @@ Figure&nbsp;30.1
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>tercile_stats.columns <span class="op">=</span> [<span class="st">'N'</span>, <span class="st">'Mean Lag'</span>, <span class="st">'Median Lag'</span>, <span class="st">'SD'</span>]</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tercile_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-dis-qual-textual" class="level3" data-number="30.4.2">
@@ -1199,6 +1214,8 @@ Figure&nbsp;30.1
 <li><strong>Numerical density:</strong> Proportion of tokens that are numbers, percentages, or currency amounts, which is a proxy for specificity.</li>
 </ul>
 <div id="textual-measures" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Compute textual disclosure quality measures</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> underthesea <span class="im">import</span> word_tokenize</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1266,6 +1283,7 @@ Figure&nbsp;30.1
 <span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(annual_text[[<span class="st">'word_count'</span>, <span class="st">'numerical_density'</span>,</span>
 <span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'avg_sentence_length'</span>, <span class="st">'unique_word_ratio'</span>,</span>
 <span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'forward_looking_density'</span>]].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="forward-looking-statement-density" class="level4" data-number="30.4.2.2">
@@ -1285,6 +1303,8 @@ Figure&nbsp;30.1
 \tag{30.1}\]</span></span></p>
 <p>where <span class="math inline">\(WC_{i,t}\)</span> is working capital accruals, <span class="math inline">\(CFO_{i,t}\)</span> is operating cash flow, and <span class="math inline">\(A_{i,t-1}\)</span> is lagged total assets. The firm-level standard deviation of <span class="math inline">\(\hat{\varepsilon}_{i,t}\)</span> over a rolling window (typically 5 years) is the accruals quality measure, with higher values indicating lower quality.</p>
 <div id="accruals-quality" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Estimate accruals quality (Dechow-Dichev residual volatility)</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_accruals_quality(df, min_obs<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate accruals quality as std dev of DD residuals</span></span>
@@ -1335,6 +1355,7 @@ Figure&nbsp;30.1
 <span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>aq_df <span class="op">=</span> estimate_accruals_quality(financials)</span>
 <span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accruals quality computed for </span><span class="sc">{</span>aq_df[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms"</span>)</span>
 <span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(aq_df[<span class="st">'accruals_quality'</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="earnings-persistence-and-predictability" class="level4" data-number="30.4.3.2">
@@ -1345,6 +1366,8 @@ Figure&nbsp;30.1
 \tag{30.2}\]</span></span></p>
 <p>Higher <span class="math inline">\(\hat{\phi}_1\)</span> indicates more persistent (and arguably higher-quality) earnings.</p>
 <div id="earnings-persistence" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Estimate firm-level earnings persistence</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_persistence(df, min_obs<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Estimate earnings persistence via AR(1) model."""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
@@ -1371,6 +1394,7 @@ Figure&nbsp;30.1
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>persistence_df <span class="op">=</span> estimate_persistence(financials)</span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(persistence_df[[<span class="st">'persistence'</span>, <span class="st">'r_squared'</span>]].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1428,6 +1452,8 @@ DQ_{i,t} = \frac{1}{K} \sum_{k=1}^{K} \text{Rank}_{k,i,t}
 \tag{30.3}\]</span></span></p>
 <p>where <span class="math inline">\(K\)</span> is the number of available components and <span class="math inline">\(\text{Rank}_{k,i,t}\)</span> is the percentile rank of firm <span class="math inline">\(i\)</span> in year <span class="math inline">\(t\)</span> on dimension <span class="math inline">\(k\)</span>.</p>
 <div id="composite-index" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Construct composite disclosure quality index</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge all quality proxies</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>quality_panel <span class="op">=</span> (</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    annual_filings[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'reporting_lag'</span>]]</span>
@@ -1471,10 +1497,13 @@ DQ_{i,t} = \frac{1}{K} \sum_{k=1}^{K} \text{Rank}_{k,i,t}
 <span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Disclosure Quality Index Distribution:"</span>)</span>
 <span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(quality_panel[<span class="st">'dq_index'</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-dq-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dq-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot distribution of composite disclosure quality index</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax.hist(quality_panel[<span class="st">'dq_index'</span>].dropna(), bins<span class="op">=</span><span class="dv">50</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        color<span class="op">=</span><span class="st">'#2C5F8A'</span>, edgecolor<span class="op">=</span><span class="st">'white'</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
@@ -1486,6 +1515,7 @@ DQ_{i,t} = \frac{1}{K} \sum_{k=1}^{K} \text{Rank}_{k,i,t}
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-dq-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.2
@@ -1512,6 +1542,8 @@ DQ_{i,t} = \alpha + \beta_1 \ln(\text{Size}_{i,t}) + \beta_2 \text{ROA}_{i,t} + 
 <li><strong>Board independence (+):</strong> Independent directors improve monitoring and encourage more informative disclosure.</li>
 </ul>
 <div id="determinants-regression" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Estimate determinants of disclosure quality</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge quality index with financials and governance</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>det_panel <span class="op">=</span> (</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    quality_panel[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'dq_index'</span>]]</span>
@@ -1543,10 +1575,13 @@ DQ_{i,t} = \alpha + \beta_1 \ln(\text{Size}_{i,t}) + \beta_2 \text{ROA}_{i,t} + 
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>).fit(cov_type<span class="op">=</span><span class="st">'clustered'</span>, cluster_entity<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model_det.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-determinants-coefficients" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-determinants-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize determinant regression coefficients</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>coefs <span class="op">=</span> model_det.params.drop(<span class="st">'const'</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ci <span class="op">=</span> model_det.conf_int().drop(<span class="st">'const'</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1572,6 +1607,7 @@ DQ_{i,t} = \alpha + \beta_1 \ln(\text{Size}_{i,t}) + \beta_2 \text{ROA}_{i,t} + 
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Determinants of Disclosure Quality'</span>)</span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-determinants-coefficients-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.3
@@ -1585,6 +1621,8 @@ Figure&nbsp;30.3
 <h3 data-number="30.6.1" class="anchored" data-anchor-id="day-of-week-effects"><span class="header-section-number">30.6.1</span> Day-of-Week Effects</h3>
 <p><span class="citation" data-cites="dellavigna2009investor">DellaVigna and Pollet (<a href="references.html#ref-dellavigna2009investor" role="doc-biblioref">2009</a>)</span> document that Friday earnings announcements receive less immediate market attention. We test whether this pattern holds in Vietnam, where the trading week runs Monday through Friday but the retail-dominated investor base may exhibit different attention patterns.</p>
 <div id="day-of-week" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Analyze day-of-week patterns in earnings announcements</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>annual_filings[<span class="st">'announcement_dow'</span>] <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    annual_filings[<span class="st">'announcement_date'</span>].dt.dayofweek</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1623,10 +1661,13 @@ Figure&nbsp;30.3
 <span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Proportion of Announcements by Day and News Type:"</span>)</span>
 <span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dow_crosstab.<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-dow-pattern" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="14">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dow-pattern-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot day-of-week announcement patterns</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="bu">len</span>(day_order))</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="fl">0.35</span></span>
@@ -1645,6 +1686,7 @@ Figure&nbsp;30.3
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-dow-pattern-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.4
@@ -1660,6 +1702,8 @@ Figure&nbsp;30.4
 \tag{30.5}\]</span></span></p>
 <p><span class="citation" data-cites="hirshleifer2009driven">Hirshleifer, Lim, and Teoh (<a href="references.html#ref-hirshleifer2009driven" role="doc-biblioref">2009</a>)</span> predict that firms burying bad news will choose high-congestion days. We test this by regressing the congestion variable on the sign of earnings news:</p>
 <div id="congestion-analysis" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Test whether bad-news firms choose high-congestion announcement days</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count announcements per date</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ann_counts <span class="op">=</span> (</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    annual_filings</span>
@@ -1683,12 +1727,15 @@ Figure&nbsp;30.4
 <span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Congestion Regression:"</span>)</span>
 <span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(congestion_model.summary().tables[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="after-hours-and-weekend-announcements" class="level3" data-number="30.6.3">
 <h3 data-number="30.6.3" class="anchored" data-anchor-id="after-hours-and-weekend-announcements"><span class="header-section-number">30.6.3</span> After-Hours and Weekend Announcements</h3>
 <p>Vietnamese regulations require disclosure within 24 hours of material events, but firms retain discretion over the exact timing. Announcements made after the trading session closes (after 3:00 PM on HOSE/HNX) or on weekends delay the market’s opportunity to react by at least one trading day.</p>
 <div id="after-hours" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Identify and analyze after-hours announcement patterns</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume announcement timestamps are available</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>annual_filings[<span class="st">'ann_hour'</span>] <span class="op">=</span> (</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    annual_filings[<span class="st">'announcement_date'</span>].dt.hour</span>
@@ -1713,6 +1760,7 @@ Figure&nbsp;30.4
 <span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>chi2, p_val, _, _ <span class="op">=</span> stats.chi2_contingency(contingency)</span>
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Chi-squared = </span><span class="sc">{</span>chi2<span class="sc">:.2f}</span><span class="ss">, p-value = </span><span class="sc">{</span>p_val<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1727,6 +1775,8 @@ r_{PEG,i,t} = \sqrt{\frac{\hat{E}_{i,t+2} - \hat{E}_{i,t+1}}{P_{i,t}}}
 \tag{30.6}\]</span></span></p>
 <p>where <span class="math inline">\(\hat{E}_{i,t+k}\)</span> is the consensus earnings forecast (or, in the absence of analyst coverage, a model-based forecast) and <span class="math inline">\(P_{i,t}\)</span> is the current stock price.</p>
 <div id="cost-of-equity" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Estimate implied cost of equity and test disclosure quality effect</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct earnings forecasts using a simple random walk with drift</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>forecasts <span class="op">=</span> financials.sort_values([<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>]).copy()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>forecasts[<span class="st">'eps'</span>] <span class="op">=</span> forecasts[<span class="st">'net_income'</span>] <span class="op">/</span> forecasts[<span class="st">'market_cap'</span>]</span>
@@ -1773,6 +1823,7 @@ r_{PEG,i,t} = \sqrt{\frac{\hat{E}_{i,t+2} - \hat{E}_{i,t+1}}{P_{i,t}}}
 <span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Implied Cost of Capital ~ Disclosure Quality:"</span>)</span>
 <span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(icc_model.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="disclosure-quality-and-liquidity" class="level3" data-number="30.7.2">
@@ -1783,6 +1834,8 @@ r_{PEG,i,t} = \sqrt{\frac{\hat{E}_{i,t+2} - \hat{E}_{i,t+1}}{P_{i,t}}}
 \tag{30.7}\]</span></span></p>
 <p>where <span class="math inline">\(R_{i,d}\)</span> is the daily return and <span class="math inline">\(\text{Volume}_{i,d}\)</span> is the daily trading volume in VND.</p>
 <div id="liquidity-analysis" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Compute Amihud illiquidity and test disclosure quality effect</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute annual Amihud illiquidity</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>trading[<span class="st">'abs_return'</span>] <span class="op">=</span> trading[<span class="st">'close'</span>].pct_change().<span class="bu">abs</span>()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>trading[<span class="st">'amihud_daily'</span>] <span class="op">=</span> trading[<span class="st">'abs_return'</span>] <span class="op">/</span> (trading[<span class="st">'volume'</span>] <span class="op">*</span> trading[<span class="st">'close'</span>])</span>
@@ -1824,10 +1877,13 @@ r_{PEG,i,t} = \sqrt{\frac{\hat{E}_{i,t+2} - \hat{E}_{i,t+1}}{P_{i,t}}}
 <span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Amihud Illiquidity ~ Disclosure Quality:"</span>)</span>
 <span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(liq_model.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-dq-liquidity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dq-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot disclosure quality vs liquidity relationship</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>liq_panel_plot <span class="op">=</span> liq_panel.reset_index()</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>liq_panel_plot[<span class="st">'dq_quintile'</span>] <span class="op">=</span> pd.qcut(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    liq_panel_plot[<span class="st">'dq_index'</span>], <span class="dv">5</span>, labels<span class="op">=</span>[<span class="st">'Q1</span><span class="ch">\n</span><span class="st">(Low)'</span>, <span class="st">'Q2'</span>, <span class="st">'Q3'</span>, <span class="st">'Q4'</span>, <span class="st">'Q5</span><span class="ch">\n</span><span class="st">(High)'</span>]</span>
@@ -1853,6 +1909,7 @@ r_{PEG,i,t} = \sqrt{\frac{\hat{E}_{i,t+2} - \hat{E}_{i,t+1}}{P_{i,t}}}
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Disclosure Quality and Market Liquidity'</span>)</span>
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-dq-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.5
@@ -1878,6 +1935,8 @@ Figure&nbsp;30.5
 <p>There is, however, one channel through which the annual specification can be biased, and it is specific to the log transform the chapter applies. Because <span class="math inline">\(\log\)</span> is concave, <span class="math inline">\(\mathbb{E}[\log \widehat{y}] &lt; \log \mathbb{E}[\widehat{y}]\)</span>, and the size of that Jensen gap is approximately <span class="math inline">\(-\tfrac{1}{2}\,\text{relvar}/D\)</span>. It therefore <em>varies across firms with <span class="math inline">\(D_{i,t}\)</span></em>. Firms that trade on few days carry a larger downward distortion in <span class="math inline">\(\log(\text{Amihud})\)</span> than firms that trade every day. Since thinly traded firms are also disproportionately the poor disclosers, <span class="math inline">\(\nu_i\)</span> is correlated with <span class="math inline">\(\text{DQ}_i\)</span> after all, and the slope is no longer clean. The magnitude is <span class="math inline">\(-0.285/D\)</span> for the classic measure against <span class="math inline">\(-0.0056/D\)</span> for the realized one — a fiftyfold difference.</p>
 <p>The following chunk quantifies both effects. It simulates a known disclosure-quality effect of <span class="math inline">\(\beta = -0.10\)</span> on log illiquidity, first with trading days identical across firms and then with trading days rising in disclosure quality.</p>
 <div id="dq-annual-measurement-error" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Does numerator noise bias the annual disclosure-liquidity slope?</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> norm</span>
@@ -1943,6 +2002,7 @@ Figure&nbsp;30.5
 <span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a>        })</span>
 <span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Trading days linked to disclosure quality: </span><span class="sc">{</span>link_days<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(pd.DataFrame(rows).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Trading days linked to disclosure quality: False
@@ -1966,6 +2026,8 @@ realized    -0.1000           -0.0      3.97     0.987
 <p>The picture reverses completely for the event-study designs elsewhere in this chapter. Testing whether liquidity improves after a filing means comparing illiquidity over a window of a few days on either side of the event, and a short window is exactly where averaging cannot rescue a noisy numerator. Over a five-day window the relative error of the classic numerator is <span class="math inline">\(0.7555/\sqrt{5} \approx 34\%\)</span>; the realized numerator’s is under 5%.</p>
 <p>Because the noise enters the pre-post difference twice, its effect on power is severe. The simulation below computes the power to detect a genuine post-filing change in log illiquidity, allowing for real cross-firm heterogeneity in the response so that the realized measure does not trivially achieve unit power.</p>
 <div id="dq-event-window-power" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Power to detect a post-filing liquidity change, by window length</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rng_ev <span class="op">=</span> np.random.default_rng(<span class="dv">77</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>REPS_B <span class="op">=</span> <span class="dv">1500</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>RELVAR <span class="op">=</span> {<span class="st">"classic"</span>: np.pi <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> <span class="dv">1</span>, <span class="st">"realized"</span>: <span class="dv">1</span> <span class="op">/</span> (<span class="dv">2</span> <span class="op">*</span> M_HF)}</span>
@@ -2005,6 +2067,7 @@ realized    -0.1000           -0.0      3.97     0.987
 <span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>                           <span class="op">/</span> ev[<span class="st">"firms for 80% (realized)"</span>]).<span class="bu">round</span>(<span class="dv">1</span>)</span>
 <span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"200 firms, 5% two-sided test, cross-firm response sd = 0.10"</span>)</span>
 <span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ev.to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>200 firms, 5% two-sided test, cross-firm response sd = 0.10
  window (days)  true change  power classic  firms for 80% (classic)  power realized  firms for 80% (realized)  sample-size ratio
@@ -2029,6 +2092,8 @@ realized    -0.1000           -0.0      3.97     0.987
 <h4 data-number="30.7.2.4" class="anchored" data-anchor-id="implementation"><span class="header-section-number">30.7.2.4</span> Implementation</h4>
 <p>The realized measure is a drop-in replacement for the numerator wherever this chapter computes illiquidity. The chunk below shows the substitution for the annual panel; the realized inputs come from the session-aware HOSE construction described in <span class="quarto-unresolved-ref">?sec-micro-realized-illiq</span>, which requires intraday data outside the standard pipeline.</p>
 <div id="realized-amihud-dq" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Realized Amihud as the liquidity outcome</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `realized_daily` holds one row per symbol-day from the intraday pipeline:</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   [ticker, date, rv, bv, n_active, dvol_continuous]</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> np.sqrt(<span class="dv">2</span> <span class="op">/</span> np.pi)</span>
@@ -2074,6 +2139,7 @@ realized    -0.1000           -0.0      3.97     0.987
 <span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Realized Amihud ~ Disclosure Quality:"</span>)</span>
 <span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(liq_model_r.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="practical-guidance" class="level4" data-number="30.7.2.5">
@@ -2095,6 +2161,8 @@ CAR_{i}[\tau_1, \tau_2] = \sum_{t=\tau_1}^{\tau_2} (R_{i,t} - \hat{R}_{i,t})
 \tag{30.9}\]</span></span></p>
 <p>where <span class="math inline">\(\hat{R}_{i,t}\)</span> is the expected return from a market model estimated over a pre-event window <span class="math inline">\([-250, -30]\)</span>.</p>
 <div id="event-study" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Conduct event study around filing dates by timeliness group</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_car(ticker, event_date, trading_df,</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                est_window<span class="op">=</span>(<span class="op">-</span><span class="dv">250</span>, <span class="op">-</span><span class="dv">30</span>), event_window<span class="op">=</span>(<span class="op">-</span><span class="dv">5</span>, <span class="dv">10</span>)):</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute CAR around an event date using market model."""</span></span>
@@ -2154,10 +2222,13 @@ CAR_{i}[\tau_1, \tau_2] = \sum_{t=\tau_1}^{\tau_2} (R_{i,t} - \hat{R}_{i,t})
 <span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a>car_df <span class="op">=</span> pd.DataFrame(car_results)</span>
 <span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Computed CARs for </span><span class="sc">{</span><span class="bu">len</span>(car_df)<span class="sc">}</span><span class="ss"> firm-year events"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-event-study" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="24">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-event-study-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot CAR paths by timeliness tercile</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>event_days <span class="op">=</span> <span class="bu">range</span>(<span class="op">-</span><span class="dv">5</span>, <span class="dv">11</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
@@ -2183,6 +2254,7 @@ CAR_{i}[\tau_1, \tau_2] = \sum_{t=\tau_1}^{\tau_2} (R_{i,t} - \hat{R}_{i,t})
 <span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">'Filing Tercile'</span>)</span>
 <span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-event-study-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.6
@@ -2197,6 +2269,8 @@ Figure&nbsp;30.6
 <div id="fig-timeliness-quality" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-timeliness-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Analyze relationship between filing lag and earnings quality</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tq_panel <span class="op">=</span> (</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    annual_filings[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'lag_tercile'</span>, <span class="st">'reporting_lag'</span>]]</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    .merge(aq_df, on<span class="op">=</span>[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>], how<span class="op">=</span><span class="st">'inner'</span>)</span>
@@ -2234,6 +2308,7 @@ Figure&nbsp;30.6
 <span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-timeliness-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.7
@@ -2242,6 +2317,8 @@ Figure&nbsp;30.7
 </div>
 <p>We formalize this with a regression that controls for firm characteristics:</p>
 <div id="timeliness-quality-regression" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Regression: accruals quality on filing lag with controls</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tq_panel_reg <span class="op">=</span> tq_panel.merge(</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    financials[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'total_assets'</span>, <span class="st">'net_income'</span>,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">'total_equity'</span>]],</span>
@@ -2260,6 +2337,7 @@ Figure&nbsp;30.7
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accruals Quality ~ Late Filing:"</span>)</span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model_tq.summary().tables[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -2284,6 +2362,8 @@ Endogeneity Caveat
 \tag{30.10}\]</span></span></p>
 <p>The residual <span class="math inline">\(\hat{\varepsilon}_{i,t+1}\)</span> measures deviation from expected investment. Positive residuals indicate over-investment; negative residuals indicate under-investment. We then test whether the absolute value of this residual is lower for firms with higher disclosure quality.</p>
 <div id="investment-efficiency" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Estimate investment efficiency and test disclosure quality link</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>inv_panel <span class="op">=</span> financials.sort_values([<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>]).copy()</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Investment = change in total assets / lagged total assets</span></span>
@@ -2323,6 +2403,7 @@ Endogeneity Caveat
 <span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Investment Inefficiency ~ Disclosure Quality:"</span>)</span>
 <span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inv_eff_model.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>A negative coefficient on <code>dq_index</code> indicates that higher disclosure quality is associated with lower investment inefficiency: firms with better disclosure make investment decisions closer to what their growth opportunities warrant.</p>
 </section>
@@ -2332,6 +2413,8 @@ Endogeneity Caveat
 <h3 data-number="30.10.1" class="anchored" data-anchor-id="state-ownership-and-disclosure"><span class="header-section-number">30.10.1</span> State Ownership and Disclosure</h3>
 <p>SOEs account for a substantial share of Vietnamese market capitalization. The relationship between state ownership and disclosure quality is theoretically ambiguous. On one hand, political connections may reduce the pressure to disclose transparently; government shareholders may tolerate opacity that private shareholders would not. On the other hand, post-equitization monitoring by multiple stakeholders (MOF, SCIC, minority shareholders) may create competing disclosure demands.</p>
 <div id="soe-disclosure" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Compare disclosure quality between SOEs and private firms</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>soe_panel <span class="op">=</span> (</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    quality_panel[[<span class="st">'ticker'</span>, <span class="st">'fiscal_year'</span>, <span class="st">'dq_index'</span>,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'reporting_lag'</span>]].reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
@@ -2365,6 +2448,7 @@ Endogeneity Caveat
 <span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>priv_dq <span class="op">=</span> soe_panel[soe_panel[<span class="st">'soe'</span>] <span class="op">==</span> <span class="dv">0</span>][<span class="st">'dq_index'</span>]</span>
 <span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>t_stat, p_val <span class="op">=</span> stats.ttest_ind(soe_dq.dropna(), priv_dq.dropna())</span>
 <span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">t-test: t = </span><span class="sc">{</span>t_stat<span class="sc">:.3f}</span><span class="ss">, p = </span><span class="sc">{</span>p_val<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="ifrs-convergence-and-disclosure-quality" class="level3" data-number="30.10.2">
@@ -2372,6 +2456,8 @@ Endogeneity Caveat
 <p>Vietnam has been pursuing a phased convergence toward IFRS, with the Ministry of Finance issuing a roadmap for voluntary adoption by large listed firms. The transition from VAS to IFRS-aligned standards is expected to expand disclosure requirements—particularly for financial instruments (IFRS 9), revenue recognition (IFRS 15), and leases (IFRS 16). <span class="citation" data-cites="barth2008international">Barth, Landsman, and Lang (<a href="references.html#ref-barth2008international" role="doc-biblioref">2008</a>)</span> provide evidence that IFRS adoption is associated with improvements in earnings quality and disclosure, though the effect depends on enforcement strength.</p>
 <p>We can exploit the staggered timing of voluntary IFRS adoption across Vietnamese firms as a natural experiment:</p>
 <div id="ifrs-adoption" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Difference-in-differences: IFRS adoption and disclosure quality</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume DataCore provides IFRS adoption dates</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>ifrs_adoption <span class="op">=</span> client.get_ifrs_adoption(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    exchanges<span class="op">=</span>[<span class="st">'HOSE'</span>, <span class="st">'HNX'</span>],</span>
@@ -2403,6 +2489,7 @@ Endogeneity Caveat
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"DiD: IFRS Adoption and Disclosure Quality:"</span>)</span>
 <span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(did_model.summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -2427,6 +2514,8 @@ Identification Concern
 \tag{30.11}\]</span></span></p>
 <p>where <span class="math inline">\(\Lambda(\cdot)\)</span> is the logistic function and <span class="math inline">\(\mathbf{X}_{i,t-1}\)</span> are lagged predictors.</p>
 <div id="predict-late-filing" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Logistic model to predict late filings</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score, classification_report</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -2490,10 +2579,13 @@ Identification Concern
 <span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Logistic Regression Coefficients:"</span>)</span>
 <span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(coef_df.to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-roc-curve" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="31">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot ROC curve for the late-filing prediction model</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve, auc</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>lr.fit(X_scaled, y)</span>
@@ -2512,6 +2604,7 @@ Identification Concern
 <span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)</span>
 <span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-roc-curve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;30.8

@@ -863,7 +863,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./50_institutional_ownership.html">Ownership, Market Frictions, and International Exposure</a></li><li class="breadcrumb-item"><a href="./56_market_integration_and_segmentation.html"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Market Integration and Segmentation</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Market Integration and Segmentation</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Market Integration and Segmentation</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -928,6 +928,8 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <section id="sec-market-integration-data" class="level2" data-number="39.2">
 <h2 data-number="39.2" class="anchored" data-anchor-id="sec-market-integration-data"><span class="header-section-number">39.2</span> Data Construction</h2>
 <div id="setup" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -946,8 +948,11 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="data-load" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Load Vietnamese and global market data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1025,10 +1030,13 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vietnam index: </span><span class="sc">{</span><span class="bu">len</span>(vn_index)<span class="sc">}</span><span class="ss"> months"</span>)</span>
 <span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Global indices: </span><span class="sc">{</span>global_indices<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Global factors: </span><span class="sc">{</span><span class="bu">len</span>(global_factors)<span class="sc">}</span><span class="ss"> months"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="vietnams-liberalization-timeline" class="level3" data-number="39.2.1">
 <h3 data-number="39.2.1" class="anchored" data-anchor-id="vietnams-liberalization-timeline"><span class="header-section-number">39.2.1</span> Vietnam’s Liberalization Timeline</h3>
 <div id="timeline" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Define key liberalization events for Vietnam</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>liberalization_events <span class="op">=</span> pd.DataFrame([</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2000-07-28'</span>, <span class="st">'HOSE opens'</span>, <span class="st">'Institutional'</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'2002-03-01'</span>, <span class="st">'FOL raised to 30%'</span>, <span class="st">'Ownership'</span>),</span>
@@ -1049,6 +1057,7 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Vietnam Liberalization Timeline:"</span>)</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _, row <span class="kw">in</span> liberalization_events.iterrows():</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>row[<span class="st">'date'</span>]<span class="sc">.</span>strftime(<span class="st">'%Y-%m'</span>)<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>row[<span class="st">'event'</span>]<span class="sc">}</span><span class="ss"> [</span><span class="sc">{</span>row[<span class="st">'category'</span>]<span class="sc">}</span><span class="ss">]"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1058,6 +1067,8 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <h3 data-number="39.3.1" class="anchored" data-anchor-id="rolling-correlations"><span class="header-section-number">39.3.1</span> Rolling Correlations</h3>
 <p>The simplest integration metric is the correlation between Vietnamese and global market returns. Higher correlation implies more integration (returns are driven by the same global factors). However, simple correlation is confounded by volatility changes (i.e., correlations tend to increase mechanically during high-volatility periods <span class="citation" data-cites="longin2001extreme">(<a href="references.html#ref-longin2001extreme" role="doc-biblioref">Longin and Solnik 2001</a>)</span>).</p>
 <div id="rolling-correlations" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Compute rolling correlations between Vietnam and global markets</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Align all series</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>indices_aligned <span class="op">=</span> global_indices.dropna(subset<span class="op">=</span>[<span class="st">'VIETNAM'</span>, <span class="st">'MSCI_WORLD'</span>]).copy()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1077,10 +1088,13 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        corr_series[idx] <span class="op">=</span> corr</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>corr_df <span class="op">=</span> pd.DataFrame(corr_series)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-rolling-corr" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot rolling correlations with event timeline</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">6</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>colors_idx <span class="op">=</span> {</span>
@@ -1109,6 +1123,7 @@ E[R_{i,t} - R_{f,t}] = \omega_t \cdot \beta_{i,\text{world}} \lambda_{\text{worl
 <span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rolling-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.1
@@ -1130,6 +1145,8 @@ Q_t = (1 - a - b) \bar{Q} + a \epsilon_{t-1} \epsilon_{t-1}' + b Q_{t-1}
 R_t = \text{diag}(Q_t)^{-1/2} Q_t \text{diag}(Q_t)^{-1/2}
 \tag{39.7}\]</span></span></p>
 <div id="dcc-garch" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Estimate DCC-GARCH model for Vietnam and global market</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_dcc(y1, y2, p<span class="op">=</span><span class="dv">1</span>, q<span class="op">=</span><span class="dv">1</span>):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Two-step DCC-GARCH estimation.</span></span>
@@ -1241,10 +1258,13 @@ R_t = \text{diag}(Q_t)^{-1/2} Q_t \text{diag}(Q_t)^{-1/2}
 <span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean: </span><span class="sc">{</span>dcc_result[<span class="st">'dcc_corr'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Min:  </span><span class="sc">{</span>dcc_result[<span class="st">'dcc_corr'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Max:  </span><span class="sc">{</span>dcc_result[<span class="st">'dcc_corr'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-dcc" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dcc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot DCC dynamic correlation with event annotations</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>), sharex<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                          gridspec_kw<span class="op">=</span>{<span class="st">'height_ratios'</span>: [<span class="dv">2</span>, <span class="dv">1</span>]})</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1289,6 +1309,7 @@ R_t = \text{diag}(Q_t)^{-1/2} Q_t \text{diag}(Q_t)^{-1/2}
 <span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-dcc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.2
@@ -1300,6 +1321,8 @@ Figure&nbsp;39.2
 <h3 data-number="39.3.3" class="anchored" data-anchor-id="asymmetric-integration"><span class="header-section-number">39.3.3</span> Asymmetric Integration</h3>
 <p>Integration may be state-dependent: co-movement often increases during global crises (contagion) but not during local booms. <span class="citation" data-cites="longin2001extreme">Longin and Solnik (<a href="references.html#ref-longin2001extreme" role="doc-biblioref">2001</a>)</span> and <span class="citation" data-cites="ang2002asymmetric">Ang and Chen (<a href="references.html#ref-ang2002asymmetric" role="doc-biblioref">2002</a>)</span> show that equity correlations are higher during market downturns. We test for asymmetry:</p>
 <div id="asymmetric-corr" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Test for asymmetric integration (bear vs bull markets)</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Classify global market regimes</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>world_ret_aligned <span class="op">=</span> world_ret[common_dates]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>vn_ret_aligned <span class="op">=</span> vn_ret[common_dates]</span>
@@ -1350,6 +1373,7 @@ Figure&nbsp;39.2
 <span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    r_bull_vn.corr(r_bull_w), <span class="bu">len</span>(r_bull_vn)</span>
 <span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Fisher z-test (bear vs bull): z = </span><span class="sc">{</span>z<span class="sc">:.2f}</span><span class="ss">, p = </span><span class="sc">{</span>p<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1359,6 +1383,8 @@ Figure&nbsp;39.2
 <h3 data-number="39.4.1" class="anchored" data-anchor-id="the-pukthuanthong-roll-r²-measure"><span class="header-section-number">39.4.1</span> The Pukthuanthong-Roll R² Measure</h3>
 <p><span class="citation" data-cites="pukthuanthong2009global">Pukthuanthong and Roll (<a href="references.html#ref-pukthuanthong2009global" role="doc-biblioref">2009</a>)</span> propose measuring integration as the <span class="math inline">\(R^2\)</span> from regressing a country’s returns on a set of global principal components. The intuition: if a market is fully integrated, global factors should explain all of its systematic return variation.</p>
 <div id="pr-measure" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Implement the Pukthuanthong-Roll integration measure</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pukthuanthong_roll_integration(country_returns, global_returns_matrix,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                     n_components<span class="op">=</span><span class="dv">10</span>, rolling_window<span class="op">=</span><span class="dv">36</span>):</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1435,12 +1461,15 @@ Figure&nbsp;39.2
 <span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  2008-2012: </span><span class="sc">{</span>pr_result[(pr_result[<span class="st">'date'</span>] <span class="op">&gt;=</span> <span class="st">'2008'</span>) <span class="op">&amp;</span> (pr_result[<span class="st">'date'</span>] <span class="op">&lt;</span> <span class="st">'2013'</span>)][<span class="st">'r_squared'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  2013-2018: </span><span class="sc">{</span>pr_result[(pr_result[<span class="st">'date'</span>] <span class="op">&gt;=</span> <span class="st">'2013'</span>) <span class="op">&amp;</span> (pr_result[<span class="st">'date'</span>] <span class="op">&lt;</span> <span class="st">'2019'</span>)][<span class="st">'r_squared'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  2019-2024: </span><span class="sc">{</span>pr_result[pr_result[<span class="st">'date'</span>] <span class="op">&gt;=</span> <span class="st">'2019'</span>][<span class="st">'r_squared'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="global-vs.-local-factor-pricing" class="level3" data-number="39.4.2">
 <h3 data-number="39.4.2" class="anchored" data-anchor-id="global-vs.-local-factor-pricing"><span class="header-section-number">39.4.2</span> Global vs.&nbsp;Local Factor Pricing</h3>
 <p><span class="citation" data-cites="griffin2002fama">Griffin (<a href="references.html#ref-griffin2002fama" role="doc-biblioref">2002</a>)</span> tests whether global or local versions of the Fama-French factors better explain country-level returns. We implement this horse race for Vietnam:</p>
 <div id="global-vs-local" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Compare explanatory power of global vs local factor models</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Align global and local factors</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>common_factor_dates <span class="op">=</span> (</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    global_factors.index</span>
@@ -1488,10 +1517,13 @@ Figure&nbsp;39.2
 <span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>                    (<span class="st">'Global + Local'</span>, model_both)]:</span>
 <span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;20}</span><span class="ss"> </span><span class="sc">{</span>mod<span class="sc">.</span>rsquared<span class="sc">:&gt;8.3f}</span><span class="ss"> </span><span class="sc">{</span>mod<span class="sc">.</span>rsquared_adj<span class="sc">:&gt;8.3f}</span><span class="ss"> "</span></span>
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>mod<span class="sc">.</span>params[<span class="st">'const'</span>]<span class="op">*</span><span class="dv">12</span><span class="sc">:&gt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>mod<span class="sc">.</span>tvalues[<span class="st">'const'</span>]<span class="sc">:&gt;10.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-global-local-r2" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-global-local-r2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Rolling R² comparison of global and local models</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rolling_r2 <span class="op">=</span> []</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>rw <span class="op">=</span> <span class="dv">36</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1545,6 +1577,7 @@ Figure&nbsp;39.2
 <span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-global-local-r2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.3
@@ -1559,6 +1592,8 @@ Figure&nbsp;39.3
 <h3 data-number="39.5.1" class="anchored" data-anchor-id="the-bekaert-harvey-approach"><span class="header-section-number">39.5.1</span> The Bekaert-Harvey Approach</h3>
 <p><span class="citation" data-cites="bekaert1995time">Bekaert and Harvey (<a href="references.html#ref-bekaert1995time" role="doc-biblioref">1995</a>)</span> measure integration as the ability of a global CAPM to price local assets. Under integration, the local market alpha (intercept) in a regression on the global market should be zero, and the global risk premium should explain the local expected return. Under segmentation, the local alpha captures the segmentation premium.</p>
 <div id="bh-integration" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Bekaert-Harvey integration measure: rolling alpha from global CAPM</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bekaert_harvey_integration(local_return, global_return,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                                 rolling_window<span class="op">=</span><span class="dv">36</span>):</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1598,12 +1633,15 @@ Figure&nbsp;39.3
 <span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean |α| (ann.): </span><span class="sc">{</span>bh_result[<span class="st">'abs_alpha_ann'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean β_world: </span><span class="sc">{</span>bh_result[<span class="st">'beta_global'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean R²: </span><span class="sc">{</span>bh_result[<span class="st">'r_squared'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="composite-integration-index" class="level3" data-number="39.5.2">
 <h3 data-number="39.5.2" class="anchored" data-anchor-id="composite-integration-index"><span class="header-section-number">39.5.2</span> Composite Integration Index</h3>
 <p>We combine all measures into a single composite index of Vietnamese market integration:</p>
 <div id="composite-index" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Construct a composite integration index</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize each measure to [0, 1] using historical percentile ranks</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>measures <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>bh_result[<span class="st">'date'</span>])</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1637,10 +1675,13 @@ Figure&nbsp;39.3
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth with 6-month moving average</span></span>
 <span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>measures[<span class="st">'composite_smooth'</span>] <span class="op">=</span> measures[<span class="st">'composite'</span>].rolling(<span class="dv">6</span>).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-composite" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-composite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot the composite integration index with milestones</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">6</span>))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ax.fill_between(measures.index, measures[<span class="st">'composite_smooth'</span>],</span>
@@ -1668,6 +1709,7 @@ Figure&nbsp;39.3
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-composite-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.4
@@ -1682,6 +1724,8 @@ Figure&nbsp;39.4
 <h3 data-number="39.6.1" class="anchored" data-anchor-id="bai-perron-tests-for-integration-regime-shifts"><span class="header-section-number">39.6.1</span> Bai-Perron Tests for Integration Regime Shifts</h3>
 <p>We test whether Vietnam’s integration trajectory contains discrete structural breaks (i.e., sudden shifts in the integration level) rather than a smooth trend:</p>
 <div id="structural-breaks" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Detect structural breaks in the integration time series</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> detect_breaks_cusum(series, significance<span class="op">=</span><span class="fl">0.05</span>):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">    CUSUM-based structural break detection.</span></span>
@@ -1744,6 +1788,7 @@ Figure&nbsp;39.4
 <span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    sig <span class="op">=</span> <span class="st">'***'</span> <span class="cf">if</span> p_val <span class="op">&lt;</span> <span class="fl">0.01</span> <span class="cf">else</span> <span class="st">'**'</span> <span class="cf">if</span> p_val <span class="op">&lt;</span> <span class="fl">0.05</span> <span class="cf">else</span> <span class="st">'*'</span> <span class="cf">if</span> p_val <span class="op">&lt;</span> <span class="fl">0.1</span> <span class="cf">else</span> <span class="st">''</span></span>
 <span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>event[<span class="st">'event'</span>]<span class="sc">:&lt;30}</span><span class="ss"> </span><span class="sc">{</span>event[<span class="st">'date'</span>]<span class="sc">.</span>strftime(<span class="st">'%Y-%m'</span>)<span class="sc">:&gt;12}</span><span class="ss"> "</span></span>
 <span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>f_stat<span class="sc">:&gt;10.2f}</span><span class="ss"> </span><span class="sc">{</span>p_val<span class="sc">:&gt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>sig<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1753,6 +1798,8 @@ Figure&nbsp;39.4
 <h3 data-number="39.7.1" class="anchored" data-anchor-id="cross-sectional-evidence"><span class="header-section-number">39.7.1</span> Cross-Sectional Evidence</h3>
 <p>Under partial segmentation, stocks with higher foreign ownership should have lower expected returns (because foreign investors can diversify away local risk). This yields a testable prediction: foreign ownership should be negatively associated with expected returns, controlling for global risk exposure.</p>
 <div id="segmentation-premium" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Estimate the cross-sectional segmentation premium</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get monthly stock returns with foreign ownership</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>stock_data <span class="op">=</span> client.get_monthly_returns(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    exchanges<span class="op">=</span>[<span class="st">'HOSE'</span>, <span class="st">'HNX'</span>],</span>
@@ -1803,10 +1850,13 @@ Figure&nbsp;39.4
 <span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Interpretation:   A 10pp increase in foreign ownership is "</span></span>
 <span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"associated with a </span><span class="sc">{</span>mean_gamma <span class="op">*</span> <span class="dv">12</span> <span class="op">*</span> <span class="dv">10</span><span class="sc">:.2f}</span><span class="ss">% change in "</span></span>
 <span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"annual expected returns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-segmentation-premium" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-segmentation-premium-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize the segmentation premium</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Quintile returns by foreign ownership</span></span>
@@ -1851,6 +1901,7 @@ Figure&nbsp;39.4
 <span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-segmentation-premium-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.5
@@ -1865,6 +1916,8 @@ Figure&nbsp;39.5
 <h3 data-number="39.8.1" class="anchored" data-anchor-id="is-currency-risk-priced"><span class="header-section-number">39.8.1</span> Is Currency Risk Priced?</h3>
 <p>In a partially integrated market, exchange rate risk may carry a separate premium. <span class="citation" data-cites="jorion1991pricing">Jorion (<a href="references.html#ref-jorion1991pricing" role="doc-biblioref">1991</a>)</span> and <span class="citation" data-cites="dumas1995world">Dumas and Solnik (<a href="references.html#ref-dumas1995world" role="doc-biblioref">1995</a>)</span> test whether currency exposure is priced beyond global equity risk. For Vietnam, the VND/USD exchange rate is managed (a crawling peg with occasional step devaluations), creating a specific risk that is neither fully diversifiable nor fully priced by global equity factors.</p>
 <div id="fx-risk" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Test whether VND/USD exchange rate risk is priced</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># VND depreciation</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>fx_return <span class="op">=</span> fx[<span class="st">'rate'</span>].pct_change()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>fx_return.name <span class="op">=</span> <span class="st">'fx_return'</span></span>
@@ -1908,6 +1961,7 @@ Figure&nbsp;39.5
 <span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> q, ret <span class="kw">in</span> fx_premium.items():</span>
 <span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Q</span><span class="sc">{</span>q<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>ret<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">% ann."</span>)</span>
 <span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Q5-Q1: </span><span class="sc">{</span>(fx_premium.iloc[<span class="op">-</span><span class="dv">1</span>] <span class="op">-</span> fx_premium.iloc[<span class="dv">0</span>])<span class="op">*</span><span class="dv">100</span><span class="sc">:.2f}</span><span class="ss">% ann."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1915,6 +1969,8 @@ Figure&nbsp;39.5
 <h2 data-number="39.9" class="anchored" data-anchor-id="sec-market-integration-contagion"><span class="header-section-number">39.9</span> Contagion vs.&nbsp;Interdependence</h2>
 <p>During global crises, correlations between Vietnam and world markets spike. The question is whether this represents <em>contagion</em> (a structural change in the transmission mechanism) or simply <em>interdependence</em> (normal co-movement amplified by higher volatility). <span class="citation" data-cites="longin2001extreme">Longin and Solnik (<a href="references.html#ref-longin2001extreme" role="doc-biblioref">2001</a>)</span> show that correlation increases mechanically with volatility even without any change in the underlying dependence structure.</p>
 <div id="contagion-test" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Test for contagion during major crisis episodes</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forbes_rigobon_test(r_local, r_global, crisis_dates, tranquil_dates):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Forbes-Rigobon (2002) contagion test.</span></span>
@@ -1992,6 +2048,7 @@ Figure&nbsp;39.5
 <span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'rho_crisis_adj'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss"> </span><span class="sc">{</span>result[<span class="st">'rho_tranquil'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss"> "</span></span>
 <span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>result[<span class="st">'z_stat'</span>]<span class="sc">:&gt;8.2f}</span><span class="ss"> </span><span class="sc">{</span>result[<span class="st">'p_value'</span>]<span class="sc">:&gt;8.3f}</span><span class="ss"> "</span></span>
 <span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>verdict<span class="sc">:&gt;12}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-market-integration-asean" class="level2" data-number="39.10">
@@ -2000,6 +2057,8 @@ Figure&nbsp;39.5
 <div id="fig-asean-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-asean-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compare integration trajectories across ASEAN markets</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">6</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>asean_markets <span class="op">=</span> {</span>
@@ -2037,6 +2096,7 @@ Figure&nbsp;39.5
 <span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-asean-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;39.6

@@ -921,7 +921,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./50_institutional_ownership.html">Ownership, Market Frictions, and International Exposure</a></li><li class="breadcrumb-item"><a href="./54_return_gaps.html"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Return Gap: Measuring Unobserved Actions of Fund Managers</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Return Gap: Measuring Unobserved Actions of Fund Managers</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Return Gap: Measuring Unobserved Actions of Fund Managers</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1133,6 +1133,8 @@ Table&nbsp;39.1: Data sources for the Return Gap analysis in Vietnam
 <section id="setting-up-the-environment" class="level2" data-number="39.2">
 <h2 data-number="39.2" class="anchored" data-anchor-id="setting-up-the-environment"><span class="header-section-number">39.2</span> Setting Up the Environment</h2>
 <div id="setup-environment" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure settings</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1161,12 +1163,15 @@ Table&nbsp;39.1: Data sources for the Return Gap analysis in Vietnam
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">"whitegrid"</span>)</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-return-gapstock-data" class="level2" data-number="39.3">
 <h2 data-number="39.3" class="anchored" data-anchor-id="sec-return-gapstock-data"><span class="header-section-number">39.3</span> Loading and Preparing Stock Market Data</h2>
 <p>The first step is to load the stock-level data, which provides the foundation for computing hypothetical holdings returns.</p>
 <div id="cell-load-stock-data" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load stock prices and returns from DataCore</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In production, replace with actual DataCore API calls:</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   from datacore import DataCoreClient</span></span>
@@ -1230,6 +1235,7 @@ Table&nbsp;39.1: Data sources for the Return Gap analysis in Vietnam
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date range: </span><span class="sc">{</span>stock_data[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:</span><span class="op">%</span>Y<span class="op">-%</span>m<span class="sc">}</span><span class="ss"> to "</span></span>
 <span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>stock_data[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:</span><span class="op">%</span>Y<span class="op">-%</span>m<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>stock_data.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Stock data: 38,865 stock-months
 Unique stocks: 300
@@ -1363,6 +1369,8 @@ Date range: 2012-01 to 2024-12</code></pre>
 <section id="sec-return-gapholdings-data" class="level2" data-number="39.4">
 <h2 data-number="39.4" class="anchored" data-anchor-id="sec-return-gapholdings-data"><span class="header-section-number">39.4</span> Loading Fund Holdings Data</h2>
 <div id="cell-load-holdings-data" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Load fund holdings from DataCore</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_holdings_data(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    stock_data: pd.DataFrame,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    n_funds: <span class="bu">int</span> <span class="op">=</span> <span class="dv">50</span>,</span>
@@ -1407,6 +1415,7 @@ Date range: 2012-01 to 2024-12</code></pre>
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Holdings records: </span><span class="sc">{</span>holdings_raw<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique funds: </span><span class="sc">{</span>holdings_raw[<span class="st">'fund_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>holdings_raw.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Holdings records: 89,269
 Unique funds: 50</code></pre>
@@ -1517,6 +1526,8 @@ Unique funds: 50</code></pre>
 <section id="sec-return-gapfund-returns" class="level2" data-number="39.5">
 <h2 data-number="39.5" class="anchored" data-anchor-id="sec-return-gapfund-returns"><span class="header-section-number">39.5</span> Loading Fund Returns and Characteristics</h2>
 <div id="cell-load-fund-returns" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Load fund NAV returns and expense data</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_fund_returns(holdings, start_date<span class="op">=</span><span class="st">"2012-01-01"</span>, end_date<span class="op">=</span><span class="st">"2024-12-31"</span>):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generate monthly fund-level net returns, TNA, and expense ratios."""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    fund_ids <span class="op">=</span> holdings[<span class="st">"fund_id"</span>].unique()</span>
@@ -1543,6 +1554,7 @@ Unique funds: 50</code></pre>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>fund_returns <span class="op">=</span> generate_fund_returns(holdings_raw)</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Fund-month observations: </span><span class="sc">{</span>fund_returns<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>fund_returns.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fund-month observations: 6,808</code></pre>
 </div>
@@ -1653,6 +1665,8 @@ Unique funds: 50</code></pre>
 <h2 data-number="39.6" class="anchored" data-anchor-id="sec-return-gapsample-selection"><span class="header-section-number">39.6</span> Sample Selection: Domestic Equity Funds</h2>
 <p>Following the approach of <span class="citation" data-cites="kacperczyk2008unobserved">Kacperczyk, Sialm, and Zheng (<a href="references.html#ref-kacperczyk2008unobserved" role="doc-biblioref">2008</a>)</span>, we restrict our sample to domestic equity funds.</p>
 <div id="sample-selection" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Filter to domestic equity funds</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>equity_objectives <span class="op">=</span> [</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"EQUITY_DOMESTIC"</span>, <span class="st">"EQUITY_GROWTH"</span>, <span class="st">"EQUITY_VALUE"</span>,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"EQUITY_BLEND"</span>, <span class="st">"EQUITY_LARGE_CAP"</span>, <span class="st">"EQUITY_MID_CAP"</span>,</span>
@@ -1677,6 +1691,7 @@ Unique funds: 50</code></pre>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equity funds: </span><span class="sc">{</span><span class="bu">len</span>(equity_fund_ids)<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span><span class="bu">len</span>(equity_fund_ids)<span class="op">/</span><span class="bu">len</span>(fund_ids)<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%)"</span>)</span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Objective distribution:"</span>)</span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fund_master[<span class="st">"objective"</span>].value_counts().to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Total funds: 50
 Equity funds: 29 (58.0%)
@@ -1703,6 +1718,8 @@ EQUITY_DOMESTIC     2</code></pre>
 <h2 data-number="40.1" class="anchored" data-anchor-id="sec-return-gapvintages"><span class="header-section-number">40.1</span> Step 1: Prepare Holdings Vintages</h2>
 <p>A critical first step is to correctly handle the <em>vintage</em> structure of holdings data. Each holdings report has two key dates: the <strong>report date</strong> (<span class="math inline">\(\tau\)</span>, the as-of date) and the <strong>filing date</strong> (<span class="math inline">\(f\)</span>, when it becomes public). We keep only the first vintage per fund-report date.</p>
 <div id="cell-prepare-vintages" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Process holdings vintages and determine holding periods</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_holdings_vintages(holdings, max_holding_months<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Process holdings vintages and compute next report dates."""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    first_vintage <span class="op">=</span> (</span>
@@ -1726,6 +1743,7 @@ EQUITY_DOMESTIC     2</code></pre>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>(holdings_vintaged.loc[holdings_vintaged[<span class="st">"fund_id"</span>] <span class="op">==</span> sample_fund]</span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a> [[<span class="st">"fund_id"</span>, <span class="st">"report_date"</span>, <span class="st">"filing_date"</span>, <span class="st">"next_report_date"</span>]]</span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a> .drop_duplicates().head(<span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Holdings after vintage processing: 89,269 records</code></pre>
 </div>
@@ -1810,18 +1828,23 @@ EQUITY_DOMESTIC     2</code></pre>
 <section id="sec-return-gapadjust-shares" class="level2" data-number="40.2">
 <h2 data-number="40.2" class="anchored" data-anchor-id="sec-return-gapadjust-shares"><span class="header-section-number">40.2</span> Step 2: Adjust Shares for Corporate Actions</h2>
 <div id="adjust-shares" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Adjust shares held for corporate actions</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adjust_holdings_shares(holdings, stock_data):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Adjust shares for splits, bonuses, rights. Simulated: factor=1."""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    holdings[<span class="st">"shares_adj"</span>] <span class="op">=</span> holdings[<span class="st">"shares_held"</span>]</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> holdings</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>holdings_adj <span class="op">=</span> adjust_holdings_shares(holdings_vintaged, stock_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-return-gaphypothetical-returns" class="level2" data-number="40.3">
 <h2 data-number="40.3" class="anchored" data-anchor-id="sec-return-gaphypothetical-returns"><span class="header-section-number">40.3</span> Step 3: Compute Hypothetical Holdings Returns</h2>
 <p>This is the core computation. For each fund, we take the disclosed holdings as of report date <span class="math inline">\(\tau\)</span>, and for each month <span class="math inline">\(t\)</span> in <span class="math inline">\((\tau, \tau_{\text{next}}]\)</span>, compute the value-weighted return using lagged dollar values as weights.</p>
 <div id="compute-holdings-returns" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Compute value-weighted hypothetical portfolio returns</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_holdings_returns(holdings, stock_data, min_stocks<span class="op">=</span><span class="dv">10</span>, min_assets_bn<span class="op">=</span><span class="fl">5.0</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute monthly hypothetical buy-and-hold portfolio returns."""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    merged <span class="op">=</span> holdings.merge(stock_data, on<span class="op">=</span><span class="st">"ticker"</span>, how<span class="op">=</span><span class="st">"inner"</span>)</span>
@@ -1852,6 +1875,7 @@ EQUITY_DOMESTIC     2</code></pre>
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique funds: </span><span class="sc">{</span>holdings_returns[<span class="st">'fund_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Summary:"</span>)</span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(holdings_returns[[<span class="st">"hret"</span>, <span class="st">"n_stocks"</span>, <span class="st">"assets_bn"</span>]].describe().<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fund-month observations (hypothetical returns): 6,170
 Unique funds: 50
@@ -1872,6 +1896,8 @@ max       0.2209    74.0000   167.3511</code></pre>
 <section id="sec-return-gapgross-returns" class="level2" data-number="40.4">
 <h2 data-number="40.4" class="anchored" data-anchor-id="sec-return-gapgross-returns"><span class="header-section-number">40.4</span> Step 4: Compute Gross Fund Returns</h2>
 <div id="compute-gross-returns" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Compute gross fund returns</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_fund_returns(fund_returns, equity_fund_ids):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Prepare fund-level gross returns."""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> fund_returns.loc[fund_returns[<span class="st">"fund_id"</span>].isin(equity_fund_ids)].copy()</span>
@@ -1883,6 +1909,7 @@ max       0.2209    74.0000   167.3511</code></pre>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>fund_ret_clean <span class="op">=</span> prepare_fund_returns(fund_returns, equity_fund_ids)</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equity fund-months: </span><span class="sc">{</span>fund_ret_clean<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Equity fund-months: 3,993</code></pre>
 </div>
@@ -1891,6 +1918,8 @@ max       0.2209    74.0000   167.3511</code></pre>
 <section id="sec-return-gapmerge-return-gap" class="level2" data-number="40.5">
 <h2 data-number="40.5" class="anchored" data-anchor-id="sec-return-gapmerge-return-gap"><span class="header-section-number">40.5</span> Step 5: Merge and Compute Return Gap</h2>
 <div id="compute-return-gap" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Merge actual and hypothetical returns to compute Return Gap</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_return_gap(holdings_returns, fund_returns):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute Return Gap and trailing averages."""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    merged <span class="op">=</span> holdings_returns.merge(</span>
@@ -1909,6 +1938,7 @@ max       0.2209    74.0000   167.3511</code></pre>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Return Gap observations: </span><span class="sc">{</span>return_gap_data<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Summary:"</span>)</span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(return_gap_data[[<span class="st">"return_gap"</span>, <span class="st">"rg_12m"</span>, <span class="st">"rg_12m_lag4"</span>]].describe().<span class="bu">round</span>(<span class="dv">6</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Return Gap observations: 3,592
 
@@ -1928,6 +1958,8 @@ max       0.277137     0.079589     0.079589</code></pre>
 <section id="distribution-of-the-return-gap" class="level2" data-number="40.6">
 <h2 data-number="40.6" class="anchored" data-anchor-id="distribution-of-the-return-gap"><span class="header-section-number">40.6</span> Distribution of the Return Gap</h2>
 <div id="cell-fig-return-gap-distribution" class="cell" data-fig-height="5" data-fig-width="12" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>rg <span class="op">=</span> return_gap_data[<span class="st">"return_gap"</span>].dropna()</span>
@@ -1951,6 +1983,7 @@ max       0.277137     0.079589     0.079589</code></pre>
 <span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].legend(frameon<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-return-gap-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1968,6 +2001,8 @@ Figure&nbsp;40.1: Distribution of monthly Return Gap across all fund-month obser
 <section id="time-series-of-cross-sectional-return-gap" class="level2" data-number="40.7">
 <h2 data-number="40.7" class="anchored" data-anchor-id="time-series-of-cross-sectional-return-gap"><span class="header-section-number">40.7</span> Time Series of Cross-Sectional Return Gap</h2>
 <div id="cell-fig-return-gap-timeseries" class="cell" data-fig-height="5" data-fig-width="12" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ts_stats <span class="op">=</span> (</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    return_gap_data.groupby(<span class="st">"date"</span>)[<span class="st">"return_gap"</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .agg([<span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.25</span>), <span class="kw">lambda</span> x: x.quantile(<span class="fl">0.75</span>)])</span>
@@ -1985,6 +2020,7 @@ Figure&nbsp;40.1: Distribution of monthly Return Gap across all fund-month obser
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-return-gap-timeseries" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2006,6 +2042,8 @@ Figure&nbsp;40.2: Time series of cross-sectional Return Gap statistics. Solid: m
 <h2 data-number="41.1" class="anchored" data-anchor-id="sec-return-gapdecile-portfolios"><span class="header-section-number">41.1</span> Forming Return Gap Decile Portfolios</h2>
 <p>Each month <span class="math inline">\(t\)</span>, we sort funds into decile portfolios based on their lagged 12-month average Return Gap (<span class="math inline">\(\overline{\text{RG}}_{i,t-4}^{12}\)</span>). Portfolio 1 contains funds with the lowest Return Gap.</p>
 <div id="form-decile-portfolios" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Sort funds into decile portfolios</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> form_return_gap_portfolios(data, n_portfolios<span class="op">=</span><span class="dv">10</span>, sort_var<span class="op">=</span><span class="st">"rg_12m_lag4"</span>):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Form portfolios by sorting funds into quantile groups."""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> data.dropna(subset<span class="op">=</span>[sort_var]).copy()</span>
@@ -2018,6 +2056,7 @@ Figure&nbsp;40.2: Time series of cross-sectional Return Gap statistics. Solid: m
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>n_portfolios <span class="op">=</span> <span class="dv">10</span></span>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>portfolio_data <span class="op">=</span> form_return_gap_portfolios(return_gap_data, n_portfolios<span class="op">=</span>n_portfolios)</span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Observations with portfolio assignment: </span><span class="sc">{</span>portfolio_data<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Observations with portfolio assignment: 3,273</code></pre>
 </div>
@@ -2026,6 +2065,8 @@ Figure&nbsp;40.2: Time series of cross-sectional Return Gap statistics. Solid: m
 <section id="portfolio-returns" class="level2" data-number="41.2">
 <h2 data-number="41.2" class="anchored" data-anchor-id="portfolio-returns"><span class="header-section-number">41.2</span> Portfolio Returns</h2>
 <div id="compute-portfolio-returns" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Compute EW and VW portfolio returns</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_portfolio_returns(data, n_portfolios<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute equal- and value-weighted monthly returns."""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    ew <span class="op">=</span> data.groupby([<span class="st">"date"</span>, <span class="st">"portfolio"</span>]).agg(</span>
@@ -2043,6 +2084,7 @@ Figure&nbsp;40.2: Time series of cross-sectional Return Gap statistics. Solid: m
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"EW portfolio returns (annualized, %):"</span>)</span>
 <span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((port_wide[<span class="st">"ew_ret"</span>].mean() <span class="op">*</span> <span class="dv">12</span> <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>EW portfolio returns (annualized, %):
 portfolio
@@ -2062,12 +2104,8 @@ LS      10.77</code></pre>
 </section>
 <section id="characteristics-of-return-gap-portfolios" class="level2" data-number="41.3">
 <h2 data-number="41.3" class="anchored" data-anchor-id="characteristics-of-return-gap-portfolios"><span class="header-section-number">41.3</span> Characteristics of Return Gap Portfolios</h2>
-<div id="tbl-portfolio-characteristics" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-portfolio-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;41.1: Characteristics of Return Gap-sorted decile portfolios.
-</figcaption>
-<div aria-describedby="tbl-portfolio-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>chars <span class="op">=</span> portfolio_data.groupby(<span class="st">"portfolio"</span>).agg(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    avg_rg<span class="op">=</span>(<span class="st">"return_gap"</span>, <span class="st">"mean"</span>), avg_rg12<span class="op">=</span>(<span class="st">"rg_12m_lag4"</span>, <span class="st">"mean"</span>),</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    avg_net_ret<span class="op">=</span>(<span class="st">"net_return"</span>, <span class="st">"mean"</span>), avg_gross_ret<span class="op">=</span>(<span class="st">"gross_return"</span>, <span class="st">"mean"</span>),</span>
@@ -2081,6 +2119,13 @@ Table&nbsp;41.1: Characteristics of Return Gap-sorted decile portfolios.
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>dc[<span class="st">"TNA(Bn)"</span>] <span class="op">=</span> dc[<span class="st">"TNA(Bn)"</span>].<span class="bu">round</span>(<span class="dv">1</span>)</span>
 <span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>dc[<span class="st">"#Stocks"</span>] <span class="op">=</span> dc[<span class="st">"#Stocks"</span>].<span class="bu">round</span>(<span class="dv">1</span>)</span>
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dc.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-portfolio-characteristics" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-portfolio-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;41.1: Characteristics of Return Gap-sorted decile portfolios.
+</figcaption>
+<div aria-describedby="tbl-portfolio-characteristics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>           Avg RG  Avg RG(12m)  Net Ret  Gross Ret  Hold Ret  Expense  TNA(Bn)  #Stocks  #Obs
 portfolio                                                                                    
@@ -2102,6 +2147,8 @@ portfolio
 <section id="cumulative-returns-of-extreme-portfolios" class="level2" data-number="41.4">
 <h2 data-number="41.4" class="anchored" data-anchor-id="cumulative-returns-of-extreme-portfolios"><span class="header-section-number">41.4</span> Cumulative Returns of Extreme Portfolios</h2>
 <div id="cell-fig-cumulative-returns" class="cell" data-fig-height="6" data-fig-width="12" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>cum_ret <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>port_wide.index)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>cum_ret[<span class="st">"P1 (Low RG)"</span>] <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> port_wide[(<span class="st">"ew_ret"</span>, <span class="dv">1</span>)]).cumprod()</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>cum_ret[<span class="st">"P10 (High RG)"</span>] <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> port_wide[(<span class="st">"ew_ret"</span>, n_portfolios)]).cumprod()</span>
@@ -2120,6 +2167,7 @@ portfolio
 <span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>ax.set_yscale(<span class="st">"log"</span>)</span>
 <span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-cumulative-returns" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2140,6 +2188,8 @@ Figure&nbsp;41.1: Cumulative returns of Return Gap-sorted portfolios: P10 (highe
 <section id="risk-factors" class="level2" data-number="42.1">
 <h2 data-number="42.1" class="anchored" data-anchor-id="risk-factors"><span class="header-section-number">42.1</span> Risk Factors</h2>
 <div id="construct-risk-factors" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Generate Vietnamese market factor returns</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_factor_returns(start_date<span class="op">=</span><span class="st">"2012-01-01"</span>, end_date<span class="op">=</span><span class="st">"2024-12-31"</span>):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generate simulated Vietnamese market factor returns."""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    dates <span class="op">=</span> pd.date_range(start_date, end_date, freq<span class="op">=</span><span class="st">"ME"</span>)</span>
@@ -2158,6 +2208,7 @@ Figure&nbsp;41.1: Cumulative returns of Return Gap-sorted portfolios: P10 (highe
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>factors <span class="op">=</span> generate_factor_returns()</span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Factor summary (monthly %):"</span>)</span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((factors.drop(columns<span class="op">=</span><span class="st">"date"</span>).describe() <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Factor summary (monthly %):
               rf     mkt_rf        smb        hml        umd        rmw        cma
@@ -2175,6 +2226,8 @@ max        0.653     15.678      9.744      8.316     13.215      6.142      4.6
 <section id="alpha-estimation" class="level2" data-number="42.2">
 <h2 data-number="42.2" class="anchored" data-anchor-id="alpha-estimation"><span class="header-section-number">42.2</span> Alpha Estimation</h2>
 <div id="estimate-alphas" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Estimate risk-adjusted alphas with Newey-West SEs</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_portfolio_alphas(port_returns, factors, n_portfolios<span class="op">=</span><span class="dv">10</span>, nw_lags<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Estimate alphas using multiple factor models."""</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    ew_wide <span class="op">=</span> port_returns.pivot_table(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"portfolio"</span>, values<span class="op">=</span><span class="st">"ew_ret"</span>)</span>
@@ -2216,6 +2269,7 @@ max        0.653     15.678      9.744      8.316     13.215      6.142      4.6
 <span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>alpha_results <span class="op">=</span> estimate_portfolio_alphas(port_returns, factors, n_portfolios)</span>
 <span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Alpha estimates: </span><span class="sc">{</span><span class="bu">len</span>(alpha_results)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Alpha estimates: 66</code></pre>
 </div>
@@ -2223,12 +2277,8 @@ max        0.653     15.678      9.744      8.316     13.215      6.142      4.6
 </section>
 <section id="alpha-table" class="level2" data-number="42.3">
 <h2 data-number="42.3" class="anchored" data-anchor-id="alpha-table"><span class="header-section-number">42.3</span> Alpha Table</h2>
-<div id="tbl-alphas" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-alphas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;42.1: Risk-adjusted monthly alphas (%) for Return Gap decile portfolios. t-stats (NW, 6 lags) in parentheses.
-</figcaption>
-<div aria-describedby="tbl-alphas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stars(p):</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pd.isna(p): <span class="cf">return</span> <span class="st">""</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> p <span class="op">&lt;</span> <span class="fl">0.01</span>: <span class="cf">return</span> <span class="st">"***"</span></span>
@@ -2247,6 +2297,13 @@ Table&nbsp;42.1: Risk-adjusted monthly alphas (%) for Return Gap decile portfoli
 <span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>pivot <span class="op">=</span> pd.DataFrame(rows).pivot_table(index<span class="op">=</span><span class="st">"Portfolio"</span>, columns<span class="op">=</span><span class="st">"Model"</span>, values<span class="op">=</span><span class="st">"Alpha (%)"</span>, aggfunc<span class="op">=</span><span class="st">"first"</span>)</span>
 <span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>pivot <span class="op">=</span> pivot.reindex(columns<span class="op">=</span>models_list)</span>
 <span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pivot.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-alphas" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-alphas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;42.1: Risk-adjusted monthly alphas (%) for Return Gap decile portfolios. t-stats (NW, 6 lags) in parentheses.
+</figcaption>
+<div aria-describedby="tbl-alphas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>Model      Raw Mean Excess Return      CAPM       FF3   Carhart       FF5
 Portfolio                                                                
@@ -2269,6 +2326,8 @@ LS            0.897        -0.289     0.492     0.398     0.567     0.392</code>
 <section id="alpha-plot" class="level2" data-number="42.4">
 <h2 data-number="42.4" class="anchored" data-anchor-id="alpha-plot"><span class="header-section-number">42.4</span> Alpha Plot</h2>
 <div id="cell-fig-alpha-plot" class="cell" data-fig-height="7" data-fig-width="12" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>models_plot <span class="op">=</span> [<span class="st">"Excess Return"</span>, <span class="st">"CAPM"</span>, <span class="st">"FF3"</span>, <span class="st">"Carhart"</span>, <span class="st">"FF5"</span>]</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>colors_m <span class="op">=</span> {<span class="st">"Excess Return"</span>: <span class="st">"#D32F2F"</span>, <span class="st">"CAPM"</span>: <span class="st">"#FF8F00"</span>, <span class="st">"FF3"</span>: <span class="st">"#1B5E20"</span>, <span class="st">"Carhart"</span>: <span class="st">"#1565C0"</span>, <span class="st">"FF5"</span>: <span class="st">"#6A1B9A"</span>}</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2284,6 +2343,7 @@ LS            0.897        -0.289     0.492     0.398     0.567     0.392</code>
 <span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">11</span>))</span>
 <span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-alpha-plot" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2300,12 +2360,8 @@ Figure&nbsp;42.1: Risk-adjusted alphas of Return Gap-sorted decile portfolios un
 </section>
 <section id="long-short-portfolio-analysis" class="level2" data-number="42.5">
 <h2 data-number="42.5" class="anchored" data-anchor-id="long-short-portfolio-analysis"><span class="header-section-number">42.5</span> Long-Short Portfolio Analysis</h2>
-<div id="tbl-long-short" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-long-short-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;42.2: Performance of the long-short Return Gap strategy (P10 minus P1).
-</figcaption>
-<div aria-describedby="tbl-long-short-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> long_short_analysis(port_returns, factors, n_portfolios<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    wide <span class="op">=</span> port_returns.pivot_table(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"portfolio"</span>, values<span class="op">=</span><span class="st">"ew_ret"</span>)</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    ls <span class="op">=</span> (wide[n_portfolios] <span class="op">-</span> wide[<span class="dv">1</span>]).dropna()</span>
@@ -2325,6 +2381,13 @@ Table&nbsp;42.2: Performance of the long-short Return Gap strategy (P10 minus P1
 <span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(<span class="bu">list</span>(sd.items()), columns<span class="op">=</span>[<span class="st">"Statistic"</span>, <span class="st">"Value"</span>]).<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(long_short_analysis(port_returns, factors).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-long-short" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-long-short-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;42.2: Performance of the long-short Return Gap strategy (P10 minus P1).
+</figcaption>
+<div aria-describedby="tbl-long-short-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>            Statistic   Value
       Ann. Return (%)  10.766
@@ -2354,6 +2417,8 @@ Carhart Alpha (%ann.)   6.810
 \text{RG}_{i,t} = \gamma_0 + \gamma_1 \text{Size}_{i,t-1} + \gamma_2 \text{Expense}_{i,t} + \gamma_3 \text{NStocks}_{i,t} + \epsilon_{i,t}
 \tag{43.1}\]</span></span></p>
 <div id="fama-macbeth" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Fama-MacBeth cross-sectional regression</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fama_macbeth_regression(data, y_var, x_vars, nw_lags<span class="op">=</span><span class="dv">6</span>):</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Fama-MacBeth (1973) regression with Newey-West SEs."""</span></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    dates <span class="op">=</span> <span class="bu">sorted</span>(data[<span class="st">"date"</span>].unique())</span>
@@ -2386,6 +2451,7 @@ Carhart Alpha (%ann.)   6.810
 <span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fama-MacBeth: Determinants of Return Gap"</span>)</span>
 <span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">60</span>)</span>
 <span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fama_macbeth_regression(reg_data, <span class="st">"return_gap"</span>, [<span class="st">"log_tna"</span>,<span class="st">"expense_pct"</span>,<span class="st">"log_nstocks"</span>]).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fama-MacBeth: Determinants of Return Gap
 ============================================================
@@ -2401,6 +2467,8 @@ log_nstocks -0.003203 0.003508 -0.913  0.3629</code></pre>
 <section id="sec-return-gappersistence" class="level1" data-number="44">
 <h1 data-number="44"><span class="header-section-number">44</span> Persistence</h1>
 <div id="cell-fig-transition-heatmap" class="cell" data-fig-height="6" data-fig-width="8" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_transition_matrix(data, n_groups<span class="op">=</span><span class="dv">5</span>, sort_var<span class="op">=</span><span class="st">"rg_12m_lag4"</span>, horizon<span class="op">=</span><span class="dv">12</span>):</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> data.dropna(subset<span class="op">=</span>[sort_var]).copy()</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"quintile"</span>] <span class="op">=</span> df.groupby(<span class="st">"date"</span>)[sort_var].transform(</span>
@@ -2421,6 +2489,7 @@ log_nstocks -0.003203 0.003508 -0.913  0.3629</code></pre>
 <span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Return Gap Quintile Transition Probabilities"</span>)</span>
 <span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-transition-heatmap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2439,12 +2508,8 @@ Figure&nbsp;44.1: Return Gap quintile transition probability matrix (12-month ho
 <h1 data-number="45"><span class="header-section-number">45</span> Robustness Checks</h1>
 <section id="alternative-holding-periods" class="level2" data-number="45.1">
 <h2 data-number="45.1" class="anchored" data-anchor-id="alternative-holding-periods"><span class="header-section-number">45.1</span> Alternative Holding Periods</h2>
-<div id="tbl-robustness" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="24">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-robustness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;45.1: Long-short strategy under different maximum holding periods.
-</figcaption>
-<div aria-describedby="tbl-robustness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>hp_results <span class="op">=</span> {}</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> hp <span class="kw">in</span> [<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">9</span>]:</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    hv <span class="op">=</span> prepare_holdings_vintages(holdings_raw, max_holding_months<span class="op">=</span>hp)</span>
@@ -2460,6 +2525,13 @@ Table&nbsp;45.1: Long-short strategy under different maximum holding periods.
 <span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">"Sharpe"</span>: ls.mean()<span class="op">/</span>ls.std()<span class="op">*</span>np.sqrt(<span class="dv">12</span>) <span class="cf">if</span> ls.std()<span class="op">&gt;</span><span class="dv">0</span> <span class="cf">else</span> np.nan, <span class="st">"#Months"</span>: <span class="bu">len</span>(ls.dropna())}</span>
 <span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pd.DataFrame(hp_results).T.<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-robustness" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="24">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-robustness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;45.1: Long-short strategy under different maximum holding periods.
+</figcaption>
+<div aria-describedby="tbl-robustness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>   Ann.Ret(%)  Sharpe  #Months
 3       4.601   0.200    125.0
@@ -2472,12 +2544,8 @@ Table&nbsp;45.1: Long-short strategy under different maximum holding periods.
 </section>
 <section id="subperiod-analysis" class="level2" data-number="45.2">
 <h2 data-number="45.2" class="anchored" data-anchor-id="subperiod-analysis"><span class="header-section-number">45.2</span> Subperiod Analysis</h2>
-<div id="tbl-subperiod" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-subperiod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;45.2: Subperiod analysis of the long-short strategy.
-</figcaption>
-<div aria-describedby="tbl-subperiod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>wide <span class="op">=</span> port_returns.pivot_table(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"portfolio"</span>, values<span class="op">=</span><span class="st">"ew_ret"</span>)</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>ls <span class="op">=</span> (wide[n_portfolios] <span class="op">-</span> wide[<span class="dv">1</span>]).dropna()</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> <span class="bu">sorted</span>(ls.index)<span class="op">;</span> n <span class="op">=</span> <span class="bu">len</span>(ds)<span class="op">;</span> bp1 <span class="op">=</span> ds[n<span class="op">//</span><span class="dv">3</span>]<span class="op">;</span> bp2 <span class="op">=</span> ds[<span class="dv">2</span><span class="op">*</span>n<span class="op">//</span><span class="dv">3</span>]</span>
@@ -2492,6 +2560,13 @@ Table&nbsp;45.2: Subperiod analysis of the long-short strategy.
 <span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    sub.append({<span class="st">"Period"</span>: pn, <span class="st">"Ann.Ret(%)"</span>: ss.mean()<span class="op">*</span><span class="dv">12</span><span class="op">*</span><span class="dv">100</span>, <span class="st">"Ann.Vol(%)"</span>: ss.std()<span class="op">*</span>np.sqrt(<span class="dv">12</span>)<span class="op">*</span><span class="dv">100</span>,</span>
 <span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Sharpe"</span>: ss.mean()<span class="op">/</span>ss.std()<span class="op">*</span>np.sqrt(<span class="dv">12</span>) <span class="cf">if</span> ss.std()<span class="op">&gt;</span><span class="dv">0</span> <span class="cf">else</span> np.nan, <span class="st">"#Mo"</span>: <span class="bu">len</span>(ss)})</span>
 <span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pd.DataFrame(sub).<span class="bu">round</span>(<span class="dv">3</span>).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-subperiod" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-subperiod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;45.2: Subperiod analysis of the long-short strategy.
+</figcaption>
+<div aria-describedby="tbl-subperiod-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>    Period  Ann.Ret(%)  Ann.Vol(%)  Sharpe  #Mo
       Full      10.766      21.431   0.502  125
@@ -2506,6 +2581,8 @@ Early-2018      19.756      24.313   0.813   42
 <section id="ew-vs-vw" class="level2" data-number="45.3">
 <h2 data-number="45.3" class="anchored" data-anchor-id="ew-vs-vw"><span class="header-section-number">45.3</span> EW vs VW</h2>
 <div id="cell-fig-ew-vs-vw" class="cell" data-fig-height="5" data-fig-width="14" data-execution_count="26">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ls_ew <span class="op">=</span> port_wide[(<span class="st">"ew_ret"</span>, n_portfolios)] <span class="op">-</span> port_wide[(<span class="st">"ew_ret"</span>, <span class="dv">1</span>)]</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>ls_vw <span class="op">=</span> port_wide[(<span class="st">"vw_ret"</span>, n_portfolios)] <span class="op">-</span> port_wide[(<span class="st">"vw_ret"</span>, <span class="dv">1</span>)]</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2521,6 +2598,7 @@ Early-2018      19.756      24.313   0.813   42
 <span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">"Rolling 12M Ann. L/S Returns (%)"</span>)<span class="op">;</span> axes[<span class="dv">1</span>].legend()</span>
 <span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-ew-vs-vw" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2544,12 +2622,8 @@ Figure&nbsp;45.1: Equal-weighted vs value-weighted Return Gap long-short strateg
 <p><span id="eq-decompose-detail"><span class="math display">\[
 \text{RG}_{i,t} \approx \underbrace{(1 - \omega_t^{\text{eq}}) \cdot (r_t^{\text{cash}} - R_{i,t}^{\text{Holdings}})}_{\text{Cash Effect}} + \underbrace{\omega_t^{\text{eq}} \cdot (R_{i,t}^{\text{Traded}} - R_{i,t}^{\text{Holdings}})}_{\text{Trading Effect}}
 \tag{46.1}\]</span></span></p>
-<div id="tbl-decompose" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="27">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-decompose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;46.1: Return Gap decomposition by quintile (monthly %).
-</figcaption>
-<div aria-describedby="tbl-decompose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>df_d <span class="op">=</span> return_gap_data.copy()</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>monthly_cash <span class="op">=</span> <span class="fl">0.05</span> <span class="op">/</span> <span class="dv">12</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>df_d[<span class="st">"equity_frac"</span>] <span class="op">=</span> (df_d[<span class="st">"assets_bn"</span>] <span class="op">/</span> df_d[<span class="st">"tna"</span>].clip(lower<span class="op">=</span><span class="dv">1</span>)).clip(<span class="dv">0</span>, <span class="dv">1</span>)</span>
@@ -2561,6 +2635,13 @@ Table&nbsp;46.1: Return Gap decomposition by quintile (monthly %).
 <span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>decomp <span class="op">=</span> (df_d.groupby(<span class="st">"quintile"</span>)[[<span class="st">"return_gap"</span>,<span class="st">"cash_effect"</span>,<span class="st">"trading_effect"</span>]].mean()<span class="op">*</span><span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>decomp.columns <span class="op">=</span> [<span class="st">"Return Gap (%)"</span>, <span class="st">"Cash Effect (%)"</span>, <span class="st">"Trading Effect (%)"</span>]</span>
 <span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(decomp.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-decompose" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="27">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-decompose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;46.1: Return Gap decomposition by quintile (monthly %).
+</figcaption>
+<div aria-describedby="tbl-decompose-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>          Return Gap (%)  Cash Effect (%)  Trading Effect (%)
 quintile                                                     
@@ -2577,6 +2658,8 @@ quintile
 <section id="extension-2-conditional-return-gap" class="level2" data-number="46.2">
 <h2 data-number="46.2" class="anchored" data-anchor-id="extension-2-conditional-return-gap"><span class="header-section-number">46.2</span> Extension 2: Conditional Return Gap</h2>
 <div id="cell-fig-conditional" class="cell" data-fig-height="5" data-fig-width="12" data-execution_count="28">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>wide2 <span class="op">=</span> port_returns.pivot_table(index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"portfolio"</span>, values<span class="op">=</span><span class="st">"ew_ret"</span>)</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ls2 <span class="op">=</span> (wide2[n_portfolios] <span class="op">-</span> wide2[<span class="dv">1</span>]).dropna()</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>cond <span class="op">=</span> pd.DataFrame({<span class="st">"ls"</span>: ls2}).merge(factors[[<span class="st">"date"</span>,<span class="st">"mkt_rf"</span>]], on<span class="op">=</span><span class="st">"date"</span>, how<span class="op">=</span><span class="st">"inner"</span>)</span>
@@ -2603,6 +2686,7 @@ quintile
 <span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>    axes[<span class="dv">1</span>].text(b.get_x()<span class="op">+</span>b.get_width()<span class="op">/</span><span class="dv">2</span>, v, <span class="ss">f"</span><span class="sc">{</span>v<span class="sc">:.2f}</span><span class="ss">%"</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"bottom"</span> <span class="cf">if</span> v<span class="op">&gt;</span><span class="dv">0</span> <span class="cf">else</span> <span class="st">"top"</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
 <span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-conditional" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2624,6 +2708,8 @@ Figure&nbsp;46.1: L/S performance in bull vs bear markets and volatility regimes
 \text{Flow}_{i,t+1} = \delta_0 + \delta_1 \overline{\text{RG}}_{i,t}^{12} + \delta_2 R_{i,t}^{\text{Net}} + \delta_3 \ln(\text{TNA}_{i,t}) + \epsilon_{i,t+1}
 \tag{46.2}\]</span></span></p>
 <div id="flow-rg" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Return Gap and fund flows</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>flow_data <span class="op">=</span> return_gap_data.sort_values([<span class="st">"fund_id"</span>,<span class="st">"date"</span>]).copy()</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>flow_data[<span class="st">"tna_lag"</span>] <span class="op">=</span> flow_data.groupby(<span class="st">"fund_id"</span>)[<span class="st">"tna"</span>].shift(<span class="dv">1</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>flow_data[<span class="st">"flow"</span>] <span class="op">=</span> ((flow_data[<span class="st">"tna"</span>] <span class="op">-</span> flow_data[<span class="st">"tna_lag"</span>]<span class="op">*</span>(<span class="dv">1</span><span class="op">+</span>flow_data[<span class="st">"net_return"</span>])) <span class="op">/</span> flow_data[<span class="st">"tna_lag"</span>])</span>
@@ -2637,6 +2723,7 @@ Figure&nbsp;46.1: L/S performance in bull vs bear markets and volatility regimes
 <span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    flow_data.dropna(subset<span class="op">=</span>[<span class="st">"flow_lead"</span>,<span class="st">"rg_12m"</span>,<span class="st">"net_return"</span>]),</span>
 <span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"flow_lead"</span>, [<span class="st">"rg_12m"</span>,<span class="st">"net_return"</span>,<span class="st">"log_tna"</span>]</span>
 <span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>).to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fama-MacBeth: Return Gap and Future Fund Flows
 ============================================================
@@ -2654,12 +2741,8 @@ net_return  0.007547 0.006567  1.149  0.2527
 <p><span id="eq-cs"><span class="math display">\[
 \text{CS}_{i,t} = \sum_{j=1}^{N} w_{j,t-1}\left(r_{j,t} - r_{t}^{\text{bench}(j)}\right)
 \tag{46.3}\]</span></span></p>
-<div id="tbl-cs-by-rg" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="30">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cs-by-rg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;46.2: Characteristic selectivity by Return Gap quintile.
-</figcaption>
-<div aria-describedby="tbl-cs-by-rg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>cs_data <span class="op">=</span> return_gap_data[[<span class="st">"fund_id"</span>,<span class="st">"date"</span>,<span class="st">"rg_12m_lag4"</span>]].dropna(subset<span class="op">=</span>[<span class="st">"rg_12m_lag4"</span>]).copy()</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>cs_data[<span class="st">"cs_score"</span>] <span class="op">=</span> <span class="fl">0.3</span> <span class="op">*</span> cs_data[<span class="st">"rg_12m_lag4"</span>] <span class="op">+</span> np.random.normal(<span class="dv">0</span>, <span class="fl">0.005</span>, <span class="bu">len</span>(cs_data))</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>cs_data[<span class="st">"rg_q"</span>] <span class="op">=</span> cs_data.groupby(<span class="st">"date"</span>)[<span class="st">"rg_12m_lag4"</span>].transform(</span>
@@ -2668,6 +2751,13 @@ Table&nbsp;46.2: Characteristic selectivity by Return Gap quintile.
 <span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>cs_by_q[<span class="st">"t"</span>] <span class="op">=</span> cs_by_q[<span class="st">"mean"</span>] <span class="op">/</span> (cs_by_q[<span class="st">"std"</span>] <span class="op">/</span> np.sqrt(cs_by_q[<span class="st">"count"</span>]))</span>
 <span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>cs_by_q[<span class="st">"Mean CS (%)"</span>] <span class="op">=</span> (cs_by_q[<span class="st">"mean"</span>]<span class="op">*</span><span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cs_by_q[[<span class="st">"Mean CS (%)"</span>,<span class="st">"t"</span>]].<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-cs-by-rg" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="30">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cs-by-rg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;46.2: Characteristic selectivity by Return Gap quintile.
+</figcaption>
+<div aria-describedby="tbl-cs-by-rg-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>      Mean CS (%)       t
 rg_q                     
@@ -2683,12 +2773,8 @@ rg_q
 </section>
 <section id="extension-5-double-sorts" class="level2" data-number="46.5">
 <h2 data-number="46.5" class="anchored" data-anchor-id="extension-5-double-sorts"><span class="header-section-number">46.5</span> Extension 5: Double Sorts</h2>
-<div id="tbl-double-sort" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="31">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-double-sort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;46.3: Double sort: Fund Size (rows) x Return Gap (columns). Monthly net returns (%).
-</figcaption>
-<div aria-describedby="tbl-double-sort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> return_gap_data.copy()</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>ds[<span class="st">"log_tna"</span>] <span class="op">=</span> np.log(ds[<span class="st">"tna"</span>].clip(lower<span class="op">=</span><span class="dv">1</span>))</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>ds2 <span class="op">=</span> ds.dropna(subset<span class="op">=</span>[<span class="st">"log_tna"</span>,<span class="st">"rg_12m_lag4"</span>]).copy()</span>
@@ -2698,6 +2784,13 @@ Table&nbsp;46.3: Double sort: Fund Size (rows) x Return Gap (columns). Monthly n
 <span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> (ds2.groupby([<span class="st">"g1"</span>,<span class="st">"g2"</span>])[<span class="st">"net_return"</span>].mean()<span class="op">*</span><span class="dv">100</span>).unstack().<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>result.index.name <span class="op">=</span> <span class="st">"Size Tercile"</span><span class="op">;</span> result.columns.name <span class="op">=</span> <span class="st">"RG Tercile"</span></span>
 <span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="tbl-double-sort" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="31">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-double-sort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;46.3: Double sort: Fund Size (rows) x Return Gap (columns). Monthly net returns (%).
+</figcaption>
+<div aria-describedby="tbl-double-sort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-stdout">
 <pre><code>RG Tercile      1.0    2.0    3.0
 Size Tercile                     

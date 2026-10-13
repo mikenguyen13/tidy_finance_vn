@@ -888,7 +888,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./10_modern_portfolio_theory.html">Portfolio Construction, Risk, and Empirical Mechanics</a></li><li class="breadcrumb-item"><a href="./16_liquidity_and_turnover_measures.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Liquidity and Turnover Measures</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Liquidity and Turnover Measures</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Liquidity and Turnover Measures</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -946,6 +946,8 @@ Note
 <section id="sec-liquidity-data" class="level2" data-number="14.2">
 <h2 data-number="14.2" class="anchored" data-anchor-id="sec-liquidity-data"><span class="header-section-number">14.2</span> Data Construction</h2>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -964,8 +966,11 @@ Note
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="data-load" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load daily and monthly data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1024,8 +1029,11 @@ Note
 <span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily observations: </span><span class="sc">{</span>daily<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly observations: </span><span class="sc">{</span>monthly<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique tickers: </span><span class="sc">{</span>daily[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="daily-returns" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Compute daily returns and basic trading statistics</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Daily returns</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>daily[<span class="st">'daily_return'</span>] <span class="op">=</span> (</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    daily.groupby(<span class="st">'ticker'</span>)[<span class="st">'adjusted_close'</span>].pct_change()</span>
@@ -1049,6 +1057,7 @@ Note
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(daily[<span class="st">'daily_return'</span>].describe().<span class="bu">round</span>(<span class="dv">6</span>))</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Zero-return days: </span><span class="sc">{</span>daily[<span class="st">'zero_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Zero-volume days: </span><span class="sc">{</span>daily[<span class="st">'zero_volume'</span>]<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-liquidity-measures" class="level2" data-number="14.3">
@@ -1063,6 +1072,8 @@ Note
 <p>where <span class="math inline">\(|R_{i,d}|\)</span> is the absolute daily return, <span class="math inline">\(\text{DVOL}_{i,d}\)</span> is VND trading volume on day <span class="math inline">\(d\)</span>, and <span class="math inline">\(D_{i,m}\)</span> is the number of trading days with positive volume in month <span class="math inline">\(m\)</span>. Higher values indicate greater illiquidity.</p>
 <p>The Amihud measure captures the price impact dimension of liquidity. It is grounded in the <span class="citation" data-cites="kyle1985continuous">Kyle (<a href="references.html#ref-kyle1985continuous" role="doc-biblioref">1985</a>)</span> model where the parameter <span class="math inline">\(\lambda\)</span> (Kyle’s lambda) measures the price impact of order flow: <span class="math inline">\(\Delta p = \lambda \cdot Q\)</span>. The Amihud ratio is a daily-frequency analog of <span class="math inline">\(\lambda\)</span>.</p>
 <div id="amihud" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Compute monthly Amihud illiquidity ratio</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_amihud(daily_df, min_days<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the Amihud (2002) illiquidity ratio at the firm-month level.</span></span>
@@ -1107,6 +1118,7 @@ Note
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Amihud observations: </span><span class="sc">{</span><span class="bu">len</span>(amihud_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Log Amihud distribution:"</span>)</span>
 <span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(amihud_monthly[<span class="st">'amihud'</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="sec-liquidity-amihud-original" class="level4" data-number="14.3.1.1">
 <h4 data-number="14.3.1.1" class="anchored" data-anchor-id="sec-liquidity-amihud-original"><span class="header-section-number">14.3.1.1</span> The Original 2002 Definition</h4>
@@ -1205,6 +1217,8 @@ Table&nbsp;14.1: Transformations of the Amihud illiquidity ratio in common use. 
 <h4 data-number="14.3.1.4" class="anchored" data-anchor-id="scaling-is-not-innocuous"><span class="header-section-number">14.3.1.4</span> Scaling Is Not Innocuous</h4>
 <p>The following chunk is self-contained and executes. It builds a synthetic daily panel with <em>known, constant</em> true illiquidity and then shows what the variant choice does to the numbers.</p>
 <div id="amihud-variants" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>All Amihud variants, and what scaling does to them</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> amihud_variants(daily, ret<span class="op">=</span><span class="st">"ret"</span>, dvol<span class="op">=</span><span class="st">"dvol"</span>, scale<span class="op">=</span><span class="fl">1e6</span>, min_days<span class="op">=</span><span class="dv">15</span>):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the Amihud (2002) ratio and its common transformations from a</span></span>
@@ -1283,6 +1297,7 @@ Table&nbsp;14.1: Transformations of the Amihud illiquidity ratio in common use. 
 <span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>    ap <span class="op">=</span> np.minimum(<span class="fl">0.25</span> <span class="op">+</span> <span class="fl">0.30</span> <span class="op">*</span> s, <span class="fl">30.0</span>)</span>
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  DVOL in </span><span class="sc">{</span>unit<span class="sc">:&lt;12s}</span><span class="ss"> mean=</span><span class="sc">{</span>ap<span class="sc">.</span>mean()<span class="sc">:8.4f}</span><span class="ss">  sd=</span><span class="sc">{</span>ap<span class="sc">.</span>std()<span class="sc">:8.4f}</span><span class="ss">  "</span></span>
 <span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"at cap=</span><span class="sc">{</span><span class="dv">100</span> <span class="op">*</span> (ap <span class="op">&gt;=</span> <span class="fl">30.0</span>)<span class="sc">.</span>mean()<span class="sc">:5.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Median ILLIQ x 10^6, identical economics, three volume units:
   DVOL in VND             5.40237e-06
@@ -1319,6 +1334,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <p><strong>Borrowed calibrations do not survive the trip.</strong> The <span class="citation" data-cites="acharya2005asset">Acharya and Pedersen (<a href="references.html#ref-acharya2005asset" role="doc-biblioref">2005</a>)</span> cost mapping is the clearest case. Under VND volume it assigns every firm-month the intercept, 0.25%, with a cross-sectional standard deviation of exactly zero; under billions of VND it pins all of them at the 30% cap, again with zero dispersion. In neither case does it fail loudly — it returns a plausible-looking percentage cost that happens to carry no information whatsoever about which stock is illiquid. Any published constant of the form <span class="math inline">\(a + b\,\text{ILLIQ}\)</span> inherits the units of the data it was fitted to, and must be re-estimated rather than copied.</p>
 <p>To apply the same function to the chapter’s actual panel:</p>
 <div id="amihud-variants-real" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Apply the variant constructor to the Vietnamese daily panel</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `daily` carries turnover_value in VND; express it in billions so that the</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># resulting ratio reads as "return per billion VND traded".</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>amihud_all <span class="op">=</span> amihud_variants(</span>
@@ -1329,6 +1346,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    min_days<span class="op">=</span><span class="dv">10</span>,</span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(amihud_all[[<span class="st">"illiq_scaled"</span>, <span class="st">"illiq_ma"</span>, <span class="st">"log_illiq"</span>]].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Setting <code>scale=100.0</code> with volume in billions VND gives the measure a reading that survives translation: <em>the percentage price move associated with one billion VND of trading</em>. This is the convention we recommend for Vietnamese work, and it should always be stated alongside the number.</p>
 </section>
@@ -1361,6 +1379,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 \text{ZeroRet}_{i,m} = \frac{\text{Number of days with } R_{i,d} = 0}{D_{i,m}}
 \tag{14.4}\]</span></span></p>
 <div id="zero-return" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Compute monthly zero-return proportion</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_zero_return(daily_df):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the Lesmond et al. (1999) zero-return measure</span></span>
@@ -1395,6 +1415,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Zero-return observations: </span><span class="sc">{</span><span class="bu">len</span>(zero_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Zero-return proportion distribution:"</span>)</span>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(zero_monthly[<span class="st">'zero_return_pct'</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="turnover-ratio" class="level3" data-number="14.3.3">
@@ -1404,6 +1425,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 \text{Turn}_{i,m} = \frac{1}{D_{i,m}} \sum_{d=1}^{D_{i,m}} \frac{\text{Volume}_{i,d}}{\text{SharesOut}_{i,d}}
 \tag{14.5}\]</span></span></p>
 <div id="turnover" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Compute monthly average turnover ratio</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_turnover(daily_df):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute average daily turnover ratio at the firm-month level."""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> daily_df.copy()</span>
@@ -1437,6 +1460,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Turnover observations: </span><span class="sc">{</span><span class="bu">len</span>(turnover_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Log turnover distribution:"</span>)</span>
 <span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(turnover_monthly[<span class="st">'log_turnover'</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="roll-spread-estimator" class="level3" data-number="14.3.4">
@@ -1450,6 +1474,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 \tag{14.6}\]</span></span></p>
 <p>where <span class="math inline">\(\Delta P_{i,d} = P_{i,d} - P_{i,d-1}\)</span>. The measure is intuitive: the bid-ask bounce creates negative serial correlation in transaction prices, and the magnitude of this negative correlation reflects the spread.</p>
 <div id="roll-spread" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Compute monthly Roll (1984) effective spread estimator</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_roll_spread(daily_df, min_days<span class="op">=</span><span class="dv">15</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the Roll (1984) effective spread from serial</span></span>
@@ -1487,6 +1513,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Roll spread observations: </span><span class="sc">{</span><span class="bu">len</span>(roll_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Roll spread distribution:"</span>)</span>
 <span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(roll_monthly[<span class="st">'roll_spread'</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="corwin-schultz-high-low-spread" class="level3" data-number="14.3.5">
@@ -1501,6 +1528,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 \tag{14.8}\]</span></span></p>
 <p>with <span class="math inline">\(\hat{\beta}\)</span> and <span class="math inline">\(\hat{\gamma}\)</span> computed from one-day and two-day log high-low ratios.</p>
 <div id="corwin-schultz" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Compute the Corwin-Schultz (2012) high-low spread estimator</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_corwin_schultz(daily_df, min_days<span class="op">=</span><span class="dv">15</span>):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the Corwin and Schultz (2012) bid-ask spread</span></span>
@@ -1564,6 +1593,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Corwin-Schultz observations: </span><span class="sc">{</span><span class="bu">len</span>(cs_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">CS spread distribution:"</span>)</span>
 <span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(cs_monthly[<span class="st">'cs_spread'</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="quoted-bid-ask-spread" class="level3" data-number="14.3.6">
@@ -1573,6 +1603,8 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 \text{PQSPR}_{i,m} = \frac{1}{D_{i,m}} \sum_{d=1}^{D_{i,m}} \frac{\text{Ask}_{i,d} - \text{Bid}_{i,d}}{(\text{Ask}_{i,d} + \text{Bid}_{i,d})/2}
 \tag{14.9}\]</span></span></p>
 <div id="quoted-spread" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Compute monthly average quoted percentage spread</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_quoted_spread(daily_df):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute average quoted percentage spread at the firm-month level."""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> daily_df[</span>
@@ -1605,6 +1637,7 @@ Acharya-Pedersen cost min(0.25 + 0.30*ILLIQ*1e6, 30) by volume unit:
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Quoted spread observations: </span><span class="sc">{</span><span class="bu">len</span>(quoted_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Quoted spread distribution:"</span>)</span>
 <span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(quoted_monthly[<span class="st">'quoted_spread'</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="kyles-lambda-price-impact-regression" class="level3" data-number="14.3.7">
@@ -1615,6 +1648,8 @@ R_{i,d} = \alpha_i + \lambda_i \cdot \text{Sign}(R_{i,d}) \cdot \sqrt{\text{Volu
 \tag{14.10}\]</span></span></p>
 <p>This is an adaptation of the <span class="citation" data-cites="hasbrouck2009trading">Hasbrouck (<a href="references.html#ref-hasbrouck2009trading" role="doc-biblioref">2009</a>)</span> effective cost measure. The coefficient <span class="math inline">\(\lambda_i\)</span> measures how much prices move per unit of (unsigned, square-rooted) volume.</p>
 <div id="kyle-lambda" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Estimate Kyle’s lambda from daily price-volume regressions</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_kyle_lambda(daily_df, min_days<span class="op">=</span><span class="dv">15</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate Kyle's lambda (price impact per unit order flow)</span></span>
@@ -1656,6 +1691,7 @@ R_{i,d} = \alpha_i + \lambda_i \cdot \text{Sign}(R_{i,d}) \cdot \sqrt{\text{Volu
 <span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Kyle lambda observations: </span><span class="sc">{</span><span class="bu">len</span>(kyle_monthly)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Log Kyle lambda distribution:"</span>)</span>
 <span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(kyle_monthly[<span class="st">'log_kyle'</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1805,6 +1841,8 @@ Table&nbsp;14.2: Analytical measurement error of the Amihud numerator by samplin
 <h3 data-number="14.4.7" class="anchored" data-anchor-id="sec-liquidity-realized-sim"><span class="header-section-number">14.4.7</span> Simulation Design</h3>
 <p>The following experiment benchmarks <a href="#eq-realized-amihud" class="quarto-xref">Equation&nbsp;<span>14.14</span></a> against <a href="39_divop.html#eq-amihud" class="quarto-xref">Equation&nbsp;<span>38.2</span></a> on a common DGP, and then breaks (A2) and (A3) in turn to expose the failure modes. The target estimand is the scaled true daily illiquidity <span class="math inline">\(\sqrt{2/\pi}\sqrt{\text{IV}_{i,d}}/\text{DVOL}_{i,d}\)</span>, so bias and RMSE are measured against a known quantity.</p>
 <div id="cell-realized-amihud-simulation" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Monte Carlo: realized vs.&nbsp;classic Amihud under noise and jumps</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">20260812</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>M_HOSE <span class="op">=</span> <span class="dv">45</span>  <span class="co"># 225 continuous minutes on HOSE / 5-minute sampling</span></span>
@@ -1882,6 +1920,7 @@ Table&nbsp;14.2: Analytical measurement error of the Amihud numerator by samplin
 <span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a><span class="co"># Failure case B: information jumps</span></span>
 <span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>score(simulate_days(<span class="dv">30_000</span>, M_HOSE, jump_prob<span class="op">=</span><span class="fl">0.2</span>, jump_sd<span class="op">=</span><span class="fl">0.03</span>),</span>
 <span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Information jumps (~1 per 5 days, 3</span><span class="sc">% s</span><span class="st">ize)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 --- Baseline (A1-A4 hold), M=45
@@ -1994,6 +2033,8 @@ Bipower Amihud     0.0122    0.2429     0.9891</code></pre>
 <h2 data-number="14.5" class="anchored" data-anchor-id="sec-liquidity-panel"><span class="header-section-number">14.5</span> Assembling the Liquidity Panel</h2>
 <p>We merge all seven measures into a single firm-month panel for comparative analysis.</p>
 <div id="merge-panel" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Merge all liquidity measures into a unified panel</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with monthly returns as the base</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>panel <span class="op">=</span> monthly[[<span class="st">'ticker'</span>, <span class="st">'month_end'</span>, <span class="st">'monthly_return'</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'market_cap'</span>]].copy()</span>
@@ -2036,6 +2077,7 @@ Bipower Amihud     0.0122    0.2429     0.9891</code></pre>
 <span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> liquidity_cols:</span>
 <span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>    pct <span class="op">=</span> panel[col].notna().mean()</span>
 <span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>col<span class="sc">:&lt;20}</span><span class="ss">: </span><span class="sc">{</span>pct<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-liquidity-cross-section" class="level2" data-number="14.6">
@@ -2044,6 +2086,8 @@ Bipower Amihud     0.0122    0.2429     0.9891</code></pre>
 <h3 data-number="14.6.1" class="anchored" data-anchor-id="summary-statistics-by-size-quintile"><span class="header-section-number">14.6.1</span> Summary Statistics by Size Quintile</h3>
 <p>Liquidity varies enormously across the size distribution. Small-cap Vietnamese stocks can be orders of magnitude less liquid than large-caps.</p>
 <div id="liquidity-by-size" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Compute liquidity statistics by market cap quintile</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign size quintiles within each month</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>panel[<span class="st">'size_quintile'</span>] <span class="op">=</span> (</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    panel.groupby(<span class="st">'month_end'</span>)[<span class="st">'market_cap'</span>]</span>
@@ -2062,10 +2106,13 @@ Bipower Amihud     0.0122    0.2429     0.9891</code></pre>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Average Liquidity by Market Cap Quintile:"</span>)</span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(liq_by_size.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-liquidity-by-size" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="16">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-liquidity-by-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Bar charts of liquidity measures by size quintile</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">10</span>))</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2090,6 +2137,7 @@ Bipower Amihud     0.0122    0.2429     0.9891</code></pre>
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Liquidity Measures by Market Cap Quintile'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-liquidity-by-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.1
@@ -2103,6 +2151,8 @@ Figure&nbsp;14.1
 <div id="fig-liquidity-correlations" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-liquidity-correlations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compute and plot cross-sectional rank correlations</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank correlations (Spearman) among liquidity measures</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Reverse turnover sign so higher = less liquid (consistent direction)</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>panel_corr <span class="op">=</span> panel[liquidity_cols].copy()</span>
@@ -2127,6 +2177,7 @@ Figure&nbsp;14.1
 <span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Cross-Sectional Rank Correlations Among Liquidity Measures'</span>)</span>
 <span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-liquidity-correlations-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.2
@@ -2138,6 +2189,8 @@ Figure&nbsp;14.2
 <h3 data-number="14.6.3" class="anchored" data-anchor-id="principal-component-analysis-of-liquidity"><span class="header-section-number">14.6.3</span> Principal Component Analysis of Liquidity</h3>
 <p>Given the multidimensionality of liquidity, we extract a composite liquidity factor using PCA:</p>
 <div id="pca-liquidity" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Extract principal components from standardized liquidity measures</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> PCA</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2183,6 +2236,7 @@ Figure&nbsp;14.2
 <span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>liq_complete[<span class="st">'illiq_pc1'</span>] <span class="op">=</span> pca.transform(</span>
 <span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>    liq_complete[z_cols].values</span>
 <span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>)[:, <span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2194,6 +2248,8 @@ Figure&nbsp;14.2
 <div id="fig-aggregate-liquidity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-aggregate-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot aggregate liquidity time series</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly cross-sectional aggregates</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>agg_liquidity <span class="op">=</span> (</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    panel.groupby(<span class="st">'month_end'</span>)</span>
@@ -2257,6 +2313,7 @@ Figure&nbsp;14.2
 <span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-aggregate-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.3
@@ -2272,6 +2329,8 @@ Figure&nbsp;14.3
 \tag{14.22}\]</span></span></p>
 <p>where <span class="math inline">\(\Delta L_{i,m}\)</span> is the change in firm <span class="math inline">\(i\)</span>’s illiquidity, <span class="math inline">\(\Delta L_{M,m}\)</span> is the change in market-average illiquidity (excluding firm <span class="math inline">\(i\)</span>), and the lead/lag terms capture non-synchronous adjustment. The coefficient <span class="math inline">\(\beta_i\)</span> measures the sensitivity of firm <span class="math inline">\(i\)</span>’s liquidity to market-wide liquidity shocks.</p>
 <div id="commonality" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Test for commonality in liquidity across Vietnamese stocks</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute monthly changes in Amihud for each firm and the market</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>panel_common <span class="op">=</span> panel[[<span class="st">'ticker'</span>, <span class="st">'month_end'</span>, <span class="st">'amihud'</span>]].dropna().copy()</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>panel_common <span class="op">=</span> panel_common.sort_values([<span class="st">'ticker'</span>, <span class="st">'month_end'</span>])</span>
@@ -2322,6 +2381,7 @@ Figure&nbsp;14.3
 <span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  % significant at 5%: "</span></span>
 <span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>(commonality[<span class="st">'beta_t'</span>].<span class="bu">abs</span>() <span class="op">&gt;</span> <span class="fl">1.96</span>)<span class="sc">.</span>mean()<span class="sc">:.1%}</span><span class="ss">"</span>)</span>
 <span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean R-squared: </span><span class="sc">{</span>commonality[<span class="st">'r_squared'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2331,6 +2391,8 @@ Figure&nbsp;14.3
 <h3 data-number="14.8.1" class="anchored" data-anchor-id="portfolio-sorts"><span class="header-section-number">14.8.1</span> Portfolio Sorts</h3>
 <p>We test whether illiquidity predicts future returns by sorting stocks into quintile portfolios based on lagged liquidity measures and comparing average returns across quintiles.</p>
 <div id="portfolio-sorts" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Sort stocks into quintiles by lagged illiquidity and compute returns</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> liquidity_portfolio_sort(panel_df, liq_col, n_groups<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute quintile portfolio returns sorted on lagged liquidity.</span></span>
@@ -2403,10 +2465,13 @@ Figure&nbsp;14.3
 <span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>    t <span class="op">=</span> ls <span class="op">/</span> ls_se <span class="cf">if</span> ls_se <span class="kw">and</span> ls_se <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> np.nan</span>
 <span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;18}</span><span class="ss"> </span><span class="sc">{</span>q1<span class="sc">:&gt;12.4f}</span><span class="ss"> </span><span class="sc">{</span>q5<span class="sc">:&gt;14.4f}</span><span class="ss"> </span><span class="sc">{</span>ls<span class="sc">:&gt;10.4f}</span><span class="ss"> </span><span class="sc">{</span>t<span class="sc">:&gt;8.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-liquidity-premium" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-liquidity-premium-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Bar chart of quintile returns by liquidity measure</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">10</span>))</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>axes <span class="op">=</span> axes.flatten()</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2433,6 +2498,7 @@ Figure&nbsp;14.3
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Average Returns by Illiquidity Quintile'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-liquidity-premium-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.4
@@ -2448,6 +2514,8 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 \tag{14.23}\]</span></span></p>
 <p>The time-series average of the monthly coefficient <span class="math inline">\(\bar{\gamma}_1\)</span> estimates the illiquidity premium, and its t-statistic uses the <span class="citation" data-cites="fama1993common">Fama and French (<a href="references.html#ref-fama1993common" role="doc-biblioref">1993</a>)</span> standard error.</p>
 <div id="fama-macbeth" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Fama-MacBeth regressions of returns on lagged liquidity and controls</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fama_macbeth(panel_df, illiq_col, controls<span class="op">=</span>[<span class="st">'log_mcap'</span>, <span class="st">'bm'</span>],</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                  min_stocks<span class="op">=</span><span class="dv">50</span>):</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -2511,12 +2579,15 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 <span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a>    results, gammas <span class="op">=</span> fama_macbeth(panel, col)</span>
 <span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">:"</span>)</span>
 <span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(results[[<span class="st">'Coefficient'</span>, <span class="st">'t-stat'</span>]].<span class="bu">round</span>(<span class="dv">4</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="factor-adjusted-liquidity-premium" class="level3" data-number="14.8.3">
 <h3 data-number="14.8.3" class="anchored" data-anchor-id="factor-adjusted-liquidity-premium"><span class="header-section-number">14.8.3</span> Factor-Adjusted Liquidity Premium</h3>
 <p>The liquidity premium may be partially or fully explained by existing risk factors (size, value, momentum). We test this by regressing the long-short liquidity portfolio returns on the Fama-French-Carhart factors:</p>
 <div id="factor-adjusted" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Regress liquidity long-short returns on FF+Carhart factors</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Factor-Adjusted Liquidity Premium:"</span>)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="st">'Measure'</span><span class="sc">:&lt;18}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Alpha (ann.)'</span><span class="sc">:&gt;12}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'Alpha t'</span><span class="sc">:&gt;10}</span><span class="ss"> "</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span><span class="st">'MKT'</span><span class="sc">:&gt;8}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'SMB'</span><span class="sc">:&gt;8}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'HML'</span><span class="sc">:&gt;8}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'R2'</span><span class="sc">:&gt;6}</span><span class="ss">"</span>)</span>
@@ -2549,6 +2620,7 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 <span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;18}</span><span class="ss"> </span><span class="sc">{</span>alpha_ann<span class="sc">:&gt;12.4f}</span><span class="ss"> </span><span class="sc">{</span>alpha_t<span class="sc">:&gt;10.2f}</span><span class="ss"> "</span></span>
 <span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"</span><span class="sc">{</span>mkt_b<span class="sc">:&gt;8.3f}</span><span class="ss"> </span><span class="sc">{</span>smb_b<span class="sc">:&gt;8.3f}</span><span class="ss"> </span><span class="sc">{</span>hml_b<span class="sc">:&gt;8.3f}</span><span class="ss"> </span><span class="sc">{</span>r2<span class="sc">:&gt;6.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2558,6 +2630,8 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 <h3 data-number="14.9.1" class="anchored" data-anchor-id="translating-measures-to-trading-costs"><span class="header-section-number">14.9.1</span> Translating Measures to Trading Costs</h3>
 <p>For practitioners, the key question is: what does a given Amihud or spread value <em>mean</em> in terms of actual VND cost per trade? We calibrate the relationship between our low-frequency proxies and explicit trading costs.</p>
 <div id="cost-calibration" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Calibrate liquidity proxies to estimated round-trip trading costs</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_round_trip_cost(row):</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate total round-trip trading cost (in %) from</span></span>
@@ -2591,10 +2665,13 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 <span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Estimated Round-Trip Cost by Size Quintile (%):"</span>)</span>
 <span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((rtc_by_size <span class="op">*</span> <span class="dv">100</span>).<span class="bu">round</span>(<span class="dv">2</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-cost-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="26">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cost-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot estimated trading costs by size quintile</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Distribution</span></span>
@@ -2624,6 +2701,7 @@ R_{i,m+1} = \gamma_{0,m} + \gamma_{1,m} \text{ILLIQ}_{i,m} + \gamma_{2,m} \ln(\t
 <span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cost-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.5
@@ -2635,6 +2713,8 @@ Figure&nbsp;14.5
 <h3 data-number="14.9.2" class="anchored" data-anchor-id="strategy-implementability"><span class="header-section-number">14.9.2</span> Strategy Implementability</h3>
 <p>A critical application of liquidity measurement is testing whether a given anomaly strategy remains profitable after accounting for realistic trading costs. We compute net-of-cost returns for the liquidity-sorted portfolios themselves. This is an inherently conservative test because the illiquid long leg carries the highest costs.</p>
 <div id="net-of-cost" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Compute net-of-cost returns for illiquidity-sorted portfolios</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For each quintile, estimate average monthly turnover and cost</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and subtract from gross returns</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, ports <span class="kw">in</span> sort_results.items():</span>
@@ -2656,6 +2736,7 @@ Figure&nbsp;14.5
 <span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:&lt;18}</span><span class="ss">: Gross = </span><span class="sc">{</span>gross_ann<span class="op">*</span><span class="dv">100</span><span class="sc">:&gt;6.2f}</span><span class="ss">%, "</span></span>
 <span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"TC = </span><span class="sc">{</span>monthly_tc<span class="op">*</span><span class="dv">1200</span><span class="sc">:&gt;6.1f}</span><span class="ss"> bps/mo, "</span></span>
 <span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"Net = </span><span class="sc">{</span>net_ann<span class="op">*</span><span class="dv">100</span><span class="sc">:&gt;6.2f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2665,6 +2746,8 @@ Figure&nbsp;14.5
 <h3 data-number="14.10.1" class="anchored" data-anchor-id="flight-to-liquidity"><span class="header-section-number">14.10.1</span> Flight to Liquidity</h3>
 <p>During market stress, investors sell illiquid assets and buy liquid ones, which is a “flight to liquidity” that widens the return differential between liquid and illiquid stocks. <span class="citation" data-cites="hameed2010stock">Hameed, Kang, and Viswanathan (<a href="references.html#ref-hameed2010stock" role="doc-biblioref">2010</a>)</span> show that this pattern is strongest when market returns are most negative.</p>
 <div id="flight-to-liquidity" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Test for flight-to-liquidity during market stress</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge Amihud-sorted portfolio returns with market returns</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>amihud_ports <span class="op">=</span> sort_results.get(<span class="st">'Amihud'</span>)</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> amihud_ports <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> <span class="st">'long_short'</span> <span class="kw">in</span> amihud_ports.columns:</span>
@@ -2697,10 +2780,13 @@ Figure&nbsp;14.5
 <span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Illiquidity Premium by Market State:"</span>)</span>
 <span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(state_premium[[<span class="st">'ann_premium'</span>, <span class="st">'t_stat'</span>, <span class="st">'count'</span>]].<span class="bu">round</span>(<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-flight-to-liquidity" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="29">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-flight-to-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Bar chart of conditional illiquidity premium</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'state_premium'</span> <span class="kw">in</span> <span class="bu">dir</span>():</span>
@@ -2721,6 +2807,7 @@ Figure&nbsp;14.5
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-flight-to-liquidity-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;14.6
@@ -2732,6 +2819,8 @@ Figure&nbsp;14.6
 <h3 data-number="14.10.2" class="anchored" data-anchor-id="liquidity-co-movement-with-global-risk"><span class="header-section-number">14.10.2</span> Liquidity Co-Movement with Global Risk</h3>
 <p>Vietnamese market liquidity may be driven by global risk factors, particularly for stocks held by foreign investors. We test whether global risk measures (VIX, USD strength) predict Vietnamese aggregate liquidity:</p>
 <div id="global-risk" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Regress Vietnamese aggregate liquidity on global risk proxies</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge aggregate liquidity with global variables</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>global_vars <span class="op">=</span> client.get_macro_data(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    variables<span class="op">=</span>[<span class="st">'vix_close'</span>, <span class="st">'dxy_index'</span>],</span>
@@ -2757,6 +2846,7 @@ Figure&nbsp;14.6
 <span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> sm.OLS(y, X).fit(cov_type<span class="op">=</span><span class="st">'HAC'</span>, cov_kwds<span class="op">=</span>{<span class="st">'maxlags'</span>: <span class="dv">3</span>})</span>
 <span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Aggregate Illiquidity ~ Global Risk:"</span>)</span>
 <span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.summary().tables[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2764,6 +2854,8 @@ Figure&nbsp;14.6
 <h2 data-number="14.11" class="anchored" data-anchor-id="sec-liquidity-factor"><span class="header-section-number">14.11</span> Constructing a Tradeable Liquidity Factor</h2>
 <p>Following <span class="citation" data-cites="pastor2003liquidity">Pástor and Stambaugh (<a href="references.html#ref-pastor2003liquidity" role="doc-biblioref">2003</a>)</span>, we construct an aggregate liquidity factor that can be used in asset pricing tests. The factor captures innovations in aggregate liquidity (unexpected changes in market-wide trading conditions).</p>
 <div id="liquidity-factor" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Construct an aggregate liquidity innovation factor</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Compute market-level Amihud as EW average</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>mkt_amihud <span class="op">=</span> (</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    panel.groupby(<span class="st">'month_end'</span>)[<span class="st">'amihud'</span>]</span>
@@ -2821,6 +2913,7 @@ Figure&nbsp;14.6
 <span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Liquidity Beta Distribution:"</span>)</span>
 <span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(liq_betas[<span class="st">'liq_beta'</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-liquidity-practical" class="level2" data-number="14.12">

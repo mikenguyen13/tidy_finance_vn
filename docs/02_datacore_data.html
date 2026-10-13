@@ -840,7 +840,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_institutional_background.html">Vietnam Financial Markets, Institutions, and Data</a></li><li class="breadcrumb-item"><a href="./02_datacore_data.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Datacore Data</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Datacore Data</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Datacore Data</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -874,6 +874,8 @@ div.csl-indent {
 <h2 data-number="3.3" class="anchored" data-anchor-id="setting-up-the-environment"><span class="header-section-number">3.3</span> Setting Up the Environment</h2>
 <p>We begin by loading the Python packages used throughout this chapter. The core packages include <code>pandas</code> for data manipulation, <code>numpy</code> for numerical operations, and <code>sqlite3</code> for local database management. We also import visualization libraries for creating publication-quality figures.</p>
 <div id="a5390008" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
@@ -882,15 +884,22 @@ div.csl-indent {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> comma_format, percent_format</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>We establish a connection to our local SQLite database, which serves as the central repository for all processed data. This database was introduced in the previous chapter and will store the cleaned datasets for use in subsequent analyses.</p>
 <div id="327ff521" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>We define the date range for our data collection. The Vietnamese stock market began operations in July 2000 with the establishment of the Ho Chi Minh City Stock Exchange (HOSE), so our sample period starts from 2000 and extends through the end of 2024.</p>
 <div id="e9122888" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>start_date <span class="op">=</span> <span class="st">"2000-01-01"</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>end_date <span class="op">=</span> <span class="st">"2024-12-31"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="connecting-to-datacore" class="level2" data-number="3.4">
@@ -898,6 +907,8 @@ div.csl-indent {
 <p>Datacore delivers data through a cloud-based object storage system built on MinIO, an S3-compatible storage infrastructure. This architecture enables efficient, programmatic access to large datasets without the limitations of traditional database connections. To access the data, you need credentials provided by Datacore upon subscription: an endpoint URL, access key, and secret key.</p>
 <p>The following class establishes the connection to Datacore’s storage system. The credentials are stored as environment variables for security, following best practices for credential management in research computing environments.</p>
 <div id="98476ca8" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> boto3</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> botocore.client <span class="im">import</span> Config</span>
@@ -955,15 +966,19 @@ div.csl-indent {
 <span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Read a CSV file from Datacore storage."""</span></span>
 <span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>        obj <span class="op">=</span> <span class="va">self</span>.s3.get_object(Bucket<span class="op">=</span>bucket_name, Key<span class="op">=</span>key)</span>
 <span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.read_csv(BytesIO(obj[<span class="st">"Body"</span>].read()), <span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>With the connection class defined, we can establish a connection and verify access to Datacore’s data repositories.</p>
 <div id="1784157c" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize connection</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> DatacoreConnection()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>conn.test_connection()</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Get bucket name from environment</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>bucket_name <span class="op">=</span> os.environ[<span class="st">"MINIO_BUCKET"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Connected successfully. Available buckets:
   - dsteam-data
@@ -988,6 +1003,8 @@ div.csl-indent {
 <h3 data-number="3.5.2" class="anchored" data-anchor-id="downloading-fundamentals-data"><span class="header-section-number">3.5.2</span> Downloading Fundamentals Data</h3>
 <p>Datacore organizes fundamentals data in Excel files partitioned by time period for efficient access. We download and concatenate these files to create a comprehensive dataset spanning our sample period.</p>
 <div id="672e3803" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define paths to fundamentals data files</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fundamentals_paths <span class="op">=</span> [</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fundamental_annual_1767674486317/fundamental_annual_1.xlsx"</span>,</span>
@@ -1004,6 +1021,7 @@ div.csl-indent {
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>df_fundamentals_raw <span class="op">=</span> pd.concat(fundamentals_list, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Total observations: </span><span class="sc">{</span><span class="bu">len</span>(df_fundamentals_raw)<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>/home/mikenguyen/project/tidyfinance/.venv/lib/python3.13/site-packages/openpyxl/styles/stylesheet.py:237: UserWarning: Workbook contains no default style, apply openpyxl's default</code></pre>
 </div>
@@ -1030,6 +1048,8 @@ Total observations: 22,821</code></pre>
 <h3 data-number="3.5.3" class="anchored" data-anchor-id="cleaning-and-standardizing-fundamentals"><span class="header-section-number">3.5.3</span> Cleaning and Standardizing Fundamentals</h3>
 <p>The raw fundamentals data requires several cleaning steps to ensure consistency and usability. We standardize variable names, handle missing values, and create derived variables commonly used in asset pricing research.</p>
 <div id="1478a578" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_fundamentals(df):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Clean and standardize company fundamentals data.</span></span>
@@ -1085,6 +1105,7 @@ Total observations: 22,821</code></pre>
 <span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>df_fundamentals <span class="op">=</span> clean_fundamentals(df_fundamentals_raw)</span>
 <span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"After cleaning: </span><span class="sc">{</span><span class="bu">len</span>(df_fundamentals)<span class="sc">:,}</span><span class="ss"> firm-year observations"</span>)</span>
 <span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique firms: </span><span class="sc">{</span>df_fundamentals[<span class="st">'symbol'</span>]<span class="sc">.</span>nunique()<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>After cleaning: 21,232 firm-year observations
 Unique firms: 1,554</code></pre>
@@ -1095,6 +1116,8 @@ Unique firms: 1,554</code></pre>
 <h3 data-number="3.5.4" class="anchored" data-anchor-id="creating-standardized-variables"><span class="header-section-number">3.5.4</span> Creating Standardized Variables</h3>
 <p>To facilitate comparison with international studies and ensure compatibility with standard asset pricing methodologies, we create variables following conventions established in the academic literature. We map Vietnamese financial statement items to their Compustat equivalents where possible.</p>
 <div id="2d895ee4" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_standard_variables(df):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Create standardized financial variables for asset pricing research.</span></span>
@@ -1156,12 +1179,15 @@ Unique firms: 1,554</code></pre>
 <span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>df_fundamentals <span class="op">=</span> create_standard_variables(df_fundamentals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-book-equity-and-profitability" class="level3" data-number="3.5.5">
 <h3 data-number="3.5.5" class="anchored" data-anchor-id="computing-book-equity-and-profitability"><span class="header-section-number">3.5.5</span> Computing Book Equity and Profitability</h3>
 <p>Book equity is a crucial variable for value investing strategies and the construction of HML (High Minus Low) factor portfolios. We follow the definition from Kenneth French’s data library, which accounts for deferred taxes and preferred stock.</p>
 <div id="e63265d3" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_book_equity(df):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute book equity following Fama-French conventions.</span></span>
@@ -1219,6 +1245,7 @@ Unique firms: 1,554</code></pre>
 <span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics for book equity</span></span>
 <span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Book Equity Summary Statistics (in million VND):"</span>)</span>
 <span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_fundamentals[<span class="st">"be"</span>].describe().<span class="bu">round</span>(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Book Equity Summary Statistics (in million VND):
 count    2.023500e+04
@@ -1234,6 +1261,8 @@ Name: be, dtype: float64</code></pre>
 </div>
 <p>Operating profitability, introduced by <span class="citation" data-cites="FamaFrench2015">Fama and French (<a href="references.html#ref-FamaFrench2015" role="doc-biblioref">2015</a>)</span>, measures a firm’s profits relative to its book equity. Firms with higher operating profitability tend to have higher expected returns.</p>
 <div id="3788eadb" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_profitability(df):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute operating profitability following Fama-French (2015).</span></span>
@@ -1271,12 +1300,15 @@ Name: be, dtype: float64</code></pre>
 <span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>df_fundamentals <span class="op">=</span> compute_profitability(df_fundamentals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-investment" class="level3" data-number="3.5.6">
 <h3 data-number="3.5.6" class="anchored" data-anchor-id="computing-investment"><span class="header-section-number">3.5.6</span> Computing Investment</h3>
 <p>Investment, measured as asset growth, captures firms’ investment behavior. <span class="citation" data-cites="FamaFrench2015">Fama and French (<a href="references.html#ref-FamaFrench2015" role="doc-biblioref">2015</a>)</span> document that firms with high asset growth (aggressive investment) tend to have lower future returns.</p>
 <div id="b85c9055" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_investment(df):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute investment (asset growth) following Fama-French (2015).</span></span>
@@ -1313,12 +1345,15 @@ Name: be, dtype: float64</code></pre>
 <span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>df_fundamentals <span class="op">=</span> compute_investment(df_fundamentals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-total-debt" class="level3" data-number="3.5.7">
 <h3 data-number="3.5.7" class="anchored" data-anchor-id="computing-total-debt"><span class="header-section-number">3.5.7</span> Computing Total Debt</h3>
 <p>In Vietnamese financial statements, total liabilities include non-interest-bearing items such as accounts payable and tax payables. For leverage analysis, we compute total interest-bearing debt by aggregating loan and lease obligations.</p>
 <div id="89c25b8f" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_total_debt(df):</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute total interest-bearing debt.</span></span>
@@ -1350,12 +1385,15 @@ Name: be, dtype: float64</code></pre>
 <span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>df_fundamentals <span class="op">=</span> compute_total_debt(df_fundamentals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="applying-filters" class="level3" data-number="3.5.8">
 <h3 data-number="3.5.8" class="anchored" data-anchor-id="applying-filters"><span class="header-section-number">3.5.8</span> Applying Filters</h3>
 <p>We apply standard filters to ensure data quality: requiring positive assets, non-negative sales, and presence of core variables needed for portfolio construction.</p>
 <div id="00e5cca7" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only observations with required variables</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>required_vars <span class="op">=</span> [<span class="st">"at"</span>, <span class="st">"lt"</span>, <span class="st">"seq"</span>, <span class="st">"sale"</span>]</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>comp_vn <span class="op">=</span> df_fundamentals.dropna(subset<span class="op">=</span>required_vars)</span>
@@ -1376,6 +1414,7 @@ Name: be, dtype: float64</code></pre>
 <span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Final sample: </span><span class="sc">{</span><span class="bu">len</span>(comp_vn)<span class="sc">:,}</span><span class="ss"> firm-year observations"</span>)</span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique firms: </span><span class="sc">{</span>comp_vn[<span class="st">'symbol'</span>]<span class="sc">.</span>nunique()<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sample period: </span><span class="sc">{</span>comp_vn[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> - </span><span class="sc">{</span>comp_vn[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Final sample: 20,091 firm-year observations
 Unique firms: 1,502
@@ -1387,6 +1426,8 @@ Sample period: 1998 - 2023</code></pre>
 <h3 data-number="3.5.9" class="anchored" data-anchor-id="storing-fundamentals-data"><span class="header-section-number">3.5.9</span> Storing Fundamentals Data</h3>
 <p>We store the prepared fundamentals data in our local SQLite database for use in subsequent chapters.</p>
 <div id="e5783a05" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>comp_vn.to_sql(</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"comp_vn"</span>,</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1395,6 +1436,7 @@ Sample period: 1998 - 2023</code></pre>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Company fundamentals saved to database."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Company fundamentals saved to database.</code></pre>
 </div>
@@ -1408,6 +1450,8 @@ Sample period: 1998 - 2023</code></pre>
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="downloading-price-data"><span class="header-section-number">3.6.1</span> Downloading Price Data</h3>
 <p>We download the historical price data from Datacore’s storage system. The data includes daily observations with open, high, low, close prices, trading volume, and adjustment factors.</p>
 <div id="8c95675b" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download historical price data</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>prices_raw <span class="op">=</span> conn.read_csv(</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    bucket_name,</span>
@@ -1417,6 +1461,7 @@ Sample period: 1998 - 2023</code></pre>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Downloaded </span><span class="sc">{</span><span class="bu">len</span>(prices_raw)<span class="sc">:,}</span><span class="ss"> daily price observations"</span>)</span>
 <span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Date range: </span><span class="sc">{</span>prices_raw[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>prices_raw[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Downloaded 4,307,791 daily price observations
 Date range: 2010-01-04 to 2025-05-12</code></pre>
@@ -1427,6 +1472,8 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="processing-price-data"><span class="header-section-number">3.6.2</span> Processing Price Data</h3>
 <p>We clean the price data and compute adjusted prices that account for stock splits, stock dividends, and other corporate actions.</p>
 <div id="b1c2504d" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> process_price_data(df):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Process raw price data from Datacore.</span></span>
@@ -1461,12 +1508,15 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> process_price_data(prices_raw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-shares-outstanding-and-market-capitalization" class="level3" data-number="3.6.3">
 <h3 data-number="3.6.3" class="anchored" data-anchor-id="computing-shares-outstanding-and-market-capitalization"><span class="header-section-number">3.6.3</span> Computing Shares Outstanding and Market Capitalization</h3>
 <p>Market capitalization is computed as the product of price and shares outstanding. Since Datacore provides earnings per share and net income, we can infer shares outstanding from these variables.</p>
 <div id="26cefc48" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_shares_outstanding(fundamentals_df):</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute shares outstanding from fundamentals.</span></span>
@@ -1478,8 +1528,11 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> shares</span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>shares_outstanding <span class="op">=</span> compute_shares_outstanding(df_fundamentals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fb62f28d" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_market_cap(df, shares_df):</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Add market capitalization to price data.</span></span>
@@ -1495,6 +1548,7 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> add_market_cap(prices, shares_outstanding)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-returns-and-excess-returns" class="level3" data-number="3.6.4">
@@ -1506,6 +1560,8 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <li>Sequential version</li>
 </ol>
 <div id="9e83160d" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_daily_dataset(df, annual_rf<span class="op">=</span><span class="fl">0.04</span>):</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Create daily price dataset with returns and excess returns.</span></span>
@@ -1537,11 +1593,14 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
 <span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>prices_daily <span class="op">=</span> create_daily_dataset(prices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <ol start="2" type="1">
 <li>Parallel version</li>
 </ol>
 <div id="e09534a9" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1608,6 +1667,7 @@ Date range: 2010-01-04 to 2025-05-12</code></pre>
 <span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a>prices_daily.query(<span class="st">"symbol == 'FPT'"</span>)[[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"adjusted_close"</span>, <span class="st">"ret"</span>]].head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing 1,837 symbols using 87 cores...</code></pre>
 </div>
@@ -1680,6 +1740,8 @@ Sample of non-zero returns:
 </div>
 </div>
 <div id="dcc669ec" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select columns</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>daily_columns <span class="op">=</span> [</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"year"</span>, <span class="st">"month"</span>,</span>
@@ -1695,6 +1757,7 @@ Sample of non-zero returns:
 <span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Daily Return Summary Statistics:"</span>)</span>
 <span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prices_daily[<span class="st">"ret"</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span>
 <span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Final daily sample: </span><span class="sc">{</span><span class="bu">len</span>(prices_daily)<span class="sc">:,}</span><span class="ss"> observations"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Daily Return Summary Statistics:
 count    3.462157e+06
@@ -1718,6 +1781,8 @@ Final daily sample: 3,462,157 observations</code></pre>
 <li>Sequential version</li>
 </ol>
 <div id="231ac7a7" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_monthly_dataset(df, annual_rf<span class="op">=</span><span class="fl">0.04</span>):</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Create monthly price dataset with returns computed from </span></span>
@@ -1775,11 +1840,14 @@ Final daily sample: 3,462,157 observations</code></pre>
 <span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> monthly</span>
 <span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> create_monthly_dataset(prices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <ol start="2" type="1">
 <li>Parallel version</li>
 </ol>
 <div id="39bfcaad" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1869,6 +1937,7 @@ Final daily sample: 3,462,157 observations</code></pre>
 <span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prices_monthly[prices_monthly[<span class="st">"ret"</span>] <span class="op">!=</span> <span class="dv">0</span>][[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"adjusted_close"</span>, <span class="st">"ret"</span>]].head(<span class="dv">10</span>))</span>
 <span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>prices_monthly.query(<span class="st">"symbol == 'FPT'"</span>)[[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"adjusted_close"</span>, <span class="st">"ret"</span>]].head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing 1,837 symbols using 87 cores...</code></pre>
 </div>
@@ -1941,6 +2010,8 @@ Sample of non-zero returns:
 </div>
 </div>
 <div id="e5b034be" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select columns (same structure as daily)</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>monthly_columns <span class="op">=</span> [</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"year"</span>, <span class="st">"month"</span>,</span>
@@ -1956,6 +2027,7 @@ Sample of non-zero returns:
 <span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Monthly Return Summary Statistics:"</span>)</span>
 <span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prices_monthly[<span class="st">"ret"</span>].describe().<span class="bu">round</span>(<span class="dv">4</span>))</span>
 <span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Final monthly sample: </span><span class="sc">{</span><span class="bu">len</span>(prices_monthly)<span class="sc">:,}</span><span class="ss"> observations"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Monthly Return Summary Statistics:
 count    165499.0000
@@ -1976,6 +2048,8 @@ Final monthly sample: 165,499 observations</code></pre>
 <section id="storing-price-data" class="level3" data-number="3.6.5">
 <h3 data-number="3.6.5" class="anchored" data-anchor-id="storing-price-data"><span class="header-section-number">3.6.5</span> Storing Price Data</h3>
 <div id="44691cde" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>prices_daily.to_sql(</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">"prices_daily"</span>,</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1991,6 +2065,7 @@ Final monthly sample: 165,499 observations</code></pre>
 <span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
 <span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Monthly price data saved to database."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2001,6 +2076,8 @@ Final monthly sample: 165,499 observations</code></pre>
 <h3 data-number="3.7.1" class="anchored" data-anchor-id="market-evolution-over-time"><span class="header-section-number">3.7.1</span> Market Evolution Over Time</h3>
 <p>We first examine how the number of listed securities has grown over time.</p>
 <div id="6bd4f40f" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>securities_over_time <span class="op">=</span> (prices_monthly</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"date"</span>)</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -2009,8 +2086,11 @@ Final monthly sample: 165,499 observations</code></pre>
 <span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
 <span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-securities-over-time" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>securities_figure <span class="op">=</span> (</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    ggplot(securities_over_time, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"n_securities"</span>))</span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(color<span class="op">=</span><span class="st">"steelblue"</span>, size<span class="op">=</span><span class="dv">1</span>)</span>
@@ -2024,6 +2104,7 @@ Final monthly sample: 165,499 observations</code></pre>
 <span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
 <span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>securities_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-securities-over-time" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Line chart showing the growth in number of listed securities over time.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2042,6 +2123,8 @@ Figure&nbsp;3.1: The figure shows the monthly number of securities in the Vietna
 <h3 data-number="3.7.2" class="anchored" data-anchor-id="market-capitalization-evolution"><span class="header-section-number">3.7.2</span> Market Capitalization Evolution</h3>
 <p>The aggregate market capitalization reflects the overall size and development of the Vietnamese equity market.</p>
 <div id="cell-fig-market-cap-over-time" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mktcap_figure <span class="op">=</span> (</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    ggplot(securities_over_time, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"total_mktcap / 1000"</span>))</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line(color<span class="op">=</span><span class="st">"darkgreen"</span>, size<span class="op">=</span><span class="dv">1</span>)</span>
@@ -2055,6 +2138,7 @@ Figure&nbsp;3.1: The figure shows the monthly number of securities in the Vietna
 <span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
 <span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>mktcap_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-market-cap-over-time" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Line chart showing total market capitalization growth.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2073,6 +2157,8 @@ Figure&nbsp;3.2: The figure shows the total market capitalization of Vietnamese 
 <h3 data-number="3.7.3" class="anchored" data-anchor-id="return-distribution"><span class="header-section-number">3.7.3</span> Return Distribution</h3>
 <p>Understanding the distribution of monthly returns helps identify potential data quality issues and characterize market risk.</p>
 <div id="cell-fig-return-distribution" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>return_distribution <span class="op">=</span> (</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    ggplot(prices_monthly, aes(x<span class="op">=</span><span class="st">"ret_excess"</span>))</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(</span>
@@ -2090,6 +2176,7 @@ Figure&nbsp;3.2: The figure shows the total market capitalization of Vietnamese 
 <span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
 <span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>return_distribution.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>/home/mikenguyen/project/tidyfinance/.venv/lib/python3.13/site-packages/plotnine/layer.py:293: PlotnineWarning: stat_bin : Removed 3264 rows containing non-finite values.
 /home/mikenguyen/project/tidyfinance/.venv/lib/python3.13/site-packages/plotnine/layer.py:374: PlotnineWarning: geom_histogram : Removed 2 rows containing missing values.</code></pre>
@@ -2112,6 +2199,8 @@ Figure&nbsp;3.3: Distribution of monthly excess returns for Vietnamese stocks.
 <h3 data-number="3.7.4" class="anchored" data-anchor-id="coverage-of-book-equity"><span class="header-section-number">3.7.4</span> Coverage of Book Equity</h3>
 <p>Book equity is essential for constructing value portfolios. We examine what fraction of our sample has book equity data available over time.</p>
 <div id="cell-fig-book-equity-coverage" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge prices with fundamentals</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>coverage_data <span class="op">=</span> (prices_monthly</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    .assign(year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"date"</span>].dt.year)</span>
@@ -2144,6 +2233,7 @@ Figure&nbsp;3.3: Distribution of monthly excess returns for Vietnamese stocks.
 <span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme_minimal()</span>
 <span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a>coverage_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-book-equity-coverage" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Line chart showing the coverage of book equity data over time.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2163,6 +2253,8 @@ Figure&nbsp;3.4: Share of securities with available book equity data by year.
 <h2 data-number="3.8" class="anchored" data-anchor-id="merging-stock-and-fundamental-data"><span class="header-section-number">3.8</span> Merging Stock and Fundamental Data</h2>
 <p>The final step links price data with fundamental data using the stock symbol as the common identifier. This merged dataset forms the basis for constructing portfolios sorted on firm characteristics.</p>
 <div id="1d22dcee" class="cell" data-execution_count="32">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: Create merged dataset for end-of-June each year</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> (prices_monthly</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">"month == 6"</span>)</span>
@@ -2194,6 +2286,7 @@ Figure&nbsp;3.4: Share of securities with available book equity data by year.
 <span id="cb52-29"><a href="#cb52-29" aria-hidden="true" tabindex="-1"></a>merged_data.head(<span class="dv">3</span>)</span>
 <span id="cb52-30"><a href="#cb52-30" aria-hidden="true" tabindex="-1"></a>merged_data.describe()</span>
 <span id="cb52-31"><a href="#cb52-31" aria-hidden="true" tabindex="-1"></a>merged_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Merged observations: 13,756
 With book-to-market: 12,859</code></pre>
@@ -2502,6 +2595,8 @@ With book-to-market: 12,859</code></pre>
 </div>
 </div>
 <div id="d581bc00" class="cell" data-execution_count="33">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2521,6 +2616,7 @@ With book-to-market: 12,859</code></pre>
 <span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">+</span></span>
 <span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>    theme_minimal()</span>
 <span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="29">
 <div>
 <figure class="figure">
@@ -2530,6 +2626,8 @@ With book-to-market: 12,859</code></pre>
 </div>
 </div>
 <div id="2ffa8269" class="cell" data-execution_count="34">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>size_plot_data <span class="op">=</span> (</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    merged_data[[<span class="st">"mktcap_lag"</span>]]</span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>      .dropna()</span>
@@ -2546,6 +2644,7 @@ With book-to-market: 12,859</code></pre>
 <span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">+</span></span>
 <span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>    theme_minimal()</span>
 <span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="30">
 <div>
 <figure class="figure">
@@ -2555,6 +2654,8 @@ With book-to-market: 12,859</code></pre>
 </div>
 </div>
 <div id="36f7e0e6" class="cell" data-execution_count="35">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>scatter_data <span class="op">=</span> (</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>    merged_data[[<span class="st">"be"</span>, <span class="st">"mktcap_lag"</span>]]</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>      .dropna()</span>
@@ -2574,6 +2675,7 @@ With book-to-market: 12,859</code></pre>
 <span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="op">+</span></span>
 <span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>    theme_minimal()</span>
 <span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="31">
 <div>
 <figure class="figure">

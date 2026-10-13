@@ -883,7 +883,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./10_modern_portfolio_theory.html">Portfolio Construction, Risk, and Empirical Mechanics</a></li><li class="breadcrumb-item"><a href="./14_portfolio_weighting_and_rebalancing.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Portfolio Weighting and Rebalancing</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Portfolio Weighting and Rebalancing</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Portfolio Weighting and Rebalancing</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1029,6 +1029,8 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <section id="sec-weight-data" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="sec-weight-data"><span class="header-section-number">12.2</span> Data Construction</h2>
 <div id="setup" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Import libraries and configure environment</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1047,8 +1049,11 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.top'</span>: <span class="va">False</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'axes.spines.right'</span>: <span class="va">False</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="data-load" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Load market and fundamental data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCoreClient</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> DataCoreClient()</span>
@@ -1099,11 +1104,14 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily observations: </span><span class="sc">{</span>daily<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly observations: </span><span class="sc">{</span>monthly<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique tickers: </span><span class="sc">{</span>monthly[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="universe-construction-and-liquidity-filters" class="level3" data-number="12.2.1">
 <h3 data-number="12.2.1" class="anchored" data-anchor-id="universe-construction-and-liquidity-filters"><span class="header-section-number">12.2.1</span> Universe Construction and Liquidity Filters</h3>
 <p>A critical pre-processing step is defining the investable universe. Including all listed stocks, regardless of liquidity, inflates the apparent benefits of equal-weighting and other small-cap-tilted schemes because it implicitly assumes the ability to trade illiquid stocks without friction. We apply graduated liquidity filters and track how results change.</p>
 <div id="universe-construction" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Apply liquidity filters to define investable universes</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_universe(monthly_df, min_mcap_pct<span class="op">=</span><span class="dv">0</span>, min_turnover<span class="op">=</span><span class="dv">0</span>, min_months<span class="op">=</span><span class="dv">12</span>):</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Construct investable universe with liquidity filters.</span></span>
@@ -1149,6 +1157,7 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>]:</span>
 <span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    n_stocks <span class="op">=</span> univ.groupby(<span class="st">"month_end"</span>)[<span class="st">"ticker"</span>].nunique().median()</span>
 <span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">: median </span><span class="sc">{</span>n_stocks<span class="sc">:.0f}</span><span class="ss"> stocks/month"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="market-capitalization-concentration" class="level3" data-number="12.2.2">
@@ -1157,6 +1166,8 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <div id="fig-concentration" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="4">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-concentration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Visualize market cap concentration</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel A: Cumulative market cap share (latest month)</span></span>
@@ -1198,6 +1209,7 @@ Table&nbsp;12.1: Summary of portfolio weighting schemes.
 <span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-concentration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.1
@@ -1212,6 +1224,8 @@ Figure&nbsp;12.1
 <section id="core-portfolio-engine" class="level3" data-number="12.3.1">
 <h3 data-number="12.3.1" class="anchored" data-anchor-id="core-portfolio-engine"><span class="header-section-number">12.3.1</span> Core Portfolio Engine</h3>
 <div id="portfolio-engine" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Generic portfolio construction and backtesting engine</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_portfolio_returns(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    monthly_df,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    weight_fn,</span>
@@ -1338,11 +1352,14 @@ Figure&nbsp;12.1
 <span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>        prev_weights <span class="op">=</span> aligned_w.copy()</span>
 <span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="value-weighted-portfolio" class="level3" data-number="12.3.2">
 <h3 data-number="12.3.2" class="anchored" data-anchor-id="value-weighted-portfolio"><span class="header-section-number">12.3.2</span> Value-Weighted Portfolio</h3>
 <div id="vw-portfolio" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Implement value-weighted portfolio</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> vw_weights(cross_section):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Value-weighted: proportional to market cap."""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cross_section.set_index(<span class="st">'ticker'</span>)[<span class="st">'market_cap'</span>]</span>
@@ -1352,11 +1369,14 @@ Figure&nbsp;12.1
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean monthly return: </span><span class="sc">{</span>vw_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean turnover: </span><span class="sc">{</span>vw_returns[<span class="st">'turnover'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean effective N: </span><span class="sc">{</span>vw_returns[<span class="st">'effective_n'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="equal-weighted-portfolio" class="level3" data-number="12.3.3">
 <h3 data-number="12.3.3" class="anchored" data-anchor-id="equal-weighted-portfolio"><span class="header-section-number">12.3.3</span> Equal-Weighted Portfolio</h3>
 <div id="ew-portfolio" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Implement equal-weighted portfolio at different rebalancing frequencies</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> ew_weights(cross_section):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Equal-weighted: 1/N."""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    tickers <span class="op">=</span> cross_section.set_index(<span class="st">'ticker'</span>).index</span>
@@ -1382,12 +1402,15 @@ Figure&nbsp;12.1
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'EW Annual'</span>, ew_annual)]:</span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">: mean ret = </span><span class="sc">{</span>df[<span class="st">'port_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>          <span class="ss">f"turnover = </span><span class="sc">{</span>df[<span class="st">'turnover'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="capped-value-weighted-portfolio" class="level3" data-number="12.3.4">
 <h3 data-number="12.3.4" class="anchored" data-anchor-id="capped-value-weighted-portfolio"><span class="header-section-number">12.3.4</span> Capped Value-Weighted Portfolio</h3>
 <p>To mitigate the concentration of pure VW while retaining its low-turnover properties, we impose a cap on individual stock weights. A common choice is 5% or 10%, mimicking the construction rules of capped indices such as the MSCI Capped indices.</p>
 <div id="capped-vw" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Implement capped value-weighted portfolios</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> capped_vw_weights(cross_section, cap<span class="op">=</span><span class="fl">0.05</span>):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Capped VW: market cap weights with an upper bound."""</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> cross_section.set_index(<span class="st">'ticker'</span>)[<span class="st">'market_cap'</span>]</span>
@@ -1412,6 +1435,7 @@ Figure&nbsp;12.1
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"turnover = </span><span class="sc">{</span>capped5[<span class="st">'turnover'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Capped 10%: eff_N = </span><span class="sc">{</span>capped10[<span class="st">'effective_n'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">, "</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"turnover = </span><span class="sc">{</span>capped10[<span class="st">'turnover'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="fundamental-weighted-portfolio" class="level3" data-number="12.3.5">
@@ -1421,6 +1445,8 @@ Figure&nbsp;12.1
 w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Rank}_{i,t}^{\text{BE}} + \text{Rank}_{i,t}^{\text{Div}} + \text{Rank}_{i,t}^{\text{CFO}}\right)
 \tag{12.3}\]</span></span></p>
 <div id="fundamental-weighted" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Implement fundamental-weighted portfolio</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge fundamentals with monthly data (use most recent fiscal year)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>fundamentals[<span class="st">"merge_year"</span>] <span class="op">=</span> fundamentals[<span class="st">"fiscal_year"</span>] <span class="op">+</span> <span class="dv">1</span>  <span class="co"># Lag by 1 year</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>monthly_fund <span class="op">=</span> monthly.copy()</span>
@@ -1453,6 +1479,7 @@ w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Ran
 <span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Fundamental-weighted: mean ret = </span><span class="sc">{</span>fw_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"eff_N = </span><span class="sc">{</span>fw_returns[<span class="st">'effective_n'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">"</span></span>
 <span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1467,6 +1494,8 @@ w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Ran
 \tag{12.4}\]</span></span></p>
 <p>where <span class="math inline">\(\mathbf{S}\)</span> is the sample covariance, <span class="math inline">\(\mathbf{F}\)</span> is the shrinkage target, and <span class="math inline">\(\delta \in [0,1]\)</span> is the optimal shrinkage intensity derived analytically.</p>
 <div id="covariance-estimation" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Estimate covariance matrix with Ledoit-Wolf shrinkage</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_covariance(monthly_df, month, lookback<span class="op">=</span><span class="dv">60</span>, min_obs<span class="op">=</span><span class="dv">36</span>):</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Estimate covariance matrix using Ledoit-Wolf shrinkage.</span></span>
@@ -1516,6 +1545,7 @@ w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Ran
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cov_matrix, <span class="bu">list</span>(valid_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="minimum-variance-portfolio" class="level3" data-number="12.4.2">
@@ -1526,6 +1556,8 @@ w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Ran
 \tag{12.5}\]</span></span></p>
 <p>The long-only constraint (<span class="math inline">\(w_i \geq 0\)</span>) is essential in practice and also acts as an implicit shrinkage that improves out-of-sample performance <span class="citation" data-cites="jagannathan2003risk">(<a href="references.html#ref-jagannathan2003risk" role="doc-biblioref">Jagannathan and Ma 2003</a>)</span>.</p>
 <div id="minimum-variance" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Implement minimum variance portfolio</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minimum_variance_weights(cov_matrix, max_weight<span class="op">=</span><span class="fl">0.05</span>):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Solve for the minimum variance portfolio with long-only</span></span>
@@ -1584,6 +1616,7 @@ w_{i,t}^{FW} \propto \frac{1}{4}\left(\text{Rank}_{i,t}^{\text{Rev}} + \text{Ran
 <span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Min Variance: mean ret = </span><span class="sc">{</span>mv_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std = </span><span class="sc">{</span>mv_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="risk-parity-equal-risk-contribution" class="level3" data-number="12.4.3">
@@ -1594,6 +1627,8 @@ RC_i = w_i \cdot \frac{(\boldsymbol{\Sigma} \mathbf{w})_i}{\sqrt{\mathbf{w}'\bol
 \tag{12.6}\]</span></span></p>
 <p>The risk parity portfolio solves <span class="math inline">\(RC_i = RC_j\)</span> for all <span class="math inline">\(i, j\)</span>:</p>
 <div id="risk-parity" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Implement risk parity (equal risk contribution) portfolio</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> risk_parity_weights(cov_matrix, max_weight<span class="op">=</span><span class="fl">0.05</span>):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Solve for the risk parity portfolio where each asset</span></span>
@@ -1652,6 +1687,7 @@ RC_i = w_i \cdot \frac{(\boldsymbol{\Sigma} \mathbf{w})_i}{\sqrt{\mathbf{w}'\bol
 <span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Risk Parity: mean ret = </span><span class="sc">{</span>rp_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std = </span><span class="sc">{</span>rp_returns[<span class="st">'port_return'</span>]<span class="sc">.</span>std()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="maximum-diversification-portfolio" class="level3" data-number="12.4.4">
@@ -1662,6 +1698,8 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 \tag{12.7}\]</span></span></p>
 <p>where <span class="math inline">\(\boldsymbol{\sigma}\)</span> is the vector of individual asset volatilities. The maximum diversification portfolio maximizes this ratio:</p>
 <div id="max-diversification" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Implement maximum diversification portfolio</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> max_diversification_weights(cov_matrix, max_weight<span class="op">=</span><span class="fl">0.05</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Maximize the diversification ratio."""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> cov_matrix.shape[<span class="dv">0</span>]</span>
@@ -1692,6 +1730,7 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.Series(result.x, index<span class="op">=</span>cov_matrix.index)</span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pd.Series(<span class="fl">1.0</span> <span class="op">/</span> n, index<span class="op">=</span>cov_matrix.index)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1699,6 +1738,8 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 <h2 data-number="12.5" class="anchored" data-anchor-id="sec-weight-comparison"><span class="header-section-number">12.5</span> Comprehensive Performance Comparison</h2>
 <p>We now compare all schemes on a common universe with consistent methodology.</p>
 <div id="all-portfolios" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Compute returns for all weighting schemes</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Collect all portfolio return series</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>portfolios <span class="op">=</span> {</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'VW'</span>: vw_returns,</span>
@@ -1724,10 +1765,13 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Common period: </span><span class="sc">{</span>common_start<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>common_end<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of months: </span><span class="sc">{</span><span class="bu">len</span>(portfolios[<span class="st">'VW'</span>])<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="performance-metrics" class="level3" data-number="12.5.1">
 <h3 data-number="12.5.1" class="anchored" data-anchor-id="performance-metrics"><span class="header-section-number">12.5.1</span> Performance Metrics</h3>
 <div id="performance-metrics" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Compute comprehensive performance statistics for all schemes</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_metrics(returns_df, risk_free_annual<span class="op">=</span><span class="fl">0.04</span>):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute performance metrics from monthly portfolio returns."""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> returns_df[<span class="st">'port_return'</span>]</span>
@@ -1796,10 +1840,13 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 <span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Max Drawdown'</span>, <span class="st">'Avg. Turnover'</span>, <span class="st">'Effective N'</span></span>
 <span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(metrics_df[display_cols].<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-cumulative-returns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="16">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cumulative-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot cumulative returns for all weighting schemes</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">7</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {</span>
@@ -1830,6 +1877,7 @@ DR(\mathbf{w}) = \frac{\mathbf{w}'\boldsymbol{\sigma}}{\sqrt{\mathbf{w}'\boldsym
 <span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>ax.set_yscale(<span class="st">'log'</span>)</span>
 <span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cumulative-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.2
@@ -1842,6 +1890,8 @@ Figure&nbsp;12.2
 <div id="fig-risk-return" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-risk-return-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Risk-return scatter plot</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">7</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name <span class="kw">in</span> metrics_df.index:</span>
@@ -1864,6 +1914,7 @@ Figure&nbsp;12.2
 <span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Risk-Return Profile (bubble size = Effective N)'</span>)</span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-risk-return-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.3
@@ -1924,6 +1975,8 @@ TC_{i,t} = c_{\text{fixed}} + \frac{1}{2} \text{Spread}_{i,t} + \lambda \sqrt{\f
 \tag{12.8}\]</span></span></p>
 <p>where <span class="math inline">\(c_{\text{fixed}} \approx 0.25\%\)</span> is the explicit cost per trade, <span class="math inline">\(\text{Spread}_{i,t}\)</span> is the quoted bid-ask spread, <span class="math inline">\(\Delta w_{i,t}\)</span> is the weight change, <span class="math inline">\(\text{AUM}\)</span> is portfolio size, <span class="math inline">\(ADV_{i,t}\)</span> is average daily volume in VND, and <span class="math inline">\(\lambda\)</span> is the price impact coefficient estimated from the <span class="citation" data-cites="amihud2002illiquidity">Amihud (<a href="references.html#ref-amihud2002illiquidity" role="doc-biblioref">2002</a>)</span> model.</p>
 <div id="transaction-cost-model" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Implement transaction cost model calibrated to Vietnamese market</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_transaction_costs(weight_changes, stock_data,</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                                aum_vnd<span class="op">=</span><span class="fl">100e9</span>, fixed_cost<span class="op">=</span><span class="fl">0.0025</span>,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                                impact_coef<span class="op">=</span><span class="fl">0.10</span>):</span>
@@ -1984,12 +2037,15 @@ TC_{i,t} = c_{\text{fixed}} + \frac{1}{2} \text{Spread}_{i,t} + \lambda \sqrt{\f
 <span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>    total_cost <span class="op">=</span> cost_df[<span class="st">'total'</span>].<span class="bu">sum</span>() <span class="op">/</span> aum_vnd <span class="cf">if</span> <span class="bu">len</span>(cost_df) <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
 <span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_cost, cost_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="net-of-cost-performance" class="level3" data-number="12.6.2">
 <h3 data-number="12.6.2" class="anchored" data-anchor-id="net-of-cost-performance"><span class="header-section-number">12.6.2</span> Net-of-Cost Performance</h3>
 <p>We apply the transaction cost model to compute net-of-cost returns for each weighting scheme at different assumed AUM levels. This is critical because strategies that appear attractive in gross terms may be unimplementable at scale due to the illiquidity of small-cap Vietnamese stocks.</p>
 <div id="net-returns" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Compute net-of-cost returns using simplified proportional cost model</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_net_returns(portfolio_df, cost_per_turnover<span class="op">=</span><span class="fl">0.005</span>):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Approximate net returns using a proportional cost model.</span></span>
@@ -2023,10 +2079,13 @@ TC_{i,t} = c_{\text{fixed}} + \frac{1}{2} \text{Spread}_{i,t} + \lambda \sqrt{\f
 <span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> k <span class="op">!=</span> <span class="st">'Scenario'</span>:</span>
 <span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>k<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-turnover-comparison" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="20">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-turnover-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Compare turnover distributions across schemes</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>turnover_data <span class="op">=</span> {}</span>
@@ -2053,6 +2112,7 @@ TC_{i,t} = c_{\text{fixed}} + \frac{1}{2} \text{Spread}_{i,t} + \lambda \sqrt{\f
 <span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Turnover Distribution by Weighting Scheme'</span>)</span>
 <span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-turnover-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.4
@@ -2066,6 +2126,8 @@ Figure&nbsp;12.4
 <div id="fig-aum-scaling" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-aum-scaling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Simulate performance degradation with AUM for different schemes</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>aum_levels <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">5000</span>]  <span class="co"># VND billions</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
@@ -2108,6 +2170,7 @@ Figure&nbsp;12.4
 <span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>ax.axhline(y<span class="op">=</span><span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-aum-scaling-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.5
@@ -2125,6 +2188,8 @@ Figure&nbsp;12.5
 <div id="fig-rebal-frequency" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rebal-frequency-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Analyze rebalancing frequency impact on EW portfolio</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>frequencies <span class="op">=</span> {</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Monthly'</span>: <span class="st">'M'</span>,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Quarterly'</span>: <span class="st">'Q'</span>,</span>
@@ -2178,6 +2243,7 @@ Figure&nbsp;12.5
 <span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rebal-frequency-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.6
@@ -2189,6 +2255,8 @@ Figure&nbsp;12.6
 <h3 data-number="12.7.2" class="anchored" data-anchor-id="threshold-based-rebalancing"><span class="header-section-number">12.7.2</span> Threshold-Based Rebalancing</h3>
 <p>An alternative to calendar-based rebalancing is to rebalance only when portfolio weights drift beyond a tolerance band. This “no-trade zone” approach is motivated by <span class="citation" data-cites="garleanu2013dynamic">Gârleanu and Pedersen (<a href="references.html#ref-garleanu2013dynamic" role="doc-biblioref">2013</a>)</span>, who derive the optimal dynamic trading strategy under quadratic transaction costs and show that the optimal portfolio is a weighted average of the current holdings and the frictionless target.</p>
 <div id="threshold-rebalancing" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Implement threshold-based rebalancing for EW portfolio</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_threshold_rebalanced(monthly_df, weight_fn,</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                                  threshold<span class="op">=</span><span class="fl">0.01</span>):</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -2264,6 +2332,7 @@ Figure&nbsp;12.6
 <span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a>    threshold_results[<span class="ss">f'</span><span class="sc">{</span>t<span class="sc">:.1%}</span><span class="ss">'</span>] <span class="op">=</span> compute_threshold_rebalanced(</span>
 <span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>        universe_mid, ew_weights, threshold<span class="op">=</span>t</span>
 <span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -2275,6 +2344,8 @@ R^{EW}_{\text{rebal}} - R^{EW}_{\text{drift}} \approx \frac{1}{2N} \sum_{i=1}^N 
 \tag{12.9}\]</span></span></p>
 <p>The first term captures the “buy low, sell high” effect from resetting weights after return dispersion. The second term is the cost of undoing covariance-induced drift. The rebalancing bonus is larger when cross-sectional return dispersion is high (which it is in Vietnam) and when pairwise correlations are low.</p>
 <div id="rebalancing-bonus" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Estimate the rebalancing bonus for Vietnamese equities</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute buy-and-hold EW portfolio (no rebalancing after initial equal weight)</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>bh_returns <span class="op">=</span> compute_portfolio_returns(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    universe_mid, ew_weights, rebal_freq<span class="op">=</span><span class="st">'A'</span>  <span class="co"># Rebalance once per year only</span></span>
@@ -2302,10 +2373,13 @@ R^{EW}_{\text{rebal}} - R^{EW}_{\text{drift}} \approx \frac{1}{2N} \sum_{i=1}^N 
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>ann_bonus <span class="op">=</span> bonus_df[<span class="st">'bonus'</span>].mean() <span class="op">*</span> <span class="dv">12</span></span>
 <span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Annualized rebalancing bonus (EW monthly vs annual): </span><span class="sc">{</span>ann_bonus<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Mean cross-sectional dispersion: </span><span class="sc">{</span>bonus_df[<span class="st">'cs_dispersion'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-rebal-bonus-time" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rebal-bonus-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Plot rebalancing bonus over time</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>ax1.bar(pd.to_datetime(bonus_df[<span class="st">'month_end'</span>]),</span>
@@ -2328,6 +2402,7 @@ R^{EW}_{\text{rebal}} - R^{EW}_{\text{drift}} \approx \frac{1}{2N} \sum_{i=1}^N 
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rebal-bonus-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.7
@@ -2342,6 +2417,8 @@ Figure&nbsp;12.7
 R_{p,t} - R_{f,t} = \alpha_p + \beta_p^{MKT}(R_{m,t} - R_{f,t}) + \beta_p^{SMB} \text{SMB}_t + \beta_p^{HML} \text{HML}_t + \varepsilon_{p,t}
 \tag{12.10}\]</span></span></p>
 <div id="factor-regressions" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Regress portfolio returns on Fama-French-Carhart factors</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieve Vietnamese factor returns from DataCore</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>factors <span class="op">=</span> client.get_factor_returns(</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    market<span class="op">=</span><span class="st">'vietnam'</span>,</span>
@@ -2378,10 +2455,13 @@ R_{p,t} - R_{f,t} = \alpha_p + \beta_p^{MKT}(R_{m,t} - R_{f,t}) + \beta_p^{SMB} 
 <span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>factor_df <span class="op">=</span> pd.DataFrame(factor_results).T</span>
 <span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(factor_df.<span class="bu">round</span>(<span class="dv">3</span>).to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-factor-exposures" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="27">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-factor-exposures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Heatmap of factor exposures across weighting schemes</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>plot_data <span class="op">=</span> factor_df[[<span class="st">'MKT'</span>, <span class="st">'SMB'</span>, <span class="st">'HML'</span>, <span class="st">'WML'</span>]].copy()</span>
@@ -2405,6 +2485,7 @@ R_{p,t} - R_{f,t} = \alpha_p + \beta_p^{MKT}(R_{m,t} - R_{f,t}) + \beta_p^{SMB} 
 <span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Factor Exposures by Weighting Scheme'</span>)</span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-factor-exposures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;12.8
@@ -2465,6 +2546,8 @@ D_t = \gamma\, \Omega_t^\top \Sigma_t \Omega_t + W\, \Delta\Omega_t^\top \Lambda
 <h3 data-number="12.10.5" class="anchored" data-anchor-id="sec-weight-ief-code"><span class="header-section-number">12.10.5</span> An Independent Implementation</h3>
 <p>The core of the method is five small functions: the trading-speed matrix <span class="math inline">\(m\)</span>, the scaling of signals, random Fourier features, the implied-weights matrix <span class="math inline">\(\Omega_t\)</span>, and the closed-form coefficients of <a href="#eq-weight-ief-beta" class="quarto-xref">Equation&nbsp;<span>12.15</span></a>.</p>
 <div id="portfolio-ml-core" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Core functions for Portfolio-ML</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trading_speed(sigma, lam, wealth, gamma, mu<span class="op">=</span><span class="fl">0.007</span>, rf<span class="op">=</span><span class="fl">0.0</span>, iters<span class="op">=</span><span class="dv">10</span>):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Persistence matrix m in the optimal rule pi_t = m g_t pi_{t-1} + (I - m) A_t.</span></span>
@@ -2541,9 +2624,12 @@ D_t = \gamma\, \Omega_t^\top \Sigma_t \Omega_t + W\, \Delta\Omega_t^\top \Lambda
 <span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> objective(beta, r_tilde, D, months):</span>
 <span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Average realized utility r_tilde' beta - beta' D beta / 2 over the given months."""</span></span>
 <span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.mean([r_tilde[t] <span class="op">@</span> beta <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> beta <span class="op">@</span> D[t] <span class="op">@</span> beta <span class="cf">for</span> t <span class="kw">in</span> months])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>To see the method at work where the truth is known, the simulation below creates markets of 60 stocks over 35 years with two signals of very different persistence: a value-like signal with monthly autocorrelation 0.97 and a reversal-like signal that is independent from month to month but three times as predictive per unit. Liquidity varies across stocks by three orders of magnitude, and the investor has $10 billion and risk aversion 10. Four rules compete over the final ten years. Three of them are <em>oracles</em> that know the true expected returns: the cost-agnostic Markowitz portfolio, the static cost-aware portfolio, and the dynamic optimum of <a href="#eq-weight-ief-rule" class="quarto-xref">Equation&nbsp;<span>12.12</span></a> and <a href="#eq-weight-ief-aim" class="quarto-xref">Equation&nbsp;<span>12.13</span></a> computed from the known signal dynamics. Portfolio-ML knows nothing about the data-generating process and learns its coefficients from the first 25 years, once with the two signals alone and once with a liquidity rank and its interactions with the signals added as features. Repeating the exercise over 20 simulated markets guards against reading too much into one draw.</p>
 <div id="portfolio-ml-simulation" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Simulated markets with persistent and fleeting signals</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>GAMMA, WEALTH, LOOKBACK <span class="op">=</span> <span class="fl">10.0</span>, <span class="fl">1e10</span>, <span class="dv">11</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>N_STOCKS, N_MONTHS <span class="op">=</span> <span class="dv">60</span>, <span class="dv">420</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>TRAIN_END, TEST_START <span class="op">=</span> <span class="dv">240</span>, <span class="dv">300</span></span>
@@ -2647,8 +2733,11 @@ D_t = \gamma\, \Omega_t^\top \Sigma_t \Omega_t + W\, \Delta\Omega_t^\top \Lambda
 <span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a>sim_results <span class="op">=</span> pd.concat([run_one(seed) <span class="cf">for</span> seed <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>)],</span>
 <span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a>                        ignore_index<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> [<span class="st">"Markowitz (oracle, cost-agnostic)"</span>, <span class="st">"Static (oracle)"</span>,</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Portfolio-ML: signals only"</span>, <span class="st">"Portfolio-ML: signals x liquidity"</span>,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Dynamic optimum (oracle)"</span>]</span>
@@ -2658,6 +2747,7 @@ D_t = \gamma\, \Omega_t^\top \Sigma_t \Omega_t + W\, \Delta\Omega_t^\top \Lambda
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>summary[<span class="st">"Beats static oracle (share of seeds)"</span>] <span class="op">=</span> [</span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    (wide[name] <span class="op">&gt;</span> wide[<span class="st">"Static (oracle)"</span>]).mean() <span class="cf">for</span> name <span class="kw">in</span> order]</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>summary.<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-portfolio-ml-simulation" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="30">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-portfolio-ml-simulation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2741,6 +2831,8 @@ Table&nbsp;12.3: Out-of-Sample Performance in Simulated Markets: Medians over 20
 <p>The two Portfolio-ML variants carry a lesson about features. The optimal aim treats liquid and illiquid stocks differently: it trades toward signals quickly in liquid names and slowly in illiquid ones, and it is willing to hold persistent signals in illiquid names but not fleeting ones. A rule that is linear in the signals alone cannot express this, so it can only scale everything down, which shows up as very low turnover and lower utility. Adding liquidity and its interactions recovers much of the gap. In the paper, the random Fourier features of 115 characteristics, several of which measure liquidity, generate such interactions automatically.</p>
 <p>Applying the method to Vietnamese stocks uses the liquid universe and the Ledoit-Wolf covariance estimator defined earlier in this chapter, the characteristics panel from the factor-construction chapter, and price impact calibrated to each stock’s average daily traded value in VND. The code is not executed here: the hyperparameter search refits the model for every combination of random features, feature scale, and ridge penalty, and takes several minutes per wealth and risk-aversion pair.</p>
 <div id="pfml-vn-data" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Characteristics and wide panels for Portfolio-ML</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Characteristics panel from the factor-construction chapter</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>characteristics <span class="op">=</span> client.get_characteristics_panel(</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    exchanges<span class="op">=</span>[<span class="st">"HOSE"</span>, <span class="st">"HNX"</span>],</span>
@@ -2770,8 +2862,11 @@ Table&nbsp;12.3: Out-of-Sample Performance in Simulated Markets: Medians over 20
 <span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>lag_mcap <span class="op">=</span> mcap_wide.shift(<span class="dv">1</span>).where(ret_wide.notna())</span>
 <span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>mkt_ret <span class="op">=</span> (ret_wide <span class="op">*</span> lag_mcap).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">/</span> lag_mcap.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> ret_wide.index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="pfml-vn-inputs" class="cell" data-execution_count="32">
+<details class="code-fold">
+<summary>Monthly universe, covariance, and price impact</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>LOOKBACK <span class="op">=</span> <span class="dv">11</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>_base_cache <span class="op">=</span> {}</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2813,8 +2908,11 @@ Table&nbsp;12.3: Out-of-Sample Performance in Simulated Markets: Medians over 20
 <span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>                             <span class="cf">for</span> c <span class="kw">in</span> char_cols])</span>
 <span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>        out.append(scale_signals(random_fourier_features(X, W), vol))</span>
 <span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="pfml-vn-backtest" class="cell" data-execution_count="33">
+<details class="code-fold">
+<summary>Tuning and out-of-sample backtest of Portfolio-ML</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_portfolio_ml(wealth, gamma, first_val_year<span class="op">=</span><span class="dv">2017</span>, first_test_year<span class="op">=</span><span class="dv">2020</span>,</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>                     p_grid<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">32</span>, <span class="dv">64</span>), g_grid<span class="op">=</span>(np.exp(<span class="op">-</span><span class="dv">3</span>), np.exp(<span class="op">-</span><span class="dv">2</span>)),</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                     ridges<span class="op">=</span>(<span class="fl">0.0</span>, <span class="op">*</span>np.exp(np.arange(<span class="op">-</span><span class="dv">10</span>, <span class="dv">7</span>))),</span>
@@ -2902,6 +3000,7 @@ Table&nbsp;12.3: Out-of-Sample Performance in Simulated Markets: Medians over 20
 <span id="cb33-85"><a href="#cb33-85" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Turnover"</span>: bt[<span class="st">"turnover"</span>].mean(),</span>
 <span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Leverage"</span>: bt[<span class="st">"leverage"</span>].mean(),</span>
 <span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a>    })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-pfml-vn" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="34">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -2909,6 +3008,8 @@ Table&nbsp;12.3: Out-of-Sample Performance in Simulated Markets: Medians over 20
 Table&nbsp;12.4: The Implementable Efficient Frontier for Vietnamese Stocks: Portfolio-ML by Fund Size and Risk Aversion
 </figcaption>
 <div aria-describedby="tbl-pfml-vn-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Points on the implementable efficient frontier for three fund sizes</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>frontier <span class="op">=</span> {}</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> wealth <span class="kw">in</span> [<span class="fl">1e11</span>, <span class="fl">1e12</span>, <span class="fl">1e13</span>]:            <span class="co"># VND 100 billion, 1 trillion, 10 trillion</span></span>
@@ -2920,6 +3021,7 @@ Table&nbsp;12.4: The Implementable Efficient Frontier for Vietnamese Stocks: Por
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>frontier <span class="op">=</span> pd.DataFrame(frontier).T</span>
 <span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>frontier.index.names <span class="op">=</span> [<span class="st">"Wealth (VND)"</span>, <span class="st">"Risk aversion"</span>, <span class="st">"Positions"</span>]</span>
 <span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>frontier.<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>

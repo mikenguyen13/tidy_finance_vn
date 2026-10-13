@@ -877,7 +877,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./32_info_earnings.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Information Content of Earnings Announcements</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Information Content of Earnings Announcements</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Information Content of Earnings Announcements</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -895,6 +895,8 @@ window.Quarto = {
 
 
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -912,6 +914,7 @@ window.Quarto = {
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.right"</span>: <span class="va">False</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"font.size"</span>: <span class="dv">11</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>A foundational question in capital markets research is whether accounting information matters to investors. If financial statements merely repackage what the market already knows from other sources, such as press coverage, analyst reports, management guidance, macroeconomic data, then the elaborate apparatus of financial reporting is largely redundant for price discovery. Conversely, if earnings announcements trigger measurable changes in trading behavior, we have evidence that the accounting system produces information the market did not previously possess.</p>
 <p><span class="citation" data-cites="beaver1968information">Beaver (<a href="references.html#ref-beaver1968information" role="doc-biblioref">1968</a>)</span> addressed this question by examining whether trading volume and return volatility increase around the dates when firms announce annual earnings. The logic is direct: if an earnings announcement contains new information, it should alter investors’ beliefs. Altered beliefs lead some investors to trade, increasing volume. And to the extent that the announcement resolves uncertainty, the stock price should adjust, generating abnormal return volatility. Both channels (i.e., volume and volatility) provide distinct windows into the information content of earnings.</p>
@@ -1028,6 +1031,8 @@ Table&nbsp;25.1: Data sources for the information content analysis
 <h3 data-number="25.2.2" class="anchored" data-anchor-id="trading-day-calendar"><span class="header-section-number">25.2.2</span> Trading Day Calendar</h3>
 <p>A critical infrastructure element is a <strong>trading day calendar</strong> that maps calendar dates to sequential trading day indices. This allows us to count “20 trading days before the announcement” correctly, skipping weekends and holidays.</p>
 <div id="trading-calendar" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Construct a trading day calendar for HOSE/HNX</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_trading_calendar(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    start_date: <span class="bu">str</span> <span class="op">=</span> <span class="st">"2008-01-01"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    end_date: <span class="bu">str</span> <span class="op">=</span> <span class="st">"2024-12-31"</span>,</span>
@@ -1070,6 +1075,7 @@ Table&nbsp;25.1: Data sources for the information content analysis
 <span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>trading_cal <span class="op">=</span> build_trading_calendar()</span>
 <span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Trading calendar: </span><span class="sc">{</span><span class="bu">len</span>(trading_cal)<span class="sc">:,}</span><span class="ss"> trading days, "</span></span>
 <span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>trading_cal[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">.</span>date()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>trading_cal[<span class="st">'date'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">.</span>date()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Trading calendar: 4,266 trading days, 2008-01-01 to 2024-12-31</code></pre>
 </div>
@@ -1079,6 +1085,8 @@ Table&nbsp;25.1: Data sources for the information content analysis
 <h3 data-number="25.2.3" class="anchored" data-anchor-id="announcement-date-alignment"><span class="header-section-number">25.2.3</span> Announcement Date Alignment</h3>
 <p>Earnings announcements may occur on non-trading days (weekends, holidays). When this happens, we assign the announcement to the <em>next available</em> trading day, since that is the first opportunity for the market to react. We also need to handle the case where announcements occur after market close. Ideally, these would be assigned to the following trading day. Without intraday timing data (common in Vietnamese disclosures), we use the announcement date as reported.</p>
 <div id="annc-date-alignment" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Map announcement dates to trading day indices</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_announcement_mapper(trading_cal: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Create a mapping from every calendar date to the next available</span></span>
@@ -1100,12 +1108,15 @@ Table&nbsp;25.1: Data sources for the information content analysis
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mapper</span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>annc_mapper <span class="op">=</span> build_announcement_mapper(trading_cal)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="generating-synthetic-vietnamese-data" class="level3" data-number="25.2.4">
 <h3 data-number="25.2.4" class="anchored" data-anchor-id="generating-synthetic-vietnamese-data"><span class="header-section-number">25.2.4</span> Generating Synthetic Vietnamese Data</h3>
 <p>We generate a synthetic panel of Vietnamese listed firms with realistic properties to demonstrate the methodology. The simulation embeds an earnings announcement effect—elevated volume and volatility on days 0 and +1, that we then seek to detect using the <span class="citation" data-cites="beaver1968information">Beaver (<a href="references.html#ref-beaver1968information" role="doc-biblioref">1968</a>)</span> framework.</p>
 <div id="gen-data" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Generate synthetic Vietnamese earnings announcement data</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_beaver_data(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    n_firms: <span class="bu">int</span> <span class="op">=</span> <span class="dv">300</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    years: <span class="bu">list</span>[<span class="bu">int</span>] <span class="op">=</span> <span class="va">None</span>,</span>
@@ -1252,6 +1263,7 @@ Table&nbsp;25.1: Data sources for the information content analysis
 <span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>earn_annc, daily_data <span class="op">=</span> generate_beaver_data(n_firms<span class="op">=</span><span class="dv">300</span>, seed<span class="op">=</span><span class="dv">2024</span>)</span>
 <span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Announcements: </span><span class="sc">{</span><span class="bu">len</span>(earn_annc)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Daily observations: </span><span class="sc">{</span><span class="bu">len</span>(daily_data)<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Announcements: 3,600
 Daily observations: 147,600</code></pre>
@@ -1265,6 +1277,8 @@ Daily observations: 147,600</code></pre>
 <section id="selecting-the-event" class="level3" data-number="25.3.1">
 <h3 data-number="25.3.1" class="anchored" data-anchor-id="selecting-the-event"><span class="header-section-number">25.3.1</span> Selecting the Event</h3>
 <div id="single-event-select" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Select a single earnings announcement for demonstration</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>single_ticker <span class="op">=</span> <span class="st">"VN0042"</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>single_fy <span class="op">=</span> <span class="dv">2019</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1278,6 +1292,7 @@ Daily observations: 147,600</code></pre>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Announcement date: </span><span class="sc">{</span>single_event[<span class="st">'annc_date'</span>]<span class="sc">.</span>date()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Exchange: </span><span class="sc">{</span>single_event[<span class="st">'exchange'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Event trading day: </span><span class="sc">{</span>single_event[<span class="st">'event_td'</span>]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Firm: VN0042
 Fiscal year-end: 2019-12-31
@@ -1291,6 +1306,8 @@ Event trading day: 3073</code></pre>
 <h3 data-number="25.3.2" class="anchored" data-anchor-id="event-window-data"><span class="header-section-number">25.3.2</span> Event Window Data</h3>
 <p>We extract 41 trading days of data (20 before through 20 after the announcement) and compute the key measures.</p>
 <div id="single-event-data" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Extract and process data for the single event</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>single_daily <span class="op">=</span> daily_data[</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    (daily_data[<span class="st">"ticker"</span>] <span class="op">==</span> single_ticker) <span class="op">&amp;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    (daily_data[<span class="st">"fiscal_year"</span>] <span class="op">==</span> single_fy)</span>
@@ -1306,6 +1323,7 @@ Event trading day: 3073</code></pre>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Trading days in window: </span><span class="sc">{</span><span class="bu">len</span>(single_daily)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average daily volume: </span><span class="sc">{</span>avg_vol<span class="sc">:,.0f}</span><span class="ss"> shares"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Trading days in window: 41
 Average daily volume: 3,780,757 shares</code></pre>
@@ -1316,6 +1334,8 @@ Average daily volume: 3,780,757 shares</code></pre>
 <h3 data-number="25.3.3" class="anchored" data-anchor-id="visualizing-the-single-event"><span class="header-section-number">25.3.3</span> Visualizing the Single Event</h3>
 <p><a href="#fig-single-volume" class="quarto-xref">Figure&nbsp;<span>25.1</span></a> and <a href="#fig-single-volatility" class="quarto-xref">Figure&nbsp;<span>25.2</span></a> display the volume and volatility patterns for this single earnings announcement.</p>
 <div id="cell-fig-single-volume" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"firebrick"</span> <span class="cf">if</span> <span class="bu">abs</span>(t) <span class="op">&lt;=</span> <span class="dv">1</span> <span class="cf">else</span> <span class="st">"steelblue"</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> t <span class="kw">in</span> single_daily[<span class="st">"relative_td"</span>]]</span>
@@ -1330,6 +1350,7 @@ Average daily volume: 3,780,757 shares</code></pre>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-single-volume" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1344,6 +1365,8 @@ Figure&nbsp;25.1: Daily trading volume around a single earnings announcement. Da
 </div>
 </div>
 <div id="cell-fig-single-volatility" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ax.bar(single_daily[<span class="st">"relative_td"</span>], single_daily[<span class="st">"sq_ret_mkt"</span>],</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       color<span class="op">=</span>[<span class="st">"firebrick"</span> <span class="cf">if</span> <span class="bu">abs</span>(t) <span class="op">&lt;=</span> <span class="dv">1</span> <span class="cf">else</span> <span class="st">"steelblue"</span></span>
@@ -1357,6 +1380,7 @@ Figure&nbsp;25.1: Daily trading volume around a single earnings announcement. Da
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">9</span>)</span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-single-volatility" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1398,6 +1422,8 @@ Reading the Plots
 \tag{25.8}\]</span></span></p>
 <p>where <span class="math inline">\(N_\tau\)</span> is the number of announcements with available data on event day <span class="math inline">\(\tau\)</span>.</p>
 <div id="full-sample-measures" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Compute event-time aggregate measures across all announcements</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Squared and absolute market-adjusted returns</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>daily_data[<span class="st">"sq_ret_mkt"</span>] <span class="op">=</span> daily_data[<span class="st">"ret_mkt"</span>] <span class="op">**</span> <span class="dv">2</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>daily_data[<span class="st">"abs_ret_mkt"</span>] <span class="op">=</span> daily_data[<span class="st">"ret_mkt"</span>].<span class="bu">abs</span>()</span>
@@ -1418,8 +1444,11 @@ Reading the Plots
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Add fiscal year for panel breakdowns</span></span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>daily_data[<span class="st">"year"</span>] <span class="op">=</span> daily_data[<span class="st">"fiscal_year"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="event-time-summary" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Aggregate by event day and year</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>event_summary <span class="op">=</span> (</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    daily_data</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"relative_td"</span>, <span class="st">"year"</span>])</span>
@@ -1454,12 +1483,15 @@ Reading the Plots
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
 <span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="return-volatility-around-announcements" class="level3" data-number="25.4.2">
 <h3 data-number="25.4.2" class="anchored" data-anchor-id="return-volatility-around-announcements"><span class="header-section-number">25.4.2</span> Return Volatility Around Announcements</h3>
 <p><a href="#fig-volatility-by-year" class="quarto-xref">Figure&nbsp;<span>25.3</span></a> plots the standard deviation of market-adjusted returns by event day, separately for each fiscal year. A clear spike on days 0 and +1 is the hallmark of information content.</p>
 <div id="cell-fig-volatility-by-year" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>years_plot <span class="op">=</span> <span class="bu">sorted</span>(event_summary[<span class="st">"year"</span>].unique())</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Use a colormap</span></span>
@@ -1482,6 +1514,7 @@ Reading the Plots
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">7</span>, ncol<span class="op">=</span><span class="dv">4</span>, loc<span class="op">=</span><span class="st">"upper right"</span>)</span>
 <span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-volatility-by-year" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1500,6 +1533,8 @@ Figure&nbsp;25.3: Standard deviation of market-adjusted returns around earnings 
 <h3 data-number="25.4.3" class="anchored" data-anchor-id="trading-volume-around-announcements"><span class="header-section-number">25.4.3</span> Trading Volume Around Announcements</h3>
 <p><a href="#fig-volume-by-year" class="quarto-xref">Figure&nbsp;<span>25.4</span></a> shows relative trading volume by event day. The volume response provides an independent confirmation of the volatility finding.</p>
 <div id="cell-fig-volume-by-year" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">5</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, yr <span class="kw">in</span> <span class="bu">enumerate</span>(years_plot):</span>
@@ -1518,6 +1553,7 @@ Figure&nbsp;25.3: Standard deviation of market-adjusted returns around earnings 
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>ax.legend(fontsize<span class="op">=</span><span class="dv">7</span>, ncol<span class="op">=</span><span class="dv">4</span>, loc<span class="op">=</span><span class="st">"upper right"</span>)</span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-volume-by-year" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1541,6 +1577,8 @@ Figure&nbsp;25.4: Mean relative trading volume around earnings announcements, by
 \tag{25.9}\]</span></span></p>
 <p>Under the null, <span class="math inline">\(E[\Delta U^2_i] = 0\)</span>. We test this with a <span class="math inline">\(t\)</span>-test across events.</p>
 <div class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>annc_window <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>]</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>non_annc_window <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="op">-</span><span class="dv">20</span>, <span class="op">-</span><span class="dv">4</span>)) <span class="op">+</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">5</span>, <span class="dv">21</span>))</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1578,6 +1616,7 @@ Figure&nbsp;25.4: Mean relative trading volume around earnings announcements, by
 <span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> pd.DataFrame(test_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>test_df[<span class="st">"N events"</span>] <span class="op">=</span> test_df[<span class="st">"N events"</span>].astype(<span class="bu">int</span>)</span>
 <span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>test_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-formal-tests" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-formal-tests-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1642,6 +1681,8 @@ Table&nbsp;25.2: Formal tests of announcement-period information content. The an
 <h3 data-number="25.4.5" class="anchored" data-anchor-id="standardized-volatility-ratio"><span class="header-section-number">25.4.5</span> Standardized Volatility Ratio</h3>
 <p>Following the approach of <span class="citation" data-cites="beaver1968information">Beaver (<a href="references.html#ref-beaver1968information" role="doc-biblioref">1968</a>)</span>, we compute the ratio of announcement-window squared returns to non-announcement-window squared returns. Under the null, this ratio equals 1.0.</p>
 <div id="cell-fig-volatility-ratio" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ratio <span class="op">=</span> pooled[<span class="st">"mean_std_sq_ret"</span>]</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [<span class="st">"firebrick"</span> <span class="cf">if</span> <span class="bu">abs</span>(t) <span class="op">&lt;=</span> <span class="dv">1</span> <span class="cf">else</span> <span class="st">"steelblue"</span></span>
@@ -1654,6 +1695,7 @@ Table&nbsp;25.2: Formal tests of announcement-period information content. The an
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-volatility-ratio" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1676,6 +1718,8 @@ Figure&nbsp;25.5: Standardized squared market-adjusted return by event day (pool
 <h3 data-number="25.5.1" class="anchored" data-anchor-id="by-firm-size"><span class="header-section-number">25.5.1</span> By Firm Size</h3>
 <p>Larger firms receive more attention from analysts, media, and institutional investors, so their earnings announcements should contain less incremental information.</p>
 <div id="cell-fig-size-effect" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign size terciles</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>daily_data[<span class="st">"size_tercile"</span>] <span class="op">=</span> pd.qcut(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    daily_data[<span class="st">"log_mcap"</span>], <span class="dv">3</span>, labels<span class="op">=</span>[<span class="st">"Small"</span>, <span class="st">"Medium"</span>, <span class="st">"Large"</span>]</span>
@@ -1716,6 +1760,7 @@ Figure&nbsp;25.5: Standardized squared market-adjusted return by event day (pool
 <span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-size-effect" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1734,6 +1779,8 @@ Figure&nbsp;25.6: Announcement-day abnormal volatility and volume by firm size t
 <h3 data-number="25.5.2" class="anchored" data-anchor-id="by-exchange-hose-vs.-hnx"><span class="header-section-number">25.5.2</span> By Exchange (HOSE vs.&nbsp;HNX)</h3>
 <p>HOSE-listed firms are generally larger and more liquid than HNX-listed firms. Additionally, the tighter price limits on HOSE (<span class="math inline">\(\pm\)</span> 7% vs.&nbsp;<span class="math inline">\(\pm\)</span> 10% on HNX) may truncate announcement-day returns, compressing measured volatility and potentially spreading the adjustment over multiple days.</p>
 <div id="cell-fig-exchange-effect" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>exch_summary <span class="op">=</span> (</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    daily_data</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"relative_td"</span>, <span class="st">"exchange"</span>])</span>
@@ -1769,6 +1816,7 @@ Figure&nbsp;25.6: Announcement-day abnormal volatility and volume by firm size t
 <span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-exchange-effect" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1791,6 +1839,8 @@ Figure&nbsp;25.7: Announcement reactions by exchange. HNX firms (generally small
 \tag{25.10}\]</span></span></p>
 <p>where <span class="math inline">\(\text{Size}_i\)</span> is log market capitalization, <span class="math inline">\(\text{HNX}_i\)</span> is an indicator for HNX listing, and <span class="math inline">\(\text{AnnLag}_i\)</span> is the number of calendar days between fiscal year-end and the announcement date (longer lags may allow more information leakage, reducing the surprise).</p>
 <div class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build event-level dataset</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>annc_data <span class="op">=</span> daily_data[daily_data[<span class="st">"relative_td"</span>].isin(annc_window)].copy()</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>non_annc_data <span class="op">=</span> daily_data[daily_data[<span class="st">"relative_td"</span>].isin(non_annc_window)].copy()</span>
@@ -1848,6 +1898,7 @@ Figure&nbsp;25.7: Announcement reactions by exchange. HNX firms (generally small
 <span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>    },</span>
 <span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a>reg_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-cross-section" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="17">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cross-section-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1919,6 +1970,8 @@ Table&nbsp;25.3: Cross-sectional determinants of announcement-day return volatil
 </ol>
 <p>We can assess the first concern directly. <a href="#fig-proportion" class="quarto-xref">Figure&nbsp;<span>25.8</span></a> plots the <em>fraction</em> of announcements with above-median volatility or volume on each event day, following the spirit of Bamber et al.’s critique.</p>
 <div id="cell-fig-proportion" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># For each event, determine if announcement-day measures exceed</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># that event's median non-announcement-day measures</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>event_medians <span class="op">=</span> (</span>
@@ -1971,6 +2024,7 @@ Table&nbsp;25.3: Cross-sectional determinants of announcement-day return volatil
 <span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-proportion" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1990,6 +2044,8 @@ Figure&nbsp;25.8: Proportion of individual announcements with above-median react
 <p><span class="citation" data-cites="ball2008much">Ball and Shivakumar (<a href="references.html#ref-ball2008much" role="doc-biblioref">2008</a>)</span> pose a provocative question: even if earnings announcements generate detectable market reactions, how much of the <em>total</em> annual information flow do they account for? Their analysis suggests that quarterly earnings announcements explain only about 12–18% of annual return variation for U.S. firms, implying that the vast majority of value-relevant information reaches the market through other channels.</p>
 <p>We can compute an analogous statistic for our Vietnamese sample:</p>
 <div class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute fraction of event-window variance in announcement days</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>variance_shares <span class="op">=</span> []</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (ticker, fy), group <span class="kw">in</span> daily_data.groupby([<span class="st">"ticker"</span>, <span class="st">"fiscal_year"</span>]):</span>
@@ -2018,6 +2074,7 @@ Figure&nbsp;25.8: Proportion of individual announcements with above-median react
 <span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    ],</span>
 <span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>}).set_index(<span class="st">"Statistic"</span>)</span>
 <span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>share_stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-info-share" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-info-share-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2074,6 +2131,8 @@ Table&nbsp;25.4: Share of annual return variation concentrated in the announceme
 <h3 data-number="25.6.3" class="anchored" data-anchor-id="price-limits-and-multi-day-adjustment"><span class="header-section-number">25.6.3</span> Price Limits and Multi-Day Adjustment</h3>
 <p>A distinctive feature of Vietnamese markets is that daily price limits can prevent full single-day price adjustment. When an announcement is sufficiently surprising, the stock may hit the <span class="math inline">\(\pm\)</span> 7% limit on HOSE (or <span class="math inline">\(\pm\)</span> 10% on HNX), and the remaining adjustment spills into subsequent trading days. This creates a pattern of <strong>limit hits followed by continued drift</strong>, a phenomenon that would bias downward any single-day measure of announcement impact and redistribute information content across days 0, +1, and potentially +2.</p>
 <div id="cell-fig-limit-hits" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify limit hits</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_limit_hit(row):</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    limit <span class="op">=</span> <span class="fl">0.07</span> <span class="cf">if</span> row[<span class="st">"exchange"</span>] <span class="op">==</span> <span class="st">"HOSE"</span> <span class="cf">else</span> <span class="fl">0.10</span></span>
@@ -2100,6 +2159,7 @@ Table&nbsp;25.4: Share of annual return variation concentrated in the announceme
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"black"</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-limit-hits" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

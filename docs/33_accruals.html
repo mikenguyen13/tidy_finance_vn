@@ -876,7 +876,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./33_accruals.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Accruals, Earnings Persistence, and Market Efficiency</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Accruals, Earnings Persistence, and Market Efficiency</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Accruals, Earnings Persistence, and Market Efficiency</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -894,6 +894,8 @@ window.Quarto = {
 
 
 <div id="setup" class="cell" data-message="false" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -911,6 +913,7 @@ window.Quarto = {
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.right"</span>: <span class="va">False</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"font.size"</span>: <span class="dv">11</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Accrual accounting is the foundation of modern financial reporting. Under accrual principles, revenues are recognized when earned and expenses when incurred, regardless of when cash changes hands. This timing wedge between economic events and cash realization generates <strong>accruals</strong> (i.e., the non-cash component of reported earnings). Formally, we define total accruals as:</p>
 <p><span id="eq-accruals-def"><span class="math display">\[
@@ -1038,6 +1041,8 @@ ACC^{CF}_{i,t} = \text{Earnings}_{i,t} - \text{CFO}_{i,t}
 </ul>
 <p>The key parameter of interest is <span class="math inline">\(\alpha\)</span>, the managerial estimate of bad debts. When <span class="math inline">\(\alpha = \delta\)</span> (the true default rate), the accounting system is unbiased. When <span class="math inline">\(\alpha \neq \delta\)</span>, accruals contain estimation error that affects persistence.</p>
 <div id="sim-function" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Simulation function for a single firm</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_firm(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    alpha: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.03</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    n_years: <span class="bu">int</span> <span class="op">=</span> <span class="dv">20</span>,</span>
@@ -1133,12 +1138,15 @@ ACC^{CF}_{i,t} = \text{Earnings}_{i,t} - \text{CFO}_{i,t}
 <span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>        <span class="st">"cash"</span>: cash,</span>
 <span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">"equity"</span>: equity,</span>
 <span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="generating-a-single-firm" class="level3" data-number="26.2.2">
 <h3 data-number="26.2.2" class="anchored" data-anchor-id="generating-a-single-firm"><span class="header-section-number">26.2.2</span> Generating a Single Firm</h3>
 <p>We first generate 1,000 years of data for a single firm with <span class="math inline">\(\alpha = \delta = 0.03\)</span> (unbiased accounting) to visualize the sales process.</p>
 <div id="cell-fig-sales-sim" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">2024</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_long <span class="op">=</span> simulate_firm(alpha<span class="op">=</span><span class="fl">0.03</span>, n_years<span class="op">=</span><span class="dv">1000</span>, rng<span class="op">=</span>rng)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1154,6 +1162,7 @@ ACC^{CF}_{i,t} = \text{Earnings}_{i,t} - \text{CFO}_{i,t}
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-sales-sim" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1176,6 +1185,8 @@ Figure&nbsp;26.1: Simulated sales for a single firm over 20 years. The blue dash
 NI_{i,t} = \beta_0 + \beta_1 NI_{i,t-1} + u_{i,t}
 \tag{26.5}\]</span></span></p>
 <div id="sim-cross-section" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Cross-sectional simulation of persistence vs.&nbsp;alpha</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_persistence(df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Estimate AR(1) persistence of net income for one firm."""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    temp <span class="op">=</span> df[[<span class="st">"year"</span>, <span class="st">"net_income"</span>]].copy()</span>
@@ -1198,8 +1209,11 @@ NI_{i,t} = \beta_0 + \beta_1 NI_{i,t-1} + u_{i,t}
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    results.append(estimate_persistence(firm_df))</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>sim_results <span class="op">=</span> pd.DataFrame(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-persistence-alpha" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ax.scatter(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    sim_results[<span class="st">"alpha"</span>], sim_results[<span class="st">"persistence"</span>],</span>
@@ -1211,6 +1225,7 @@ NI_{i,t} = \beta_0 + \beta_1 NI_{i,t-1} + u_{i,t}
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-persistence-alpha" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1229,6 +1244,8 @@ Figure&nbsp;26.2: Earnings persistence vs.&nbsp;allowance parameter (<span class
 <h3 data-number="26.2.4" class="anchored" data-anchor-id="decomposing-persistence-by-earnings-component"><span class="header-section-number">26.2.4</span> Decomposing Persistence by Earnings Component</h3>
 <p>The simulation allows us to verify the core theoretical prediction: cash flow persistence exceeds accrual persistence. We compute operating cash flows and accruals for each simulated firm and estimate component-specific persistence.</p>
 <div id="sim-component-persistence" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Component persistence in simulated data</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> component_persistence(df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Estimate persistence of NI, CFO, and accruals."""</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    temp <span class="op">=</span> df.copy()</span>
@@ -1258,8 +1275,11 @@ Figure&nbsp;26.2: Earnings persistence vs.&nbsp;allowance parameter (<span class
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        component_results.append(component_persistence(fdf))</span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>comp_df <span class="op">=</span> pd.DataFrame(component_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> (</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    comp_df</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"alpha"</span>)[[<span class="st">"persist_net_income"</span>, <span class="st">"persist_cfo"</span>, <span class="st">"persist_acc"</span>]]</span>
@@ -1273,6 +1293,7 @@ Figure&nbsp;26.2: Earnings persistence vs.&nbsp;allowance parameter (<span class
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>summary.index.name <span class="op">=</span> <span class="st">"α"</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-sim-persistence" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sim-persistence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1366,6 +1387,8 @@ Vietnamese Interpretation
 <h3 data-number="26.3.1" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">26.3.1</span> Data Preparation</h3>
 <p>The following code constructs the accrual measures from Vietnamese firm financial statements. We demonstrate the workflow assuming data is loaded from a local database or CSV files. Adapt the data loading step to match your source.</p>
 <div id="data-prep" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Construct accrual variables from Vietnamese financial statement data</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ─── Data Loading (adapt to your source) ───────────────────────────</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># funda = pd.read_parquet("data/vn_annual_financials.parquet")</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># prices = pd.read_parquet("data/vn_monthly_prices.parquet")</span></span>
@@ -1432,12 +1455,15 @@ Vietnamese Interpretation
 <span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df.query(<span class="st">"avg_at &gt; 0"</span>).dropna(subset<span class="op">=</span>[<span class="st">"acc"</span>, <span class="st">"earn"</span>, <span class="st">"cfo"</span>, <span class="st">"lead_earn"</span>])</span>
 <span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="simulated-vietnamese-style-data-for-demonstration" class="level3" data-number="26.3.2">
 <h3 data-number="26.3.2" class="anchored" data-anchor-id="simulated-vietnamese-style-data-for-demonstration"><span class="header-section-number">26.3.2</span> Simulated Vietnamese-Style Data for Demonstration</h3>
 <p>Since we cannot distribute proprietary data in this chapter, we generate synthetic data that mimics the cross-sectional properties of Vietnamese listed firms. The parameters are calibrated to approximate values observed in the Vietnamese market.</p>
 <div id="gen-demo-data" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Generate synthetic Vietnamese-style panel data</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_vn_panel(</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    n_firms: <span class="bu">int</span> <span class="op">=</span> <span class="dv">400</span>,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    n_years: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>,</span>
@@ -1523,6 +1549,7 @@ Vietnamese Interpretation
 <span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Panel: </span><span class="sc">{</span>panel<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> firm-years, "</span></span>
 <span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>panel[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms, "</span></span>
 <span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>panel[<span class="st">'year'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> years"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Panel: 7,000 firm-years, 500 firms, 14 years</code></pre>
 </div>
@@ -1532,6 +1559,8 @@ Vietnamese Interpretation
 <h3 data-number="26.3.3" class="anchored" data-anchor-id="descriptive-statistics-by-accrual-decile"><span class="header-section-number">26.3.3</span> Descriptive Statistics by Accrual Decile</h3>
 <p><a href="#tbl-desc-decile" class="quarto-xref">Table&nbsp;<span>26.3</span></a> reports mean values of earnings, accruals, and cash flows by accrual decile. The pattern should mirror the mechanical decomposition: <span class="math inline">\(\text{earn} = \text{acc} + \text{cfo}\)</span>.</p>
 <div class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>desc <span class="op">=</span> (</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    panel</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"acc_decile"</span>)[[<span class="st">"acc"</span>, <span class="st">"earn"</span>, <span class="st">"cfo"</span>]]</span>
@@ -1541,6 +1570,7 @@ Vietnamese Interpretation
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>desc.index.name <span class="op">=</span> <span class="st">"Accrual Decile"</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>desc.columns <span class="op">=</span> [<span class="st">"Accruals"</span>, <span class="st">"Earnings"</span>, <span class="st">"Cash Flows"</span>]</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>desc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-desc-decile" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-desc-decile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1650,6 +1680,8 @@ Table&nbsp;26.3: Mean earnings, accruals, and cash flows by accrual decile. Firm
 \tag{26.7}\]</span></span></p>
 <p>The hypothesis of differential persistence is <span class="math inline">\(H_0: \gamma_a = \gamma_c\)</span>, which we test with a standard <span class="math inline">\(F\)</span>-test.</p>
 <div class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Column (1): Aggregate persistence</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mod1 <span class="op">=</span> smf.ols(<span class="st">"lead_earn ~ earn"</span>, data<span class="op">=</span>panel).fit()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1682,6 +1714,7 @@ Table&nbsp;26.3: Mean earnings, accruals, and cash flows by accrual decile. Firm
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    },</span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>results_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-persistence" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-persistence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1750,6 +1783,8 @@ Table&nbsp;26.4: Earnings persistence regressions. Column (1) estimates aggregat
 <h3 data-number="26.3.5" class="anchored" data-anchor-id="industry-level-persistence"><span class="header-section-number">26.3.5</span> Industry-Level Persistence</h3>
 <p>Market-wide regressions may mask heterogeneity across industries. Vietnamese industry structure is concentrated in manufacturing, real estate, banking, and retail (i.e., sectors with very different accrual profiles). We estimate persistence separately by two-digit VSIC code.</p>
 <div class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> industry_persistence(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Estimate persistence regressions by VSIC 2-digit code."""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    coefs <span class="op">=</span> []</span>
@@ -1776,6 +1811,7 @@ Table&nbsp;26.4: Earnings persistence regressions. Column (1) estimates aggregat
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>ind_summary.index <span class="op">=</span> [<span class="st">"Mean"</span>, <span class="st">"Q1"</span>, <span class="st">"Median"</span>, <span class="st">"Q3"</span>]</span>
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>ind_summary.columns <span class="op">=</span> [<span class="st">"Intercept"</span>, <span class="st">"Accruals (γ_a)"</span>, <span class="st">"Cash Flows (γ_c)"</span>]</span>
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>ind_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-industry-persistence" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="13">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-industry-persistence-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1834,6 +1870,8 @@ Table&nbsp;26.5: Distribution of industry-level persistence coefficients. Each r
 <h3 data-number="26.3.6" class="anchored" data-anchor-id="persistence-visualization"><span class="header-section-number">26.3.6</span> Persistence Visualization</h3>
 <p><a href="#fig-persistence-bars" class="quarto-xref">Figure&nbsp;<span>26.3</span></a> compares the accrual and cash flow persistence coefficients across industries, providing a visual test of the differential persistence hypothesis.</p>
 <div id="cell-fig-persistence-bars" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(ind_coefs) <span class="op">&gt;</span> <span class="dv">2</span>:</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    ind_plot <span class="op">=</span> ind_coefs.sort_values(<span class="st">"cfo"</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
@@ -1848,6 +1886,7 @@ Table&nbsp;26.5: Distribution of industry-level persistence coefficients. Each r
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">"Earnings Component Persistence by Industry"</span>)</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-persistence-bars" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1886,6 +1925,8 @@ AR_{i,t+1} = \alpha + \beta_a \cdot ACC_{i,t} + \beta_c \cdot CFO_{i,t} + \eta_{
 \tag{26.10}\]</span></span></p>
 <p>Under efficient pricing, <span class="math inline">\(\beta_a = \beta_c = 0\)</span>: lagged public information should have no predictive power for abnormal returns. A finding of <span class="math inline">\(\beta_a &lt; 0\)</span> implies that the market overprices accruals and subsequently corrects.</p>
 <div class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Abel-Mishkin style test</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>mod_am1 <span class="op">=</span> smf.ols(<span class="st">"size_adj_ret ~ acc + cfo"</span>, data<span class="op">=</span>panel).fit()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mod_am2 <span class="op">=</span> smf.ols(<span class="st">"size_adj_ret ~ acc_decile + cfo_decile"</span>, data<span class="op">=</span>panel).fit()</span>
@@ -1907,6 +1948,7 @@ AR_{i,t+1} = \alpha + \beta_a \cdot ACC_{i,t} + \beta_c \cdot CFO_{i,t} + \eta_{
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    },</span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>am_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-mispricing" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="15">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mispricing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1972,6 +2014,8 @@ Table&nbsp;26.6: Abnormal return regressions. Column (1) regresses size-adjusted
 <h3 data-number="26.5.1" class="anchored" data-anchor-id="portfolio-returns-by-accrual-decile"><span class="header-section-number">26.5.1</span> Portfolio Returns by Accrual Decile</h3>
 <p>Following the portfolio approach of <span class="citation" data-cites="sloan1996stock">Sloan (<a href="references.html#ref-sloan1996stock" role="doc-biblioref">1996</a>)</span>, we compute mean size-adjusted returns for each accrual decile. If the market misprices accruals, we expect a monotonically decreasing pattern: low-accrual firms (decile 1) earn positive abnormal returns, while high-accrual firms (decile 10) earn negative abnormal returns.</p>
 <div class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute annual portfolio returns (equal-weighted within decile-year)</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>port_rets <span class="op">=</span> (</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    panel</span>
@@ -2011,6 +2055,7 @@ Table&nbsp;26.6: Abnormal return regressions. Column (1) regresses size-adjusted
 <span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"t-statistic: </span><span class="sc">{</span>hedge_t<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>()</span>
 <span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>decile_means</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Hedge portfolio (D1 - D10): 0.0397
 t-statistic: 2.21
@@ -2127,6 +2172,8 @@ Table&nbsp;26.7: Mean size-adjusted returns by accrual decile. The hedge portfol
 <section id="visualizing-the-anomaly" class="level3" data-number="26.5.2">
 <h3 data-number="26.5.2" class="anchored" data-anchor-id="visualizing-the-anomaly"><span class="header-section-number">26.5.2</span> Visualizing the Anomaly</h3>
 <div id="cell-fig-anomaly-bar" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>decile_plot <span class="op">=</span> port_rets.groupby(<span class="st">"acc_decile"</span>)[<span class="st">"size_adj_ret"</span>].mean()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
@@ -2139,6 +2186,7 @@ Table&nbsp;26.7: Mean size-adjusted returns by accrual decile. The hedge portfol
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>ax.yaxis.set_major_formatter(mticker.PercentFormatter(xmax<span class="op">=</span><span class="dv">1</span>, decimals<span class="op">=</span><span class="dv">1</span>))</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-anomaly-bar" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2157,6 +2205,8 @@ Figure&nbsp;26.4: Mean size-adjusted returns by accrual decile. The downward slo
 <h3 data-number="26.5.3" class="anchored" data-anchor-id="time-series-stability"><span class="header-section-number">26.5.3</span> Time-Series Stability</h3>
 <p>A critical question for any anomaly is whether it persists over time or is concentrated in specific sub-periods. <a href="#fig-anomaly-ts" class="quarto-xref">Figure&nbsp;<span>26.5</span></a> plots the hedge portfolio return by year.</p>
 <div id="cell-fig-anomaly-ts" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ax.bar(hedge_series.index, hedge_series.values,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>       color<span class="op">=</span>[<span class="st">"steelblue"</span> <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="st">"firebrick"</span> <span class="cf">for</span> v <span class="kw">in</span> hedge_series.values],</span>
@@ -2170,6 +2220,7 @@ Figure&nbsp;26.4: Mean size-adjusted returns by accrual decile. The downward slo
 <span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-anomaly-ts" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

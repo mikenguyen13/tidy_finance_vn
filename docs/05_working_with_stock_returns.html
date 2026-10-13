@@ -830,7 +830,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_institutional_background.html">Vietnam Financial Markets, Institutions, and Data</a></li><li class="breadcrumb-item"><a href="./05_working_with_stock_returns.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Constructing and Analyzing Equity Return Series</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Constructing and Analyzing Equity Return Series</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Constructing and Analyzing Equity Return Series</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -853,8 +853,11 @@ window.Quarto = {
 <h2 data-number="6.1" class="anchored" data-anchor-id="data-access-and-preparation"><span class="header-section-number">6.1</span> Data Access and Preparation</h2>
 <p>We begin by loading the core numerical and data manipulation libraries. These provide all functionality required for return construction without relying on specialized financial wrappers.</p>
 <div id="832e7c14" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>For this project, we retrieve our historical price data using the DataCore API. If you wish to replicate this analysis or use the dataset for your own work, you will need to access the data through their platform.</p>
 <section id="prerequisites-for-api-access" class="level3" data-number="6.1.1">
@@ -871,6 +874,8 @@ window.Quarto = {
 </ol>
 <p><em>Note: If you only want to test the code performance, DataCore provides a preview endpoint that does not require an API key, though the data returned is limited.</em></p>
 <div id="datacore-demo" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -894,6 +899,7 @@ window.Quarto = {
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(rows, columns<span class="op">=</span>columns)</span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.head())</span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total rows:"</span>, <span class="bu">len</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  symbol  year  total_current_asset ca_fin        ca_cce       ca_cash  \
 0    CLL  2011         1.078338e+11   None  8.313178e+10  4.131776e+09   
@@ -933,6 +939,8 @@ Total rows: 10</code></pre>
 <p>If you need to verify the IP address of the machine running your code (to whitelist it), you can use the following Python snippets.</p>
 <p><strong>To find your Public IP:</strong></p>
 <div id="3786b306" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
@@ -940,9 +948,12 @@ Total rows: 10</code></pre>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Public IP: </span><span class="sc">{</span>public_ip<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> requests.exceptions.RequestException <span class="im">as</span> e:</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Could not retrieve Public IP: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p><strong>To find your Private IP (useful for specific remote server setups):</strong></p>
 <div id="2748344c" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> socket</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_private_ip():</span>
@@ -956,6 +967,7 @@ Total rows: 10</code></pre>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"Error: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Private IP: </span><span class="sc">{</span>get_private_ip()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="fetching-the-dataset" class="level3" data-number="6.1.3">
@@ -964,6 +976,8 @@ Total rows: 10</code></pre>
 <!-- Historical price data are stored in an S3-compatible object storage system. Access credentials are supplied via environment variables, which keeps sensitive information separate from the analysis and supports collaborative reproducibility. -->
 <!-- The daily price file is read directly into memory. We explicitly parse dates and harmonize variable names to avoid ambiguity in later steps. -->
 <div id="be642952" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the date column to proper datetime objects</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(prices[<span class="st">"date"</span>])</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -989,11 +1003,14 @@ Total rows: 10</code></pre>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Data manipulation complete. The dataset is ready for analysis."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data manipulation complete. The dataset is ready for analysis.</code></pre>
 </div>
 </div>
 <div id="fe7b4dbb" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>prices[<span class="st">"date"</span>] <span class="op">=</span> pd.to_datetime(prices[<span class="st">"date"</span>])</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1011,6 +1028,7 @@ Total rows: 10</code></pre>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>prices <span class="op">=</span> prices.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Adjusted closing prices incorporate mechanical changes due to corporate actions such as cash dividends and stock splits. Using adjusted prices ensures that subsequent return calculations reflect investor-relevant performance rather than accounting artifacts.</p>
 </section>
@@ -1019,6 +1037,8 @@ Total rows: 10</code></pre>
 <h2 data-number="6.2" class="anchored" data-anchor-id="examining-a-single-equity"><span class="header-section-number">6.2</span> Examining a Single Equity</h2>
 <p>To ground the discussion, we isolate the trading history of a single large-cap stock, FPT, over a long sample period.</p>
 <div id="00c01a99" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> pd.Timestamp(<span class="st">"2000-01-01"</span>)</span>
@@ -1031,17 +1051,24 @@ Total rows: 10</code></pre>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> (prices[<span class="st">"date"</span>] <span class="op">&lt;=</span> end),</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    [<span class="st">"date"</span>, <span class="st">"symbol"</span>, <span class="st">"volume"</span>, <span class="st">"open"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>, <span class="st">"close"</span>, <span class="st">"adjusted_close"</span>],</span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>].copy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>This subset contains the standard daily market variables required for most empirical studies. Before computing returns, it is good practice to visually inspect the price series.</p>
 <div id="8245cf50" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, aes, geom_line, labs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-100" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    ggplot(fpt, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"adjusted_close"</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Adjusted price path of FPT"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div id="fig-100" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: FPT stock prices">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1065,7 +1092,10 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <p>where <span class="math inline">\(p_t\)</span> denotes the adjusted closing price at the end of trading day <span class="math inline">\(t\)</span>.</p>
 <p>Before computing returns, we must address invalid price observations. In Vietnamese equity data, adjusted prices occasionally take the value zero. These entries typically arise from IPO placeholders, trading suspensions, or historical backfilling conventions and cannot be used to compute meaningful returns.</p>
 <div id="4b61a82b" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>prices.loc[prices[<span class="st">"adjusted_close"</span>] <span class="op">&lt;=</span> <span class="dv">0</span>, [<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"adjusted_close"</span>]].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <div>
 
@@ -1118,6 +1148,8 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 </div>
 <p>We therefore exclude non-positive adjusted prices and compute returns stock by stock. Correct chronological ordering is essential.</p>
 <div id="d40e3a21" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>returns <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    prices</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    .loc[prices[<span class="st">"adjusted_close"</span>] <span class="op">&gt;</span> <span class="dv">0</span>]</span>
@@ -1126,6 +1158,7 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    [[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"ret"</span>]]</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>returns <span class="op">=</span> returns.dropna(subset<span class="op">=</span>[<span class="st">"ret"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The initial return for each stock is missing by construction, since no lagged price is available. These observations are mechanical and can safely be removed in most applications.</p>
 </section>
@@ -1133,6 +1166,8 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <h2 data-number="6.4" class="anchored" data-anchor-id="limiting-the-influence-of-extreme-returns"><span class="header-section-number">6.4</span> Limiting the Influence of Extreme Returns</h2>
 <p>Daily return series often contain extreme observations driven by data errors, thin trading, or abrupt price adjustments. A common approach is to winsorize returns using cross-sectional percentile cutoffs.</p>
 <div id="d7ccf8d7" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> winsorize_cs(df, column<span class="op">=</span><span class="st">"ret"</span>, lower_q<span class="op">=</span><span class="fl">0.01</span>, upper_q<span class="op">=</span><span class="fl">0.99</span>):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    lo <span class="op">=</span> df[column].quantile(lower_q)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    hi <span class="op">=</span> df[column].quantile(upper_q)</span>
@@ -1141,6 +1176,7 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> out</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>returns <span class="op">=</span> winsorize_cs(returns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Applying winsorization across the full cross-section limits the impact of extreme market-wide observations while preserving relative differences between firms. Winsorizing within each stock is rarely appropriate in panel settings and can severely distort illiquid securities.</p>
 </section>
@@ -1148,14 +1184,19 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <h2 data-number="6.5" class="anchored" data-anchor-id="distributional-features-of-returns"><span class="header-section-number">6.5</span> Distributional Features of Returns</h2>
 <p>We next examine the empirical distribution of daily returns for FPT. The figure below also marks the historical 5 percent quantile, which provides a simple, non-parametric measure of downside risk.</p>
 <div id="0147758d" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> geom_histogram, geom_vline, scale_x_continuous</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>fpt_ret <span class="op">=</span> returns.loc[returns[<span class="st">"symbol"</span>] <span class="op">==</span> <span class="st">"FPT"</span>].copy()</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>q05 <span class="op">=</span> fpt_ret[<span class="st">"ret"</span>].quantile(<span class="fl">0.05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-101" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    ggplot(fpt_ret, aes(x<span class="op">=</span><span class="st">"ret"</span>))</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">100</span>)</span>
@@ -1163,6 +1204,7 @@ r_t = \frac{p_t}{p_t - 1} - 1,
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> scale_x_continuous(labels<span class="op">=</span>percent_format())</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Distribution of daily FPT returns"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <div id="fig-101" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Distribution of daily FPT stock returns in percent. The figure shows a histogram of daily returns. The vertical line indicates that the historical five percent quantile of daily returns was around negative three percent.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1178,7 +1220,10 @@ Figure&nbsp;6.2: The dotted vertical line indicates the historical five percent 
 </div>
 <p>Summary statistics offer a compact description of return behavior and should always be inspected before formal modeling.</p>
 <div id="bc494b57" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>returns[<span class="st">"ret"</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>count    4305063.000
 mean           0.000
@@ -1193,6 +1238,8 @@ Name: ret, dtype: float64</code></pre>
 </div>
 <p>Computing these statistics by calendar year can reveal periods of elevated volatility or structural change.</p>
 <div id="947f6c5b" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    returns</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    .assign(year<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"date"</span>].dt.year)</span>
@@ -1200,6 +1247,7 @@ Name: ret, dtype: float64</code></pre>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    .describe()</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <div>
 
@@ -1417,6 +1465,8 @@ Name: ret, dtype: float64</code></pre>
 <h2 data-number="6.6" class="anchored" data-anchor-id="expanding-to-a-market-cross-section"><span class="header-section-number">6.6</span> Expanding to a Market Cross-Section</h2>
 <p>The same procedures apply naturally to a larger universe of stocks. We now restrict attention to the constituents of the VN30 index.</p>
 <div id="616ce506" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>vn30 <span class="op">=</span> [</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ACB"</span>,<span class="st">"BCM"</span>,<span class="st">"BID"</span>,<span class="st">"BVH"</span>,<span class="st">"CTG"</span>,<span class="st">"FPT"</span>,<span class="st">"GAS"</span>,<span class="st">"GVR"</span>,<span class="st">"HDB"</span>,<span class="st">"HPG"</span>,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"MBB"</span>,<span class="st">"MSN"</span>,<span class="st">"MWG"</span>,<span class="st">"PLX"</span>,<span class="st">"POW"</span>,<span class="st">"SAB"</span>,<span class="st">"SHB"</span>,<span class="st">"SSB"</span>,<span class="st">"STB"</span>,<span class="st">"TCB"</span>,</span>
@@ -1426,14 +1476,18 @@ Name: ret, dtype: float64</code></pre>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>prices_vn30 <span class="op">=</span> prices.loc[prices[<span class="st">"symbol"</span>].isin(vn30)]</span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-102" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    ggplot(prices_vn30, aes(x<span class="op">=</span><span class="st">"date"</span>, y<span class="op">=</span><span class="st">"adjusted_close"</span>, color<span class="op">=</span><span class="st">"symbol"</span>))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Adjusted prices of VN30 constituents"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> theme(legend_position<span class="op">=</span><span class="st">"none"</span>)</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <div id="fig-102" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Stock prices of VN30 index constituents.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1449,6 +1503,8 @@ Figure&nbsp;6.3: Prices in VND, adjusted for dividend payments and stock splits.
 </div>
 <p>Returns for the VN30 universe are computed analogously.</p>
 <div id="ecde6f20" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>returns_vn30 <span class="op">=</span> (</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    prices_vn30</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    .sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span>
@@ -1459,6 +1515,7 @@ Figure&nbsp;6.3: Prices in VND, adjusted for dividend payments and stock splits.
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>returns_vn30.groupby(<span class="st">"symbol"</span>)[<span class="st">"ret"</span>].describe().<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <div>
 
@@ -1830,15 +1887,20 @@ Figure&nbsp;6.3: Prices in VND, adjusted for dividend payments and stock splits.
 <h2 data-number="6.7" class="anchored" data-anchor-id="aggregating-returns-across-time"><span class="header-section-number">6.7</span> Aggregating Returns Across Time</h2>
 <p>Financial variables are observed at different frequencies. While equity prices are recorded daily, many empirical questions require monthly or annual returns. Lower-frequency returns are constructed by compounding higher-frequency observations.</p>
 <div id="a36df380" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>returns_monthly <span class="op">=</span> (</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    returns_vn30</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    .assign(month<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>).dt.to_timestamp())</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">"symbol"</span>, <span class="st">"month"</span>], as_index<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    .agg(ret<span class="op">=</span>(<span class="st">"ret"</span>, <span class="kw">lambda</span> x: np.prod(<span class="dv">1</span> <span class="op">+</span> x) <span class="op">-</span> <span class="dv">1</span>))</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Comparing daily and monthly return distributions illustrates how aggregation dampens volatility and alters tail behavior.</p>
 <div id="be13efad" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> facet_wrap</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>fpt_d <span class="op">=</span> returns_vn30.loc[returns_vn30[<span class="st">"symbol"</span>] <span class="op">==</span> <span class="st">"FPT"</span>].assign(freq<span class="op">=</span><span class="st">"Daily"</span>)</span>
@@ -1849,8 +1911,11 @@ Figure&nbsp;6.3: Prices in VND, adjusted for dividend payments and stock splits.
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    fpt_d[[<span class="st">"ret"</span>, <span class="st">"freq"</span>]],</span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    fpt_m[[<span class="st">"ret"</span>, <span class="st">"freq"</span>]],</span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-103" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    ggplot(fpt_both, aes(x<span class="op">=</span><span class="st">"ret"</span>))</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_histogram(bins<span class="op">=</span><span class="dv">50</span>)</span>
@@ -1858,6 +1923,7 @@ Figure&nbsp;6.3: Prices in VND, adjusted for dividend payments and stock splits.
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"FPT returns at different frequencies"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> facet_wrap(<span class="st">"freq"</span>, scales<span class="op">=</span><span class="st">"free"</span>)</span>
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <div id="fig-103" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Distribution of FPT returns across different frequencies. The figure shows the distribution of daily and monthly returns in two separate facets.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1876,6 +1942,8 @@ Figure&nbsp;6.4: Returns are based on prices adjusted for dividend payments and 
 <h2 data-number="6.8" class="anchored" data-anchor-id="aggregation-across-firms-trading-activity"><span class="header-section-number">6.8</span> Aggregation Across Firms: Trading Activity</h2>
 <p>Aggregation is not limited to time. In some settings, it is informative to aggregate variables across firms. As an illustration, we compute total daily trading value for VN30 stocks by multiplying share volume by adjusted prices and summing across firms.</p>
 <div id="99169ddd" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>trading_value <span class="op">=</span> (</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    prices_vn30</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    .assign(value<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"volume"</span>] <span class="op">*</span> x[<span class="st">"adjusted_close"</span>] <span class="op">/</span> <span class="fl">1e9</span>)</span>
@@ -1889,6 +1957,7 @@ Figure&nbsp;6.4: Returns are based on prices adjusted for dividend payments and 
 <span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_line()</span>
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> labs(title<span class="op">=</span><span class="st">"Aggregate VN30 trading value (billion VND)"</span>, x<span class="op">=</span><span class="st">""</span>, y<span class="op">=</span><span class="st">""</span>)</span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <div>
 <figure class="figure">
@@ -1899,9 +1968,14 @@ Figure&nbsp;6.4: Returns are based on prices adjusted for dividend payments and 
 </div>
 <p>Finally, we assess persistence in trading activity by comparing trading value on consecutive days.</p>
 <div id="c85e046c" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> geom_point, geom_abline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="cell-fig-104" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    ggplot(trading_value, aes(x<span class="op">=</span><span class="st">"value_lag"</span>, y<span class="op">=</span><span class="st">"value"</span>))</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> geom_point()</span>
@@ -1912,6 +1986,7 @@ Figure&nbsp;6.4: Returns are based on prices adjusted for dividend payments and 
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">"Current day"</span>,</span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>/home/mikenguyen/project/tidyfinance/.venv/lib/python3.13/site-packages/plotnine/layer.py:374: PlotnineWarning: geom_point : Removed 1 rows containing missing values.</code></pre>
 </div>

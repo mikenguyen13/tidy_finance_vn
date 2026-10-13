@@ -871,7 +871,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./34_earning_management.html"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Earnings Management: Detection and Measurement</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Earnings Management: Detection and Measurement</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Earnings Management: Detection and Measurement</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -889,6 +889,8 @@ window.Quarto = {
 
 
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -906,6 +908,7 @@ window.Quarto = {
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.right"</span>: <span class="va">False</span>,</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"font.size"</span>: <span class="dv">11</span>,</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Earnings management refers to the purposeful intervention by managers in the financial reporting process to achieve outcomes that serve private objectives, whether to meet analyst forecasts, trigger bonus thresholds, avoid covenant violations, or influence equity valuations. While the concept is intuitive, its rigorous detection poses one of the most enduring methodological challenges in empirical accounting research.</p>
 <p>The difficulty is fundamental: researchers observe <em>total</em> accruals, which combine a legitimate component (reflecting genuine economic activity) with a discretionary component (reflecting managerial intervention). Separating these two components requires a model of what accruals <em>should</em> be absent manipulation, what the literature calls <strong>non-discretionary accruals (NDA)</strong>. Any residual, the gap between observed accruals and the modelâ€™s prediction, is then attributed to managerial discretion. The quality of the detection method therefore hinges entirely on the quality of this model.</p>
@@ -1028,6 +1031,8 @@ TA_{i,t} = \phi_0 + \phi_1 \cdot \widetilde{TA}_{j,t} + \eta_{i,t}
 <section id="implementation" class="level3" data-number="27.1.3">
 <h3 data-number="27.1.3" class="anchored" data-anchor-id="implementation"><span class="header-section-number">27.1.3</span> Implementation</h3>
 <div id="calc-accruals-fn" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Function to compute total accruals from balance sheet data</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calc_accruals(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute total accruals using the balance sheet approach.</span></span>
@@ -1054,8 +1059,11 @@ TA_{i,t} = \phi_0 + \phi_1 \cdot \widetilde{TA}_{j,t} + \eta_{i,t}
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"acc_raw"</span>] <span class="op">=</span> (df[<span class="st">"d_ca"</span>] <span class="op">-</span> df[<span class="st">"d_cash"</span>] <span class="op">-</span> df[<span class="st">"d_cl"</span>] <span class="op">+</span> df[<span class="st">"d_std"</span>]) <span class="op">-</span> df[<span class="st">"dp"</span>]</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="nda-models" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Implementations of five non-discretionary accrual models</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_healy(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Healy (1985): NDA = mean accruals in estimation period."""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    est_mean <span class="op">=</span> df.loc[<span class="op">~</span>df[<span class="st">"part"</span>], <span class="st">"acc_at"</span>].mean()</span>
@@ -1134,8 +1142,11 @@ TA_{i,t} = \phi_0 + \phi_1 \cdot \widetilde{TA}_{j,t} + \eta_{i,t}
 <span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"nda_industry"</span>] <span class="op">=</span> model.predict(pred_X)</span>
 <span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"da_industry"</span>] <span class="op">=</span> df[<span class="st">"acc_at"</span>] <span class="op">-</span> df[<span class="st">"nda_industry"</span>]</span>
 <span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="get-nda-all" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Master function to apply all five models to a panel</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_model_vars(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Add scaled variables needed by the five NDA models."""</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> calc_accruals(df)</span>
@@ -1179,6 +1190,7 @@ TA_{i,t} = \phi_0 + \phi_1 \cdot \widetilde{TA}_{j,t} + \eta_{i,t}
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        results.append(g)</span>
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.concat(results, ignore_index<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="the-salkever-1976-correction" class="level3" data-number="27.1.4">
@@ -1191,6 +1203,8 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 \tag{27.7}\]</span></span></p>
 <p>The coefficient <span class="math inline">\(\hat{\delta}\)</span> is numerically identical to the two-stage <span class="math inline">\(DA\)</span> estimate, but its standard error <span class="math inline">\(\text{se}(\hat{\delta})\)</span> is the correct prediction error standard error.</p>
 <div id="salkever-demo" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Demonstration of the Salkever (1976) equivalence</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> demonstrate_salkever(df_firm: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    For a single firm, show that the two-stage Jones DA equals</span></span>
@@ -1229,6 +1243,7 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Correct SE"</span>: [<span class="st">"Not available"</span>, <span class="ss">f"</span><span class="sc">{</span>se_salkever<span class="sc">:.6f}</span><span class="ss">"</span>],</span>
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"t-statistic"</span>: [<span class="st">"Biased"</span>, <span class="ss">f"</span><span class="sc">{</span>fm_salkever<span class="sc">.</span>tvalues[<span class="st">'part_float'</span>]<span class="sc">:.4f}</span><span class="ss">"</span>],</span>
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1251,6 +1266,8 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <h3 data-number="27.2.2" class="anchored" data-anchor-id="data-generation"><span class="header-section-number">27.2.2</span> Data Generation</h3>
 <p>We generate synthetic panel data that preserves the key cross-sectional and time-series properties of Vietnamese listed firms while allowing us to know with certainty that no manipulation exists.</p>
 <div id="gen-panel" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Generate synthetic Vietnamese panel data for Type I error analysis</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_em_panel(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    n_firms: <span class="bu">int</span> <span class="op">=</span> <span class="dv">500</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    n_years: <span class="bu">int</span> <span class="op">=</span> <span class="dv">15</span>,</span>
@@ -1351,6 +1368,7 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>panel_raw <span class="op">=</span> generate_em_panel(n_firms<span class="op">=</span><span class="dv">500</span>, n_years<span class="op">=</span><span class="dv">15</span>, seed<span class="op">=</span><span class="dv">2024</span>)</span>
 <span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Panel: </span><span class="sc">{</span>panel_raw<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> firm-years, "</span></span>
 <span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>panel_raw[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Panel: 7,500 firm-years, 500 firms</code></pre>
 </div>
@@ -1360,6 +1378,8 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <h3 data-number="27.2.3" class="anchored" data-anchor-id="sample-construction"><span class="header-section-number">27.2.3</span> Sample Construction</h3>
 <p>We construct a sample of 500 firms, each with a randomly designated test year, mirroring the design of <span class="citation" data-cites="dechow1995detecting">Dechow, Sloan, and Sweeney (<a href="references.html#ref-dechow1995detecting" role="doc-biblioref">1995</a>)</span>.</p>
 <div id="sample-construction" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Construct analysis sample with random test-year assignment</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> construct_sample(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    df: pd.DataFrame,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    n_sample: <span class="bu">int</span> <span class="op">=</span> <span class="dv">500</span>,</span>
@@ -1415,6 +1435,7 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Sample 1: </span><span class="sc">{</span>sample_1<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">:,}</span><span class="ss"> firm-years, "</span></span>
 <span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>sample_1[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms, "</span></span>
 <span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>sample_1[<span class="st">'part'</span>]<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss"> test years"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Sample 1: 7,000 firm-years, 500 firms, 500 test years</code></pre>
 </div>
@@ -1423,6 +1444,8 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <section id="estimating-discretionary-accruals" class="level3" data-number="27.2.4">
 <h3 data-number="27.2.4" class="anchored" data-anchor-id="estimating-discretionary-accruals"><span class="header-section-number">27.2.4</span> Estimating Discretionary Accruals</h3>
 <div id="cell-estimate-da" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Apply all five models to Sample 1</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>da_results <span class="op">=</span> get_all_nda(sample_1)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify: peek at test-year DA across models</span></span>
@@ -1430,6 +1453,7 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>test_da <span class="op">=</span> da_results[da_results[<span class="st">"part"</span>]][da_cols]</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test-year discretionary accruals (first 5 firms):"</span>)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>test_da.head().<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Test-year discretionary accruals (first 5 firms):</code></pre>
 </div>
@@ -1500,6 +1524,8 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <h3 data-number="27.2.5" class="anchored" data-anchor-id="firm-level-regressions-and-rejection-rates"><span class="header-section-number">27.2.5</span> Firm-Level Regressions and Rejection Rates</h3>
 <p>For each firm and each model, we regress <span class="math inline">\(DA\)</span> on <span class="math inline">\(PART\)</span> and record whether the null hypothesis of zero discretionary accruals in the test year is rejected.</p>
 <div id="type1-regressions" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Compute firm-specific t-statistics and rejection rates</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> firm_regressions(df: pd.DataFrame, models: <span class="bu">list</span>[<span class="bu">str</span>]) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">    For each firm and model, regress DA on PART.</span></span>
@@ -1549,12 +1575,15 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>models <span class="op">=</span> [<span class="st">"healy"</span>, <span class="st">"deangelo"</span>, <span class="st">"jones"</span>, <span class="st">"mod_jones"</span>, <span class="st">"industry"</span>]</span>
 <span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>reg_results <span class="op">=</span> firm_regressions(da_results, models)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="results" class="level3" data-number="27.2.6">
 <h3 data-number="27.2.6" class="anchored" data-anchor-id="results"><span class="header-section-number">27.2.6</span> Results</h3>
 <p><a href="#tbl-type1-coefs" class="quarto-xref">Table&nbsp;<span>27.2</span></a> reports the distribution of estimated coefficients on <span class="math inline">\(PART\)</span> across firms. Under the null of no manipulation, we expect the mean coefficient to be approximately zero.</p>
 <div class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>coef_stats <span class="op">=</span> (</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    reg_results</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"model"</span>)[<span class="st">"coef"</span>]</span>
@@ -1564,6 +1593,7 @@ TA_{i,t} = \alpha_1 \frac{1}{A_{i,t-1}} + \alpha_2 \Delta Rev_{i,t} + \alpha_3 P
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>coef_stats.columns <span class="op">=</span> [<span class="st">"Mean"</span>, <span class="st">"Std Dev"</span>, <span class="st">"Q1"</span>, <span class="st">"Median"</span>, <span class="st">"Q3"</span>]</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>coef_stats.index.name <span class="op">=</span> <span class="st">"Model"</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>coef_stats.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-type1-coefs" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-type1-coefs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1645,6 +1675,8 @@ Table&nbsp;27.2: Distribution of firm-level discretionary accrual estimates (coe
 </div>
 <p><a href="#tbl-type1-rejection" class="quarto-xref">Table&nbsp;<span>27.3</span></a> reports rejection rates. The critical comparison is whether these rates approximate the nominal test size.</p>
 <div class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>rejection_rates <span class="op">=</span> (</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    reg_results</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"model"</span>)[[<span class="st">"neg_p01"</span>, <span class="st">"neg_p05"</span>, <span class="st">"pos_p01"</span>, <span class="st">"pos_p05"</span>]]</span>
@@ -1656,6 +1688,7 @@ Table&nbsp;27.2: Distribution of firm-level discretionary accrual estimates (coe
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>rejection_rates.index.name <span class="op">=</span> <span class="st">"Model"</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>rejection_rates</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-type1-rejection" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="11">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-type1-rejection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1733,6 +1766,8 @@ Table&nbsp;27.3: Type I error rates for one-sided tests of earnings management u
 <h3 data-number="27.2.7" class="anchored" data-anchor-id="binomial-test-for-size-distortion"><span class="header-section-number">27.2.7</span> Binomial Test for Size Distortion</h3>
 <p>We formally test whether observed rejection rates differ from nominal sizes using a two-sided binomial test. Small <span class="math inline">\(p\)</span>-values indicate significant mis-calibration of the test statistic.</p>
 <div class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> binom_test_rate(series: pd.Series, nominal: <span class="bu">float</span>) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Two-sided binomial test for rejection rate = nominal."""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> series.dropna()</span>
@@ -1754,6 +1789,7 @@ Table&nbsp;27.3: Type I error rates for one-sided tests of earnings management u
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>binom_df <span class="op">=</span> pd.DataFrame(binom_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>binom_df.index.name <span class="op">=</span> <span class="st">"Model"</span></span>
 <span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>binom_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-binom-test" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-binom-test-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1848,6 +1884,8 @@ Interpreting Over-Rejection
 <section id="constructing-extreme-performance-samples" class="level3" data-number="27.3.1">
 <h3 data-number="27.3.1" class="anchored" data-anchor-id="constructing-extreme-performance-samples"><span class="header-section-number">27.3.1</span> Constructing Extreme-Performance Samples</h3>
 <div id="extreme-sample" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Construct samples from top and bottom earnings deciles</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_earnings_deciles(df: pd.DataFrame) <span class="op">-&gt;</span> pd.DataFrame:</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute firm-year earnings (scaled) and assign to deciles."""</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    firm_col <span class="op">=</span> <span class="st">"ticker"</span> <span class="cf">if</span> <span class="st">"ticker"</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="st">"gvkey"</span></span>
@@ -1883,6 +1921,7 @@ Interpreting Over-Rejection
 <span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"High-earnings sample: </span><span class="sc">{</span>sample_high[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms"</span>)</span>
 <span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Low-earnings sample: </span><span class="sc">{</span>sample_low[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss"> firms"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>High-earnings sample: 164 firms
 Low-earnings sample: 203 firms</code></pre>
@@ -1894,6 +1933,8 @@ Low-earnings sample: 203 firms</code></pre>
 Table&nbsp;27.5: Type I error rates (5% one-sided) when test firm-years are drawn from extreme earnings deciles. Over-rejection is expected because accrual models misattribute performance-driven accrual variation to managerial discretion.
 </figcaption>
 <div aria-describedby="tbl-extreme-rejection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>extreme_results <span class="op">=</span> {}</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, sample_df <span class="kw">in</span> [(<span class="st">"High earners"</span>, sample_high), (<span class="st">"Low earners"</span>, sample_low)]:</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    da <span class="op">=</span> get_all_nda(sample_df)</span>
@@ -1906,6 +1947,7 @@ Table&nbsp;27.5: Type I error rates (5% one-sided) when test firm-years are draw
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    extreme_df <span class="op">=</span> pd.concat(extreme_results.values(), axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    extreme_df.index.name <span class="op">=</span> <span class="st">"Model"</span></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    extreme_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1932,6 +1974,8 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 </ol>
 <p>The parameter <span class="math inline">\(\lambda\)</span> represents manipulation as a fraction of lagged total assets, ranging from 0% to 50%.</p>
 <div id="manipulate-fn" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Function to introduce artificial manipulation</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> manipulate(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    df: pd.DataFrame,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    level: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.0</span>,</span>
@@ -1986,8 +2030,11 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 <span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>        df.drop(columns<span class="op">=</span>[<span class="st">"_ni_ratio"</span>], inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="power-analysis" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Power analysis across manipulation levels and types</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> [<span class="fl">0.0</span>, <span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.20</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>]</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>manip_types <span class="op">=</span> [<span class="st">"expense"</span>, <span class="st">"revenue"</span>, <span class="st">"margin"</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2015,8 +2062,11 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 <span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>            })</span>
 <span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>power_df <span class="op">=</span> pd.DataFrame(power_records)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="power-analysis-parallel" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Power analysis across manipulation levels and types</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> [<span class="fl">0.0</span>, <span class="fl">0.05</span>, <span class="fl">0.10</span>, <span class="fl">0.20</span>, <span class="fl">0.30</span>, <span class="fl">0.50</span>]</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>manip_types <span class="op">=</span> [<span class="st">"expense"</span>, <span class="st">"revenue"</span>, <span class="st">"margin"</span>]</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2055,6 +2105,7 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 <span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        flat.extend(batch)</span>
 <span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>power_df <span class="op">=</span> pd.DataFrame(flat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>[Parallel(n_jobs=-1)]: Using backend LokyBackend with 16 concurrent workers.
 [Parallel(n_jobs=-1)]: Done   2 out of  16 | elapsed:  1.6min remaining: 11.0min
@@ -2066,6 +2117,8 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 <h3 data-number="27.4.2" class="anchored" data-anchor-id="power-functions"><span class="header-section-number">27.4.2</span> Power Functions</h3>
 <p><a href="#fig-power" class="quarto-xref">Figure&nbsp;<span>27.1</span></a> plots the estimated power functions. The key questions are: (i) which model has the highest power for a given manipulation level and type, and (ii) at what magnitudes does manipulation become reliably detectable?</p>
 <div id="cell-fig-power" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>), sharey<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model_colors <span class="op">=</span> {</span>
@@ -2098,6 +2151,7 @@ DA^{PM}_{i,t} = DA_{i,t} - DA_{i^*,t}
 <span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">2</span>].legend(fontsize<span class="op">=</span><span class="dv">8</span>, loc<span class="op">=</span><span class="st">"center left"</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">1.02</span>, <span class="fl">0.5</span>))</span>
 <span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-power" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2116,6 +2170,8 @@ Figure&nbsp;27.1: Power functions for the five earnings management detection mod
 <h3 data-number="27.4.3" class="anchored" data-anchor-id="summary-statistics"><span class="header-section-number">27.4.3</span> Summary Statistics</h3>
 <p><a href="#tbl-power-summary" class="quarto-xref">Table&nbsp;<span>27.6</span></a> reports power at selected manipulation levels for the Jones and Modified Jones models, which are most commonly used in applied research.</p>
 <div class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>power_summary <span class="op">=</span> (</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    power_df[power_df[<span class="st">"model"</span>].isin([<span class="st">"jones"</span>, <span class="st">"mod_jones"</span>])]</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    .pivot_table(index<span class="op">=</span>[<span class="st">"model"</span>, <span class="st">"level"</span>], columns<span class="op">=</span><span class="st">"type"</span>, values<span class="op">=</span><span class="st">"power"</span>)</span>
@@ -2123,6 +2179,7 @@ Figure&nbsp;27.1: Power functions for the five earnings management detection mod
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>power_summary.index.names <span class="op">=</span> [<span class="st">"Model"</span>, <span class="st">"Level (% assets)"</span>]</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>power_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-power-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-power-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2264,6 +2321,8 @@ Implications for Vietnamese Research
 <p><span class="citation" data-cites="burgstahler1997earnings">Burgstahler and Dichev (<a href="references.html#ref-burgstahler1997earnings" role="doc-biblioref">1997</a>)</span> observed a striking discontinuity in the distribution of reported earnings around zero: far more firms report small positive earnings than small losses, relative to what a smooth distribution would predict. This pattern is interpreted as evidence that firms manage earnings to avoid reporting losses.</p>
 <p>We apply this test to Vietnamese-style data to illustrate the methodology.</p>
 <div id="cell-fig-earnings-distribution" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate earnings for a larger sample with benchmark-beating behavior</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>rng_dist <span class="op">=</span> np.random.default_rng(<span class="dv">2024</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>n_firms_dist <span class="op">=</span> <span class="dv">2000</span></span>
@@ -2292,6 +2351,7 @@ Implications for Vietnamese Research
 <span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-earnings-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2306,6 +2366,8 @@ Figure&nbsp;27.2: Distribution of scaled earnings around zero. A discontinuityâ€
 </div>
 </div>
 <div id="cell-fig-earnings-change-dist" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Year-over-year changes</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>earn_changes <span class="op">=</span> np.diff(earn_array.reshape(n_firms_dist, n_years_dist), axis<span class="op">=</span><span class="dv">1</span>).flatten()</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2320,6 +2382,7 @@ Figure&nbsp;27.2: Distribution of scaled earnings around zero. A discontinuityâ€
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-earnings-change-dist" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

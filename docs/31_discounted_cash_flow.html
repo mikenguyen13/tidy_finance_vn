@@ -866,7 +866,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./31_discounted_cash_flow.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Discounted Cash Flow Analysis</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Discounted Cash Flow Analysis</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Discounted Cash Flow Analysis</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -908,6 +908,8 @@ window.Quarto = {
 </ol>
 <p>We make simplifying assumptions throughout this chapter. In particular, we assume firms conduct only operating activities (i.e., financial statements do not include non-operating items like excess cash or investment securities). Real-world valuations require valuing these separately. Entire textbooks are devoted to valuation nuances; our goal is to establish the conceptual framework and practical implementation.</p>
 <div id="e9fffbe8" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
@@ -915,6 +917,7 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format, comma_format</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> product</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -951,6 +954,8 @@ window.Quarto = {
 <h2 data-number="24.3" class="anchored" data-anchor-id="loading-historical-financial-data"><span class="header-section-number">24.3</span> Loading Historical Financial Data</h2>
 <p>We use FPT Corporation, one of Vietnam’s largest technology companies, as our case study. FPT provides IT services, telecommunications, and education. It’s a diversified business with meaningful capital requirements and growth potential.</p>
 <div id="fa1b2575" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span>)</span>
@@ -968,6 +973,7 @@ window.Quarto = {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Available years: </span><span class="sc">{</span>fpt_data[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>fpt_data[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of observations: </span><span class="sc">{</span><span class="bu">len</span>(fpt_data)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Available years: 2002 to 2023
 Number of observations: 22</code></pre>
@@ -977,6 +983,8 @@ Number of observations: 22</code></pre>
 <h3 data-number="24.3.1" class="anchored" data-anchor-id="computing-historical-free-cash-flow"><span class="header-section-number">24.3.1</span> Computing Historical Free Cash Flow</h3>
 <p>Let’s calculate the components needed for FCF from the financial statement data:</p>
 <div id="64a59194" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract and compute FCF components</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>historical_data <span class="op">=</span> (fpt_data</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
@@ -1020,6 +1028,7 @@ Number of observations: 22</code></pre>
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>historical_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
@@ -1292,6 +1301,8 @@ Number of observations: 22</code></pre>
 <h3 data-number="24.3.2" class="anchored" data-anchor-id="understanding-the-historical-pattern"><span class="header-section-number">24.3.2</span> Understanding the Historical Pattern</h3>
 <p>Before forecasting, we should understand the historical trends in FCF and its components:</p>
 <div id="c6999f28" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate key ratios relative to revenue</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>historical_ratios <span class="op">=</span> (historical_data</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .assign(</span>
@@ -1325,6 +1336,7 @@ Number of observations: 22</code></pre>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>]</span>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>historical_ratios[display_cols].<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 
@@ -1598,6 +1610,8 @@ Number of observations: 22</code></pre>
 <h2 data-number="24.4" class="anchored" data-anchor-id="visualizing-historical-ratios"><span class="header-section-number">24.4</span> Visualizing Historical Ratios</h2>
 <p><a href="#fig-500" class="quarto-xref">Figure&nbsp;<span>24.1</span></a> shows the historical evolution of key financial ratios that drive FCF. Understanding these patterns helps inform our forecasts.</p>
 <div id="cell-fig-500" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data for plotting</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ratio_columns <span class="op">=</span> [</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"operating_margin"</span>, <span class="st">"depreciation_margin"</span>, <span class="st">"tax_margin"</span>,</span>
@@ -1629,6 +1643,7 @@ Number of observations: 22</code></pre>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>ratios_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-500" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Key financial ratios of FPT over time. The figure shows a line chart with years on the horizontal axis and financial ratios on the vertical axis.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1656,6 +1671,8 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <h3 data-number="24.5.2" class="anchored" data-anchor-id="setting-forecast-assumptions"><span class="header-section-number">24.5.2</span> Setting Forecast Assumptions</h3>
 <p>For our five-year forecast, we make the following assumptions about FPT’s financial ratios. These should reflect industry analysis, company guidance, and competitive dynamics. Here we use estimates for illustration:</p>
 <div id="f630717e" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the forecast horizon</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>last_historical_year <span class="op">=</span> historical_data[<span class="st">"year"</span>].<span class="bu">max</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>forecast_years <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(last_historical_year <span class="op">+</span> <span class="dv">1</span>, last_historical_year <span class="op">+</span> <span class="dv">6</span>))</span>
@@ -1680,6 +1697,7 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>forecast_assumptions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Forecast period: 2024 to 2028</code></pre>
 </div>
@@ -1758,10 +1776,13 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <p><strong>Approach 1: Historical Average</strong></p>
 <p>A simple approach uses the historical average growth rate:</p>
 <div id="5a4524ce" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>historical_growth <span class="op">=</span> historical_ratios[<span class="st">"revenue_growth"</span>].dropna()</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>avg_historical_growth <span class="op">=</span> historical_growth.mean()</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Average historical revenue growth: </span><span class="sc">{</span>avg_historical_growth<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Average historical revenue growth: 25.2%</code></pre>
 </div>
@@ -1769,6 +1790,8 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <p><strong>Approach 2: GDP-Linked Growth</strong></p>
 <p>A more sophisticated approach links company growth to GDP forecasts from institutions like the IMF. This captures the intuition that company revenues often move with broader economic activity.</p>
 <div id="4a7183b8" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vietnam GDP growth forecasts (illustrative, based on IMF WEO style projections)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice, download from IMF WEO database</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>gdp_forecasts <span class="op">=</span> pd.DataFrame({</span>
@@ -1786,6 +1809,7 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>forecast_assumptions[[<span class="st">"year"</span>, <span class="st">"gdp_growth"</span>, <span class="st">"revenue_growth"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <div>
 
@@ -1841,6 +1865,8 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <h3 data-number="24.5.4" class="anchored" data-anchor-id="building-the-forecast"><span class="header-section-number">24.5.4</span> Building the Forecast</h3>
 <p>Now we combine our assumptions to project revenue and FCF:</p>
 <div id="341b4395" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the last historical revenue as our starting point</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>last_revenue <span class="op">=</span> historical_data.loc[</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    historical_data[<span class="st">"year"</span>] <span class="op">==</span> last_historical_year, <span class="st">"revenue"</span></span>
@@ -1882,6 +1908,7 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>forecast_data[[<span class="st">"year"</span>, <span class="st">"revenue"</span>, <span class="st">"ebit"</span>, <span class="st">"fcf"</span>]].<span class="bu">round</span>(<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Last historical revenue (2023): 52.62 trillion VND</code></pre>
 </div>
@@ -1947,6 +1974,8 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <h2 data-number="24.6" class="anchored" data-anchor-id="visualizing-the-forecast"><span class="header-section-number">24.6</span> Visualizing the Forecast</h2>
 <p><a href="#fig-501" class="quarto-xref">Figure&nbsp;<span>24.2</span></a> compares our forecast ratios with historical values, showing the transition from realized to projected performance.</p>
 <div id="cell-fig-501" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare historical data for plotting</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>historical_plot <span class="op">=</span> (historical_ratios</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    .loc[:, [<span class="st">"year"</span>, <span class="st">"operating_margin"</span>, <span class="st">"depreciation_margin"</span>, </span>
@@ -1989,6 +2018,7 @@ Figure&nbsp;24.1: Historical financial ratios reveal the operating characteristi
 <span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>forecast_ratios_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-501" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Historical and forecast financial ratios for FPT. The figure shows line charts comparing historical ratios with forecast assumptions.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2004,6 +2034,8 @@ Figure&nbsp;24.2: Historical ratios (solid lines) and forecast assumptions (dash
 </div>
 <p><a href="#fig-502" class="quarto-xref">Figure&nbsp;<span>24.3</span></a> shows the revenue growth trajectory, comparing historical performance with our GDP-linked forecasts.</p>
 <div id="cell-fig-502" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare growth data</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>historical_growth_df <span class="op">=</span> (historical_ratios</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    .loc[:, [<span class="st">"year"</span>, <span class="st">"revenue_growth"</span>]]</span>
@@ -2039,6 +2071,7 @@ Figure&nbsp;24.2: Historical ratios (solid lines) and forecast assumptions (dash
 <span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>growth_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-502" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Revenue growth rates for FPT. The figure shows historical and forecast revenue growth rates.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2054,6 +2087,8 @@ Figure&nbsp;24.3: Revenue growth rates: historical (realized) and forecast (GDP-
 </div>
 <p><a href="#fig-503" class="quarto-xref">Figure&nbsp;<span>24.4</span></a> presents the resulting FCF projections alongside historical values.</p>
 <div id="cell-fig-503" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine historical and forecast FCF</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>fcf_historical <span class="op">=</span> (historical_data</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    .loc[:, [<span class="st">"year"</span>, <span class="st">"fcf"</span>]]</span>
@@ -2081,6 +2116,7 @@ Figure&nbsp;24.3: Revenue growth rates: historical (realized) and forecast (GDP-
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>fcf_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-503" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: Free Cash Flow for FPT. The figure shows a bar chart with historical and forecast FCF values.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2121,6 +2157,8 @@ TV_T = \frac{FCF_{T+1}}{r - g} = \frac{FCF_T \times (1 + g)}{r - g}
 <li><p><strong>For Vietnam</strong>, long-term nominal GDP growth might be 6-8% given current development stage, but this will moderate over time. A perpetual growth rate of 3-5% is often reasonable.</p></li>
 </ol>
 <div id="60d59e59" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_terminal_value(last_fcf, growth_rate, discount_rate):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute terminal value using the perpetuity growth model.</span></span>
@@ -2153,6 +2191,7 @@ TV_T = \frac{FCF_{T+1}}{r - g} = \frac{FCF_T \times (1 + g)}{r - g}
 <span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Last forecast FCF: </span><span class="sc">{</span>last_fcf<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.2f}</span><span class="ss"> trillion VND"</span>)</span>
 <span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Terminal value (at </span><span class="sc">{</span>perpetual_growth<span class="sc">:.0%}</span><span class="ss"> growth, </span><span class="sc">{</span>discount_rate<span class="sc">:.0%}</span><span class="ss"> WACC): </span><span class="sc">{</span>terminal_value<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Last forecast FCF: 8.43 trillion VND
 Terminal value (at 4% growth, 10% WACC): 146.1 trillion VND</code></pre>
@@ -2206,6 +2245,8 @@ r_E = r_f + \beta \times (r_m - r_f)
 <h4 data-number="24.8.2.1" class="anchored" data-anchor-id="downloading-the-data"><span class="header-section-number">24.8.2.1</span> Downloading the Data</h4>
 <p>The following code downloads the required datasets. Run this manually when you need to update the data (typically annually), but it is not executed during book rendering to avoid dependency on external servers.</p>
 <div id="download-damodaran-data" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2226,12 +2267,15 @@ r_E = r_f + \beta \times (r_m - r_f)
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>response.raise_for_status()</span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>(data_dir <span class="op">/</span> <span class="st">"damodaran_crp.xlsx"</span>).write_bytes(response.content)</span>
 <span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded: damodaran_crp.xlsx"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="industry-wacc" class="level4" data-number="24.8.2.2">
 <h4 data-number="24.8.2.2" class="anchored" data-anchor-id="industry-wacc"><span class="header-section-number">24.8.2.2</span> Industry WACC</h4>
 <p>We extract the cost of capital for the Computer Services industry, which most closely matches FPT’s business profile:</p>
 <div id="read-industry-wacc" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Read local WACC data</span></span>
@@ -2248,6 +2292,7 @@ r_E = r_f + \beta \times (r_m - r_f)
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>].values[<span class="dv">0</span>]</span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Industry WACC (Computer Services): </span><span class="sc">{</span>industry_wacc<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Industry WACC (Computer Services): 7.83%</code></pre>
 </div>
@@ -2257,6 +2302,8 @@ r_E = r_f + \beta \times (r_m - r_f)
 <h4 data-number="24.8.2.3" class="anchored" data-anchor-id="country-risk-premium"><span class="header-section-number">24.8.2.3</span> Country Risk Premium</h4>
 <p>For Vietnamese companies, we must adjust for country-specific risk. Damodaran calculates country risk premiums based on sovereign credit ratings and relative equity market volatility:</p>
 <div id="read-country-risk-premium" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read local country risk premium data</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>crp_data <span class="op">=</span> pd.read_excel(</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data/damodaran_crp.xlsx"</span>,</span>
@@ -2271,6 +2318,7 @@ r_E = r_f + \beta \times (r_m - r_f)
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>country_risk_premium <span class="op">=</span> vietnam_row.iloc[<span class="dv">0</span>, <span class="dv">8</span>]</span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vietnam Country Risk Premium: </span><span class="sc">{</span>country_risk_premium<span class="sc">:.2%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Vietnam Country Risk Premium: 2.09%</code></pre>
 </div>
@@ -2280,6 +2328,8 @@ r_E = r_f + \beta \times (r_m - r_f)
 <h4 data-number="24.8.2.4" class="anchored" data-anchor-id="adjusted-wacc-for-vietnam"><span class="header-section-number">24.8.2.4</span> Adjusted WACC for Vietnam</h4>
 <p>Combining the industry benchmark with the country risk premium gives us an appropriate discount rate:</p>
 <div id="calculate-vietnam-wacc" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>wacc_vietnam <span class="op">=</span> industry_wacc <span class="op">+</span> country_risk_premium</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Industry WACC (US):        </span><span class="sc">{</span>industry_wacc<span class="sc">:.2%}</span><span class="ss">"</span>)</span>
@@ -2287,6 +2337,7 @@ r_E = r_f + \beta \times (r_m - r_f)
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Adjusted WACC (Vietnam):   </span><span class="sc">{</span>wacc_vietnam<span class="sc">:.2%}</span><span class="ss">"</span>)</span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>wacc <span class="op">=</span> wacc_vietnam</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Industry WACC (US):        7.83%
 Country Risk Premium:      2.09%
@@ -2305,6 +2356,8 @@ Adjusted WACC (Vietnam):   9.92%</code></pre>
 \]</span></p>
 <p>The first term is the present value of forecast-period cash flows; the second is the present value of terminal value.</p>
 <div id="8787aea3" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_dcf_value(fcf_series, wacc, perpetual_growth):</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute enterprise value using DCF analysis.</span></span>
@@ -2364,6 +2417,7 @@ Adjusted WACC (Vietnam):   9.92%</code></pre>
 <span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"PV of Terminal Value: </span><span class="sc">{</span>dcf_result[<span class="st">'pv_terminal'</span>]<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span>
 <span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Enterprise Value: </span><span class="sc">{</span>dcf_result[<span class="st">'enterprise_value'</span>]<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span>
 <span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Terminal Value as % of EV: </span><span class="sc">{</span>dcf_result[<span class="st">'terminal_pct'</span>]<span class="sc">:.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>DCF Valuation Results
 ==================================================
@@ -2380,6 +2434,8 @@ Terminal Value as % of EV: 80.2%</code></pre>
 <h2 data-number="24.10" class="anchored" data-anchor-id="sensitivity-analysis"><span class="header-section-number">24.10</span> Sensitivity Analysis</h2>
 <p>Given the uncertainty in DCF inputs, sensitivity analysis is essential. We examine how enterprise value changes with different assumptions about WACC and perpetual growth.</p>
 <div id="cell-fig-504" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define ranges for sensitivity analysis</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>wacc_range <span class="op">=</span> np.arange(<span class="fl">0.08</span>, <span class="fl">0.14</span>, <span class="fl">0.01</span>)  <span class="co"># 8% to 13%</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>growth_range <span class="op">=</span> np.arange(<span class="fl">0.02</span>, <span class="fl">0.06</span>, <span class="fl">0.01</span>)  <span class="co"># 2% to 5%</span></span>
@@ -2424,6 +2480,7 @@ Terminal Value as % of EV: 80.2%</code></pre>
 <span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>sensitivity_figure.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-504" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Title: DCF Sensitivity Analysis. The figure shows a heatmap of enterprise values for different combinations of WACC and growth rate.">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2464,6 +2521,8 @@ Figure&nbsp;24.5: Sensitivity of enterprise value to WACC and perpetual growth r
 <li>Preferred stock (if treated as debt-like)</li>
 </ul>
 <div id="e3f002e0" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get most recent balance sheet data for FPT</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>latest_year <span class="op">=</span> fpt_data[<span class="st">"year"</span>].<span class="bu">max</span>()</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>latest_data <span class="op">=</span> fpt_data[fpt_data[<span class="st">"year"</span>] <span class="op">==</span> latest_year].iloc[<span class="dv">0</span>]</span>
@@ -2482,6 +2541,7 @@ Figure&nbsp;24.5: Sensitivity of enterprise value to WACC and perpetual growth r
 <span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Less: Total Debt: </span><span class="sc">{</span>total_debt<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span>
 <span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Plus: Cash: </span><span class="sc">{</span>cash<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span>
 <span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Equity Value: </span><span class="sc">{</span>equity_value<span class="op">/</span><span class="fl">1e12</span><span class="sc">:.1f}</span><span class="ss"> trillion VND"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>From Enterprise Value to Equity Value
 ==================================================
@@ -2495,6 +2555,8 @@ Equity Value: 123.3 trillion VND</code></pre>
 <h3 data-number="24.11.1" class="anchored" data-anchor-id="implied-share-price"><span class="header-section-number">24.11.1</span> Implied Share Price</h3>
 <p>If we know the number of shares outstanding, we can compute an implied share price:</p>
 <div id="f5102f0d" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get shares outstanding (this would come from market data)</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Using placeholder - in practice, get from exchange data</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>shares_outstanding <span class="op">=</span> latest_data.get(<span class="st">"total_equity"</span>, equity_value) <span class="op">/</span> <span class="dv">25000</span>  <span class="co"># Rough estimate</span></span>
@@ -2502,6 +2564,7 @@ Equity Value: 123.3 trillion VND</code></pre>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>implied_price <span class="op">=</span> equity_value <span class="op">/</span> shares_outstanding</span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Implied Share Price: </span><span class="sc">{</span>implied_price<span class="sc">:,.0f}</span><span class="ss"> VND"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Implied Share Price: 103,008 VND</code></pre>

@@ -865,7 +865,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./60_event_studies.html">Advanced Financial Modeling</a></li><li class="breadcrumb-item"><a href="./63_structural_models_finance.html"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Structural Models in Finance</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Structural Models in Finance</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">45</span>&nbsp; <span class="chapter-title">Structural Models in Finance</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -886,6 +886,8 @@ window.Quarto = {
 <p>This chapter introduces the key structural estimation frameworks used in financial economics and implements them for Vietnamese equity markets. We cover four domains where structural models have proven most productive: investor demand estimation, trading cost and execution models, primary market auctions, and limit order book dynamics. Each domain involves distinct economic primitives such as preferences, beliefs, transaction costs, information asymmetries and each requires domain-specific identification strategies.</p>
 <p>Vietnamese markets offer both challenges and opportunities for structural estimation. On the challenge side, data quality is uneven, market microstructure is evolving, and institutional features (price limits, foreign ownership caps, state ownership) introduce constraints that standard models do not accommodate. On the opportunity side, several features of Vietnamese markets create natural variation that aids identification: the coexistence of two exchanges (HOSE and HNX) with different trading rules, regulatory changes that shift trading costs and price limits, and the phased liberalization of foreign ownership caps that generates exogenous demand shocks.</p>
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats, optimize</span>
@@ -898,6 +900,7 @@ window.Quarto = {
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mizani.formatters <span class="im">import</span> percent_format, comma_format</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="what-structural-estimation-means-in-finance" class="level2" data-number="45.1">
 <h2 data-number="45.1" class="anchored" data-anchor-id="what-structural-estimation-means-in-finance"><span class="header-section-number">45.1</span> What Structural Estimation Means in Finance</h2>
@@ -1056,6 +1059,8 @@ w_{ij,t} = \frac{\exp(\delta_{j,t} + \boldsymbol{\beta}_i' \mathbf{x}_{j,t})}{1 
 \tag{45.6}\]</span></span></p>
 <p>In a frictionless market with perfectly elastic demand, a supply shock (e.g., an index addition) would have zero price impact. Empirically, demand curves for financial assets slope downward with finite elasticity, implying that supply shocks move equilibrium prices.</p>
 <div id="load-holdings-data" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DataCore.vn API</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datacore <span class="im">import</span> DataCore</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dc <span class="op">=</span> DataCore()</span>
@@ -1081,8 +1086,11 @@ w_{ij,t} = \frac{\exp(\delta_{j,t} + \boldsymbol{\beta}_i' \mathbf{x}_{j,t})}{1 
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Holdings observations: </span><span class="sc">{</span><span class="bu">len</span>(holdings)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique institutions: </span><span class="sc">{</span>holdings[<span class="st">'institution_id'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Unique stocks: </span><span class="sc">{</span>holdings[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="demand-system-construction" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct demand system variables</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>demand <span class="op">=</span> holdings.merge(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    firm_chars[[<span class="st">"ticker"</span>, <span class="st">"date"</span>, <span class="st">"market_cap"</span>, <span class="st">"book_to_market"</span>,</span>
@@ -1110,8 +1118,11 @@ w_{ij,t} = \frac{\exp(\delta_{j,t} + \boldsymbol{\beta}_i' \mathbf{x}_{j,t})}{1 
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>demand[<span class="st">"log_weight_ratio"</span>] <span class="op">=</span> np.log(</span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    demand[<span class="st">"port_weight"</span>] <span class="op">/</span> demand[<span class="st">"outside_weight"</span>]</span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="demand-estimation" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simplified KY demand estimation</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># log(w_ij / w_i0) = delta_j + beta_i' x_j + epsilon_ij</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># First stage: estimate mean utility delta_j via OLS with asset FE</span></span>
@@ -1157,6 +1168,7 @@ w_{ij,t} = \frac{\exp(\delta_{j,t} + \boldsymbol{\beta}_i' \mathbf{x}_{j,t})}{1 
 <span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
 <span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
 <span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-demand-params" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1164,6 +1176,8 @@ w_{ij,t} = \frac{\exp(\delta_{j,t} + \boldsymbol{\beta}_i' \mathbf{x}_{j,t})}{1 
 Table&nbsp;45.3: Demand Elasticities by Investor Type
 </figcaption>
 <div aria-describedby="tbl-demand-params-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>avg_params <span class="op">=</span> (</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    demand_params.groupby(<span class="st">"institution_type"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -1178,12 +1192,15 @@ Table&nbsp;45.3: Demand Elasticities by Investor Type
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>avg_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="fig-demand-elasticity-time" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="6">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-demand-elasticity-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>top_types <span class="op">=</span> demand_params.groupby(<span class="st">"institution_type"</span>).size().nlargest(<span class="dv">4</span>).index</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plot_data <span class="op">=</span> demand_params[</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    demand_params[<span class="st">"institution_type"</span>].isin(top_types)</span>
@@ -1202,6 +1219,7 @@ Table&nbsp;45.3: Demand Elasticities by Investor Type
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>), legend_position<span class="op">=</span><span class="st">"top"</span>)</span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-demand-elasticity-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.1
@@ -1217,6 +1235,8 @@ Figure&nbsp;45.1
 \tag{45.7}\]</span></span></p>
 <p>where <span class="math inline">\(\varepsilon_{jj}\)</span> is the demand elasticity and <span class="math inline">\(\Delta D_j / D_j\)</span> is the percentage demand shock. Less elastic demand implies larger price impact for the same demand shock (a prediction with direct implications for the price impact of index rebalancing, fund flows, and forced selling).</p>
 <div id="price-pressure" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate aggregate demand elasticity via index rebalancing events</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Use VN30 index reconstitutions as demand shocks</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1309,10 +1329,13 @@ Figure&nbsp;45.1
 <span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>car_results <span class="op">=</span> event_study_car(index_changes, daily_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-index-event-study" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-index-event-study-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(car_results) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Average AR by event day and type</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    avg_ar <span class="op">=</span> (</span>
@@ -1349,6 +1372,7 @@ Figure&nbsp;45.1
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-index-event-study-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.2
@@ -1389,6 +1413,8 @@ x_t^* = X \cdot \frac{\sinh(\kappa (T - t))}{\sinh(\kappa T)}
 \tag{45.11}\]</span></span></p>
 <p>where <span class="math inline">\(\kappa = \sqrt{\lambda \sigma^2 / \eta}\)</span> governs the trade-off between urgency (trading quickly to reduce risk) and patience (trading slowly to reduce impact). High risk aversion (<span class="math inline">\(\lambda\)</span> large) implies front-loaded execution.</p>
 <div id="almgren-chriss" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> almgren_chriss_trajectory(X, T, sigma, eta, gamma, lam, n_steps<span class="op">=</span><span class="dv">100</span>):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute Almgren-Chriss optimal execution trajectory.</span></span>
@@ -1448,10 +1474,13 @@ x_t^* = X \cdot \frac{\sinh(\kappa (T - t))}{\sinh(\kappa T)}
 <span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    results.attrs[<span class="st">"kappa"</span>] <span class="op">=</span> kappa <span class="cf">if</span> kappa_sq <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">0</span></span>
 <span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-execution-trajectories" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-execution-trajectories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate market impact parameters from Vietnamese data</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Typical values for mid-cap Vietnamese stocks</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>sigma_daily <span class="op">=</span> <span class="fl">0.025</span>  <span class="co"># 2.5% daily vol</span></span>
@@ -1491,6 +1520,7 @@ x_t^* = X \cdot \frac{\sinh(\kappa (T - t))}{\sinh(\kappa T)}
 <span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>), legend_position<span class="op">=</span><span class="st">"top"</span>)</span>
 <span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-execution-trajectories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.3
@@ -1506,6 +1536,8 @@ Figure&nbsp;45.3
 \tag{45.12}\]</span></span></p>
 <p>where <span class="math inline">\(Q\)</span> is the signed order flow, <span class="math inline">\(V\)</span> is daily volume, <span class="math inline">\(c\)</span> is the impact coefficient, and <span class="math inline">\(\delta \approx 0.5\)</span> is the impact exponent. The “square root” refers to <span class="math inline">\(\delta = 0.5\)</span>, which is remarkably robust across markets, time periods, and asset classes.</p>
 <div id="impact-estimation" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load intraday transaction data (or daily order flow proxy)</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>order_flow <span class="op">=</span> dc.get_order_flow(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2018-01-01"</span>,</span>
@@ -1562,6 +1594,7 @@ Figure&nbsp;45.3
 <span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    })</span>
 <span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>impact_df <span class="op">=</span> pd.DataFrame(impact_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-impact-by-size" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="12">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1569,7 +1602,10 @@ Figure&nbsp;45.3
 Table&nbsp;45.4: Market Impact Exponent by Firm Size Quintile
 </figcaption>
 <div aria-describedby="tbl-impact-by-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>impact_df.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1583,6 +1619,8 @@ Table&nbsp;45.4: Market Impact Exponent by Firm Size Quintile
 \tag{45.13}\]</span></span></p>
 <p>We estimate each component separately, following the <span class="citation" data-cites="hasbrouck2009trading">Hasbrouck (<a href="references.html#ref-hasbrouck2009trading" role="doc-biblioref">2009</a>)</span> methodology for effective spread decomposition.</p>
 <div id="tc-decomposition" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Effective spread estimation</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>spreads <span class="op">=</span> dc.get_bid_ask_data(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2020-01-01"</span>,</span>
@@ -1631,10 +1669,13 @@ Table&nbsp;45.4: Market Impact Exponent by Firm Size Quintile
 <span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
 <span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>    .dropna(subset<span class="op">=</span>[<span class="st">"roll_spread"</span>])</span>
 <span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-spread-size" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="14">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spread-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bin by market cap deciles</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>roll_spreads[<span class="st">"size_decile"</span>] <span class="op">=</span> roll_spreads.groupby(<span class="st">"month"</span>)[</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"market_cap"</span></span>
@@ -1668,6 +1709,7 @@ Table&nbsp;45.4: Market Impact Exponent by Firm Size Quintile
 <span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-spread-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.4
@@ -1702,6 +1744,8 @@ E\left[\frac{v - P}{P}\right] &gt; 0
 <p><strong>Book Building</strong> <span class="citation" data-cites="benveniste1989investment">(<a href="references.html#ref-benveniste1989investment" role="doc-biblioref">Benveniste and Spindt 1989</a>)</span>: The underwriter solicits indications of interest from institutional investors during the roadshow. Investors who reveal positive information (high valuations) receive favorable allocations as compensation. The mechanism aggregates information efficiently but grants discretion to the underwriter.</p>
 <p><strong>Uniform-Price Auction</strong>: All winning bidders pay the same market-clearing price. This eliminates the underwriter’s allocation discretion but may lead to free-riding on information revelation.</p>
 <div id="ipo-data" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load IPO data</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ipo_data <span class="op">=</span> dc.get_ipo_data(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    start_date<span class="op">=</span><span class="st">"2005-01-01"</span>,</span>
@@ -1723,6 +1767,7 @@ E\left[\frac{v - P}{P}\right] &gt; 0
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total IPOs: </span><span class="sc">{</span><span class="bu">len</span>(ipo_data)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"By mechanism:</span><span class="ch">\n</span><span class="sc">{</span>ipo_data[<span class="st">'mechanism'</span>]<span class="sc">.</span>value_counts()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-ipo-underpricing" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="16">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1730,6 +1775,8 @@ E\left[\frac{v - P}{P}\right] &gt; 0
 Table&nbsp;45.5: IPO Underpricing by Allocation Mechanism
 </figcaption>
 <div aria-describedby="tbl-ipo-underpricing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ipo_summary <span class="op">=</span> (</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    ipo_data.groupby(<span class="st">"mechanism"</span>)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
@@ -1743,6 +1790,7 @@ Table&nbsp;45.5: IPO Underpricing by Allocation Mechanism
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>ipo_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1754,6 +1802,8 @@ Table&nbsp;45.5: IPO Underpricing by Allocation Mechanism
 <p>1 . Average underpricing: <span class="math inline">\(E[U] = f(\mu, \sigma_v^2)\)</span> 2. Cross-sectional variance of underpricing: <span class="math inline">\(\text{Var}(U) = g(\mu, \sigma_v^2)\)</span></p>
 <p>We match these model-implied moments to the data.</p>
 <div id="rock-model-estimation" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rock_model_moments(params, n_sim<span class="op">=</span><span class="dv">10000</span>):</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Simulate Rock (1986) IPO model and compute moments.</span></span>
@@ -1835,10 +1885,13 @@ Table&nbsp;45.5: IPO Underpricing by Allocation Mechanism
 <span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Fraction informed (μ): </span><span class="sc">{</span>mu_hat<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Value uncertainty (σ_v): </span><span class="sc">{</span>sigma_v_hat<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Objective value: </span><span class="sc">{</span>result<span class="sc">.</span>fun<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-ipo-underpricing-time" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="18">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-ipo-underpricing-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ipo_plot <span class="op">=</span> ipo_data.dropna(subset<span class="op">=</span>[<span class="st">"underpricing"</span>, <span class="st">"mechanism"</span>]).copy()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>ipo_plot[<span class="st">"year"</span>] <span class="op">=</span> pd.to_datetime(ipo_plot[<span class="st">"ipo_date"</span>]).dt.year</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1870,6 +1923,7 @@ Table&nbsp;45.5: IPO Underpricing by Allocation Mechanism
 <span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
 <span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ipo-underpricing-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.5
@@ -1881,6 +1935,8 @@ Figure&nbsp;45.5
 <h3 data-number="45.4.4" class="anchored" data-anchor-id="counterfactual-welfare-under-alternative-mechanisms"><span class="header-section-number">45.4.4</span> Counterfactual: Welfare Under Alternative Mechanisms</h3>
 <p>With the structural parameters <span class="math inline">\((\hat{\mu}, \hat{\sigma}_v)\)</span> in hand, we can simulate counterfactual outcomes. For instance: if all Vietnamese IPOs used uniform-price auctions instead of book building, how would underpricing and welfare change?</p>
 <div id="counterfactual-ipo" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> simulate_ipo_mechanism(mu, sigma_v, mechanism<span class="op">=</span><span class="st">"book_building"</span>,</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                           n_sim<span class="op">=</span><span class="dv">50000</span>):</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -1931,6 +1987,7 @@ Figure&nbsp;45.5
 <span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>]).set_index(<span class="st">"mechanism"</span>).<span class="bu">round</span>(<span class="dv">4</span>)</span>
 <span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>counterfactual</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1974,6 +2031,8 @@ b = E[V \mid \text{sell order}] = \frac{p(1-\mu)}{(1-\mu) + (1-p)\mu} V^H + \fra
 \text{PIN} = \frac{\alpha \mu}{\alpha \mu + \varepsilon_b + \varepsilon_s}
 \tag{45.20}\]</span></span></p>
 <div id="pin-estimation" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pin_log_likelihood(params, data):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute negative log-likelihood for the Easley-Kiefer-O'Hara-Paperman</span></span>
@@ -2089,8 +2148,11 @@ b = E[V \mid \text{sell order}] = \frac{p(1-\mu)}{(1-\mu) + (1-p)\mu} V^H + \fra
 <span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a>        <span class="st">"pin"</span>: pin,</span>
 <span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a>        <span class="st">"log_likelihood"</span>: <span class="op">-</span>best_nll</span>
 <span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="pin-cross-section" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate PIN for a cross-section of stocks</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Using daily buy/sell counts from Lee-Ready classification</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>trade_counts <span class="op">=</span> dc.get_trade_counts(</span>
@@ -2121,10 +2183,13 @@ b = E[V \mid \text{sell order}] = \frac{p(1-\mu)}{(1-\mu) + (1-p)\mu} V^H + \fra
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"PIN estimates for </span><span class="sc">{</span><span class="bu">len</span>(pin_df)<span class="sc">}</span><span class="ss"> stocks"</span>)</span>
 <span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Mean PIN: </span><span class="sc">{</span>pin_df[<span class="st">'pin'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Median PIN: </span><span class="sc">{</span>pin_df[<span class="st">'pin'</span>]<span class="sc">.</span>median()<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-pin-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="22">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pin-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    p9.ggplot(pin_df, p9.aes(x<span class="op">=</span><span class="st">"pin"</span>))</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.geom_histogram(bins<span class="op">=</span><span class="dv">25</span>, fill<span class="op">=</span><span class="st">"#2E5090"</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
@@ -2140,6 +2205,7 @@ b = E[V \mid \text{sell order}] = \frac{p(1-\mu)}{(1-\mu) + (1-p)\mu} V^H + \fra
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme_minimal()</span>
 <span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">+</span> p9.theme(figure_size<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-pin-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;45.6
@@ -2151,6 +2217,8 @@ Figure&nbsp;45.6
 <h3 data-number="45.5.4" class="anchored" data-anchor-id="pin-and-asset-pricing"><span class="header-section-number">45.5.4</span> PIN and Asset Pricing</h3>
 <p><span class="citation" data-cites="easley2002information">Easley, Hvidkjaer, and O’hara (<a href="references.html#ref-easley2002information" role="doc-biblioref">2002</a>)</span> argue that PIN should be priced in the cross-section of expected returns: stocks with higher information asymmetry require a risk premium to compensate uninformed investors. We test this prediction using Fama-MacBeth regressions.</p>
 <div id="pin-asset-pricing" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge PIN with firm characteristics and forward returns</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pin_chars <span class="op">=</span> pin_df[[<span class="st">"ticker"</span>, <span class="st">"pin"</span>]].merge(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    dc.get_firm_characteristics(</span>
@@ -2188,6 +2256,7 @@ Figure&nbsp;45.6
 <span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> var <span class="kw">in</span> [<span class="st">"pin"</span>, <span class="st">"log_size"</span>, <span class="st">"book_to_market"</span>, <span class="st">"momentum_12m"</span>]:</span>
 <span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>var<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>cs_model<span class="sc">.</span>params[var]<span class="sc">:.4f}</span><span class="ss"> "</span></span>
 <span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>              <span class="ss">f"(t = </span><span class="sc">{</span>cs_model<span class="sc">.</span>tvalues[var]<span class="sc">:.3f}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="estimation-challenges-in-limit-order-book-models" class="level3" data-number="45.5.5">
@@ -2328,6 +2397,8 @@ Table&nbsp;45.7: Data Requirements for Structural Estimation
 <p><strong>Optimization.</strong> The GMM or MLE objective is typically non-convex, requiring multiple starting points and global optimization algorithms. The PIN model with 5 parameters requires <span class="math inline">\(\sim 10\)</span> random starts; a richer model with <span class="math inline">\(\sim 20\)</span> parameters might require hundreds.</p>
 <p><strong>Inference.</strong> Standard errors for structural parameters often require bootstrapping (because the asymptotic distribution is non-standard or the delta method is unreliable), adding a multiplicative factor of 200–1000 to the computational budget.</p>
 <div id="computational-cost-comparison" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Illustration: computational cost comparison</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2353,6 +2424,7 @@ Table&nbsp;45.7: Data Requirements for Structural Estimation
 <span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  OLS (100k obs): </span><span class="sc">{</span>ols_time<span class="op">*</span><span class="dv">1000</span><span class="sc">:.1f}</span><span class="ss"> ms per estimation"</span>)</span>
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  PIN (250 days, 5 starts): </span><span class="sc">{</span>pin_time<span class="sc">:.1f}</span><span class="ss"> s per stock"</span>)</span>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Ratio: </span><span class="sc">{</span>pin_time <span class="op">/</span> ols_time<span class="sc">:.0f}</span><span class="ss">x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Computational Cost Comparison:
   OLS (100k obs): 42.7 ms per estimation

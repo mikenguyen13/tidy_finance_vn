@@ -937,7 +937,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./30_financial_statement_analysis.html">Firm Fundamentals, Valuation, and Corporate Signals</a></li><li class="breadcrumb-item"><a href="./36_valuation.html"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Firm Valuation, Financial Distress, and Company Maturity</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Firm Valuation, Financial Distress, and Company Maturity</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Firm Valuation, Financial Distress, and Company Maturity</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -959,6 +959,8 @@ window.Quarto = {
 <section id="required-packages" class="level2" data-number="29.1">
 <h2 data-number="29.1" class="anchored" data-anchor-id="required-packages"><span class="header-section-number">29.1</span> Required Packages</h2>
 <div id="setup" class="cell" data-message="false" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -993,6 +995,7 @@ window.Quarto = {
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"danger"</span>: <span class="st">"#d62728"</span>,</span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"distress"</span>: <span class="st">"#8b0000"</span>,</span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="sec-valuation-theory" class="level1" data-number="30">
@@ -1270,6 +1273,8 @@ DataCore.vn provides comprehensive financial data for Vietnamese listed companie
 <h2 data-number="32.1" class="anchored" data-anchor-id="loading-and-cleaning-financial-statement-data"><span class="header-section-number">32.1</span> Loading and Cleaning Financial Statement Data</h2>
 <p>We begin by loading the annual financial statement data and constructing the variables needed for our three measures.</p>
 <div id="simulate-data" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Simulate Vietnamese financial data (replace with DataCore.vn API calls)</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================================</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice, replace this section with actual DataCore.vn API calls:</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
@@ -1403,6 +1408,7 @@ DataCore.vn provides comprehensive financial data for Vietnamese listed companie
 <span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Number of unique firms: </span><span class="sc">{</span>df[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Year range: </span><span class="sc">{</span>df[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">}</span><span class="ss">–</span><span class="sc">{</span>df[<span class="st">'year'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Exchanges: </span><span class="sc">{</span>df[<span class="st">'exchange'</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>to_dict()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Panel dimensions: 3,484 firm-year observations
 Number of unique firms: 297
@@ -1415,6 +1421,8 @@ Exchanges: {'HOSE': 1701, 'HNX': 1118, 'UPCoM': 665}</code></pre>
 <h2 data-number="32.2" class="anchored" data-anchor-id="variable-definitions-and-mapping"><span class="header-section-number">32.2</span> Variable Definitions and Mapping</h2>
 <p><a href="#tbl-variable-mapping" class="quarto-xref">Table&nbsp;<span>32.1</span></a> provides the mapping between standard variable names and the corresponding fields.</p>
 <div class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>variable_map <span class="op">=</span> pd.DataFrame({</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Compustat Variable"</span>: [</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"AT"</span>, <span class="st">"SEQ"</span>, <span class="st">"LT"</span>, <span class="st">"LCT"</span>, <span class="st">"SALE"</span>, <span class="st">"EBIT"</span>, <span class="st">"NI"</span>,</span>
@@ -1465,6 +1473,7 @@ Exchanges: {'HOSE': 1701, 'HNX': 1118, 'UPCoM': 665}</code></pre>
 <span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    ]},</span>
 <span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"selector"</span>: <span class="st">"td"</span>, <span class="st">"props"</span>: [(<span class="st">"padding"</span>, <span class="st">"6px"</span>)]},</span>
 <span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-variable-mapping" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-variable-mapping-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1638,6 +1647,8 @@ Table&nbsp;32.1: Variable mapping
 <h2 data-number="32.3" class="anchored" data-anchor-id="data-quality-checks"><span class="header-section-number">32.3</span> Data Quality Checks</h2>
 <p>Before computing any measures, we perform essential data quality checks that are particularly important for Vietnamese data.</p>
 <div id="data-quality-checks" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Data quality validation</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> data_quality_report(df):</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Generate a comprehensive data quality report."""</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    report <span class="op">=</span> {}</span>
@@ -1672,6 +1683,7 @@ Table&nbsp;32.1: Variable mapping
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> df_clean[df_clean[<span class="st">"seq"</span>] <span class="op">&gt;</span> <span class="dv">0</span>]  <span class="co"># Positive equity (for BE calculation)</span></span>
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Observations after cleaning: </span><span class="sc">{</span><span class="bu">len</span>(df_clean)<span class="sc">:,}</span><span class="ss"> "</span></span>
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"(dropped </span><span class="sc">{</span><span class="bu">len</span>(df) <span class="op">-</span> <span class="bu">len</span>(df_clean)<span class="sc">:,}</span><span class="ss">)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data Quality Report
 =============================================
@@ -1700,6 +1712,8 @@ BE = SEQ + TXDB + ITCB - PREF
 \tag{33.1}\]</span></span></p>
 <p>where <span class="math inline">\(PREF\)</span> is the preferred stock value, using the redemption value if available, otherwise the liquidating value, and finally the carrying value as a last resort. In the Vietnamese context, preferred stock is relatively rare among listed companies, so <span class="math inline">\(PREF\)</span> is often zero.</p>
 <div id="compute-book-equity" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Book value of equity computation</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_book_equity(df):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute book value of equity following Daniel and Titman (1997).</span></span>
@@ -1727,6 +1741,7 @@ BE = SEQ + TXDB + ITCB - PREF
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Book Equity Summary Statistics (VND millions)"</span>)</span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_clean[<span class="st">"be"</span>].describe().<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Book Equity Summary Statistics (VND millions)
 count          3,484
@@ -1749,6 +1764,8 @@ ME = P_{\text{close}} \times \text{CSHO}
 \tag{33.2}\]</span></span></p>
 <p>For Vietnamese firms, this is obtained from the closing price on the last trading day of the fiscal year. Most Vietnamese firms have a December 31 fiscal year end, though some (particularly in agriculture and banking) may differ.</p>
 <div id="compute-market-equity" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Market value of equity computation</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ME is already computed in our simulated data as prcc * csho</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice with DataCore.vn:</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   me = df["gia_dong_cua_cuoi_nam"] * df["so_luong_co_phieu_luu_hanh"]</span></span>
@@ -1757,6 +1774,7 @@ ME = P_{\text{close}} \times \text{CSHO}
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Market Equity Summary Statistics (VND millions)"</span>)</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df_clean[<span class="st">"me"</span>].describe().<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="ss">f"</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Market Equity Summary Statistics (VND millions)
 count          3,484
@@ -1783,6 +1801,8 @@ Q_{\text{simple}} = 1 + \frac{ME - BE}{AT}
 \tag{33.4}\]</span></span></p>
 <p>which makes the interpretation clear: Tobin’s Q equals one plus the market-to-book premium (or discount) scaled by total assets.</p>
 <div id="compute-tobinq" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Tobin’s Q computation with multiple variants</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_tobins_q(df):</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute multiple variants of Tobin's Q.</span></span>
@@ -1824,6 +1844,7 @@ Q_{\text{simple}} = 1 + \frac{ME - BE}{AT}
 <span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Tobin's Q Summary Statistics"</span>)</span>
 <span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(q_summary.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Tobin's Q Summary Statistics
        Simple Q  Chung-Pruitt Q  Market-to-Book
@@ -1846,6 +1867,8 @@ max       2.804           2.433           3.189</code></pre>
 <h2 data-number="33.4" class="anchored" data-anchor-id="winsorizing-extreme-values"><span class="header-section-number">33.4</span> Winsorizing Extreme Values</h2>
 <p>Tobin’s Q values can be heavily influenced by outliers, particularly in emerging markets where data quality may be inconsistent. We winsorize at the 1st and 99th percentiles.</p>
 <div id="winsorize" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Winsorization of extreme values</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> winsorize(series, lower<span class="op">=</span><span class="fl">0.01</span>, upper<span class="op">=</span><span class="fl">0.99</span>):</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Winsorize a pandas Series at specified percentiles."""</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    low <span class="op">=</span> series.quantile(lower)</span>
@@ -1861,6 +1884,7 @@ max       2.804           2.433           3.189</code></pre>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std=</span><span class="sc">{</span>df_clean[<span class="st">'tobin_q_simple'</span>]<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  After:  mean=</span><span class="sc">{</span>df_clean[<span class="st">'tobin_q_simple_w'</span>]<span class="sc">.</span>mean()<span class="sc">:.3f}</span><span class="ss">, "</span></span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std=</span><span class="sc">{</span>df_clean[<span class="st">'tobin_q_simple_w'</span>]<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Effect of Winsorization on Simple Tobin's Q:
   Before: mean=1.031, std=0.243
@@ -1871,6 +1895,8 @@ max       2.804           2.433           3.189</code></pre>
 <section id="cross-sectional-distribution-of-tobins-q" class="level2" data-number="33.5">
 <h2 data-number="33.5" class="anchored" data-anchor-id="cross-sectional-distribution-of-tobins-q"><span class="header-section-number">33.5</span> Cross-Sectional Distribution of Tobin’s Q</h2>
 <div id="cell-fig-tobinq-distribution" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">5</span>))</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Latest year distribution</span></span>
@@ -1908,6 +1934,7 @@ max       2.804           2.433           3.189</code></pre>
 <span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-tobinq-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1925,6 +1952,8 @@ Figure&nbsp;33.1: Distribution of Tobin’s Q across Vietnamese listed firms (20
 <section id="time-series-evolution-of-tobins-q" class="level2" data-number="33.6">
 <h2 data-number="33.6" class="anchored" data-anchor-id="time-series-evolution-of-tobins-q"><span class="header-section-number">33.6</span> Time-Series Evolution of Tobin’s Q</h2>
 <div id="cell-fig-tobinq-timeseries" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute annual statistics by exchange</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>annual_q <span class="op">=</span> (</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    df_clean</span>
@@ -1956,6 +1985,7 @@ Figure&nbsp;33.1: Distribution of Tobin’s Q across Vietnamese listed firms (20
 <span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-tobinq-timeseries" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1973,6 +2003,8 @@ Figure&nbsp;33.2: Evolution of median Tobin’s Q across Vietnamese exchanges (2
 <section id="tobins-q-by-industry" class="level2" data-number="33.7">
 <h2 data-number="33.7" class="anchored" data-anchor-id="tobins-q-by-industry"><span class="header-section-number">33.7</span> Tobin’s Q by Industry</h2>
 <div id="cell-fig-tobinq-industry" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>latest_industry_q <span class="op">=</span> (</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    latest_data</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"industry"</span>)[<span class="st">"tobin_q_simple_w"</span>]</span>
@@ -2002,6 +2034,7 @@ Figure&nbsp;33.2: Evolution of median Tobin’s Q across Vietnamese exchanges (2
 <span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-tobinq-industry" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2022,6 +2055,8 @@ Figure&nbsp;33.3: Median Tobin’s Q by industry in Vietnam (latest available ye
 <section id="original-z-score-for-listed-firms" class="level2" data-number="34.1">
 <h2 data-number="34.1" class="anchored" data-anchor-id="original-z-score-for-listed-firms"><span class="header-section-number">34.1</span> Original Z-Score for Listed Firms</h2>
 <div id="compute-zscore" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Altman Z-Score computation (all three variants)</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_altman_z(df):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute three variants of the Altman Z-Score:</span></span>
@@ -2090,6 +2125,7 @@ Figure&nbsp;33.3: Median Tobin’s Q by industry in Vietnam (latest available ye
 <span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>z_summary <span class="op">=</span> df_clean[[<span class="st">"altman_z"</span>, <span class="st">"altman_z_prime"</span>, <span class="st">"altman_z_em"</span>]].describe().<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a>z_summary.columns <span class="op">=</span> [<span class="st">"Original Z"</span>, <span class="st">"Z' (Private)"</span>, <span class="st">"Z'' (Emerging)"</span>]</span>
 <span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(z_summary.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Z-Score Summary Statistics
        Original Z  Z' (Private)  Z'' (Emerging)
@@ -2108,6 +2144,8 @@ max        28.640        11.119          29.686</code></pre>
 <h2 data-number="34.2" class="anchored" data-anchor-id="z-score-component-analysis"><span class="header-section-number">34.2</span> Z-Score Component Analysis</h2>
 <p>Understanding which components drive the Z-Score is particularly informative in the Vietnamese context, where certain ratios may behave differently than in developed markets.</p>
 <div id="cell-fig-zscore-components" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">9</span>))</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>components <span class="op">=</span> [</span>
@@ -2138,6 +2176,7 @@ max        28.640        11.119          29.686</code></pre>
 <span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="ss">f"Z-Score Component Distributions (</span><span class="sc">{</span>latest_year<span class="sc">}</span><span class="ss">)"</span>, fontsize<span class="op">=</span><span class="dv">14</span>, y<span class="op">=</span><span class="fl">1.02</span>)</span>
 <span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-zscore-components" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2155,6 +2194,8 @@ Figure&nbsp;34.1: Distribution of Altman Z-Score component ratios for Vietnamese
 <section id="distribution-of-risk-zones" class="level2" data-number="34.3">
 <h2 data-number="34.3" class="anchored" data-anchor-id="distribution-of-risk-zones"><span class="header-section-number">34.3</span> Distribution of Risk Zones</h2>
 <div id="cell-fig-zscore-zones" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">6</span>))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># --- Original Z-Score Zones ---</span></span>
@@ -2219,6 +2260,7 @@ Figure&nbsp;34.1: Distribution of Altman Z-Score component ratios for Vietnamese
 <span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-zscore-zones" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2237,6 +2279,8 @@ Figure&nbsp;34.2: Proportion of Vietnamese listed firms in each Altman Z-Score r
 <h2 data-number="34.4" class="anchored" data-anchor-id="comparing-z-score-variants"><span class="header-section-number">34.4</span> Comparing Z-Score Variants</h2>
 <p>An important practical question is which Z-Score variant is most appropriate for Vietnamese firms. The original model was calibrated on U.S. manufacturing firms, while the Z’’-Score was specifically designed for emerging markets and non-manufacturing sectors.</p>
 <div id="cell-fig-zscore-comparison" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> latest_z.dropna(subset<span class="op">=</span>[<span class="st">"altman_z_w"</span>, <span class="st">"altman_z_em_w"</span>]).sample(</span>
@@ -2272,6 +2316,7 @@ Figure&nbsp;34.2: Proportion of Vietnamese listed firms in each Altman Z-Score r
 <span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">"upper left"</span>)</span>
 <span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-zscore-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2302,6 +2347,8 @@ Figure&nbsp;34.3: Comparison of original Z-Score and emerging market Z’‘-Sco
 \text{Age}_{\text{data}} = \text{Current Year} - \text{First Year with Data}
 \tag{35.3}\]</span></span></p>
 <div id="compute-age" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Company age computation with multiple proxies</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_company_age(df):</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute multiple proxies for company age.</span></span>
@@ -2338,6 +2385,7 @@ Figure&nbsp;34.3: Comparison of original Z-Score and emerging market Z’‘-Sco
 <span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>].describe().<span class="bu">round</span>(<span class="dv">1</span>)</span>
 <span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>age_summary.columns <span class="op">=</span> [<span class="st">"Founding Age"</span>, <span class="st">"Listing Age"</span>, <span class="st">"Data Age"</span>]</span>
 <span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(age_summary.to_string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Company Age Summary Statistics
        Founding Age  Listing Age  Data Age
@@ -2355,6 +2403,8 @@ max            49.0         24.0      16.0</code></pre>
 <section id="age-distribution" class="level2" data-number="35.2">
 <h2 data-number="35.2" class="anchored" data-anchor-id="age-distribution"><span class="header-section-number">35.2</span> Age Distribution</h2>
 <div id="cell-fig-age-distribution" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">5</span>))</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>age_vars <span class="op">=</span> [</span>
@@ -2381,6 +2431,7 @@ max            49.0         24.0      16.0</code></pre>
 <span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="ss">f"Company Age Distributions (</span><span class="sc">{</span>latest_year<span class="sc">}</span><span class="ss">)"</span>, fontsize<span class="op">=</span><span class="dv">14</span>, y<span class="op">=</span><span class="fl">1.02</span>)</span>
 <span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-age-distribution" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2399,6 +2450,8 @@ Figure&nbsp;35.1: Distribution of company age measures for Vietnamese listed fir
 <h2 data-number="35.3" class="anchored" data-anchor-id="age-and-the-equitization-effect"><span class="header-section-number">35.3</span> Age and the Equitization Effect</h2>
 <p>A distinctive feature of the Vietnamese market is the equitization of SOEs. Many firms have founding dates that predate the stock market by decades, creating a large gap between founding age and listing age.</p>
 <div id="cell-fig-age-gap" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>latest <span class="op">=</span> df_clean[df_clean[<span class="st">"year"</span>] <span class="op">==</span> latest_year].copy()</span>
@@ -2425,6 +2478,7 @@ Figure&nbsp;35.1: Distribution of company age measures for Vietnamese listed fir
 <span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-age-gap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2451,6 +2505,8 @@ Figure&nbsp;35.2: Relationship between founding age and listing age for Vietname
 <li><strong>Z and Age</strong>: Older firms typically have more stable earnings and higher retained earnings, contributing to higher Z-Scores, though very old firms may face declining competitiveness.</li>
 </ul>
 <div id="cell-fig-joint-analysis" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">5</span>))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> latest.dropna(subset<span class="op">=</span>[<span class="st">"tobin_q_simple_w"</span>, <span class="st">"altman_z_w"</span>, <span class="st">"age_founding"</span>])</span>
@@ -2494,6 +2550,7 @@ Figure&nbsp;35.2: Relationship between founding age and listing age for Vietname
 <span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-joint-analysis" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2511,6 +2568,8 @@ Figure&nbsp;36.1: Relationship between Tobin’s Q, Altman Z-Score, and company 
 <section id="correlation-structure" class="level2" data-number="36.2">
 <h2 data-number="36.2" class="anchored" data-anchor-id="correlation-structure"><span class="header-section-number">36.2</span> Correlation Structure</h2>
 <div id="cell-fig-correlation-matrix" class="cell" data-execution_count="20">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>corr_vars <span class="op">=</span> [</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tobin_q_simple_w"</span>, <span class="st">"mtb_w"</span>, <span class="st">"altman_z_w"</span>, <span class="st">"altman_z_em_w"</span>,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"age_founding"</span>, <span class="st">"age_listing"</span>,</span>
@@ -2542,6 +2601,7 @@ Figure&nbsp;36.1: Relationship between Tobin’s Q, Altman Z-Score, and company 
 <span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-correlation-matrix" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2563,6 +2623,8 @@ Figure&nbsp;36.2: Correlation matrix of key valuation, distress, and maturity me
 Q_{i,t} = \alpha + \beta_1 \ln(\text{Age}_{i}) + \beta_2 Z''_{i,t} + \beta_3 \text{SOE}_{i} + \beta_4 \ln(\text{TA}_{i,t}) + \varepsilon_{i,t}
 \tag{36.1}\]</span></span></p>
 <div id="regression-analysis" class="cell" data-execution_count="21">
+<details class="code-fold">
+<summary>Cross-sectional regression of Tobin’s Q</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.linalg <span class="im">import</span> lstsq</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare regression data</span></span>
@@ -2610,6 +2672,7 @@ Q_{i,t} = \alpha + \beta_1 \ln(\text{Age}_{i}) + \beta_2 Z''_{i,t} + \beta_3 \te
 <span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Observations: </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">65</span>)</span>
 <span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Significance: *** p&lt;0.01, ** p&lt;0.05, * p&lt;0.10"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>=================================================================
   Cross-Sectional Regression: Determinants of Tobin's Q
@@ -2639,6 +2702,8 @@ Q_{i,t} = \alpha + \beta_1 \ln(\text{Age}_{i}) + \beta_2 Z''_{i,t} + \beta_3 \te
 <h2 data-number="37.1" class="anchored" data-anchor-id="putting-it-all-together"><span class="header-section-number">37.1</span> Putting It All Together</h2>
 <p>Here we provide a single, clean function that takes raw DataCore.vn financial data and produces a complete dataset with all three measures computed.</p>
 <div id="complete-pipeline" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Complete pipeline for computing Tobin’s Q, Z-Score, and Company Age</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_valuation_distress_age(df, firm_profiles<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Complete pipeline to compute Tobin's Q, Altman Z-Score variants,</span></span>
@@ -2757,6 +2822,7 @@ Q_{i,t} = \alpha + \beta_1 \ln(\text{Age}_{i}) + \beta_2 Z''_{i,t} + \beta_3 \te
 <span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> var <span class="kw">in</span> final_df.columns:</span>
 <span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a>        non_null <span class="op">=</span> final_df[var].notna().<span class="bu">sum</span>()</span>
 <span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"  </span><span class="sc">{</span>var<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>non_null<span class="sc">:,}</span><span class="ss"> non-null values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Final dataset: 3,484 observations, 48 variables
 Firms: 297
@@ -2777,6 +2843,8 @@ Key variables computed:
 <section id="exporting-results" class="level2" data-number="37.2">
 <h2 data-number="37.2" class="anchored" data-anchor-id="exporting-results"><span class="header-section-number">37.2</span> Exporting Results</h2>
 <div id="export-results" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Export computed measures to CSV</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select key output variables</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>output_vars <span class="op">=</span> [</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ticker"</span>, <span class="st">"year"</span>, <span class="st">"datadate"</span>, <span class="st">"exchange"</span>, <span class="st">"industry"</span>,</span>
@@ -2799,6 +2867,7 @@ Key variables computed:
 <span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>                <span class="st">"z_zone"</span>, <span class="st">"age_founding"</span>]</span>
 <span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>display_cols <span class="op">=</span> [c <span class="cf">for</span> c <span class="kw">in</span> display_cols <span class="cf">if</span> c <span class="kw">in</span> export_df.columns]</span>
 <span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(export_df[display_cols].head().to_string(index<span class="op">=</span><span class="va">False</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Export dataset: 3,484 rows × 22 columns
 
@@ -2819,6 +2888,8 @@ VN0001  2021 0.805818  4.220869     7.588273   Safe             8</code></pre>
 <h2 data-number="38.1" class="anchored" data-anchor-id="state-ownership-and-valuation"><span class="header-section-number">38.1</span> State Ownership and Valuation</h2>
 <p>State ownership is a defining feature of the Vietnamese corporate landscape. We examine how state ownership affects both Tobin’s Q and financial distress risk.</p>
 <div id="cell-fig-soe-analysis" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">6</span>))</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>latest <span class="op">=</span> final_df[final_df[<span class="st">"year"</span>] <span class="op">==</span> latest_year].dropna(</span>
@@ -2873,6 +2944,7 @@ VN0001  2021 0.805818  4.220869     7.588273   Safe             8</code></pre>
 <span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-soe-analysis" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -2890,6 +2962,8 @@ Figure&nbsp;38.1: Relationship between state ownership percentage and firm valua
 <section id="exchange-level-analysis" class="level2" data-number="38.2">
 <h2 data-number="38.2" class="anchored" data-anchor-id="exchange-level-analysis"><span class="header-section-number">38.2</span> Exchange-Level Analysis</h2>
 <div class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>exchange_summary <span class="op">=</span> (</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    latest</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"exchange"</span>)</span>
@@ -2928,6 +3002,7 @@ Figure&nbsp;38.1: Relationship between state ownership percentage and firm valua
 <span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"% Distress (Z)"</span>: <span class="st">"</span><span class="sc">{:.1f}</span><span class="st">%"</span>, <span class="st">"% Distress (Z'')"</span>: <span class="st">"</span><span class="sc">{:.1f}</span><span class="st">%"</span>,</span>
 <span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Median Age"</span>: <span class="st">"</span><span class="sc">{:.0f}</span><span class="st">"</span>, <span class="st">"Median SOE %"</span>: <span class="st">"</span><span class="sc">{:.1f}</span><span class="st">%"</span></span>
 <span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-exchange-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="25">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-exchange-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -3023,6 +3098,8 @@ Table&nbsp;38.1: Summary statistics by exchange for Vietnamese listed firms (lat
 <section id="sector-heatmap-valuation-and-distress" class="level2" data-number="38.3">
 <h2 data-number="38.3" class="anchored" data-anchor-id="sector-heatmap-valuation-and-distress"><span class="header-section-number">38.3</span> Sector Heatmap: Valuation and Distress</h2>
 <div id="cell-fig-sector-heatmap" class="cell" data-execution_count="26">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>))</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Tobin's Q heatmap</span></span>
@@ -3063,6 +3140,7 @@ Table&nbsp;38.1: Summary statistics by exchange for Vietnamese listed firms (lat
 <span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-sector-heatmap" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -3081,6 +3159,8 @@ Figure&nbsp;38.2: Median Tobin’s Q and Z’’-Score by industry and year for 
 <h2 data-number="38.4" class="anchored" data-anchor-id="handling-delisted-firms-survivorship-bias"><span class="header-section-number">38.4</span> Handling Delisted Firms: Survivorship Bias</h2>
 <p>A critical issue in measuring financial distress is survivorship bias. If we only analyze currently listed firms, we miss the very firms that the Z-Score is designed to identify, those that went bankrupt or were delisted.</p>
 <div id="survivorship-bias" class="cell" data-execution_count="27">
+<details class="code-fold">
+<summary>Analysis of delisted firms and survivorship bias</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate delisting data (replace with DataCore.vn delisting records)</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">123</span>)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>n_delisted <span class="op">=</span> <span class="dv">50</span></span>
@@ -3105,6 +3185,7 @@ Figure&nbsp;38.2: Median Tobin’s Q and Z’’-Score by industry and year for 
 <span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Currently listed: </span><span class="sc">{</span>final_df[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Survivorship rate: "</span></span>
 <span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"</span><span class="sc">{</span>final_df[<span class="st">'ticker'</span>]<span class="sc">.</span>nunique()<span class="op">/</span>(final_df[<span class="st">'ticker'</span>].nunique()<span class="op">+</span>n_delisted)<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Delisting Reasons Summary
 ==================================================
@@ -3127,6 +3208,8 @@ Survivorship rate: 85.6%</code></pre>
 <section id="alternative-tobins-q-specifications" class="level2" data-number="39.1">
 <h2 data-number="39.1" class="anchored" data-anchor-id="alternative-tobins-q-specifications"><span class="header-section-number">39.1</span> Alternative Tobin’s Q Specifications</h2>
 <div id="cell-fig-q-variants-comparison" class="cell" data-execution_count="28">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>))</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> latest.dropna(subset<span class="op">=</span>[<span class="st">"tobin_q_w"</span>, <span class="st">"tobin_q_cp"</span>]).copy()</span>
@@ -3156,6 +3239,7 @@ Survivorship rate: 85.6%</code></pre>
 <span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-q-variants-comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -3178,6 +3262,8 @@ Q^{\text{adj}}_{i,t} = Q_{i,t} - \overline{Q}_{j(i),t}
 \tag{39.1}\]</span></span></p>
 <p>where <span class="math inline">\(\overline{Q}_{j(i),t}\)</span> is the median Tobin’s Q of the industry <span class="math inline">\(j\)</span> to which firm <span class="math inline">\(i\)</span> belongs in year <span class="math inline">\(t\)</span>.</p>
 <div id="industry-adjusted" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Industry-adjusted measures</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> industry_adjust(df, var, group_var<span class="op">=</span><span class="st">"industry"</span>):</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute industry-adjusted measure (deviation from industry median)."""</span></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    industry_median <span class="op">=</span> df.groupby([<span class="st">"year"</span>, group_var])[var].transform(<span class="st">"median"</span>)</span>
@@ -3193,6 +3279,7 @@ Q^{\text{adj}}_{i,t} = Q_{i,t} - \overline{Q}_{j(i),t}
 <span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std=</span><span class="sc">{</span>latest_adj[<span class="st">'tobin_q_adj'</span>]<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
 <span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Z''-Score (adjusted): mean=</span><span class="sc">{</span>latest_adj[<span class="st">'altman_z_em_adj'</span>]<span class="sc">.</span>mean()<span class="sc">:.4f}</span><span class="ss">, "</span></span>
 <span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"std=</span><span class="sc">{</span>latest_adj[<span class="st">'altman_z_em_adj'</span>]<span class="sc">.</span>std()<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Industry-Adjusted Measures (Latest Year)
   Tobin's Q (adjusted): mean=0.0352, std=0.226
@@ -3207,6 +3294,8 @@ Q^{\text{adj}}_{i,t} = Q_{i,t} - \overline{Q}_{j(i),t}
 Q_{i,t} = \alpha_i + \gamma_t + \beta_1 Z''_{i,t} + \beta_2 \ln(\text{Age}_{i,t}) + \beta_3 \text{Size}_{i,t} + \varepsilon_{i,t}
 \tag{39.2}\]</span></span></p>
 <div id="panel-regression" class="cell" data-execution_count="30">
+<details class="code-fold">
+<summary>Panel regression with year and industry fixed effects</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Simplified within-estimator (year and industry demeaning)</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>panel <span class="op">=</span> final_df.dropna(</span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    subset<span class="op">=</span>[<span class="st">"tobin_q_w"</span>, <span class="st">"altman_z_em_w"</span>, <span class="st">"age_founding"</span>, <span class="st">"at"</span>]</span>
@@ -3255,6 +3344,7 @@ Q_{i,t} = \alpha_i + \gamma_t + \beta_1 Z''_{i,t} + \beta_2 \ln(\text{Age}_{i,t}
 <span id="cb43-46"><a href="#cb43-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  R-squared (within): </span><span class="sc">{</span>r_squared<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
 <span id="cb43-47"><a href="#cb43-47" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Observations: </span><span class="sc">{</span>n<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb43-48"><a href="#cb43-48" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">65</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>=================================================================
   Panel Regression: Tobin's Q with Year-Industry FE
@@ -3416,6 +3506,8 @@ y_i = \alpha + \beta_1 \text{Treated}_i + \beta_2 \text{Post}_t + \beta_3\,(\tex
 <h2 data-number="40.5" class="anchored" data-anchor-id="sec-valuation-rdd-implementation"><span class="header-section-number">40.5</span> Implementation: A Fuzzy RDD from Scratch</h2>
 <p>No Vietnamese case-level insolvency panel exists, so we simulate one whose data-generating process is calibrated to the estimates in <a href="#tbl-subv-estimates" class="quarto-xref">Table&nbsp;<span>40.1</span></a>: a <span class="math inline">\(17\%\)</span> baseline confirmation rate, roughly <span class="math inline">\(60\%\)</span> take-up among eligible firms, and a true local effect of <span class="math inline">\(32\)</span> percentage points. Because the truth is known, the estimator can be checked against it, and the selection problem that motivates the design can be built in deliberately. Unobserved case complexity raises take-up and lowers the baseline probability of confirmation, so a naive comparison of users to non-users is biased <em>downwards</em> — the same direction <span class="citation" data-cites="hotchkiss2026can">Hotchkiss, Iverson, and Zheng (<a href="references.html#ref-hotchkiss2026can" role="doc-biblioref">2026</a>)</span> argue applies in their data, where Subchapter V filers are if anything more distressed than traditional Chapter 11 filers.</p>
 <div id="rdd-simulate" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Simulate a threshold-eligibility insolvency regime</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">2026</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>CUTOFF <span class="op">=</span> <span class="fl">7.5</span>        <span class="co"># eligibility ceiling, in millions of currency units</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>TAU <span class="op">=</span> <span class="fl">0.32</span>          <span class="co"># true local effect on the probability of confirmation</span></span>
@@ -3451,6 +3543,7 @@ y_i = \alpha + \beta_1 \text{Treated}_i + \beta_2 \text{Post}_t + \beta_3\,(\tex
 <span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Use simplified track | eligible: </span><span class="sc">{</span>simplified[eligible <span class="op">==</span> <span class="dv">1</span>]<span class="sc">.</span>mean()<span class="sc">:6.1%}</span><span class="ss">"</span>)</span>
 <span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Use simplified track | above:    </span><span class="sc">{</span>simplified[eligible <span class="op">==</span> <span class="dv">0</span>]<span class="sc">.</span>mean()<span class="sc">:6.1%}</span><span class="ss">"</span>)</span>
 <span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Plan confirmed (overall):        </span><span class="sc">{</span>confirmed<span class="sc">.</span>mean()<span class="sc">:6.1%}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Cases simulated:                 1,940
 Eligible (below cutoff):          50.8%
@@ -3461,6 +3554,8 @@ Plan confirmed (overall):         27.5%</code></pre>
 </div>
 <p>The estimation machinery is short enough to write out in full. Weighted least squares with heteroskedasticity-robust standard errors is the building block; two-stage least squares is the same algebra applied to the projection of the endogenous regressor onto the instrument set.</p>
 <div id="rdd-estimators" class="cell" data-execution_count="32">
+<details class="code-fold">
+<summary>Weighted least squares, weighted 2SLS, and the fuzzy RD wrapper</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> erfc, sqrt</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3525,9 +3620,12 @@ Plan confirmed (overall):         27.5%</code></pre>
 <span id="cb47-62"><a href="#cb47-62" aria-hidden="true" tabindex="-1"></a>        <span class="st">"late"</span>: b_iv[<span class="dv">1</span>], <span class="st">"late_se"</span>: se_iv[<span class="dv">1</span>],</span>
 <span id="cb47-63"><a href="#cb47-63" aria-hidden="true" tabindex="-1"></a>        <span class="st">"wald"</span>: b_rf[<span class="dv">1</span>] <span class="op">/</span> b_fs[<span class="dv">1</span>],</span>
 <span id="cb47-64"><a href="#cb47-64" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>The naive comparison and the RD estimate can now be put side by side.</p>
 <div id="rdd-main" class="cell" data-execution_count="33">
+<details class="code-fold">
+<summary>Naive OLS versus the fuzzy RD estimate</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>b_naive, se_naive <span class="op">=</span> robust_wls(</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    np.column_stack([np.ones(n), simplified]), confirmed, np.ones(n)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -3549,6 +3647,7 @@ Plan confirmed (overall):         27.5%</code></pre>
 <span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"   (se </span><span class="sc">{</span>main[<span class="st">'late_se'</span>]<span class="sc">:.3f}</span><span class="ss">)"</span>)</span>
 <span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"    Wald ratio, ITT / first stage          </span><span class="sc">{</span>main[<span class="st">'wald'</span>]<span class="sc">:&gt;10.3f}</span><span class="ss">"</span>)</span>
 <span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">66</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>==================================================================
   Effect on the probability of confirming a plan
@@ -3567,6 +3666,8 @@ Plan confirmed (overall):         27.5%</code></pre>
 <p>The Wald ratio and the 2SLS coefficient agree to machine precision, because the model is just identified. The naive comparison understates the true effect, exactly as the selection story predicts.</p>
 <p>Bandwidth sensitivity and a donut-hole specification come next. The point of the table is not to find the specification with the largest coefficient but to see how the estimate and its precision move together.</p>
 <div id="rdd-bandwidth" class="cell" data-execution_count="34">
+<details class="code-fold">
+<summary>Bandwidth path and donut-hole robustness</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> []</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> h <span class="kw">in</span> [<span class="fl">1.5</span>, <span class="fl">2.0</span>, <span class="fl">2.5</span>, <span class="fl">3.0</span>, <span class="fl">3.5</span>]:</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> fuzzy_rd(liab, simplified, confirmed, h<span class="op">=</span>h)</span>
@@ -3584,6 +3685,7 @@ Plan confirmed (overall):         27.5%</code></pre>
 <span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>bw_table <span class="op">=</span> pd.DataFrame(rows)</span>
 <span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bandwidth path for the fuzzy RD estimate (true effect = </span><span class="sc">{</span>TAU<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
 <span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bw_table.to_string(index<span class="op">=</span><span class="va">False</span>, float_format<span class="op">=</span><span class="kw">lambda</span> v: <span class="ss">f"</span><span class="sc">{</span>v<span class="sc">:8.3f}</span><span class="ss">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Bandwidth path for the fuzzy RD estimate (true effect = 0.32)
    Bandwidth    N  First stage        F     LATE       SE        t
@@ -3597,6 +3699,8 @@ Plan confirmed (overall):         27.5%</code></pre>
 </div>
 <p>Two validity checks follow. The density test looks for bunching just below the cutoff, which would indicate that firms manage the running variable to qualify; the covariate check runs the reduced form on a variable that treatment cannot affect.</p>
 <div id="rdd-validity" class="cell" data-execution_count="35">
+<details class="code-fold">
+<summary>Density continuity test and covariate smoothness placebo</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> density_jump(x, cutoff<span class="op">=</span>CUTOFF, h<span class="op">=</span><span class="fl">3.5</span>, binw<span class="op">=</span><span class="fl">0.25</span>, n_boot<span class="op">=</span><span class="dv">400</span>, seed<span class="op">=</span><span class="dv">7</span>):</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co">    McCrary-style test: a local-linear density fitted separately on each side</span></span>
@@ -3640,6 +3744,7 @@ Plan confirmed (overall):         27.5%</code></pre>
 <span id="cb52-41"><a href="#cb52-41" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"t = </span><span class="sc">{</span>cov_check[<span class="st">'itt'</span>] <span class="op">/</span> cov_check[<span class="st">'itt_se'</span>]<span class="sc">:.2f}</span><span class="ss">)"</span>)</span>
 <span id="cb52-42"><a href="#cb52-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"-"</span> <span class="op">*</span> <span class="dv">66</span>)</span>
 <span id="cb52-43"><a href="#cb52-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Neither should be distinguishable from zero."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Validity checks
 ------------------------------------------------------------------
@@ -3650,6 +3755,8 @@ Plan confirmed (overall):         27.5%</code></pre>
 </div>
 </div>
 <div id="cell-fig-rdd-discontinuity" class="cell" data-execution_count="36">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>bins <span class="op">=</span> np.linspace(CUTOFF <span class="op">-</span> <span class="fl">3.5</span>, CUTOFF <span class="op">+</span> <span class="fl">3.5</span>, <span class="dv">29</span>)</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> np.digitize(liab, bins) <span class="op">-</span> <span class="dv">1</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>mids <span class="op">=</span> (bins[:<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> bins[<span class="dv">1</span>:]) <span class="op">/</span> <span class="fl">2.0</span></span>
@@ -3684,6 +3791,7 @@ Plan confirmed (overall):         27.5%</code></pre>
 <span id="cb54-32"><a href="#cb54-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-33"><a href="#cb54-33" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb54-34"><a href="#cb54-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div id="fig-rdd-discontinuity" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -3699,6 +3807,8 @@ Figure&nbsp;40.1: Fuzzy regression discontinuity at an eligibility threshold. Th
 </div>
 <p>Finally, the difference-in-differences counterpart. The pre-period cohort files before the procedure exists, and its treatment indicator has to be built from <em>total</em> liabilities, because the non-contingent split is unobservable before the rule creates a reason to record it. That measurement error attenuates the intent-to-treat estimate, and rescaling by the first stage recovers the structural parameter.</p>
 <div id="rdd-did" class="cell" data-execution_count="37">
+<details class="code-fold">
+<summary>Difference-in-differences intent-to-treat, and rescaling to a LATE</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>did_rng <span class="op">=</span> np.random.default_rng(<span class="dv">20200219</span>)</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3745,6 +3855,7 @@ Figure&nbsp;40.1: Fuzzy regression discontinuity at an eligibility threshold. Th
 <span id="cb55-44"><a href="#cb55-44" aria-hidden="true" tabindex="-1"></a>      <span class="ss">f"   (se </span><span class="sc">{</span>se_first[<span class="dv">3</span>]<span class="sc">:.3f}</span><span class="ss">)"</span>)</span>
 <span id="cb55-45"><a href="#cb55-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Rescaled: ITT / first stage            </span><span class="sc">{</span>b_itt[<span class="dv">3</span>] <span class="op">/</span> b_first[<span class="dv">3</span>]<span class="sc">:&gt;8.3f}</span><span class="ss">"</span>)</span>
 <span id="cb55-46"><a href="#cb55-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"="</span> <span class="op">*</span> <span class="dv">66</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>==================================================================
   Difference-in-differences, n = 6,398   (true effect = 0.32)

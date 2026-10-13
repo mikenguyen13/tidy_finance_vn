@@ -892,7 +892,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./50_institutional_ownership.html">Ownership, Market Frictions, and International Exposure</a></li><li class="breadcrumb-item"><a href="./53_governance.html"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Corporate Governance</span></a></li></ol></nav>
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Corporate Governance</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Corporate Governance</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
 </div>
 
 
@@ -1008,6 +1008,8 @@ Table&nbsp;36.1: Categories of governance provisions for the VN-GIndex
 <li><strong>Factor data</strong>: Vietnamese Fama-French factors (market, size, value) and a momentum factor.</li>
 </ol>
 <div id="46c35c98" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1024,17 +1026,21 @@ Table&nbsp;36.1: Categories of governance provisions for the VN-GIndex
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>tidy_finance <span class="op">=</span> sqlite3.<span class="ex">connect</span>(</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">"data/tidy_finance_python.sqlite"</span></span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <section id="loading-governance-data" class="level3" data-number="36.2.1">
 <h3 data-number="36.2.1" class="anchored" data-anchor-id="loading-governance-data"><span class="header-section-number">36.2.1</span> Loading Governance Data</h3>
 <p>The governance dataset contains firm-level governance characteristics. Each observation corresponds to a firm-year, with binary indicators for the presence of each governance provision.</p>
 <div id="load-governance" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>governance_raw <span class="op">=</span> pd.read_csv(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"data/datacore_governance.csv"</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>[<span class="st">"date_effective"</span>, <span class="st">"date_expires"</span>]</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>governance_raw.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-governance-head" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="3">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1042,7 +1048,10 @@ Table&nbsp;36.1: Categories of governance provisions for the VN-GIndex
 Table&nbsp;36.2: First observations of the governance dataset
 </figcaption>
 <div aria-describedby="tbl-governance-head-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>governance_raw.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1058,6 +1067,8 @@ Table&nbsp;36.2: First observations of the governance dataset
 <h3 data-number="36.2.2" class="anchored" data-anchor-id="computing-the-vn-gindex"><span class="header-section-number">36.2.2</span> Computing the VN-GIndex</h3>
 <p>We compute the governance index by summing the binary indicators of governance provision. The provision columns are identified by the prefix <code>gov_</code>.</p>
 <div id="compute-gindex" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify governance provision columns</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>gov_columns <span class="op">=</span> [</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    col <span class="cf">for</span> col <span class="kw">in</span> governance_raw.columns <span class="cf">if</span> col.startswith(<span class="st">"gov_"</span>)</span>
@@ -1072,6 +1083,7 @@ Table&nbsp;36.2: First observations of the governance dataset
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>governance[[<span class="st">"symbol"</span>, <span class="st">"year"</span>, <span class="st">"gindex"</span>]].describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="distribution-of-the-vn-gindex" class="level3" data-number="36.2.3">
@@ -1080,6 +1092,8 @@ Table&nbsp;36.2: First observations of the governance dataset
 <div id="fig-gindex-distribution" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="5">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gindex-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span>, <span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">7</span>), sharey<span class="op">=</span><span class="va">True</span>, sharex<span class="op">=</span><span class="va">True</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -1116,6 +1130,7 @@ Table&nbsp;36.2: First observations of the governance dataset
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-gindex-distribution-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.1
@@ -1128,6 +1143,8 @@ Figure&nbsp;36.1
 Table&nbsp;36.3: Summary statistics of the VN-GIndex by vintage year
 </figcaption>
 <div aria-describedby="tbl-gindex-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gindex_summary <span class="op">=</span> (</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    governance</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"year"</span>)[<span class="st">"gindex"</span>]</span>
@@ -1136,6 +1153,7 @@ Table&nbsp;36.3: Summary statistics of the VN-GIndex by vintage year
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>gindex_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1144,6 +1162,8 @@ Table&nbsp;36.3: Summary statistics of the VN-GIndex by vintage year
 <h3 data-number="36.2.4" class="anchored" data-anchor-id="classifying-firms-democracy-neutral-and-dictatorship"><span class="header-section-number">36.2.4</span> Classifying Firms: Democracy, Neutral, and Dictatorship</h3>
 <p>Rather than using fixed cutoffs (which may be inappropriate given varying index ranges across markets), we use percentile-based classification. Firms in the bottom quintile of the VN-GIndex distribution within each vintage year are classified as <strong>Democracy</strong> firms, and firms in the top quintile are classified as <strong>Dictatorship</strong> firms.</p>
 <div id="classify-firms" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_governance(group):</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Classify firms into Democracy, Neutral, or Dictatorship</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    within each governance vintage year."""</span></span>
@@ -1180,6 +1200,7 @@ Table&nbsp;36.3: Summary statistics of the VN-GIndex by vintage year
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>classification_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="tbl-classification" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="8">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1187,12 +1208,17 @@ Table&nbsp;36.3: Summary statistics of the VN-GIndex by vintage year
 Table&nbsp;36.4: Number of firms in each governance category by vintage year
 </figcaption>
 <div aria-describedby="tbl-classification-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>classification_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <p>We exclude firms with dual-class share structures, as these create a distinct governance arrangement that conflates voting rights with economic ownership. In the US, <span class="citation" data-cites="gompers2003corporate">Gompers, Ishii, and Metrick (<a href="references.html#ref-gompers2003corporate" role="doc-biblioref">2003</a>)</span> similarly excluded dual-class firms.</p>
 <div id="exclude-dualclass" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exclude dual-class firms if flagged in the data</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"dual_class"</span> <span class="kw">in</span> governance_classified.columns:</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    governance_classified <span class="op">=</span> governance_classified.query(</span>
@@ -1209,12 +1235,15 @@ Table&nbsp;36.4: Number of firms in each governance category by vintage year
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Firms in portfolio universe: </span><span class="sc">{</span><span class="bu">len</span>(portfolio_firms)<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(portfolio_firms[<span class="st">"gx"</span>].value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="loading-stock-market-data" class="level3" data-number="36.2.5">
 <h3 data-number="36.2.5" class="anchored" data-anchor-id="loading-stock-market-data"><span class="header-section-number">36.2.5</span> Loading Stock Market Data</h3>
 <p>We merge the governance classifications with monthly stock return data.</p>
 <div id="load-stock-data" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>prices_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"""</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">        SELECT symbol, date, ret, ret_excess, mktcap, mktcap_lag, risk_free</span></span>
@@ -1225,6 +1254,7 @@ Table&nbsp;36.4: Number of firms in each governance category by vintage year
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>).dropna()</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>prices_monthly.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.DataFrame'&gt;
 Index: 165499 entries, 1 to 209477
@@ -1252,7 +1282,10 @@ memory usage: 10.6 MB</code></pre>
 <li><code>shares_outstanding</code>: Number of shares outstanding (in thousands).</li>
 </ul>
 <div id="cell-compute-mktcap" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>prices_monthly[[<span class="st">"symbol"</span>, <span class="st">"date"</span>, <span class="st">"ret"</span>, <span class="st">"mktcap"</span>]].describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="compute-mktcap" class="cell-output cell-output-display" data-execution_count="3">
 <div>
 
@@ -1326,6 +1359,8 @@ memory usage: 10.6 MB</code></pre>
 <h3 data-number="36.2.6" class="anchored" data-anchor-id="linking-governance-and-stock-data"><span class="header-section-number">36.2.6</span> Linking Governance and Stock Data</h3>
 <p>Each governance vintage is valid from <code>date_effective</code> through <code>date_expires</code>. We assign monthly stock returns to the appropriate governance vintage. This is the portfolio rebalancing logic: portfolios are reformed when new governance data becomes available and held until the next vintage.</p>
 <div id="merge-governance-stocks" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge: each stock-month gets its governance classification</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># if the month falls within [date_effective, date_expires]</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> pd.merge(</span>
@@ -1345,6 +1380,7 @@ memory usage: 10.6 MB</code></pre>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total firm-month observations: </span><span class="sc">{</span><span class="bu">len</span>(merged)<span class="sc">:,}</span><span class="ss">"</span>)</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>merged.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="computing-lagged-market-capitalization-for-weighting" class="level3" data-number="36.2.7">
@@ -1356,6 +1392,8 @@ r_{p,t}^{vw} = \sum_{i \in p} w_{i,t-1} \cdot r_{i,t}, \quad w_{i,t-1} = \frac{\
 \tag{36.3}\]</span></span></p>
 <p>where <span class="math inline">\(\text{MV}_{i,t-1}\)</span> is the market capitalization of stock <span class="math inline">\(i\)</span> at the end of month <span class="math inline">\(t-1\)</span>.</p>
 <div id="compute-lag-mktcap" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> merged.sort_values([<span class="st">"symbol"</span>, <span class="st">"date"</span>])</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Lagged market value (previous month)</span></span>
@@ -1382,6 +1420,7 @@ r_{p,t}^{vw} = \sum_{i \in p} w_{i,t-1} \cdot r_{i,t}, \quad w_{i,t-1} = \frac{\
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>merged <span class="op">=</span> merged.query(<span class="st">"mktcap_lag &gt; 0"</span>)</span>
 <span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Clean firm-month observations: </span><span class="sc">{</span><span class="bu">len</span>(merged)<span class="sc">:,}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -1391,6 +1430,8 @@ r_{p,t}^{vw} = \sum_{i \in p} w_{i,t-1} \cdot r_{i,t}, \quad w_{i,t-1} = \frac{\
 <h3 data-number="36.3.1" class="anchored" data-anchor-id="value-weighted-portfolio-returns"><span class="header-section-number">36.3.1</span> Value-Weighted Portfolio Returns</h3>
 <p>We now compute the value-weighted monthly returns for the Democracy and Dictatorship portfolios.</p>
 <div id="compute-portfolio-returns" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> value_weighted_return(group):</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute value-weighted return for a group of stocks."""</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    weights <span class="op">=</span> group[<span class="st">"mktcap_lag"</span>]</span>
@@ -1424,6 +1465,7 @@ r_{p,t}^{vw} = \sum_{i \in p} w_{i,t-1} \cdot r_{i,t}, \quad w_{i,t-1} = \frac{\
 <span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>portfolio_returns.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="long-short-portfolio-democracy-minus-dictatorship" class="level3" data-number="36.3.2">
@@ -1433,6 +1475,8 @@ r_{p,t}^{vw} = \sum_{i \in p} w_{i,t-1} \cdot r_{i,t}, \quad w_{i,t-1} = \frac{\
 r_{t}^{D-D} = r_{t}^{\text{Democracy}} - r_{t}^{\text{Dictatorship}}
 \tag{36.4}\]</span></span></p>
 <div id="compute-long-short" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot to wide format</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>returns_wide <span class="op">=</span> portfolio_returns.pivot(</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"gx"</span>, values<span class="op">=</span>[<span class="st">"ret_vw"</span>, <span class="st">"ret_ew"</span>]</span>
@@ -1458,6 +1502,7 @@ r_{t}^{D-D} = r_{t}^{\text{Democracy}} - r_{t}^{\text{Dictatorship}}
 <span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Monthly return series: </span><span class="sc">{</span><span class="bu">len</span>(returns_wide)<span class="sc">}</span><span class="ss"> months"</span>)</span>
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>returns_wide.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="portfolio-characteristics-over-time" class="level3" data-number="36.3.3">
@@ -1469,6 +1514,8 @@ r_{t}^{D-D} = r_{t}^{\text{Democracy}} - r_{t}^{\text{Dictatorship}}
 Table&nbsp;36.5: Portfolio characteristics by governance group and year
 </figcaption>
 <div aria-describedby="tbl-portfolio-chars-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>portfolio_chars <span class="op">=</span> (</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    merged</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    .assign(year_month<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="st">"date"</span>].dt.to_period(<span class="st">"Y"</span>))</span>
@@ -1483,6 +1530,7 @@ Table&nbsp;36.5: Portfolio characteristics by governance group and year
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>portfolio_chars</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1498,6 +1546,8 @@ Table&nbsp;36.5: Portfolio characteristics by governance group and year
 Table&nbsp;36.6: Summary statistics of monthly portfolio returns (in percent)
 </figcaption>
 <div aria-describedby="tbl-return-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>return_cols <span class="op">=</span> [</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ret_vw_Democracy"</span>, <span class="st">"ret_vw_Dictatorship"</span>, <span class="st">"ret_diff_vw"</span>,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ret_ew_Democracy"</span>, <span class="st">"ret_ew_Dictatorship"</span>, <span class="st">"ret_diff_ew"</span></span>
@@ -1522,6 +1572,7 @@ Table&nbsp;36.6: Summary statistics of monthly portfolio returns (in percent)
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>summary_stats[[<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"min"</span>, <span class="st">"25%"</span>, <span class="st">"50%"</span>, <span class="st">"75%"</span>, <span class="st">"max"</span>, </span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>               <span class="st">"skewness"</span>, <span class="st">"sharpe"</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1543,6 +1594,8 @@ H_0: \mathbb{E}[r_t^{\text{Democracy}} - r_t^{\text{Dictatorship}}] = 0
 Table&nbsp;36.7: T-test for the mean difference between Democracy and Dictatorship portfolio returns
 </figcaption>
 <div aria-describedby="tbl-ttest-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> perform_ttest(series, label):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Perform a one-sample t-test and return results."""</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    clean <span class="op">=</span> series.dropna()</span>
@@ -1565,6 +1618,7 @@ Table&nbsp;36.7: T-test for the mean difference between Democracy and Dictatorsh
 <span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>])</span>
 <span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>ttest_results.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1579,6 +1633,8 @@ W_T = \prod_{t=1}^{T} (1 + r_{p,t})
 <div id="fig-cumulative-returns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="19">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cumulative-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>returns_wide <span class="op">=</span> returns_wide.sort_values(<span class="st">"date"</span>)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>cum_democracy <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> returns_wide[<span class="st">"ret_vw_Democracy"</span>]).cumprod()</span>
@@ -1620,6 +1676,7 @@ W_T = \prod_{t=1}^{T} (1 + r_{p,t})
 <span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cumulative-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.2
@@ -1629,6 +1686,8 @@ Figure&nbsp;36.2
 <div id="fig-cumulative-longshort" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="20">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cumulative-longshort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cum_longshort <span class="op">=</span> (<span class="dv">1</span> <span class="op">+</span> returns_wide[<span class="st">"ret_diff_vw"</span>]).cumprod()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
@@ -1656,6 +1715,7 @@ Figure&nbsp;36.2
 <span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cumulative-longshort-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.3
@@ -1669,6 +1729,8 @@ Figure&nbsp;36.3
 <div id="fig-rolling-returns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="21">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rolling_mean <span class="op">=</span> (</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    returns_wide[<span class="st">"ret_diff_vw"</span>]</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    .rolling(window<span class="op">=</span><span class="dv">12</span>, min_periods<span class="op">=</span><span class="dv">6</span>)</span>
@@ -1711,6 +1773,7 @@ Figure&nbsp;36.3
 <span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rolling-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.4
@@ -1742,6 +1805,8 @@ r_{t}^{D-D} - r_{f,t} = \alpha + \beta_1 (r_{m,t} - r_{f,t}) + \beta_2 \text{SMB
 <section id="loading-factor-data" class="level3" data-number="36.5.2">
 <h3 data-number="36.5.2" class="anchored" data-anchor-id="loading-factor-data"><span class="header-section-number">36.5.2</span> Loading Factor Data</h3>
 <div id="load-factors" class="cell" data-execution_count="22">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>factors_ff5_monthly <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM factors_ff5_monthly"</span>,</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1749,6 +1814,7 @@ r_{t}^{D-D} - r_{f,t} = \alpha + \beta_1 (r_{m,t} - r_{f,t}) + \beta_2 \text{SMB
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>factors_ff5_monthly.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.DataFrame'&gt;
 RangeIndex: 150 entries, 0 to 149
@@ -1767,6 +1833,8 @@ memory usage: 8.3 KB</code></pre>
 </div>
 </div>
 <div id="ab739e36" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>momentum_factor <span class="op">=</span> pd.read_sql_query(</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    sql<span class="op">=</span><span class="st">"SELECT * FROM momentum_factor_monthly"</span>,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    con<span class="op">=</span>tidy_finance,</span>
@@ -1778,8 +1846,11 @@ memory usage: 8.3 KB</code></pre>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    .merge(momentum_factor, on<span class="op">=</span><span class="st">"date"</span>)</span>
 <span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">"mkt_excess"</span>: <span class="st">"mktrf"</span>, <span class="st">"wml"</span>: <span class="st">"umd"</span>})</span>
 <span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>factor_cols <span class="op">=</span> [<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>, <span class="st">"umd"</span>, <span class="st">"risk_free"</span>]</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>(</span>
@@ -1789,6 +1860,7 @@ memory usage: 8.3 KB</code></pre>
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    .T</span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">round</span>(<span class="dv">3</span>)</span>
 <span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div id="tbl-factors-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="24">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-factors-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1882,6 +1954,8 @@ Table&nbsp;36.8: Summary statistics of Vietnamese Fama-French-Carhart factors (m
 <section id="merging-portfolio-returns-with-factor-data" class="level3" data-number="36.5.3">
 <h3 data-number="36.5.3" class="anchored" data-anchor-id="merging-portfolio-returns-with-factor-data"><span class="header-section-number">36.5.3</span> Merging Portfolio Returns with Factor Data</h3>
 <div id="merge-factors" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge on year-month</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>returns_wide[<span class="st">"ym"</span>] <span class="op">=</span> returns_wide[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>factors_ff3_monthly[<span class="st">"ym"</span>] <span class="op">=</span> factors_ff3_monthly[<span class="st">"date"</span>].dt.to_period(<span class="st">"M"</span>)</span>
@@ -1901,6 +1975,7 @@ Table&nbsp;36.8: Summary statistics of Vietnamese Fama-French-Carhart factors (m
 <span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Observations for regression: </span><span class="sc">{</span><span class="bu">len</span>(analysis_data)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="capm-regression" class="level3" data-number="36.5.4">
@@ -1915,6 +1990,8 @@ r_{p,t} - r_{f,t} = \alpha_p + \beta_p (r_{m,t} - r_{f,t}) + \varepsilon_{p,t}
 Table&nbsp;36.9: CAPM regression results for Democracy, Dictatorship, and Long-Short portfolios
 </figcaption>
 <div aria-describedby="tbl-capm-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_regression(y, X, hac<span class="op">=</span><span class="va">True</span>):</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Run OLS regression with optional HAC standard errors."""</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    X_const <span class="op">=</span> sm.add_constant(X)</span>
@@ -1944,6 +2021,7 @@ Table&nbsp;36.9: CAPM regression results for Democracy, Dictatorship, and Long-S
 <span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(capm_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1960,6 +2038,8 @@ r_{p,t} - r_{f,t} = \alpha_p + \beta_1 \text{MKTRF}_t + \beta_2 \text{SMB}_t + \
 Table&nbsp;36.10: Fama-French three-factor model results with Newey-West standard errors
 </figcaption>
 <div aria-describedby="tbl-ff3-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ff3_results <span class="op">=</span> {}</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, y <span class="kw">in</span> portfolios.items():</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> analysis_data[[<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>]]</span>
@@ -1974,6 +2054,7 @@ Table&nbsp;36.10: Fama-French three-factor model results with Newey-West standar
 <span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(ff3_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -1987,6 +2068,8 @@ Table&nbsp;36.10: Fama-French three-factor model results with Newey-West standar
 Table&nbsp;36.11: Four-factor Carhart model results for governance portfolios. Standard errors are Newey-West adjusted with 6 lags.
 </figcaption>
 <div aria-describedby="tbl-ff4-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ff4_results <span class="op">=</span> {}</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, y <span class="kw">in</span> portfolios.items():</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> analysis_data[[<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>, <span class="st">"umd"</span>]]</span>
@@ -2010,10 +2093,13 @@ Table&nbsp;36.11: Four-factor Carhart model results for governance portfolios. S
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>ff4_df <span class="op">=</span> pd.DataFrame(ff4_results).T</span>
 <span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>ff4_df.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
 <div id="ff4-detailed-longshort" class="cell" data-execution_count="29">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Detailed regression output for the long-short portfolio</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> sm.add_constant(analysis_data[[<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>, <span class="st">"umd"</span>]])</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> analysis_data[<span class="st">"ret_excess_longshort"</span>]</span>
@@ -2023,6 +2109,7 @@ Table&nbsp;36.11: Four-factor Carhart model results for governance portfolios. S
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model_ls.summary())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="interpreting-the-factor-loadings" class="level3" data-number="36.5.7">
@@ -2044,6 +2131,8 @@ Table&nbsp;36.11: Four-factor Carhart model results for governance portfolios. S
 Table&nbsp;36.12: Four-factor model with White heteroskedasticity-consistent standard errors (HC1)
 </figcaption>
 <div aria-describedby="tbl-white-results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>white_results <span class="op">=</span> {}</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, y <span class="kw">in</span> portfolios.items():</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> sm.add_constant(analysis_data[[<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>, <span class="st">"umd"</span>]])</span>
@@ -2056,6 +2145,7 @@ Table&nbsp;36.12: Four-factor model with White heteroskedasticity-consistent sta
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(white_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -2067,6 +2157,8 @@ Table&nbsp;36.12: Four-factor model with White heteroskedasticity-consistent sta
 <h3 data-number="36.6.1" class="anchored" data-anchor-id="governance-quintile-portfolios"><span class="header-section-number">36.6.1</span> Governance Quintile Portfolios</h3>
 <p>Rather than focusing solely on the extreme portfolios, we examine returns across all five governance quintiles. This allows us to assess whether the governance-return relationship is monotonic.</p>
 <div id="quintile-portfolios" class="cell" data-execution_count="31">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> assign_quintile(group):</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Assign governance quintile within each vintage year."""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    group <span class="op">=</span> group.copy()</span>
@@ -2119,10 +2211,13 @@ Table&nbsp;36.12: Four-factor model with White heteroskedasticity-consistent sta
 <span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a>merged_q <span class="op">=</span> merged_q.dropna(subset<span class="op">=</span>[<span class="st">"ret"</span>, <span class="st">"mktcap_lag"</span>])</span>
 <span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a>merged_q <span class="op">=</span> merged_q.query(<span class="st">"mktcap_lag &gt; 0"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="fig-quintile-returns" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="32">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-quintile-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute VW returns by quintile and date</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>quintile_returns <span class="op">=</span> (</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    merged_q</span>
@@ -2173,6 +2268,7 @@ Table&nbsp;36.12: Four-factor model with White heteroskedasticity-consistent sta
 <span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-quintile-returns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.5
@@ -2185,6 +2281,8 @@ Figure&nbsp;36.5
 Table&nbsp;36.13: Average monthly returns and four-factor alphas by governance quintile
 </figcaption>
 <div aria-describedby="tbl-quintile-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge quintile returns with factors</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>quintile_wide <span class="op">=</span> quintile_returns.pivot(</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="st">"date"</span>, columns<span class="op">=</span><span class="st">"gindex_quintile"</span>, values<span class="op">=</span><span class="st">"ret_vw"</span></span>
@@ -2235,6 +2333,7 @@ Table&nbsp;36.13: Average monthly returns and four-factor alphas by governance q
 <span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(quintile_factor_results).T.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -2248,6 +2347,8 @@ Table&nbsp;36.13: Average monthly returns and four-factor alphas by governance q
 Table&nbsp;36.14: Four-factor alpha of the long-short governance strategy across subperiods
 </figcaption>
 <div aria-describedby="tbl-subsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>midpoint <span class="op">=</span> analysis_data[<span class="st">"date"</span>].quantile(<span class="fl">0.5</span>)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>subperiods <span class="op">=</span> {</span>
@@ -2276,6 +2377,7 @@ Table&nbsp;36.14: Four-factor alpha of the long-short governance strategy across
 <span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(subsample_results).T</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -2289,6 +2391,8 @@ Table&nbsp;36.14: Four-factor alpha of the long-short governance strategy across
 Table&nbsp;36.15: Four-factor model results: Equal-weighted vs.&nbsp;Value-weighted long-short portfolio
 </figcaption>
 <div aria-describedby="tbl-ew-robustness-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>ew_y <span class="op">=</span> analysis_data[<span class="st">"ret_diff_ew"</span>]</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>vw_y <span class="op">=</span> analysis_data[<span class="st">"ret_excess_longshort"</span>]</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> sm.add_constant(analysis_data[[<span class="st">"mktrf"</span>, <span class="st">"smb"</span>, <span class="st">"hml"</span>, <span class="st">"umd"</span>]])</span>
@@ -2318,6 +2422,7 @@ Table&nbsp;36.15: Four-factor model results: Equal-weighted vs.&nbsp;Value-weigh
 <span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>}).T</span>
 <span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>comparison.<span class="bu">round</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
@@ -2327,6 +2432,8 @@ Table&nbsp;36.15: Four-factor model results: Equal-weighted vs.&nbsp;Value-weigh
 <div id="fig-rolling-alpha" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="36">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-rolling-alpha-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>window <span class="op">=</span> <span class="dv">24</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>rolling_alpha <span class="op">=</span> []</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -2371,6 +2478,7 @@ Table&nbsp;36.15: Four-factor model results: Equal-weighted vs.&nbsp;Value-weigh
 <span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rolling-alpha-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.6
@@ -2408,6 +2516,8 @@ Figure&nbsp;36.6
 <div id="fig-drawdown" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="37">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-drawdown-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_drawdown(cumulative_returns):</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute drawdown series from cumulative returns."""</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    running_max <span class="op">=</span> cumulative_returns.cummax()</span>
@@ -2437,6 +2547,7 @@ Figure&nbsp;36.6
 <span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>ax.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
 <span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-drawdown-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;36.7
@@ -2449,6 +2560,8 @@ Figure&nbsp;36.7
 Table&nbsp;36.16: Risk metrics for governance portfolios
 </figcaption>
 <div aria-describedby="tbl-risk-metrics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<details class="code-fold">
+<summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_risk_metrics(returns, name, rf<span class="op">=</span><span class="va">None</span>):</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Compute standard risk metrics."""</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    r <span class="op">=</span> returns.dropna()</span>
@@ -2503,6 +2616,7 @@ Table&nbsp;36.16: Risk metrics for governance portfolios
 <span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>]).set_index(<span class="st">"Portfolio"</span>)</span>
 <span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>risk_table.<span class="bu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </figure>
 </div>
