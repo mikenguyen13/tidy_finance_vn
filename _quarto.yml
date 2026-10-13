@@ -129,6 +129,7 @@ book:
     - part: "Advanced Financial Modeling"
       chapters:
         - 60_event_studies.qmd
+        - 64_industrial_park_anchors.qmd
         - 61_tail_risk_extreme_events.qmd
         - 62_corporate_finance_estimators.qmd
         - 63_structural_models_finance.qmd
