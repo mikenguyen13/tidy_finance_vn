@@ -1,0 +1,95 @@
+# Applying Tidy Finance with Python to Vietnam
+
+> An open-source, code-first guide by Mike Nguyen to empirical finance on Vietnamese market data with Python: portfolio sorts, factor models, asset pricing tests, valuation, and machine learning. The online edition is at https://mikenguyen13.github.io/tidy_finance_vn/; a Vietnamese edition is at https://mikenguyen13.github.io/tidy_finance_vn_vi/.
+
+The book is an independent derivative work inspired by Tidy Finance (Scheuch, Voigt, Weiss, and Frey; https://www.tidy-finance.org/) and is not affiliated with its authors.
+
+- Author: Mike Nguyen, https://mikenguyen.netlify.app
+- Repository: https://github.com/mikenguyen13/tidy_finance_vn
+
+## Research Methods Library (MCP server)
+
+- [MCP endpoint](https://research-methods-mcp.vercel.app/mcp): Model Context Protocol server (streamable HTTP, no authentication) that indexes this book together with the author's other books, the causalverse R package, and research articles. Its tools recommend study designs with their identifying assumptions (`choose_method`), search and read sections (`search`, `fetch`), return runnable R and Python code (`get_code`), and format citations (`cite`); every result links to the section consulted.
+- [Research Methods Library](https://research-methods-mcp.vercel.app/): setup instructions for Claude, Claude Code, ChatGPT, Cursor, Visual Studio Code, and other MCP clients.
+
+## Front matter
+
+- [Preface](https://mikenguyen13.github.io/tidy_finance_vn/): attribution, motivation, data access, and structure of the book; use of the book in AI assistants
+
+## Vietnam Financial Markets, Institutions, and Data
+
+- [Institutional Background and Market Structure of Vietnam’s Equity Market](https://mikenguyen13.github.io/tidy_finance_vn/00_institutional_background.html)
+- [Accessing and Managing VN Financial Data](https://mikenguyen13.github.io/tidy_finance_vn/01_accessing_and_managing_financial_data.html)
+- [Datacore Data](https://mikenguyen13.github.io/tidy_finance_vn/02_datacore_data.html)
+- [Market Microstructure in Vietnam](https://mikenguyen13.github.io/tidy_finance_vn/03_market_microstructure.html)
+- [Risk-Free Rate Construction in Vietnam](https://mikenguyen13.github.io/tidy_finance_vn/04_risk_free_rate_construction.html)
+- [Constructing and Analyzing Equity Return Series](https://mikenguyen13.github.io/tidy_finance_vn/05_working_with_stock_returns.html)
+- [Compound Returns](https://mikenguyen13.github.io/tidy_finance_vn/06_compound_return.html)
+
+## Portfolio Construction, Risk, and Empirical Mechanics
+
+- [Modern Portfolio Theory](https://mikenguyen13.github.io/tidy_finance_vn/10_modern_portfolio_theory.html)
+- [Univariate Portfolio Sorts](https://mikenguyen13.github.io/tidy_finance_vn/11_univariate_portfolio_sort.html)
+- [Size Sorts](https://mikenguyen13.github.io/tidy_finance_vn/12_size_sorts.html)
+- [Value and Bivariate Sorts](https://mikenguyen13.github.io/tidy_finance_vn/13_value_bivariate.html)
+- [Portfolio Weighting and Rebalancing](https://mikenguyen13.github.io/tidy_finance_vn/14_portfolio_weighting_and_rebalancing.html)
+- [Missing Data and Survivorship Bias](https://mikenguyen13.github.io/tidy_finance_vn/15_missing_data_and_survivorship.html)
+- [Liquidity and Turnover Measures](https://mikenguyen13.github.io/tidy_finance_vn/16_liquidity_and_turnover_measures.html)
+- [Beta Estimation](https://mikenguyen13.github.io/tidy_finance_vn/17_beta_estimation.html)
+
+## Asset Pricing Models and Cross-Sectional Tests
+
+- [The Capital Asset Pricing Model](https://mikenguyen13.github.io/tidy_finance_vn/20_capm.html)
+- [Fama-French Factors](https://mikenguyen13.github.io/tidy_finance_vn/21_fama_french.html)
+- [Momentum Strategies](https://mikenguyen13.github.io/tidy_finance_vn/22_momentum.html)
+- [Factor Construction Principles](https://mikenguyen13.github.io/tidy_finance_vn/23_factor_construction_principles.html)
+- [Fama-MacBeth Regressions](https://mikenguyen13.github.io/tidy_finance_vn/24_fama_macbeth.html)
+- [Factor Zoo and Multiple Testing](https://mikenguyen13.github.io/tidy_finance_vn/25_factor_zoo_and_multiple_testing.html)
+- [Time-Series vs. Cross-Sectional Factor Tests](https://mikenguyen13.github.io/tidy_finance_vn/26_time_series_vs_cross_section.html)
+
+## Firm Fundamentals, Valuation, and Corporate Signals
+
+- [Financial Statement Analysis](https://mikenguyen13.github.io/tidy_finance_vn/30_financial_statement_analysis.html)
+- [Discounted Cash Flow Analysis](https://mikenguyen13.github.io/tidy_finance_vn/31_discounted_cash_flow.html)
+- [Information Content of Earnings Announcements](https://mikenguyen13.github.io/tidy_finance_vn/32_info_earnings.html)
+- [Accruals, Earnings Persistence, and Market Efficiency](https://mikenguyen13.github.io/tidy_finance_vn/33_accruals.html)
+- [Earnings Management: Detection and Measurement](https://mikenguyen13.github.io/tidy_finance_vn/34_earning_management.html)
+- [P/E Ratio](https://mikenguyen13.github.io/tidy_finance_vn/35_pe_ratio.html)
+- [Firm Valuation, Financial Distress, and Company Maturity](https://mikenguyen13.github.io/tidy_finance_vn/36_valuation.html)
+- [Disclosure Quality and Timing](https://mikenguyen13.github.io/tidy_finance_vn/37_disclosure_quality_and_timing.html)
+- [Standardized Earnings Surprises (SUE)](https://mikenguyen13.github.io/tidy_finance_vn/38_sue.html)
+- [Machine Learning Earnings Forecasts and Market Expectations](https://mikenguyen13.github.io/tidy_finance_vn/40_ml_earnings_forecasts.html)
+- [Measuring Divergence of Investor Opinion](https://mikenguyen13.github.io/tidy_finance_vn/39_divop.html)
+
+## Ownership, Market Frictions, and International Exposure
+
+- [Institutional Ownership Analytics in Vietnam](https://mikenguyen13.github.io/tidy_finance_vn/50_institutional_ownership.html)
+- [Institutional Trades, Flows, and Turnover Ratios](https://mikenguyen13.github.io/tidy_finance_vn/52_institutional_trade_flow.html)
+- [Corporate Governance](https://mikenguyen13.github.io/tidy_finance_vn/53_governance.html)
+- [Return Gap: Measuring Unobserved Actions of Fund Managers](https://mikenguyen13.github.io/tidy_finance_vn/54_return_gaps.html)
+- [Price Limits and Volatility](https://mikenguyen13.github.io/tidy_finance_vn/55_price_limits_and_volatility.html)
+- [Market Integration and Segmentation](https://mikenguyen13.github.io/tidy_finance_vn/56_market_integration_and_segmentation.html)
+- [Exchange Rate Dynamics](https://mikenguyen13.github.io/tidy_finance_vn/57_exchange_rate.html)
+
+## Advanced Financial Modeling
+
+- [Event Studies in Finance](https://mikenguyen13.github.io/tidy_finance_vn/60_event_studies.html)
+- [Industrial Park Anchors and Developer Value](https://mikenguyen13.github.io/tidy_finance_vn/64_industrial_park_anchors.html)
+- [Tail Risk and Extreme Events](https://mikenguyen13.github.io/tidy_finance_vn/61_tail_risk_extreme_events.html)
+- [Corporate Finance Estimators and Identification](https://mikenguyen13.github.io/tidy_finance_vn/62_corporate_finance_estimators.html)
+- [Structural Models in Finance](https://mikenguyen13.github.io/tidy_finance_vn/63_structural_models_finance.html)
+
+## Alternative Data and AI for Finance
+
+- [Textual Analysis](https://mikenguyen13.github.io/tidy_finance_vn/70_textual.html)
+- [Image and Visual Data in Finance](https://mikenguyen13.github.io/tidy_finance_vn/71_image.html)
+- [Networks and Graphs in Finance](https://mikenguyen13.github.io/tidy_finance_vn/73_networks_graphs.html)
+- [Multimodal Models in Finance](https://mikenguyen13.github.io/tidy_finance_vn/74_multimodel.html)
+- [Conclusion](https://mikenguyen13.github.io/tidy_finance_vn/99_conclusion.html)
+- [References](https://mikenguyen13.github.io/tidy_finance_vn/references.html)
+
+## Optional
+
+- [Vietnamese edition](https://mikenguyen13.github.io/tidy_finance_vn_vi/)
+- [Source repository](https://github.com/mikenguyen13/tidy_finance_vn)
+- [Sitemap](https://mikenguyen13.github.io/tidy_finance_vn/sitemap.xml)
